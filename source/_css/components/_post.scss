@@ -86,13 +86,13 @@
     .post-meta,
     .post-readingtime,
     .post-excerpt_link {
-        font-family: 'Open Sans', sans-serif;
+        font-family: $font-family-base;
         font-size:   map-get($font-size, small);
         font-weight: 400;
     }
     .post-excerpt,
     .post-content {
-        font-family: 'Merriweather', serif;
+        font-family: $font-family-base;
         color:       map-get($colors, base);
         margin-top:  15px;
         font-weight: 300;
