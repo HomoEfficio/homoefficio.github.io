@@ -1,6 +1,6 @@
-# Tranquilpeak Hexo theme
+# Custom Tranquilpeak Hexo theme
 
-A gorgeous responsive theme for Hexo blog framework 
+A customized [Tranquilpeak Hexo theme](https://github.com/LouisBarranqueiro/tranquilpeak-hexo-theme), A gorgeous responsive theme for Hexo blog framework 
 
 ![Tranquilpeak](http://louisbarranqueiro.github.io/tranquilpeak-hexo-theme/2015/06/15/Welcome-to-the-new-Tranquilpeak/tranquilpeak.png)
 
@@ -19,7 +19,8 @@ A gorgeous responsive theme for Hexo blog framework
 
 ## General ##
 
-- **Author** : Louis Barranqueiro
+- **Author** : hanmomhanda
+- **Original Tranquil Author** : Louis Barranqueiro
 - **Latest version** : 1.1.1  
 - **Compatibility** : Hexo v3.0.0 or higher  
 
