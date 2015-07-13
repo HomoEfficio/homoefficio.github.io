@@ -1,0 +1,39 @@
+<%
+    var coverImageUrl;
+
+    if (post.coverImage) {
+        if ((post.coverImage.indexOf(config.url) < 0) && (post.coverImage.indexOf('://') >= 0)) {
+            coverImageUrl = post.coverImage;
+        } else {
+            coverImageUrl = url_for(post.path + post.coverImage);
+        }
+    }
+%>
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    <% if (post.coverImage) { %>
+        <div class="post-header-cover" style="background-image:url('<%= coverImageUrl %>');">
+            <%- partial('post/header')%>
+        </div>
+    <% } else { %>
+        <%- partial('post/header')%>
+    <% } %>
+    <div class="post-content markdown main-content-wrap" itemprop="articleBody">
+        <%- post.content %>
+        <% if (theme.image_gallery) { %>
+            <%- partial('post/gallery', {photos: post.photos})%>
+        <% } %>
+    </div>
+    <div class="post-footer main-content-wrap">
+        <% if ((post.tags) && (post.tags.length > 0)) { %>
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                <%- partial('post/tag', {tags: post.tags})%>
+            </div>
+        <% } %>
+        <%- partial('post/actions') %>
+        <% if (post.comments && theme.disqus_shortname) { %>
+            <%- partial('post/disqus') %>
+        <% } %>
+    </div>
+</article>
+

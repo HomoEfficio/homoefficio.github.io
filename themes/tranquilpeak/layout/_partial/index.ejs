@@ -1,0 +1,70 @@
+<% var thumbnailImageUrl = null; %>
+<section class="post-group main-content-wrap">
+    <% page.posts.each(function(post) { %>
+        <% if ((theme.thumbnail_image) && (post.thumbnailImage) && ((post.thumbnailImage.length))) { %>
+            <% if ((post.thumbnailImage.indexOf(config.url) < 0) && (post.thumbnailImage.indexOf('://') >= 0)) { %>
+                <% thumbnailImageUrl = post.thumbnailImage; %>
+            <% } else { %>
+                <% thumbnailImageUrl = url_for(post.permalink + post.thumbnailImage); %>
+            <% } %>
+        <% } else if ((theme.thumbnail_image) && (post.photos) && (post.photos.length)) { %>
+            <% if ((post.photos[0].indexOf(config.url) < 0) && (post.photos[0].indexOf('://') >= 0)) { %>
+                <% thumbnailImageUrl = post.photos[0]; %>
+            <% } else { %>
+                <% thumbnailImageUrl = url_for(post.permalink + post.photos[0]); %>
+            <% } %>
+        <% } else if ((theme.thumbnail_image) && (post.coverImage) && (post.coverImage.length)) { %>
+            <% if ((post.coverImage.indexOf(config.url) < 0) && (post.coverImage.indexOf('://') >= 0)) { %>
+                <% thumbnailImageUrl = post.coverImage; %>
+            <% } else { %>
+                <% thumbnailImageUrl = url_for(post.permalink + post.coverImage); %>
+            <% } %>
+        <% } %>
+        <% if (thumbnailImageUrl != null) { %>
+            <article class="post post--thumbnailimg" itemscope itemType="http://schema.org/BlogPosting">
+        <% } else { %>
+                <article class="post" itemscope itemType="http://schema.org/BlogPosting">
+        <% } %>
+            <div class="post-wrap">
+                <div class="post-header">
+                    <h1 class="post-title" itemprop="headline">
+                        <% if (post.link) { %>
+                                <a class="link-unstyled" href="<%- url_for(post.link) %>"><%= post.title || '(no title)' %></a>
+                        <% } else { %>
+                                <a class="link-unstyled" href="<%- url_for(post.path) %>"><%= post.title || '(no title)' %></a>
+                        <% } %>
+                    </h1>
+                    <%- partial('post/meta', {post: post}) %>
+                </div>
+                <div class="post-excerpt" itemprop="articleBody">
+                    <% if (post.excerpt) { %>
+                        <%- post.excerpt %>
+                    <% } else { %>
+                        <p>
+                            <%- post.content.replace(/<(?:.|\n)*?>/gm, '').substr(0, 200) %><br>
+                    <% } %>
+                    <% if ((post.link) && (theme.go_to_message)) { %>
+                            <a href="<%- url_for(post.link) %>" target="new" class="post-excerpt_link link"><%= theme.go_to_message %> </a>
+                    <% } else { %>
+                        <% if (theme.read_more_message) { %>
+                            <a href="<%- url_for(post.path) %>" class="post-excerpt_link link "><%- theme.read_more_message %></a>
+                            <% if (post.readingtime) { %>
+                                <span class="post-readingtime"><%= ' - ' + post.readingtime + ' min read' %></span>
+                            <% } %>
+                        <% } %>
+                    <% } %>
+                    <% if (!post.excerpt) { %>
+                        </p>
+                    <% } %>
+                </div>
+            </div>
+            <% if (thumbnailImageUrl != null) { %>
+                <div class="post-thumbnailimg">
+                    <img alt="" src="<%= thumbnailImageUrl %>"/>
+                </div>
+                <% thumbnailImageUrl = null; %>
+            <% } %>
+        </article>
+    <% }) %>
+    <%- partial('pagination', {type: 'page'}) %>
+</section>
