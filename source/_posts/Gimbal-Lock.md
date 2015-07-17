@@ -12,6 +12,7 @@ tags:
   - 3차원
   - 회전
 thumbnailImage: https://i.imgur.com/WhRCV3n.gif
+coverImage: gimbal-lock-cover.png
 ---
 # Gimbal Lock
 
