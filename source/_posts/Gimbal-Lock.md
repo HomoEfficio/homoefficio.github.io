@@ -11,6 +11,7 @@ tags:
   - 웹지엘
   - 3차원
   - 회전
+thumbnailImage: https://i.imgur.com/WhRCV3n.gif
 ---
 # Gimbal Lock
 
