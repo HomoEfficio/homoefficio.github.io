@@ -1,5 +1,7 @@
 title: git subtree - 프로젝트 안의 또 다른 프로젝트
 date: 2015-07-18 12:54:46
+categories:
+  - 개발 환경 및 도구
 tags:
   - git
   - subtree

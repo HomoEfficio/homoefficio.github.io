@@ -1,10 +1,12 @@
 title: Java 객체 지향 디자인 패턴
+date: 2015-07-14 12:21:44
+categories:
+  - 서평
 tags:
   - 디자인패턴
   - 객체지향
-  - 서평
 thumbnailImage: 'http://image.yes24.com/goods/12501269/L'
-date: 2015-07-14 12:21:44
+
 ---
 
 {% img http://image.yes24.com/goods/12501269/L %}

@@ -1,5 +1,7 @@
 title: Gimbal Lock
 date: 2015-07-17 13:49:49
+categories:
+  - WebGL
 tags:
   - Gimbal Lock
   - Computer Graphics
