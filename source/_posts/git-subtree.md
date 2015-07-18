@@ -120,6 +120,9 @@ Password for 'https://hanmomhanda@github.com':
 Everything up-to-date
 
 >~/gitRepo/hanmomhanda.github.io $ git subtree pull --prefix=themes/tranquilpeak/ custom-tranquilpeak dev
+From https://github.com/hanmomhanda/custom-tranquilpeak-hexo-theme
+ * branch            dev        -> FETCH_HEAD
+Already up-to-date.
 
 
 # 좋은점
