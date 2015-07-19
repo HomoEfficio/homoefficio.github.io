@@ -135,7 +135,7 @@ for (k in lines) {
 
 D3.js의 `Cluster layout`을 사용하면 쉽게(?) 다이어그램을 그릴 수 있다.
 
-여기서는 사실 http://bl.ocks.org/mbostock/4063570 에 있는 예제를 거의 그대로 갖다 썼다. 그래서 '쉽게'라고 할 수 있지만, 사실 D3.js가 그렇게 쉽지만은 않다.
+여기서는 사실 http://bl.ocks.org/mbostock/4063570 에 있는 예제 중에서 `d3.json()`으로 json을 외부에서 가져오는 대신 위에서 만든 내부의 json을 사용하도록 변경한 부분 외에는 거의 그대로 갖다 썼다. 그래서 '쉽게'라고 할 수 있지만, 사실 D3.js가 그렇게 쉽지만은 않다.
 
 D3.js는 여러가지 다이어그램을 쉽게 그릴 수 있게 해주는 다양한 built-in API가 제공되지만, D3.js를 만든 **Mike Bostock** 형님도 늘 강조하듯, 화려한 시각화 뒤에 숨어있는 **D3.js의 진정한 마술은 데이터와 Dom 요소를 매핑해주는 부분에 있다.** 이 부분을 시각화를 이용해서 잘 설명해준 글이 있는데, 너무 좋아서 번역을 해뒀으니 [**여기**](http://hanmomhanda.github.io/Docs/d3/How-Selections-Work.html)를 참고하면 D3.js를 배우는 데 도움이 될 것이다.
 
