@@ -326,7 +326,7 @@ Access-Control-Request-Headers: <field-name>[, <field-name>]*
 
 # 결론
 
-- CORS를 쓰면 AJAX를 Same Origin Policy의 제약을 넘어 다른 도메인의 자원을 사용할 수 있다.
+- CORS를 쓰면 AJAX로도 Same Origin Policy의 제약을 넘어 다른 도메인의 자원을 사용할 수 있다.
 - CORS를 사용하려면
     - 클라이언트에서 `Access-Control-**` 류의 HTTP Header를 서버에 보내야 하고,
     - 서버도 `Access-Control-**` 류의 HTTP Header를 클라이언트에 회신하게 되어 있어야 한다.
