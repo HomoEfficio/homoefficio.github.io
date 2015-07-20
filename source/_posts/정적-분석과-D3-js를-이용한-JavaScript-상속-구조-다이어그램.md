@@ -86,9 +86,9 @@ for (k in lines) {
 }
 {% endcodeblock %}
 
-위계 정보를 담는 객체 `ClsMoGL`은 `LinkedList`와 비슷한 자료구조다. 애초에 단순히 텍스트에서 정보를 추출했기 때문에 텍스트를 담는 `parentName`, `childrenNames`가 추가되어 있다.
+위계 정보를 담는 객체 `ClsMoGL`은 `LinkedList`와 비슷한 자료구조다. 애초에 단순히 텍스트에서 정보를 추출했기 때문에 텍스트를 담는 `parentName`, `childrenNames`가 추가되어 있다. 그리고 나중에 필요하다면 `methods`나 `fields` 같은 필드를 추가해서 더 많은 정보를 다이어그램에 표시할 수도 있다.
 
-부모는 하나고 자식은 여럿일 수 있으므로 자식만 배열로 하면 된다. `children`, `childrenNames` 배열에는 편리하게 그냥 값 할당을 하면 내부적으로는 push()가 호출되도록 구현했다.
+부모는 하나고 자식은 여럿일 수 있으므로 자식만 배열로 하면 된다. `children`, `childrenNames` 배열에는 편리하게 그냥 값 할당을 하면 내부적으로는 `push()`가 호출되도록 구현했다.
 
 {% codeblock lang:javascript Hierarchy 정보를 담는 자료 구조 %}
 var ClsMoGL = function() {
@@ -189,7 +189,7 @@ var ClsMoGL = function() {
 
 # D3.js
 
-두말이 필요없는 굉장한 시각화 라이브러리인 [**D3.js**](https://github.com/mbostock/d3/wiki/Gallery)에는 이런 위계 정보를 나타내는 다이어그램을 쉽게 만들 수 있는 여러가지 built-in 템플릿을 제공해준다. D3.js에는 이런 build-in 템플릿을 `layout`이라고 부른다.
+두말이 필요없는 굉장한 시각화 라이브러리인 [**D3.js**](https://github.com/mbostock/d3/wiki/Gallery)에는 이런 위계 정보를 나타내는 다이어그램을 쉽게 만들 수 있는 여러가지 built-in 템플릿을 제공해준다. D3.js에는 이런 built-in 템플릿을 `layout`이라고 부른다.
 
 D3.js의 `Cluster layout`을 사용하면 쉽게(?) 다이어그램을 그릴 수 있다.
 
@@ -199,7 +199,7 @@ D3.js는 여러가지 다이어그램을 쉽게 그릴 수 있게 해주는 다�
 
 결과와 소스 코드는 [**여기**](http://projectbs.github.io/MoGL/lab/diagram/index.html)에서 볼 수 있다.
 
-화려하진 않지만, 소스 코드가 바뀌면 다이어그램도 알아서 바뀌는 살아있는 문서라는 점에서 쓸모는 꽤 있을 것이다.
+화려하진 않지만(물론 공을 더 들이면 화려하게 만들 수도 있다), 소스 코드가 바뀌면 다이어그램도 따라서 바뀌는 살아있는 문서라는 점에서 쓸모는 꽤 있을 것이다.
 
 
 # 정리
