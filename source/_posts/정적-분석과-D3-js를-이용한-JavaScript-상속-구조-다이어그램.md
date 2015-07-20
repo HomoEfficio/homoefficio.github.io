@@ -33,7 +33,7 @@ MoGL.extend('Matrix',{
 소스 코드에서 `.extend(`을 포함하는 행만 추려서 간단한 위계 정보를 추출할 수 있다.
 방법은 여러가지가 있겠지만 약간의 정규표현식과 substring()으로 다음과 같이 추출할 수 있다.
 
-```javascript
+{% codeblock lang:javascript Hierarchy 정보 추출 및 구성 %}
 // 표준화 된 상속 코드
 var extendingPattern = '.extend(';
 
@@ -84,11 +84,69 @@ for (k in lines) {
     }
 
 }
-```
+{% endcodeblock %}
 
-위계 정보를 담고 있는 `clsMoGLMap`를 재귀 함수 등을 이용해서 가공하면(사실 이 부분이 좀 복잡했는데 설명하기는 어렵고, 이 방식이 가장 좋은 방식이라는 보장도 없으니, 필요하다면 그냥 소스 코드를 참고..) 대략 다음과 같은 json을 얻을 수 있다.
+위계 정보를 담는 객체 `ClsMoGL`은 `LinkedList`와 비슷한 자료구조다. 애초에 단순히 텍스트에서 정보를 추출했기 때문에 텍스트를 담는 `parentName`, `childrenNames`가 추가되어 있다.
 
-```json
+부모는 하나고 자식은 여럿일 수 있으므로 자식만 배열로 하면 된다. `children`, `childrenNames` 배열에는 편리하게 그냥 값 할당을 하면 내부적으로는 push()가 호출되도록 구현했다.
+
+{% codeblock lang:javascript Hierarchy 정보를 담는 자료 구조 %}
+var ClsMoGL = function() {
+    var name, parentName, parent, childrenNames = [], children = [];
+    Object.defineProperties(this, {
+        'name':{
+            enumerable:true,
+            get:function() {
+                return name;
+            },
+            set:function(value) {
+                name = value;
+            }
+        },
+        'parentName':{
+            enumerable:true,
+            get:function() {
+                return parentName;
+            },
+            set:function(value) {
+                parentName = value;
+            }
+        },
+        'parent':{
+            enumerable:true,
+            get:function() {
+                return parent;
+            },
+            set:function(value) {
+                parent = value;
+            }
+        },
+        'childrenNames':{
+            enumerable:true,
+            get:function() {
+                return childrenNames;
+            },
+            set:function(childName) {
+                childrenNames.push(childName);
+            }
+        },
+        'children':{
+            enumerable:true,
+            get:function() {
+                return children;
+            },
+            set:function(child) {
+                children.push(child);
+            }
+        }
+    });
+};
+{% endcodeblock %}
+
+
+`ClsMoGL`을 담고 있는 `clsMoGLMap`를 재귀 함수 등을 이용해서 가공하면(사실 이 부분이 좀 복잡했는데 쉽게 이해할 수 있도록 설명하기는 어렵고, 이 방식이 가장 좋은 방식이라는 보장도 없으니, 필요하다면 그냥 소스 코드를 참고..) 대략 다음과 같은 json을 얻을 수 있다.
+
+{% codeblock lang:javascript json으로 정리된 Hierarchy 정보 %}
 {
     "name": "MoGL",
     "children": [{
@@ -124,7 +182,7 @@ for (k in lines) {
         "name": "World"
     }]
 }
-```
+{% endcodeblock %}
 
 자료 구조를 만들었으면 나머지 일은 **D3.js** 가 접수한다.
 
