@@ -324,6 +324,13 @@ Access-Control-Request-Headers: <field-name>[, <field-name>]*
 - XDR은 http와 https 프로토콜만 가능
 
 
+# 결론
+
+- CORS를 쓰면 AJAX를 통해서도 다른 도메인의 자원을 사용할 수 있다.
+- CORS를 사용하려면
+    - 클라이언트에서 `Access-Control-**` 류의 HTTP Header를 서버에 보내야 하고,
+    - 서버도 `Access-Control-**` 류의 HTTP Header를 클라이언트에 회신해야 한다.
+
 
 # 참고 자료
 
