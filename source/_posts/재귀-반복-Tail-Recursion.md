@@ -161,7 +161,7 @@ function sum(n) {
 이번에도 n을 마음껏 키워보자.
 
 {% asset_img stack-overflow.png %}
-
+<br/>
 이번에는 Stack 문제다.
 
 함수를 호출한 후에 원래 자리로 돌아오려면, 원래 자리를 어딘가에 저장해둬야 하는데, 그 어딘가가 바로 Stack이다. 함수를 한 번 호출하면 Stack 깊이를 하나 증가시켜서 돌아올 원래 자리에 대한 정보를 저장하고, 호출된 함수가 일을 마치고 리턴되면 Stack에서 원래 자리에 대한 정보를 빼와서 원래 자리로 돌아가므로, Stack 깊이가 하나 줄어 원래 깊이로 되돌아 간다.
@@ -354,10 +354,70 @@ call fibonacciTailRecursion(6, 1, 0)
 return 8
 {% endcodeblock %}
 
+함수 호출 횟수도 적고, Stack의 깊이도 얕다.
+
+그런데, JavaScript는 Tail Call Optimization을 지원 해주고 있을까?
+
 
 # JavaScript에서의 Tail Call Optimization
 
-**ECMAScript 6**에서는 공식적으로 [Tail Call Optimization을 지원](http://www.ecma-international.org/ecma-262/6.0/#sec-tail-position-calls)한다.
+**ECMAScript 6**에서는 공식적으로 [Tail Call Optimization을 지원](http://www.ecma-international.org/ecma-262/6.0/#sec-tail-position-calls)한다. 하지만 https://kangax.github.io/compat-table/es6/ 에 따르면 2015년 7월 28일 현재 실제로 Tail Call Optimization을 지원하고 있는 브라우저는 없다.
+
+{% asset_img es6-tail-call-optimization.png %}
+<br/>
+실제로 그런지 한 번 확인해보자.
+
+피보나치의 수는 Tail Call Optimization을 확인하기에는 적당하지 않다. 이유는 Stack을 깊이 가져가기 위해 n의 값을 크게 가져가면, 피보나치의 수는 결과값이 너무 커져서 계산을 제대로 못해내기 떄문이다. n이 겨우 100일 때 피보나치의 수는 3해 5,422경 4,848조 1,792억이 넘는 큰 수 였다는 것을 다시 떠올려보면 이해가 갈 것이다.
+
+따라서 n까지의 합을 통해 브라우저의 Tail Call Optimization 지원 여부를 확인해보자.
+
+
+### 단순 재귀 호출 버전
+
+앞의 `함수 호출의 비용, Stack` 단원에서 살펴봤던 것처럼, 단순 재귀 호출 방식에서는 Chrome 기준으로 n = 10만이면 에러가 났었다.
+
+{% asset_img stack-overflow.png %}
+<br/>
+따라서 Tail Recursion 버전이 n = 10만일때 값을 제대로 계산한다면 Tail Call Optimization이 적용되어 있다고 할 수 있다.
+
+
+### Tail Recursion 버전
+
+{% codeblock lang:javascript 반복을 사용해서 구한 n까지의 합 %}
+function sumTailRecursion(n, accumulator) {
+    if (n == 0) return accumulator;
+    accumulator += n;
+    return sumTailRecursion(--n, accumulator);
+}
+{% endcodeblock %}
+
+{% asset_img tail-call-optimization-not-supported.png %}
+<br/>
+Chrome에서는 보는 바와 같이 n = 1만까지는 괜찮지만 n = 10만을 실행하면 에러가 발생한다.
+참고로 Mozilla에서는 n = 1만에서도 에러가 발생한다.
+
+따라서 **2015년 7월 28일 현재, Tail Call Optimization은 아직 브라우저에 적용되어 있지 않다.**
+
+
+### 반복 버전
+
+참고로 반복 버전은 어떤지 알아보자.
+
+{% codeblock lang:javascript 반복을 사용해서 구한 n까지의 합 %}
+function sumLoop(n) {
+    var accumulator = 0;
+    while(n) {
+        accumulator += n--;
+    }
+    return accumulator;
+}
+{% endcodeblock %}
+
+{% asset_img loop-million.png %}
+<br/>
+`sumLoop(1000000)`을 실행하면 500,000,500,000 이 나온다.
+반복 버전의 경우 n = 1백만 인 경우에도 무리 없이 계산된다.
+
 
 # 정리
 
@@ -366,6 +426,7 @@ return 8
 하지만 **재귀 호출을 두 겹 이상으로 사용하면 함수 호출 횟수가 상상하지 못할 정도로 증가**하는 문제가 발생하고, **재귀 호출 깊이가 깊어지면 Stack을 많이 사용**하는 문제가 발생한다.
 
 이럴 때는 **재귀 호출 대신 반복이나 Tail Recursion 방식으로 구현하면 문제 상황을 피해갈 수 있다.**
+만약 **JavaScript처럼 실행 환경에서 Tail Call Optimization을 지원해주지 않으면 사실 상 유일한 해결책은 반복문 뿐이다.**
 
 재귀 호출을 반복이나 Tail Recursion 방식으로 구현하려면 다음의 사항을 꼭 기억하자.
 
