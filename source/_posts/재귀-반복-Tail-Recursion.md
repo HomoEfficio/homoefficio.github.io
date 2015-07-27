@@ -1,7 +1,7 @@
 title: 재귀, 반복, Tail Recursion
 date: 2015-07-27 12:12:54
 categories:
-  - Algorithm
+  - Technique
 tags:
   - Fibonacci
   - Recursion
