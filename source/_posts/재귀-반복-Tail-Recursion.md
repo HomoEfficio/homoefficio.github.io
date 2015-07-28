@@ -312,7 +312,7 @@ a();
 
 이름에서도 짐작할 수 있는 Tail Call 최적화는 다음과 같다.
 
->Tail Call 방식으로 짜여지면 Stack을 새로 만들지 않고 이미 있는 Stack 속의 값만 대체해서 Stack을 재사용하는 방식으로 동작하도록 최적화 할 수 있다. 이러한 최적화를 [**Tail Call Optimization(또는 Tail Call Elimination)**](http://c2.com/cgi/wiki?TailCallOptimization)이라고 하며 **언어의 실행 환경해에서 지원해줘야 한다.**
+>Tail Call 방식으로 짜여지면 Stack을 새로 만들지 않고 이미 있는 Stack 속의 값만 대체해서 Stack을 재사용하는 방식으로 동작하도록 최적화 할 수 있다. 이러한 최적화를 [**Tail Call Optimization(또는 Tail Call Elimination)**](http://c2.com/cgi/wiki?TailCallOptimization)이라고 하며 **언어의 실행 환경에서 지원해줘야 한다.**
 
 # Tail Recursion
 
@@ -357,7 +357,7 @@ function fibonacciTailRecursion(n, cached_1, cached_2) {
 
 결국 `f(n) = f(n - 1) + f(n - 2)`를 `f(n, c1, c2) = f(n - 1, c1 + c2, c1)`로 바꿔서 두 겹이었던 재귀 호출을 한 겹으로 바꾼 것이다.
 
-위에서 구현한 Tail Recursion 호출 과정을 풀어보면 아래와 같다. 들여쓰기는 Stack의 깊이를 나타낸다.
+위에서 구현한 Tail Recursion 호출 과정을 n = 6 일때를 예를 들어 풀어보면 아래와 같다. 들여쓰기는 Stack의 깊이를 나타낸다.
 
 {% codeblock lang:javascript 가운데에 있는 두 번째 파라미터의 값이 피보나치 수 %}
 call fibonacciTailRecursion(6, 1, 0)
@@ -411,7 +411,7 @@ return 8
 
 {% asset_img stack-overflow.png %}
 <br/>
-따라서 Tail Recursion 방식으로 n = 10만일때 값을 계산할 때 Stack 에러가 나지 않고 제대로 계산한다면 Tail Call Optimization이 적용되어 있다고 판단할 수 있다.
+따라서 Tail Recursion 방식으로 n = 10만일때 값을 계산할 때 Stack 에러가 나지 않고 제대로 계산한다면 Tail Call Optimization이 적용되어 있다고 근사적으로 판단할 수 있다.
 
 
 ### Tail Recursion 버전
@@ -449,7 +449,7 @@ function sumLoop(n) {
 {% asset_img loop-billion.png %}
 <br/>
 
-반복 버전의 경우 n = 1억 까지는 거의 바로 계산 결과가 나오고, n = 10억에서도 2초가 채 안 걸린 듯 하고, n = 100억은 10초 이상 소요가 되지만 계산 결과가 나오기는 한다. 물론 앞에서 언급한 JavaScript의 부동소수형 정확도 한계로 오차는 있다.
+반복 버전의 경우 n = 1억 까지는 거의 바로 계산 결과가 나오고, n = 10억에서도 2초가 채 안 걸린 듯 하고, n = 100억은 10초 이상 소요가 되지만 계산 결과가 나오기는 한다. 물론 앞에서 언급한 JavaScript의 부동소수형 정확도 한계로 인한 오차는 있다.
 
 
 # 정리
@@ -471,3 +471,4 @@ function sumLoop(n) {
 - Java의 Tail Call - http://www.drdobbs.com/jvm/tail-call-optimization-and-java/240167044
 - JavaScript의 Tail Call - http://www.2ality.com/2015/06/tail-call-optimization.html
 - 브라우저의 재귀 호출 깊이 한계 - http://jsfiddle.net/9YMDF/9/
+- 류종택의 프로그래밍 강의실 - http://ryulib.tistory.com/318
