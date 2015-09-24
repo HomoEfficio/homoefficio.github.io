@@ -232,6 +232,18 @@ driver.findElement(By.id("toMyList")).click();
 js.executeScript("$('#toMyList').click()");
 ```
 
+아이디에 `.`이 포함된 경우 일반적인 JavaScript 코드에서는 아래와 같이 역슬래쉬를 2번 써줘야 하지만,
+
+```javascript
+$('#collegeList0\\.schlCode').val('219');
+```
+
+Selenium 코드에서는 JavaScript 코드를 `js.executeScript("")`로 한 번 더 감싸주므로 아래와 같이 역슬래쉬를 4번 써줘야 한다.
+
+```java
+js.executeScript("$('#collegeList0\\\\.schlCode').val('219')");
+```
+
 jQuery를 이용하는 방법은 특히 다음과 같은 상황에서 유용하다.
 
 >- viewport에 안 보이는 hidden 필드에 값을 쓰거나 읽을 때
