@@ -215,6 +215,8 @@ public class TestBasis {
 
 앞에서 다루었던 viewport에 렌더링 되지 않은 Element를 찾지 못해서 테스트가 멈췄다가 비정상 종료하는 문제도 `js.executeScript("scroll(0, 300)");`로 스크롤해서 viewport를 적절히 이동시켜 주면 테스트가 바르게 수행된다.
 
+단순한 스크롤 이동 뿐 아니라 DOM 객체를 찾을 때도, Selenium API인 `driver.findElement(By.id("collegeList0.grdaTypeCode"))`보다 JavaScript 소스를 이용한 `js.executeScript("document.getElementById('collegeList0.grdaTypeCode')")`를 사용하는 것이 훨씬 더 안정적으로 동작한다.
+
 ## jQuery 사용
 
 테스트 대상 웹 페이지가 jQuery를 사용하도록 설정되어 있다면 jQuery 구문도 Selenium에서 실행할 수 있다.
@@ -248,6 +250,7 @@ jQuery를 이용하는 방법은 특히 다음과 같은 상황에서 유용하�
 
 >- viewport에 안 보이는 hidden 필드에 값을 쓰거나 읽을 때
 >    - hidden 필드는 HTML 기준으로는 현재의 viewport 내에 위치하더라도 `driver.findElement(By.id("ID"))`의 방식으로 찾지 못한다.
+>    - 물론 `js.executeScript("document.getElementById('ID')")`도 `js.executeScript("$('#ID')")`와 마찬가지로 hidden 필드를 찾을 수 있다.
 >- 어떤 요소에 이벤트 핸들러가 있는 경우
 >    - `js.executeScript("$('#eventDispatcher').change()")`와 같은 식으로 이벤트를 발생시키면 이벤트 핸들러가 실행된다.
 
