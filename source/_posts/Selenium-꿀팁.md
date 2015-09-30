@@ -25,6 +25,13 @@ coverImage: coverImage-Selenium.png
 **Selenium은 테스트 코드 실행으로 브라우저에서의 액션을 테스트 할 수 있게 해주는 테스팅 도구**다.
 **Selenium IDE로 브라우저 상에서의 액션을 녹화해서 테스트 코드를 생성**할 수 있으며, 그 테스트 코드를 Eclipse나 IntelliJ 같은 **IDE의 런타임에서 JUnit 테스트와 같은 방식으로 실행해서 브라우저 상에서의 액션을 재생**할 수 있다.
 
+### 실제 사용 영상(40초)
+
+수동으로 실행하면 **5분 정도 소요**되지만,
+자동화를 통해 **40초**만에 완료
+
+{% youtube bSixvofQ2Lk %}
+
 ## Selenium을 사용하기 위한 pom.xml
 
 ```xml
@@ -66,17 +73,17 @@ Selenium IDE는 파이어폭스 브라우저의 플러그인이다. **Selenium�
 
 ![](http://i.imgur.com/BQEkfTS.png)
 
-실행과 동시에 녹화가 시작되며, IDE를 실행한 파이어폭스 브라우저에서 액션을 취하면 IDE 화면에 녹화되는 것을 확인할 수 있다.
+실행과 동시에 녹화가 시작되며, Selenium IDE를 실행한 파이어폭스 브라우저에서 액션을 취하면 Selenium IDE 화면에 녹화되는 것을 확인할 수 있다.
 
 ![](http://i.imgur.com/JJYOt2T.png)
 
-IDE 우상단의 빨간 녹화 버튼을 다시 누르면 녹화가 정지된다.
+Selenium IDE 우상단의 빨간 녹화 버튼을 다시 누르면 녹화가 정지된다.
 
 ![](http://i.imgur.com/eHt8e9M.png)
 
-## Selenium IDE 자바 소스 추출
+## Selenium IDE 자바 테스트 소스 추출
 
-아래와 같이 IDE의 메뉴에서 소스를 추출할 수 있다.
+아래와 같이 Selenium IDE의 메뉴에서 녹화 내용을 재생할 수 있는 테스트 소스를 추출할 수 있다.
 
 ![](http://i.imgur.com/8wn8ztA.png)
 
@@ -88,7 +95,7 @@ IDE 우상단의 빨간 녹화 버튼을 다시 누르면 녹화가 정지된다
 
 ![](http://i.imgur.com/QNANiEd.png)
 
-기본적으로는 이 파일을 JUnit처럼 실행할 수 있지만, 실무적으로는 손을 좀 봐야한다.
+기본적으로는 이 파일을 JUnit처럼 실행할 수 있지만, 실무적으로는 꽤 많이 손을 봐야한다.
 
 ## Selenium 테스트 큰 흐름
 
@@ -103,7 +110,7 @@ Selenium으로 Daum 사이트를 테스트 해보면서 살펴봤지만 정리�
 1. Selenium IDE에서 테스트 소스 코드 추출
 1. 개발 환경에 테스트 코드 추가 - maven 등 Project Convention(규약)에 맞게 추가
 1. **테스트 코드 보완**
-1. IDE에서 테스트 실행
+1. Eclipse 같은 IDE에서 JUnit 실행하는 방식으로 Selenium 테스트 실행
 
 8번 까지는 일반적인 내용이라 그다지 어려울 것이 없는데, 9번 **테스트 코드 보완** 부분이 조금 신경쓸 부분이 있다. 이제 실전에서 마주치게 되는 문제를 해결해보자.
 
@@ -142,7 +149,7 @@ Selenium IDE가 추출해준 소스대로라면 `@Test` 항목 하나마다 브�
 
 ## 테스트 메서드 실행 순서 지정
 
-단위 테스트라면 테스트 메서드의 실행 순서를 굳이 유지할 필요가 없겠지만, Selenium은 브라우저 상에서의 테스트이므로 단위 테스트라기 보다는 인수 테스트(또는 사용자 테스트)의 용도로 사용되는 경우가 많다.
+단위 테스트라면 테스트 메서드의 실행 순서를 굳이 유지할 필요가 없겠지만, Selenium은 브라우저 상에서의 테스트이므로 단위 테스트보다는 일정한 순서를 가진 시나리오에 따라 수행되는 인수 테스트(또는 사용자 테스트)의 용도에 더 적합하다.
 **`@FixMethodOrder`를 테스트 클래스에 지정하면 메서드의 실행 순서를 고정시켜서 시나리오를 구성할 수 있다.**
 
 `@FixMethodOrder`로 지정할 수 있는 옵션은 세 가지가 있지만, **개발자가 원하는 순서대로 지정할 수 있는 옵션은 `MethodSorters.NAME_ASCENDING` 하나 뿐**이다.
@@ -175,22 +182,22 @@ Driver info: driver.version: unknown
 Process finished with exit code 255
 ```
 
-Element가 보이지 않는다는 소리인데, 말 그대로 Element가 보이지 않아서 발생하는 에러다.
+Element가 보이지 않는다는 소리인데, 말 그대로 **Element가 화면에 보이지 않아서 발생하는 에러**다.
 정확히는 viewport 내에 해당 Element가 렌더링 되어있지 않으면 `driver.findElement(By.id("ELEMENT_ID"))`와 같은 방식으로는 Element를 find하지 못하기 때문에 발생하는 에러다.
 
 이를 해결하는 방법은 일단 두 가지가 떠오른다.
 
 1. 해당 Element가 viewport 내에 들어오도록 테스트 수행이 멈춘 상태에서 수동으로 스크롤 해준다.
-2. 테스트 자동화하자고 Selenium 쓰는데 수동이 웬말이냐, 소스에서 해결해보자.
+2. 테스트 자동화하자고 Selenium 쓰는데 수동이 웬말이냐, 자동으로 잘 동작하도록 소스를 고치자.
 
 우습지만 실제로 해보면 첫번째 방법도 유효하다!!
 
-하지만 수동이 웬말이냐.. 소스에서 해결해보자. 바로 JavaScript를 사용하는 것이다.
+하지만 수동이 웬말이냐.. 소스를 개선해보자. 바로 JavaScript를 사용하는 것이다.
 
 
 ## JavaScript 사용
 
-Selenium 테스트 코드는 분명히 Java이지만, 놀랍게도 브라우저에서 실행 중인 Context를 JavaScript로 접근할 수 있다! 게다가 방법마저 쉽다!
+Selenium 테스트 코드는 분명히 Java이지만, 놀랍게도 **브라우저에서 실행 중인 Context를 JavaScript로 접근할 수 있다!** 게다가 방법마저 쉽다!
 
 ```java
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -213,7 +220,7 @@ public class TestBasis {
 
 위와 같이 JavascriptExecutor 클래스를 선언하고, Web Driver를 JavascriptExecutor로 캐스팅하는 두 줄의 코드만 있으면 `js.executeScript("scroll(0, 300)");`와 같은 방식으로 JavaScript 구문을 실행할 수 있다.
 
-앞에서 다루었던 viewport에 렌더링 되지 않은 Element를 찾지 못해서 테스트가 멈췄다가 비정상 종료하는 문제도 `js.executeScript("scroll(0, 300)");`로 스크롤해서 viewport를 적절히 이동시켜 주면 테스트가 바르게 수행된다.
+앞에서 다루었던 viewport에 렌더링 되지 않은 Element를 찾지 못해서 테스트가 멈췄다가 비정상 종료하는 문제도 `js.executeScript("scroll(0, 300)");`로 스크롤해서 **viewport를 적절히 이동시켜 주면 테스트가 바르게 수행**된다.
 
 단순한 스크롤 이동 뿐 아니라 DOM 객체를 찾을 때도, Selenium API인 `driver.findElement(By.id("collegeList0.grdaTypeCode"))`보다 JavaScript 소스를 이용한 `js.executeScript("document.getElementById('collegeList0.grdaTypeCode')")`를 사용하는 것이 훨씬 더 안정적으로 동작한다.
 
@@ -234,7 +241,7 @@ driver.findElement(By.id("toMyList")).click();
 js.executeScript("$('#toMyList').click()");
 ```
 
-아이디에 `.`이 포함된 경우 일반적인 JavaScript 코드에서는 아래와 같이 역슬래쉬를 2번 써줘야 하지만,
+Selector 아이디에 `.`이 포함된 경우 일반적인 JavaScript 코드에서는 아래와 같이 역슬래쉬를 2번 써줘야 하지만,
 
 ```javascript
 $('#collegeList0\\.schlCode').val('219');
@@ -299,11 +306,15 @@ select.selectByVisibleText("졸업예정");
 
 >Selenium은 JUnit과 같은 방식으로 실행해서, 테스트 용 브라우저 인스턴스를 띄우고, 브라우저 상에서 웹 애플리케이션의 기능을 테스트 할 수 있게 해주는 도구다.
 >
->Selenium IDE를 이용해서 웹 브라우저 상에서의 사용자 동작을 녹화하고 테스트 소스 코드를 추출할 수 있다.
+>Selenium IDE를 이용해서 웹 브라우저 상에서의 사용자 동작을 녹화하고 나중에 재생할 수 있는 테스트 소스 코드를 추출할 수 있다.
 >
->- 추출한 테스트 코드를 실무에 그대로 쓸 수는 없고 몇 가지 보완 작업을 해야 한다.
->- 테스트 코드 상에서 JavaScript 코드를 실행할 수 있고, jQuery 같은 라이브러리 코드도 실행할 수 있다.
->- select 요소 테스트 시 select 요소에 click 이벤트를 실행해줘야 정확히 동작한다.
+>테스트 코드 상에서 JavaScript 코드를 실행할 수 있고,
+>테스트 대상 페이지에서 jQuery 같은 외부 라이브러리를 사용하도록 설정되어 있다면 테스트 코드 상에서 jQuery 같은 외부 라이브러리 코드도 실행할 수 있다.
+>
+>Selenium IDE에서 추출한 테스트 코드는 적지 않은 보완 작업을 해야 실무에 적용할 수 있다.
+>- window.scrollBy(), window.scrollTo() 등 화면 스크롤 추가
+>- DOM 요소 selecting 로직 교체(Selenium API가 잘 안 먹을 경우 JavaScript로 교체)
+>- select 요소 테스트 시 select 요소에 click 이벤트를 실행
 
 # 더 읽을거리
 
