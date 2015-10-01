@@ -319,3 +319,5 @@ select.selectByVisibleText("졸업예정");
 # 더 읽을거리
 
 - Selenium 문서 - http://www.seleniumhq.org/docs/index.jsp
+
+- Selenium의 wait 기능 정리 - http://seleniumeasy.com/selenium-tutorials/how-to-work-with-ajax-controls-using-webdriver
