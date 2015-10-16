@@ -6,7 +6,7 @@ tags:
   - Application Architecture
   - 애플리케이션 아키텍쳐
 thumbnailImage: http://ecx.images-amazon.com/images/I/51X%2Br%2BOdV3L._SX397_BO1,204,203,200_.jpg
-coverImage: cover-poeaa-.png
+coverImage: cover-poeaa.png
 ---
 
 작년에 마틴 파울러의 명저 **Patterns of Enterprise Application Architecture**를 번역...할 뻔 했다.
