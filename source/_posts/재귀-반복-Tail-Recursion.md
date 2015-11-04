@@ -209,15 +209,20 @@ n까지의 합을 구할 때는 재귀 호출을 한 겹으로 사용했는데, 
 
 {% codeblock lang:javascript 재귀 호출 대신 반복을 사용 %}
 function fibonacciLoop(n) {
-    var tmp, cached_1 = 1, cached_2 = 0;
+    var currentFibo, previousFibo = 1, previousPreviousFibo = 0;
     if (n < 2)
         return n;
     for ( var i = 2 ; i <= n ; i++ ) {
-        tmp = cached_1;
-        cached_1 += cached_2;
-        cached_2 = tmp;
+        // 이번 반복의 피보나치 수를 구하고
+        currentFibo = previousFibo + previousPreviousFibo;
+
+        // 다음번 반복을 위해 앞의 피보나치 수를 앞의앞의 피보나치 수로 한 칸 미루고
+        previousPreviousFibo = previousFibo;
+
+        // 다음번 반복을 위해 현재의 피보나치 수를 앞의 피보나치 수로 한 칸 미룬다.
+        previousFibo = currentFibo;
     }
-    return cached_1;
+    return currentFibo;
 }
 {% endcodeblock%}
 
@@ -234,7 +239,7 @@ function fibonacciLoop(n) {
 
 {% codeblock lang:javascript 반복 과정 %}
 call fibonacci(6)
-반복문으로 앞의 수(cached_1)와 앞의 앞의 수(cached_2)를 더하면서 피보나치 수 계산
+반복문으로 앞의 수(previousFibo)와 앞의앞의 수(previousPreviousFibo)를 더하면서 피보나치 수 계산
 return 8
 {% endcodeblock%}
 
@@ -242,7 +247,7 @@ return 8
 
 생각을 바꾸니 의외로 간단하게 해결되었다. 재귀 호출을 반복으로 바꾸는 과정에서 꼭 머리에 새기고 넘어가야할 것은 다음과 같다.
 
-> **반복 단계별 계산 결과를 반복이 끝날 때까지 어떤 변수(여기서는 cached_1)에 계속 저장한다.**
+> **반복 단계별 계산 결과를 반복이 끝날 때까지 어떤 변수(여기서는 previousFibo)에 계속 저장한다.**
 
 
 # Tail Call
@@ -323,13 +328,21 @@ a();
 이제 Tail Recursion으로 fibonacci 수를 구하는 코드를 짜보자. 앞에서 재귀 호출 방식을 반복 방식으로 바꾸는 작업을 직접 해봤다면 크게 어렵지 않을 것이다.
 
 {% codeblock lang:javascript Tail Recursion 방식 %}
-function fibonacciTailRecursion(n, cached_1, cached_2) {
+function fibonacciTailRecursion(n, previousFibo, previousPreviousFibo) {
+    var currentFibo;
     if (n < 2)
-        return n * cached_1; // n이 0이면 0을 반환(if 문 한 번만 쓰려고 꼼수 부림)
-    tmp = cached_1;
-    cached_1 += cached_2;
-    cached_2 = tmp;
-    return fibonacciTailRecursion(n - 1, cached_1, cached_2);
+        return n * previousFibo;
+
+    // 이번 호출의 피보나치 수를 구하고
+    currentFibo = previousFibo + previousPreviousFibo;
+
+    // 다음번 재귀 호출을 위해 앞의 피보나치 수를 앞의앞의 피보나치 수로 한 칸 미루고
+    previousPreviousFibo = previousFibo;
+
+    // 다음번 재귀 호출을 위해 현재의 피보나치 수를 앞의 피보나치 수로 한 칸 미룬다.
+    previousFibo = currentFibo;
+
+    return fibonacciRecursion(n - 1, previousFibo, previousPreviousFibo);
 }
 {% endcodeblock %}
 
@@ -340,22 +353,24 @@ function fibonacciTailRecursion(n, cached_1, cached_2) {
 Tail Recursion을 적용하기 위해 **두 겹이었던 재귀 호출을 한 겹으로 바꿔서 함수 호출 횟수가 확 줄었기 때문**이다. 얼마나 줄었을까? `7해 #,###경 #,###조 #,###억..`회에서 `100`회로 완전히 획기적으로 줄어들었다.
 재귀 호출을 두 겹에서 한 겹으로 줄인 효과는 실로 막대하다.
 
-4~6라인에서 볼 수 있듯이 **`cached_1`에 계산값을 계속 저장하는 로직은 반복 방식의 for 문 안에 있던 것과 완전히 동일하다.**
+4~6라인에서 볼 수 있듯이 **`previousFibo`에 계산값을 계속 저장하는 로직은 반복 방식의 for 문 안에 있던 것과 완전히 동일하다.**
 그리고 7라인에서 볼 수 있듯이 **두 겹이었던 재귀 호출을 한 겹으로** 바꿨다.
 
-반복 방식에서는 `cached_1`이 반복문 외부에서 선언되었고, Tail Recursion 방식에서는 `cached_1`이 함수의 파라미터로 사용된다는 점만 다를 뿐, **반복이나 꼬리 호출 단계별 계산 결과를 어딘가에 저장해둔다는 점은 똑같다.**
+반복 방식에서는 `previousFibo`이 반복문 외부에서 선언되었고, Tail Recursion 방식에서는 `previousFibo`이 함수의 파라미터로 사용된다는 점만 다를 뿐, **반복이나 꼬리 호출 단계별 계산 결과를 어딘가에 저장해둔다는 점은 똑같다.**
 
 참고로 반복 방식과 동일한 로직이 사용될 수 있다는 면을 보여주기 위해 위와 같이 구현했지만, 사실 조금 더 깔끔한 답안은 아래와 같다.
 
 {% codeblock lang:javascript Tail Recursion 더 깔끔한 구현 %}
-function fibonacciTailRecursion(n, cached_1, cached_2) {
+function fibonacciTailRecursion(n, previousFibo, previousPreviousFibo) {
     if (n < 2)
-        return n * cached_1;
-    return fibonacciTailRecursion(n - 1, cached_1 + cached_2, cached_1);
+        return n * previousFibo;
+    return fibonacciTailRecursion(n - 1,
+                                  previousFibo + previousPreviousFibo,
+                                  previousFibo);
 }
 {% endcodeblock %}
 
-결국 `f(n) = f(n - 1) + f(n - 2)`를 `f(n, c1, c2) = f(n - 1, c1 + c2, c1)`로 바꿔서 두 겹이었던 재귀 호출을 한 겹으로 바꾼 것이다.
+결국 `f(n) = f(n - 1) + f(n - 2)`를 `f(n, fibo1, fibo2) = f(n - 1, fibo1 + fibo2, fibo1)`로 바꿔서 두 겹이었던 재귀 호출을 한 겹으로 바꾼 것이다.
 
 위에서 구현한 Tail Recursion 호출 과정을 n = 6 일때를 예를 들어 풀어보면 아래와 같다. 들여쓰기는 Stack의 깊이를 나타낸다.
 
