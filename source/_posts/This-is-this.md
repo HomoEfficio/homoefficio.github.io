@@ -129,7 +129,27 @@ console.log(obj.method1());    // objProp1
 따라서 `obj.method1() === obj.prop1`는 true.
 
 
-### 2.2 쩜 없이도 호출할 수 있는 전역 함수 안의 this
+### 2.2 prototype 객체의 메서드로 정의되는 함수 안의 this
+
+`prototype` 자체도 조금 생소할 수 있고, 그래서 예제를 보면 더 복잡해 보이지만 맨 마지막 줄에 있는 호출 방식만 집중해서 보면 결국 `obj.funcName()`의 형식으로 호출 된다는 것을 알 수 있다. 따라서 **`prototype` 객체의 메서드로 정의되는 함수 안의 this 역시, 쩜 앞에 있는 객체를 가리킨다.**
+
+{% codeblock lang:javascript prototype 객체의 메서드 안의 this %}
+function Person(fullName) {
+    this.fullName = fullName;
+}
+
+Person.prototype.getFullName = function() {
+    return this.fullName;
+}
+
+var kim = new Person('Kim Tae Hee');
+console.log(kim.getFullName());    // Kim Tae Hee
+{% endcodeblock %}
+
+**prototype 객체의 메서드로 정의된 getFullName 함수 안의 this는, getFullName를 호출할 때 앞에 있는 쩜 앞에 있는 객체를 가리킨다.**
+
+
+### 2.3 쩜 없이도 호출할 수 있는 전역 함수 안의 this
 
 쩜 앞에 있는 객체로 바인딩 된다는 얘기를 하면서 쩜 없이 호출한다니.. 뭔 소린가..
 
@@ -156,26 +176,6 @@ console.log(globalFunc());    // true
 {% endcodeblock %}
 
 **전역 함수 안의 this는 (생략되었지만 쩜 앞에 있는 객체인) 전역 객체를 가리킨다.**
-
-
-### 2.3 prototype 객체의 메서드로 정의되는 함수 안의 this
-
-`prototype` 자체도 조금 생소할 수 있고, 그래서 예제를 보면 더 복잡해 보이지만 맨 마지막 줄에 있는 호출 방식만 집중해서 보면 결국 `obj.funcName()`의 형식으로 호출 된다는 것을 알 수 있다. 따라서 **`prototype` 객체의 메서드로 정의되는 함수 안의 this 역시, 쩜 앞에 있는 객체를 가리킨다.**
-
-{% codeblock lang:javascript prototype 객체의 메서드 안의 this %}
-function Person(fullName) {
-    this.fullName = fullName;
-}
-
-Person.prototype.getFullName = function() {
-    return this.fullName;
-}
-
-var kim = new Person('Kim Tae Hee');
-console.log(kim.getFullName());    // Kim Tae Hee
-{% endcodeblock %}
-
-**prototype 객체의 메서드로 정의된 getFullName 함수 안의 this는, getFullName를 호출할 때 앞에 있는 쩜 앞에 있는 객체를 가리킨다.**
 
 
 ### 2.4 함수 안에 중첩된 함수 안의 this
@@ -257,6 +257,40 @@ console.log(plainObj);
 
 ---
 
+# 다른 함수의 인자로 넘겨지는 경우
+
+함수의 호출 방식은 위에서 기술한대로 세 가지다. 그리고 대부분의 경우 세 가지 방식 중에서 어떤 방식으로 호출되는지 코드에 명확하게 드러난다. 안타깝게도 전부가 아니라 대부분의 경우 그렇다는 것은, 어떤 방식으로 호출되는지 코드에 명확하게 드러나지 않는 경우도 있다는 얘기다.
+
+어떤 경우냐면,
+
+> 어떤 함수 A가 다른 함수 B의 인자로 전달되는 경우,
+> A가 어떤 방식으로 호출될 지는 (까보지 않는 이상) 알 수 없다.
+
+까보지 않는 이상 알 수 없는 이유는 바로 `call()`과 `apply()` 때문이다.
+함수 B 내에서는 인자로 받은 함수 A를 `A.call(뭐든지, args, ...)`와 같은 방식으로 원하는 대로 바인딩할 수 있기 때문이다. 함수 B의 구현부를 볼 수 있는 상황이라면 A의 this에 무엇을 바인딩하는지 알아낼 수 있다. 하지만, 함수 B의 구현부를 볼 수 없는 상황이라면, this에 뭐가 바인딩 되는지 알아내는 방법은 문서를 보거나, 직접 테스트 해 보는 수 밖에 없다.
+
+다른 함수의 인자로 넘겨지는 가장 흔한 예는 바로 `setTimeout()`과 `setInterval()`이다.
+
+{% codeblock lang:javascript setInterval(), setTimeout()의 인자로 전달되는 경우 %}
+setTimeout(function(){ console.dir(this); }, 10); // this는 전역객체(브라우저에서는 window)
+{% endcodeblock %}
+
+`setTimeout()`과 `setInterval()`의 인자로 전달되는 함수의 this에는 전역객체가 바인딩 된다.
+
+그렇다면, `Array.prototype.forEach()`, `Array.prototype.map()`, `Array.prototype.reduce()` 같은 메서드는 어떨까?
+
+{% codeblock lang:javascript Array.prototype.forEach()의 인자로 전달되는 경우 %}
+Array.prototype.forEach.call([1], function(d){ console.log(this); });
+// 브라우저에서는 ServiceWorkerGlobalScope라는 객체가 표시된다.
+{% endcodeblock %}
+
+이처럼 내장 함수의 인자로 넘겨질 때는, 넘겨지는 함수가 어떤 방식으로 호출되는 지 볼 수 있는 방법이 없으므로, this에 뭐가 바인딩 되는지는 문서를 보거나 실제 테스트를 해보기 전에는 알 수 없다.
+
+다른 함수의 인자로 넘겨지는 경우에도 **함수가 호출되는 방식에 따라 this가 결정된다**라는 원칙은 여전히 유효하다. 하지만 **호출되는 방식을 알 수 없는 경우가 있다**는 차이점이 있다.
+
+
+---
+
 # 정리
 
 JavaScript의 **this**는 기초적인 내용이지만, 다른 데서 다른 방식으로 쓰고 있는 **this**에 익숙해져 있는 사람들에게는 대단히 불편한 걸림돌로 작용한다.
@@ -283,10 +317,12 @@ JavaScript의 **this**는 기초적인 내용이지만, 다른 데서 다른 방
 
 오오~~ 다시 봐도 아득하고 현란하다.
 
-**this는**
+**this에 바인딩 되는 값은, 함수가 호출되는 방식에 따라 달라진다.**
 > **new 로 생성되는 객체로 바인딩 된다.**
 > **쩜(.) 앞에 있는 객체로 바인딩 된다.**
 > **call(), apply()의 첫번째 인자로 바인딩 된다.**
+
+**함수 A가 다른 함수 B의 인자로 넘겨지는 경우에는, 함수 A가 호출되는 방식을 볼 수 없는 경우도 있으므로, 실제로 테스트 해봐야 알 수 있다.**
 
 
 # 더 읽을거리
