@@ -11,8 +11,8 @@ tags:
   - 프로토타입 체인
   - JavaScript internal  
   - ES6
-thumbnailImage: https://camo.githubusercontent.com/e1a1948f0bcfa095d54793afd3ab96af97731773/687474703a2f2f64336a732e6f72672f65782f636c75737465722e706e67
-coverImage: cover-static-analysis.png
+thumbnailImage: http://www.clker.com/cliparts/Y/x/X/j/U/f/search-button-without-text-hi.png
+coverImage: cover-chain.jpg
 
 ---
 # Quiz
@@ -167,7 +167,8 @@ GetIdentifierReference(env, 'v1', strict)
     if (exist == true)
         return referenceToV1
     GetIdentifierReference(env.outer, 'v1', strict)
-```  
+```
+
 중첩 함수들 사이에서의 식별자 찾기는 여기까지의 과정에서 모두 찾아진다. 이제 중첩 함수의 범위를 넘어서 스코프 체인의 마지막인 `Global Environment`에 도달했을때 어떤 일이 벌어지는지 알아보자.
 
 ## 식별자를 찾는 과정 - 2
@@ -295,4 +296,9 @@ global_object.HasProperty('v1')
 어쩌다보니 스펙을 파고 결론까지 찾아내기는 했지만,
 그다지 직접적인 쓸모는 별로 없는 뻘짓인 것 같다.. ㅠㅜ
 
-하지만, ES6의 Execution Context, Lexical Environment, Global Object와 여러가지 Environment Record의 관계를 한 번 훑어봤다는 점에 나름 의미를 두기로..
+하지만, 겉으로는 비슷한 것 같지만 내부적으로는 상당히 달라져 있는 ES6의 Scope Chain을 깊이 파봤고, Execution Context, Lexical Environment, Global Object와 여러가지 Environment Record의 관계를 한 번 훑어봤다는 점에 나름 의미를 두기로..
+
+# 참고 자료
+
+- http://ecma-international.org/ecma-262/6.0/index.html
+
