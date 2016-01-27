@@ -215,7 +215,9 @@ J("$('#hidden-text').val('jQuery도 된다')");
 
 ## .가 포함된 아이디의 CSS Selector
 
-이건 팁이라기보다는 일반적인 사용법에 가까운데, 아이디에 . 가 포함되면 CSS Selector를 작성할 때 적절히 escape 처리를 해줘야 한다.
+이건 팁이라기보다는 일반적인 사용법에 가까운데, 아이디에 . 가 포함되면 CSS Selector를 작성할 때 적절히 escape 처리를 해줘야 한다. 
+
+Spring의 `form` taglib과 `path` 속성을 사용했다면 . 를 처리해줄 일이 많을 것이다. 
 
 ```java
 // Selenide API 사용 시 . 앞에 \를 2회 써준다.
