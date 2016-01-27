@@ -106,7 +106,7 @@ WebElement we = $("#css-selector").getWrappedElement();
     - 하지만, Selenium IDE에서 자동 생성한 코드도 scroll등 어느 정도 손을 봐줘야 한다는 점을 감안하면, API의 뛰어난 직관성이 이를 충분히 커버해준다.
 
 - Selenium과 마찬가지로 화면(viewport)에 렌더링되지 않은 요소에는 값 세팅이나 이벤트 유발이 불가능하다.
-    - 결국 해당 요소가 렌더링 되도록 적절히 화면을 적절히 scroll 해주는 소스를 직접 작성해야 하는데, 그래서일까 `$("#css-selector").scroll();` 처럼 쉽고 직관적인 API를 제공해준다.
+    - 결국 해당 요소가 렌더링 되도록 적절히 화면을 적절히 scroll 해주는 소스를 직접 작성해야 하는데, 그래서일까 `$("#css-selector").scrollTo();` 처럼 쉽고 직관적인 API를 제공해준다.
 
 # 꿀팁
 
