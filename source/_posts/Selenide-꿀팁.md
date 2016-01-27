@@ -24,7 +24,7 @@ coverImage: coverImage-Selenide.png
 **Selenide([셀레나이드](http://selenide.org/))는 브라우저에서의 액션을 테스트 할 수 있게 해주는 테스팅 도구**다.
 
 이름에서 "어? 어디서 본 듯한?"하는 말이 떠오를 수 있는데, 그 짐작이 맞다. 
-Selenide가 WebDriver라는 기술 기반으로 브라우저 테스팅을 위한 저수준 API를 제공한다면, **Selenide는 Selenium을 더 쓰기 쉽도록 고수준 Java API를 제공하는 Wrapper**라고 할 수 있다. 
+Selenium이 WebDriver라는 기술 기반으로 브라우저 테스팅을 위한 저수준 API를 제공한다면, **Selenide는 Selenium을 더 쓰기 쉽도록 고수준 Java API를 제공하는 Wrapper**라고 할 수 있다. 
 
 이 글 역시 예전에 작성했던 [Selenium 꿀팁](http://hanmomhanda.github.io/2015/09/23/Selenium-%EA%BF%80%ED%8C%81/)의 속편이라고 볼 수 있겠다. 위 글에 댓글 달아주신 Disqus 아이디 @gaemi82님 덕에 Selenide를 알게 되었다. 감사드리면서.. 시작~
 
