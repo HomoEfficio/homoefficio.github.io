@@ -155,7 +155,7 @@ f1();
 
 `GetIdentifierReference`는 인자로 받은 `env`가 null이면, 즉, `global environment`까지 뒤졌는데도 찾지 못하면 ReferenceError를 유발하게 하는 참조값을 반환한다. 
 `env`가 null이 아니면 `env`의 environment record(줄여서 `envRec`라 한다)의 메서드인 `HasBinding`을 `envRec.HasBinding('v1')`와 같은 형식으로 호출한다.
-`envRec.HasBinding('v1')`은 `envRec` 내에 `v1`이 있는지 확인해서 있으면 true를 반환하고 `v1`에 해당하는 참조(Reference)를 반환한다. `envRec.HasBinding('v1')`가 false를 반환하면 `GetIdentifierReference(env.outer, 'v1', strict)`와 같은 형식으로 `outer`를 인자로 해서 재귀 호출하는 방식으로 스코프 체인을 따라 올라가면서 계속 `env.HasBinding('v1')`을 실행한다.(스펙 8.1.2.1)
+`envRec.HasBinding('v1')`은 `envRec` 내에 `v1`이 있는지 확인해서 있으면 true를 반환하고, `GetIdentifierReference`는 결과적으로 `v1`에 해당하는 참조(Reference)를 반환한다. `envRec.HasBinding('v1')`가 false를 반환하면 `GetIdentifierReference(env.outer, 'v1', strict)`와 같은 형식으로 `outer`를 인자로 해서 재귀 호출하는 방식으로 스코프 체인을 따라 올라가면서 계속 `env.HasBinding('v1')`을 실행한다.(스펙 8.1.2.1)
 
 여기까지 슈도 코드로 정리해보면 아래와 같다.
 
@@ -180,20 +180,20 @@ GetIdentifierReference(env, 'v1', strict)
 
 ![](http://i.imgur.com/Ittr4GG.png)
 
-`Global Environment Record`에서의 식별자 찾기 함수 호출 과정을 알아보기 전에, 먼저 `Global Environment Record`의 구성 요소를 먼저 알아보자.
+`Global Environment Record`에서의 식별자 찾기 함수 호출 과정을 알아보기 전에, 먼저 `Global Environment Record`의 구성 요소를 알아보자.
 
 ### Declarative Environment Record
 
 - `Declarative Environment Record`는 ECMAScript 언어로 표현되는 값들과 식별자를 직접적으로 연결해주는 함수 선언, 변수 선언, catch절과 같은 문법 요소의 효과를 정의하기 위해 사용된다. 
 - 쉽게 말하면 함수 선언, 변수 선언, catch절에서 사용되는 식별자 정보를 `Declarative Environment Record`에서 찾을 수 있다고 보면 된다.
-- `Declarative Environment Record`는 이름에서 추측할 수 있듯이, `Environment Record`를 상속한 서브클래스이며, 따라서 `HasBinding` 메서드를 가지고 있다.
+- `Declarative Environment Record`는 이름에서 추측할 수 있듯이, `Environment Record`를 상속한 서브클래스이며, 따라서 `HasBinding` 메서드를 구현하고 있다.
 - `Global Environment Record`에 있는 `declarative Environment Record`는 `Declarative Environment Record`의 인스턴스라고 할 수 있다.
 
 ### Object Environment Record
 
 - `Object Environment Record`는 with문과 같이 식별자를 어떤 특정 객체 A의 속성으로 취급할 때 사용되며, 이를 위해 `binding object`라는 속성으로 A를 가리킨다.
 - 쉽게 말하면 with문의 효과를 정의하는 내용이 `Object Environment Record`에 담겨 있다고 보면 된다.
-- `Object Environment Record`도 이름에서 추측할 수 있듯이, `Environment Record`를 상속한 서브클래스이며, 따라서 `HasBinding` 메서드를 가지고 있다.
+- `Object Environment Record`도 이름에서 추측할 수 있듯이, `Environment Record`를 상속한 서브클래스이며, 따라서 `HasBinding` 메서드를 구현하고 있다.
 - `Object Environment Record`의 `HasBinding` 메서드는 내부적으로 `HasProperty(binding_object, id)`와 같은 형식으로 `HasProperty` 함수를 호출한다.
     - **`HasProperty` 함수는 프로토타입 체인을 뒤져서 식별자를 찾아낸다. 바로 이 함수가 문제 해결의 실마리를 가지고 있다!!**
 - `Global Environment Record`에 있는 `object Environment Record`는 `Object Environment Record`의 인스턴스다.
@@ -201,7 +201,7 @@ GetIdentifierReference(env, 'v1', strict)
 ### Global Environment Record의 object Environment Record
 
 - `Global Environment Record`에 있는 `object Environment Record`(소문자 object로 시작하는 것은 Global Environment Record의 object Environment Record를 의미)의 `binding object`는 전역 객체를 가리킨다. 
-- 따라서 일반적인 `Object Environment Record`와는 다르게 `Object`, `Array`, `Function`, `parseInt`, `Infinity` 같은 모든 built-in global과 전역 코드에서의 함수 선언, 제너레이터 선언, 변수 선언에 의해 생성된 모든 식별자 정보를 `binding object`를 통해 찾을 수 있다. 
+- 따라서 일반적인 `Object Environment Record`와는 다르게 `Object`, `Array`, `Function`, `parseInt`, `Infinity` 같은 모든 built-in global과 전역 코드에서의 함수 선언, 제너레이터 선언, 변수 선언에 의해 생성된 모든 식별자 정보를 `binding object`, 즉, 전역 객체에서 찾을 수 있다. 
 - `binding object`가 전역 객체를 가리키는 바람에, `declarative Environment Record`와 역할이 바뀐 것 같은 모양새가 되었다.
 
 ### Global Environment Record의 declarative Environment Record 
