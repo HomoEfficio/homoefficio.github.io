@@ -6,13 +6,13 @@
 title: 뒤태지존의 끄적거림
 subtitle: 개발
 description:
-author: hanmomhanda
+author: HomoEfficio
 language:
 timezone:
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://hanmomhanda.github.io/
+url: http://homoefficio.github.io/
 root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
@@ -69,7 +69,7 @@ theme: tranquilpeak
 ## Docs: http://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repo: https://github.com/hanmomhanda/hanmomhanda.github.io.git
+  repo: https://github.com/homoefficio/homoefficio.github.io.git
   branch: master
 
 # Feed by tranquilpeak theme
