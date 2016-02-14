@@ -46,10 +46,10 @@ sidebar:
             url: /#about
             icon: question
     author_links:
-        # github:
-        #     title: GitHub
-        #     url: https://github.com/
-        #     icon: github
+        github:
+            title: GitHub
+            url: https://github.com/HomoEfficio
+            icon: github
         # stack_overflow:
         #     title: Stack Overflow
         #     url: http://stackoverflow.com/users/
@@ -70,10 +70,10 @@ sidebar:
         #     title: Linked In
         #     url: https://www.linkedin.com/profile/
         #     icon: linkedin
-        # mail:
-        #     title: Mail
-        #     url: mailto:
-        #     icon: envelope-o
+        mail:
+            title: Mail
+            url: mailto: homo.efficio@gmail.com
+            icon: envelope-o
     rss:
         rss:
             title: RSS
@@ -92,7 +92,7 @@ header:
 
 # Author
 author:
-    email: hanmomhanda@gmail.com
+    email: homo.efficio@gmail.com
     # Your biography (Markdown and HTML supported)
     bio:
     job:
@@ -140,7 +140,7 @@ disqus_shortname: hanmomhanda
 # Your Google analystics web property ID : UA-XXXXX-X
 google_analytics_id:
 # Your Gravatar email. Overwrite `author.picture` everywhere in the blog
-gravatar_email: hanmomhanda@gmail.com
+gravatar_email: homo.efficio@gmail.com
 # Your swiftype install key
 swiftype_install_key:
 # Your Facebook user ids used to connect your blog with your facebook user accounts (Facebook Insights). Separate ids with comma. e.g : 9830047,1003342
