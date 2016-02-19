@@ -79,7 +79,7 @@ Checking connectivity... done.
 
 - 로컬의 hexo 인스턴스에 원격에 있는 `custom-tranquilpeak`의 내용을 clone이 아닌 `git subtree add`로 로컬에 물리적으로 가져온다.
 
->~/gitRepo/hanmomhanda.github.io $ git subtree add --prefix=themes/tranquilpeak/ custom-tranquilpeak dev
+>~/gitRepo/hanmomhanda.github.io $ git subtree add \--prefix=themes/tranquilpeak/ custom-tranquilpeak dev
 
 - 위의 명령은 `custom-tranquilpeak`이 참조하는 원격 repo의 dev 브랜치의 내용을 `themes/tranquilpeak` 디렉토리로 물리적으로 가져온다.
 
@@ -116,7 +116,7 @@ Checking connectivity... done.
 - `Child`는 원래 별개의 프로젝트 였다. 원격에 있는 원래의 repo에도 변경 사항을 동기화 해야 한다. 이럴 떄는 `git push`, `git pull`이 아니라 `git subtree push`, `git subtree pull` 을 사용해야 한다.
 
     - `git subtree push`
-    >~/gitRepo/hanmomhanda.github.io $ git subtree push --prefix=themes/tranquilpeak/ custom-tranquilpeak dev
+    >~/gitRepo/hanmomhanda.github.io $ git subtree push \--prefix=themes/tranquilpeak/ custom-tranquilpeak dev
     git push using:  custom-tranquilpeak dev
     Username for 'https://github.com': hanmomhanda
     Password for 'https://hanmomhanda@github.com':
@@ -129,7 +129,7 @@ Checking connectivity... done.
        ddac951..7c73ddd  7c73ddd16018e76b90de3baea21c8e78cef0b1cc -> dev
 
     - `git subtree pull`
-    >~/gitRepo/hanmomhanda.github.io $ git subtree pull --prefix=themes/tranquilpeak/ custom-tranquilpeak dev
+    >~/gitRepo/hanmomhanda.github.io $ git subtree pull \--prefix=themes/tranquilpeak/ custom-tranquilpeak dev
     From https://github.com/hanmomhanda/custom-tranquilpeak-hexo-theme
      * branch            dev        -> FETCH_HEAD
     Already up-to-date.
