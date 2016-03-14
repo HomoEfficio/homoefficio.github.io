@@ -54,11 +54,13 @@ Selenium이 WebDriver라는 기술 기반으로 브라우저 테스팅을 위한
 
 이 부분은 구구절절 여기다 썰 푸는 것보다 [Selenide vs Selenium](https://github.com/codeborne/selenide/wiki/Selenide-vs-Selenium)를 보는 것이 낫겠다.
 
-### Select Box의 선택이 무리없이 잘 된다.
+### Select Box의 선택 동작이 개선되었다.
 
-예전에 [Selenium 꿀팁](http://hanmomhanda.github.io/2015/09/23/Selenium-%EA%BF%80%ED%8C%81/)을 작성할 때는 Select Box의 선택이 뜻하는대로 되지 않는 경우가 있어 이를 극복하는 꼼수(?)를 얘기했었는데, 이번에 Selenide를 써보니 별다른 꼼수없이 그냥 제공해주는 API로 쓰면 예상했던 대로 잘 작동한다.
+예전에 [Selenium 꿀팁](http://hanmomhanda.github.io/2015/09/23/Selenium-%EA%BF%80%ED%8C%81/)을 작성할 때는 Select Box의 선택이 뜻하는대로 되지 않는 경우가 많아서 이를 극복하는 꼼수(?)를 얘기했었는데, 이번에 Selenide를 써보니 별다른 꼼수없이 그냥 제공해주는 API로도 꽤 잘 동작한다.
 
 물론 최신 버전의 Selenium도 그 부분이 개선되었을지 모르지만, Selenide의 소스를 보니 Select Box를 wrapping하면서 이 부분을 보완한 흔적이 보인다.
+
+하지만, 여전히 제대로 동작하지 않는 경우도 많아서, 아직까지는 Select Box에 한해서는 Selenide API 보다는 JavaScript를 활용하는 것이 정신건강에 이롭다.
 
 ### waitUntil
 
@@ -114,37 +116,59 @@ WebElement we = $("#css-selector").getWrappedElement();
 
 ## JavaScript의 사용
 
-아무리 쉬운 API라 한 들, 브라우저 테스트라면 결국 DOM을 다뤄야 하는데, JavaScript를 쓸 수 없다면 한계가 많을 것이다. 위에 잠깐 언급했지만 다음과 같이 JavaScript를 사용할 수 있다.
+아무리 쉬운 API라 한 들, 브라우저 테스트라면 결국 DOM을 다뤄야 하는데, JavaScript를 쓸 수 없다면 한계가 많을 것이다. 위에 잠깐 언급했지만 다음과 같이 `executeJavaScript` 메서드를 통해 JavaScript를 사용할 수 있다.
 
 ```java
+executeJavaScript("document.getElementById('name').value = 'Selenide'");
+```
+
+위의 코드는 아래의 selenium에서의 JavaScript 사용 방식을 Wrapping 한 것이다.
+
+```java
+// Selenium 방식
 WebDriver driver = WebDriverRunner.getWebDriver();
 JavascriptExecutor js = (JavascriptExecutor)driver;
 
 js.executeScript("document.getElementById('name').value = 'Selenide'");
 ```
 
-타이핑이 귀찮으니 다음과 같이 얄팍한 수를 쓰자.
+`executeJavaScript`라고 길게 타이핑 하기 귀찮으니 다음과 같이 얄팍한 수를 쓰자.
 
 ```java
 private static void J(String javaScriptSource) {
-    Object obj = js.executeScript(javaScriptSource);
+    Object obj = executeJavaScript(javaScriptSource);
 //    System.out.println(obj);  // null이 나오기도 값이 나오기도 한다. 궁금하면 찾아보기~
 }
 ```
 그럼 아래와 같이 더 쉽게 쓸 수 있다.
 
 ```java
-WebDriver driver = WebDriverRunner.getWebDriver();
-JavascriptExecutor js = (JavascriptExecutor)driver;
-
 J("document.getElementById('name').value = 'Selenide'");
 ```
+
+## Select Box
+
+위에서 잠깐 언급했듯이 Select Box는 개선되기는 했지만 여전히 말썽꾸러기다.
+일단 아래와 같이 편리하게 Selenide API로 해보고,
+
+```java
+// Selenide API를 사용해서 "Selenide"라는 옵션을 선택
+$("#bad-select-box").selectOption("Selenide");
+```
+
+이게 마음대로 작동하지 않으면, 이건 어디까지나 테스트 임을 명심하면서, Selenide API로 어떻게 안 될까 고집 부리지 말고(물론, 굳이 말릴 생각은 없으나, 여러가지로 해보니 잘 안된다는.. ㅠㅜ) 아래와 같이 JavaScript를 쓰는 방식으로 처리하자.
+
+```java
+J("document.getElementById('bad-select-box').selectedIndex='1'");
+J("$('#bad-select-box').change()");
+```
+
 
 ## Alert 창의 처리
 
 요즘 같은 호화로운 UI 시대에 웬 Alert 창?
 
-그래도 알아는 보자. 사실 아래의 `closeAlertAndGetItsText` 메서드는 Selenium IDE가 녹화해 줄 때 자동으로 생성되는 소스 코드다.
+그래도 알아는 보자. Selenium에서는 Selenium IDE로 녹화할 때 alert 창 관련 아래와 같은 코드를 자동으로 생성해주므로, `closeAlertAndGetItsText` 메서드를 호출하면 Alert 창의 메시지를 비교해서 처리할 수 있다.
 
 ```java
 WebDriver driver = WebDriverRunner.getWebDriver();
@@ -156,7 +180,7 @@ $("#saveAcademy").click();
 assertEquals("학력 정보를 성공적으로 저장했습니다.", closeAlertAndGetItsText());
 
 ~~ 중략 ~~
-
+// Selenium이 자동 생성해주는 코드
 private String closeAlertAndGetItsText() {
     try {
         Alert alert = driver.switchTo().alert();
@@ -171,6 +195,14 @@ private String closeAlertAndGetItsText() {
         acceptNextAlert = true;
     }
 }
+```
+Selenide에서는 위의 내용을 Wrapping해서 `confirm`라는 메서드를 제공해준다. 그래서 아래와 같이 아주 단순하게 처리할 수 있다.
+
+```java
+// WebDriver에 대한 의존성도 사라졌다!!
+
+$("#saveAcademy").click();
+confirm("학력 정보를 성공적으로 저장했습니다.");
 ```
 
 ##  readonly 의 처리
@@ -231,6 +263,7 @@ J("document.getElementById('obj.prop').value = 'Escape 처리 불필요'");
 J("$('#obj\\\\.prop').val('역슬래쉬 4회')");
 
 ```
+
 
 # 실제 소스 예
 
