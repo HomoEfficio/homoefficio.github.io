@@ -1,0 +1,29 @@
+<% if ((photos) && (photos.length)) { %>
+    <% var imageGalleryClass; %>
+    <% if (photos.length > 2) { %>
+        <% imageGalleryClass = 'image-gallery-photos--thumbnail' %>
+    <% } %>
+    <div class="image-gallery">
+        <div class="image-gallery-metabar">
+            <span><%=  'Gallery : ' + photos.length + ' images' %></span>
+        </div>
+        <div class="image-gallery-photos <%= imageGalleryClass %>">
+            <% photos.forEach(function(photo) { %>
+                <% var photoUrl; %>
+                <% if ((photo.indexOf(config.url) < 0) && (photo.indexOf('://') >= 0)) { %>
+                    <%  photoUrl = photo; %>
+                    <% if (!/.+\.[a-zA-Z0-9]{3,4}$/.test(photo)) { %>
+                        <%  photoUrl = photoUrl + "#.jpg"; %>
+                    <% } %>
+                <% } else { %>
+                    <% photoUrl = url_for(post.path.replace('.html', '/') + photo); %>
+                <% } %>
+                <div class="photo-box">
+                    <a class="photo-box-inner fancybox" rel="fancybox-thumb" data-fancybox-group="<%= 'gallery-' + post.id %>" title="<%= photo.replace('__', ' ').slice(0, photo.lastIndexOf('.')) %>" href="<%= photoUrl %>">
+                        <img class="photo" src="<%= photoUrl %>" itemprop="image">
+                    </a>
+                </div>
+            <% }) %>
+        </div>
+    </div>
+<% } %>
