@@ -37,7 +37,7 @@ Java7 -> Java8 마이그레이션(migration)의 일부는 그다지 결정하기
 ```java
 ExecutorService s = ...
  
-// Java 7 - meh...
+// Java 7 - 어...
 Future<String> f = s.submit(
     new Callable<String>() {
         @Override
@@ -47,9 +47,9 @@ Future<String> f = s.submit(
     }
 );
  
-// Java 8 - of course!
+// Java 8 - 이게 좋겠다!
 Future<String> f = s.submit(() -> "Hello World");
-``` 
+```
 
 익명 클래스 스타일은 코드량만 많을 뿐 별다른 의미가 없으므로, 당연히 Java8 스타일을 사용하는 것이 낫다.
 
@@ -67,6 +67,7 @@ for (Integer i : list)
 // "Modern"
 list.forEach(System.out::println);
 ```
+
 
 둘 다 똑같은 결과가 나오지만, "modern" 스타일은 아주 조심해서 써야 한다고 주장하고 싶다. 다시 말해, Stream의 `map()`이나 `flatMap()` 같은 메서드들을 체이닝(chaining)을 통해 조합해서 사용해야할 때처럼 내부적, 함수적 반복이 확실히 유리할 때만 "modern" 스타일을 쓰는 것이 좋다는 얘기다.
 
