@@ -403,7 +403,7 @@ private void asyncFileChannelTest(Path sourceFilePath, boolean isWrite) throws I
             // ByteBuffer 크기를 8k로 축소
             ByteBuffer byteBuffer = ByteBuffer.allocate(8 * 1024);
  
-            // attachment 용 객체
+            ////// attachment 용 객체
             class AsyncIOResultInfo {
                 long iterations = 0L;
                 long totalBytesRead = 0L;
