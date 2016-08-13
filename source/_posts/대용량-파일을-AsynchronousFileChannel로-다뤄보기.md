@@ -264,7 +264,6 @@ private void asyncFileChannelTest(Path sourceFilePath, boolean isWrite) throws I
     try {
         System.err.println("AsynchronousFileChannel 테스트 시작");
  
-        //// 변수 선언을 try 밖으로 이동
         AsynchronousFileChannel asyncFileChannel = AsynchronousFileChannel.open(
                 sourceFilePath,
                 StandardOpenOption.READ
@@ -392,7 +391,6 @@ private void asyncFileChannelTest(Path sourceFilePath, boolean isWrite) throws I
         try {
             System.err.println("AsynchronousFileChannel 테스트 시작");
  
-            //// 변수 선언을 try 밖으로 이동
             AsynchronousFileChannel asyncFileChannel = AsynchronousFileChannel.open(
                     sourceFilePath,
                     StandardOpenOption.READ
