@@ -26,8 +26,7 @@ Java 7 에는 비동기 방식의 File I/O를 지원하는 `AsynchronousFileChan
  
 비동기 방식이므로 File I/O에 소요되는 시간 동안 다른 처리를 할 수 있다는 장점이 있다.
  
-![](https://upload.wikimedia.org/wikipedia/commons/0/0d/HMPP_RPC.png)
-(출처 : https://en.wikipedia.org/wiki/OpenHMPP#/media/File:HMPP_RPC.png)
+![](http://i.imgur.com/641EZTR.png)
  
 특히 용량이 큰 파일일 수록 File I/O에 소요되는 시간이 클 수 있으므로, 비동기 방식의 장점을 더 살릴 수 있다.
  
