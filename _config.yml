@@ -8,7 +8,7 @@ subtitle: 개발
 description:
 author: HomoEfficio
 language:
-timezone:
+timezone: Asia/Seoul
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
