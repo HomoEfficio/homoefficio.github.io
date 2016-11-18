@@ -113,6 +113,10 @@ public class FamilyMemberDeserializer extends JsonDeserializer<FamilyMember> {
 
 `ObjectMapper`를 `deserialize()` 안에서 반복해서 생성하면 성능에 악영향을 미치므로 `FamilyMember` 생성 시 한 번만 생성해서 재사용하는 것이 좋다. `customDeserializer`에 필요한 `SimpleModule`과 `CustomDeserializer`도 마찬가지다.
 
+## 소스 코드
+
+https://github.com/HomoEfficio/plain-java-scratchpad/tree/master/src/main/java/homo/efficio/json/jackson/custom
+
 ## 정리
 
 >- 단순한 primitive 값 필드 뿐 아니라 다른 객체를 필드로 포함하고 있는 객체의 Deserialzation 과정에서는,
