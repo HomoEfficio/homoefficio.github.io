@@ -118,8 +118,11 @@ code {
     font-family:   'Nanum Gothic Coding';
     font-weight:   400;
     border-radius: 3px;
-    background:    #f5f5f5;
-    padding:       0 10px;
+//    background:    #f5f5f5;
+    background:    #eaeaea;
+    color:         deeppink;
+//    padding:       0 10px;
+    padding:       0 3px;
 }
 
 acronym,
@@ -128,7 +131,8 @@ abbr {
 }
 
 blockquote {
-    border-left: 2px solid darken(#dce4f1, 3);
+//    border-left: 2px solid darken(#dce4f1, 3);
+    border-left: 7px solid darken(#dce4f1, 3);
     padding:     10px 20px;
 
     cite {
