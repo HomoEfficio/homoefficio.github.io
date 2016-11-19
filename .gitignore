@@ -3,6 +3,12 @@ Thumbs.db
 db.json
 *.log
 node_modules/
-public/
-!public/assets/
+public/2*
+public/all*
+public/archives/
+public/categories/
+public/page/
+public/tags/
+public/atom.xml
+public/index.html
 .deploy*/
