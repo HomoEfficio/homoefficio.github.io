@@ -138,12 +138,12 @@ import java.time.LocalDateTime;
 public abstract class BaseEntity implements Serializable {
 
     @CreatedDate
-    @Convert(converter = LocalDateTimePersistenceConverter.class)
+    @Convert(converter = LocalDateTimePersistenceConverter.class)  // <- @Converter를 지정 해줘야 한다.
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdDateTime;
 
     @LastModifiedDate
-    @Convert(converter = LocalDateTimePersistenceConverter.class)
+    @Convert(converter = LocalDateTimePersistenceConverter.class)  // <- @Converter를 지정 해줘야 한다.
     @Column(name = "last_modified_at", updatable = true)
     private LocalDateTime lastModifiedDateTime;
 }
@@ -173,15 +173,18 @@ import static java.util.Objects.isNull;
 public abstract class BaseEntity implements Serializable {
 
     @CreatedDate
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.TIMESTAMP)  // java.util.Date이므로 @Temporal을 붙여준다.
     @Column(name = "created_at", updatable = false)
     private Date createdDateTime;
 
     @LastModifiedDate
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.TIMESTAMP)  // java.util.Date이므로 @Temporal을 붙여준다.
     @Column(name = "last_modified_at", updatable = true)
     private Date lastModifiedDateTime;
 
+
+
+    // 변환 로직을 직접 구현
 
     public LocalDateTime getCreatedDateTime() {
         return getLocalDateTimeFrom(createdDateTime);
