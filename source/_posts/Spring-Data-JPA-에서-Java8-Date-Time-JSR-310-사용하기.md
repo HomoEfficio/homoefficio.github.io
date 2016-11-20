@@ -222,3 +222,8 @@ Java8의 `java.time (JSR-310)` 데이터를 DB에 저장해야 한다면,
 >- Spring Data JPA 1.8 미만이지만, JPA 2.1 이상이라면 `Jsr310Converters` 클래스를 사용해서 `AttributeConverter`를 상속하고 변환 로직을 구현해서 사용하자.
 >
 >- 이도 저도 아니라면 `java.time (JSR-310)`과 `java.util.Date`를 상호 변환할 수 있는 로직을 `getter/setter` 안에 직접 구현해서 사용하자.
+
+## 더 읽을 거리
+
+>- [Java EE 7 API - javax.persistence.Convert](http://docs.oracle.com/javaee/7/api/javax/persistence/Convert.html)
+>    - `@Converter(autoApply=true)`, `@Convert(disableConversion=true)`, `@ElementCollection`, `@Embedded`, `@Converts` 등 변환 관련 다양한 애노테이션 사용법
