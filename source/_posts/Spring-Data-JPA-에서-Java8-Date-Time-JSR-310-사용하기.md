@@ -105,7 +105,7 @@ import static java.time.Instant.ofEpochMilli;
 import static java.time.LocalDateTime.ofInstant;
 import static java.time.ZoneId.systemDefault;
 
-@Converter(autoApply = true)
+@Converter
 public class LocalDateTimePersistenceConverter implements AttributeConverter<LocalDateTime, Date> {
 
     @Override
