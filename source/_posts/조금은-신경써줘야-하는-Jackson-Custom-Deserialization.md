@@ -1,10 +1,18 @@
 title: 조금은 신경써줘야 하는 Jackson Custom Deserialization
 date: 2016-11-19 00:06:13
 categories:
+  - Technique
 tags:
+  - Jackson
+  - Java
+  - Jackson Custom Deserializer
+  - ObjectMapper
+  - 자바
+  - 잭슨
 thumbnailImage: https://pbs.twimg.com/profile_images/218569186/fxml_logo.png
 coverImage: coverImage-jackson-custom-Deserialization.png
 ---
+
 [알고보면 만만한 Jackson Custom Serialization](http://homoefficio.github.io/2016/11/18/%EC%95%8C%EA%B3%A0%EB%B3%B4%EB%A9%B4-%EB%A7%8C%EB%A7%8C%ED%95%9C-Jackson-Custom-Serialization/)에 이어 이번에는 Jackson Custom Deserialzation을 알아보자.
 
 Serialzation과 Deserialization은 대칭 관계니까 언뜻 생각하기엔 별로 다르지 않을 것 같은데, 당연하지만 세부적인 과정에서는 대칭이 아니기 때문에, Deserialization에서는 대수롭지 않긴 하지만 성능 상 고려 해야할 점이 한 가지 있다.
