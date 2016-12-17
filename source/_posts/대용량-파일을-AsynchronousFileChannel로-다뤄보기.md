@@ -41,7 +41,7 @@ public abstract <A> void read(ByteBuffer dst,
            CompletionHandler<Integer,? super A> handler)
 ```
  
-`CompletionHandler`를 사용하는 대신 `Future`를 반환하는 `read()` 메서드도 있는데, `while (!result.isDone()) { ... }`와 같은 식으로 계속 완료 여부를 polling하는 `Future` 방식보다는 `CompletionHandler` 방식이 더 간지나므로 `Future` 방식은 여기서는 다루지 않는다.
+`CompletionHandler`를 사용하는 대신 `Future`를 반환하는 `read()` 메서드도 있는데, ~~while (!result.isDone()) { ... } 와 같은 식으로 계속 완료 여부를 polling하는 Future 방식보다는~~(`Future`도 `Future.get()`을 사용하면 굳이 polling 하지 않아도 된다.) `CompletionHandler` 방식이 더 간지나므로 `Future` 방식은 여기서는 다루지 않는다.
  
 암튼 API를 보니 파일의 `position` 위치에서 부터 읽은 데이터를 `dst` 라는 ByteBuffer에 담고, 성공/실패 시 `CompletionHandler`에 구현된 callback 메서드를 호출하는구나.. 라고 이해되는데, `attachment`는 뭘까? API문서에서도 그냥 아래와 같이 뜬구름 잡는 소리만 있다.
  
