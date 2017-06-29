@@ -138,7 +138,7 @@ tag_pagination: true
 # Your Disqus shortname
 disqus_shortname: hanmomhanda
 # Your Google analystics web property ID : UA-XXXXX-X
-google_analytics_id:
+google_analytics_id: UA-65345018-1
 # Your Gravatar email. Overwrite `author.picture` everywhere in the blog
 gravatar_email: homo.efficio@gmail.com
 # Your swiftype install key
