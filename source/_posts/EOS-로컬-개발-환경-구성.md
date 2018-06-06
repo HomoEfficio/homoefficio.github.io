@@ -60,7 +60,7 @@ EOSIO는 여러개의 컴포넌트로 구성되어 있다. 가장 중요한 3가
 
 각자 fork 뜬 리포지토리의 URL을 `https://github.com/YOUR_USERNAME/eos`라고 하면, 다음과 같이 clone 하면 된다.
 
->$ git clone https://github.com/YOUR_USERNAME/eos --recursive
+>$ git clone https://github.com/YOUR_USERNAME/eos \-\-recursive
 
 
 
@@ -227,7 +227,7 @@ rebase로 EOSIO의 최신 버전을 베이스로 설정한다(merge도 가능).
 
 다음 명령으로 submodule도 업데이트한다.
 
->git submodule update --init --recursive
+>git submodule update \-\-init \-\-recursive
 
 ![Imgur](https://i.imgur.com/HMxnI2o.png)
 

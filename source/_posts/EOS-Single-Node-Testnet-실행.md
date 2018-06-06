@@ -37,7 +37,7 @@ https://homoefficio.github.io/2018/06/06/EOS-로컬-개발-환경-구성/ 에서
 
 >cd build/programs/nodeos
 >
->./nodeos -e -p eosio --plugin eosio::chain_api_plugin --plugin eosio::history_api_plugin
+>./nodeos -e -p eosio \-\-plugin eosio::chain_api_plugin \-\-plugin eosio::history_api_plugin
 
 위와 같이 실행하면 아래와 같이 싱글 노드로 구성된 테스트넷이 실행되고, 블록도 매우 빠른 속도(0.5초)로 계속 생성된다.
 
@@ -61,7 +61,7 @@ https://homoefficio.github.io/2018/06/06/EOS-로컬-개발-환경-구성/ 에서
 
 `nodeos`를 실행한 터미널 말고 다른 새 터미널의 eos 디렉터리에서 아래 명령 실행
 
->./build/programs/cleos/cleos --url http://localhost:8888 get info
+>./build/programs/cleos/cleos \-\-url http://localhost:8888 get info
 
 ![Imgur](https://i.imgur.com/99DPIh2.png)
 
