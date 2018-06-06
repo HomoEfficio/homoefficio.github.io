@@ -65,4 +65,4 @@ https://homoefficio.github.io/2018/06/06/EOS-로컬-개발-환경-구성/ 에서
 
 ![Imgur](https://i.imgur.com/99DPIh2.png)
 
-이것으로 `nodeos` 실행을 마쳤다. 다음에는 [지갑 만들기 및 Key 연동.md](https://homoefficio.github.io/2018/06/06/EOS-지갑-만들기-및-Key-연동/)에서 지갑을 만들고 Key를 생성해서 연동하는 방법을 알아본다.
+이것으로 `nodeos` 실행을 마쳤다. 다음에는 [EOS 지갑 만들기 및 Key 연동](https://homoefficio.github.io/2018/06/06/EOS-지갑-만들기-및-Key-연동/)에서 지갑을 만들고 Key를 생성해서 연동하는 방법을 알아본다.
