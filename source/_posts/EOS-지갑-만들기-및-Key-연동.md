@@ -44,7 +44,7 @@ coverImage: cover-EOS-eosio-blockchain.jpg
 
 2. `cleos wallet list` 명령을 실행하면 `keosd`가 실행되고 지갑 목록이 표시된다. 아직 지갑을 생성하지 않았으므로 지갑 목록은 비어 있다. 이처럼 `cleos wallet` 명령을 통해 `keosd`가 자동으로 실행되므로 별도로 직접 `keosd` 명령을 실행할 필요가 없다.
 
-3. `ps -ef | grep keosd` 명령을 실행하면 `keods`가 실행되어 있고 `http://127.0.0.1/8900`으로 접근할 수 있음을 알 수 있다.
+3. `ps -ef | grep keosd` 명령을 실행하면 `keosd`가 실행되어 있고 `http://127.0.0.1/8900`으로 접근할 수 있음을 알 수 있다.
 
 4. `keosd`가 실행되면서 `~/eosio-wallet` 디렉터리와 `keosd` 설정 파일인 `config.ini` 파일이 생성된다.
 
@@ -67,7 +67,12 @@ coverImage: cover-EOS-eosio-blockchain.jpg
 
 *참고: 공식 문서(https://github.com/EOSIO/eos/wiki/Tutorial-Comprehensive-Accounts-and-Wallets)에는 `--data-dir` 옵션으로 지갑 파일이 저장되는 데이터 폴더를 지정할 수 있다고 언급되어 있지만, 어느 명령의 `--data-dir` 옵션으로 지정해야하는지 정확하게 나와있지 않다. `keosd` 명령의 `--data-dir`이나 `--wallet-dir` 옵션으로 다른 폴더를 지정하더라도 `~/eosio-wallet` 폴더에 지갑 파일이 생성된다.*
 
-`-n` 옵션을 이용하면 이름을 지정해서 지갑을 생성할 수도 있다. 따옴표를 이용하면 공백이 포함된 이름도 가능하다.
+`-n` 옵션을 이용하면 이름을 지정해서 지갑을 생성할 수도 있다. ~~따옴표를 이용하면 공백이 포함된 이름도 가능하다.~~ 이 글을 처음 쓸 때는 공백이 허용됐었는데 아래 화면과 같이 2018-06-07에 관련 소스가 변경되어 **공백은 허용되지 않고 알파벳과 숫자, `._-`만 허용**된다.
+
+![Imgur](https://i.imgur.com/7OHbxxl.png)
+
+따라서 아래에 나오는, 공백이 포함된 `Homo Efficio`는 더이상 유효하지 않으며 `Homo-Efficio`라고 썼다고 가정하자(다시 다 캡처해서 올리자니 눈물이.. ㅠㅜ).
+
 
 >cleos wallet create -n 'Homo Efficio'
 
@@ -152,7 +157,9 @@ EOSIO의 공개키/비밀키를 생성하는 방법은 여러가지가 있지만
 
 ![Imgur](https://i.imgur.com/sZ8FqTs.png)
 
-특정 지갑에 연동된 키 목록만을 조회하는 방법은 없는 것 같다.
+~~특정 지갑에 연동된 키 목록만을 조회하는 방법은 없는 것 같다.~~ EOSIO 1.0.2 에서는 다음과 같이 `private_keys` 서브명령으로 특정 지갑에 연동된 키 쌍 목록을 조회할 수 있다. 실행하려면 지갑의 비밀번호가 필요하며 비밀키까지 같이 확인할 수 있다.
+
+![Imgur](https://i.imgur.com/RFLQYo9.png)
 
 `cleos wallet create_key` 명령을 사용하면 `cleos create key`와 `cleos wallet import` 두 번의 명령으로 하던 작업을 한 번의 명령으로 실행할 수 있다.
 
