@@ -41,7 +41,7 @@ https://homoefficio.github.io/2018/06/06/EOS-로컬-개발-환경-구성/ 에서
 
 - `-e`: 체인이 stale 상태이더라도 블록을 생성할 수 있도록 한다.
 - `-p`: 실행될 노드에 의해 제어되는 블록 생산자의 계정 이름을 지정한다.
-  - 예제에서는 `eosio`가 블록 생산자 계정이며, `eosio` 계정의 Key는 `nodeos`의 설정 파일인 `~/.local/shared/eosio/config/config.ini`에서 확인할 수 있다.
+  - 예제에서는 `eosio`가 블록 생산자 계정이며, `eosio` 계정의 Key는 `nodeos`의 설정 파일인 `~/.local/share/eosio/config/config.ini`에서 확인할 수 있다.
 - `--plugin`: `nodeos`에서 사용할 플러그인을 지정한다. 여러번 지정할 수 있다.
   - 예제에서는 `eosio::chain_api_plugin`, `eosio::history_api_plugin` 플러그인을 사용한다.
 
