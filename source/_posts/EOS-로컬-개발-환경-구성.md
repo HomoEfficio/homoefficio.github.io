@@ -277,6 +277,6 @@ export BOOST_INCLUDEDIR=~/opt/boost_1_67_0/include
 
 ![Imgur](https://i.imgur.com/Lz3OG75.png)
 
-빌드 후 테스트는 앞에서 서술한 테스트 과정을 그대로 반복하면 된다.
+빌드 후 테스트 및 설치는 앞에서 서술한 테스트 과정을 그대로 반복하면 된다.
 
 이것으로 로컬 환경에서 EOSIO 소스를 빌드하는 작업을 마쳤다. 다음 [EOS Single Node Testnet 실행](https://homoefficio.github.io/2018/06/06/EOS-Single-Node-Testnet-실행/)에서 빌드 결과물로 단일 노드 EOS 테스트넷을 실행해보자.

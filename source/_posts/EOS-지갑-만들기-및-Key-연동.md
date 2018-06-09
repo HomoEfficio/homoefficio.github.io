@@ -159,6 +159,8 @@ EOSIO의 공개키/비밀키를 생성하는 방법은 여러가지가 있지만
 
 ~~특정 지갑에 연동된 키 목록만을 조회하는 방법은 없는 것 같다.~~ EOSIO 1.0.2 에서는 다음과 같이 `private_keys` 서브명령으로 특정 지갑에 연동된 키 쌍 목록을 조회할 수 있다. 실행하려면 지갑의 비밀번호가 필요하며 비밀키까지 같이 확인할 수 있다.
 
+>cleos wallet private_keys -n 'default'
+
 ![Imgur](https://i.imgur.com/RFLQYo9.png)
 
 `cleos wallet create_key` 명령을 사용하면 `cleos create key`와 `cleos wallet import` 두 번의 명령으로 하던 작업을 한 번의 명령으로 실행할 수 있다.
