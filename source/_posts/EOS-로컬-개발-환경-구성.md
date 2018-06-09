@@ -156,6 +156,7 @@ mongoDB 설치까지 완료된 후 지루할만 하니 에러가 나준다(이�
 
 드디어 빌드가 완성 되었다. 총 90분 정도 걸렸다고 나오는데, 중간에 오류 나기 전에 설치되는 것들까지 감안하면 CPU i5-2500 3.3GHz, RAM 8G 정도로 넉넉잡아 2시간은 걸린 것 같다.
 
+
 ## 테스트
 
 위 빌드 결과에 안내해준 대로 테스트를 수행해보자.
@@ -173,6 +174,17 @@ mongoDB 설치까지 완료된 후 지루할만 하니 에러가 나준다(이�
 ![Imgur](https://i.imgur.com/SQh7tA0.png)
 
 테스트도 시간은 10여분 정도 걸렸지만 문제없이 모두 통과한다.
+
+
+## 설치
+
+`/eos/build` 디렉터리에서 `sudo make install`을 실행해서 설치하면 실행 파일이 `/usr/local/bin`에 설치된다.
+
+![Imgur](https://i.imgur.com/jgB2MUx.png)
+
+![Imgur](https://i.imgur.com/lu1eUF2.png)
+
+![Imgur](https://i.imgur.com/ljgjYaO.png)
 
 
 ## 원본 리포지토리(upstream)와 Fork 리포지토리 Sync
