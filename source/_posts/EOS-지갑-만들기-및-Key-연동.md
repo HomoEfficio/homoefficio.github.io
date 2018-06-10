@@ -71,18 +71,20 @@ coverImage: cover-EOS-eosio-blockchain.jpg
 
 ![Imgur](https://i.imgur.com/7OHbxxl.png)
 
-따라서 아래에 나오는, 공백이 포함된 `Homo Efficio`는 더이상 유효하지 않으며 `Homo-Efficio`라고 썼다고 가정하자(다시 다 캡처해서 올리자니 눈물이.. ㅠㅜ).
+~~따라서 아래에 나오는, 공백이 포함된 `Homo Efficio`는 더이상 유효하지 않으며 `Homo-Efficio`라고 썼다고 가정하자(다시 다 캡처해서 올리자니 눈물이.. ㅠㅜ).~~ 다시 캡처해서 업데이트 완료.
 
 
->cleos wallet create -n 'Homo Efficio'
+>cleos wallet create -n Homo-Efficio
 
-![Imgur](https://i.imgur.com/WD0oIFO.png)
+![Imgur](https://i.imgur.com/gLIL4rG.png)
+
 
 ## 지갑 목록 확인
 
 >cleos wallet list
 
-![Imgur](https://i.imgur.com/fr4ejpP.png)
+![Imgur](https://i.imgur.com/2dZ310g.png)
+
 
 생성한 지갑 목록이 표시된다. `*`표는 지갑이 잠금 해제(unlocked) 되어 있음을 의미한다.
 
@@ -90,13 +92,13 @@ coverImage: cover-EOS-eosio-blockchain.jpg
 
 ## 지갑 잠금
 
-아래와 같이 'Homo Efficio' 지갑을 잠그고 지갑 목록을 확인하면 'Homo Efficio' 지갑 옆에는 `*` 표시가 나타나지 않는다.
+아래와 같이 'Homo-Efficio' 지갑을 잠그고 지갑 목록을 확인하면 'Homo-Efficio' 지갑 옆에는 `*` 표시가 나타나지 않는다.
 
->cleos wallet lock -n 'Homo Efficio'
+>cleos wallet lock -n Homo-Efficio
 >
 >cleos wallet list
 
-![Imgur](https://i.imgur.com/nPVBwLB.png)
+![Imgur](https://i.imgur.com/xW91sHG.png)
 
 지갑이 잠긴 상태에서는 블록체인에 상태 변화를 일으키는 액션을 수행할 수 없다.
 
@@ -104,9 +106,15 @@ coverImage: cover-EOS-eosio-blockchain.jpg
 
 이제 `keosd`를 종료하고 다시 시작하면 어떤 현상이 발생하는지 알아보자.
 
-`cleos wallet stop` 명령으로 `keosd`를 종료할 수도 있고, 브라우저에서 `http://localhost:8900/v1/keosd/stop`에 접속해서 `keosd`를 종료할 수도 있다.
+`cleos wallet stop` 명령으로 `keosd`를 종료할 수도 있고, 
+
+![Imgur](https://i.imgur.com/P8Xsg3T.png)
+
+브라우저에서 `http://localhost:8900/v1/keosd/stop`에 접속해서 `keosd`를 종료할 수도 있다.
 
 ![Imgur](https://i.imgur.com/fhcKGJr.png)
+
+`ps -ef | grep keosd`로 확인하면 `keosd` 프로세스가 죽은 것을 확인할 수 있다.
 
 ![Imgur](https://i.imgur.com/Uj5I3g7.png)
 
@@ -124,9 +132,9 @@ coverImage: cover-EOS-eosio-blockchain.jpg
 
 ![Imgur](https://i.imgur.com/f9sE5RX.png)
 
-이름을 지정해서 만든 'Homo Efficio' 지갑도 열고, 잠금해제 한다.
+이름을 지정해서 만든 'Homo-Efficio' 지갑도 열고, 잠금해제 한다.
 
-![Imgur](https://i.imgur.com/E7tbYbB.png)
+![Imgur](https://i.imgur.com/bfROC9w.png)
 
 
 ## Key 생성 및 지갑 연동
@@ -135,42 +143,63 @@ EOSIO의 공개키/비밀키를 생성하는 방법은 여러가지가 있지만
 
 >cleos create key
 
-![Imgur](https://i.imgur.com/W9YMwuz.png)
+![Imgur](https://i.imgur.com/DvhU7nF.png)
 
-거듭 강조하지만 튜토리알 말고 실제 사용할 때는 Private key를 아무에게도 노출해서는 안되며 분실되지 않도록 잘 보관해야 한다.
 
-'Homo Efficio' 지갑에 방금 생성한 key를 연동해보자. 역시 `cleos`를 사용한다.
+거듭 강조하지만 튜토리얼 말고 실제 사용할 때는 Private key를 아무에게도 노출해서는 안되며 분실되지 않도록 잘 보관해야 한다.
 
->cleos wallet import -n 'Homo Efficio' PRIVATE\_KEY\_VALUE
+'Homo-Efficio' 지갑에 방금 생성한 key를 연동해보자. 역시 `cleos`를 사용한다.
 
-![Imgur](https://i.imgur.com/AZXdzlF.png)
+>cleos wallet import -n Homo-Efficio PRIVATE\_KEY\_VALUE
+
+![Imgur](https://i.imgur.com/fmOi9sd.png)
+
 
 연동할 때 입력한 비밀키의 쌍인 공개키 값이 화면에 표시된다. 앞에서 공개키/비밀키 생성 시 Public key로 표시된 값과 같다.
 
 하나의 지갑에 여러개의 키를 연동할 수 있다. 다음과 같이 키 쌍을 하나더 생성하고 연동해보자.
 
-![Imgur](https://i.imgur.com/UEHw2jn.png)
+![Imgur](https://i.imgur.com/2yxG8zF.png)
 
-`cleos wallet keys` 명령을 사용하면 잠금 해제된 모든 지갑에 연동된 공개키/비밀키 쌍의 목록이 표시된다.
+
+`cleos wallet keys` 명령을 사용하면 잠금 해제된 모든 지갑에 연동된 공개키의 목록이 표시된다.
 
 >cleos wallet keys
 
-![Imgur](https://i.imgur.com/sZ8FqTs.png)
+![Imgur](https://i.imgur.com/oX2XZpd.png)
 
-~~특정 지갑에 연동된 키 목록만을 조회하는 방법은 없는 것 같다.~~ EOSIO 1.0.2 에서는 다음과 같이 `private_keys` 서브명령으로 특정 지갑에 연동된 키 쌍 목록을 조회할 수 있다. 실행하려면 지갑의 비밀번호가 필요하며 비밀키까지 같이 확인할 수 있다.
 
->cleos wallet private_keys -n 'default'
+~~특정 지갑에 연동된 키 목록만을 조회하는 방법은 없는 것 같다.~~ EOSIO 1.0.2 에서는 다음과 같이 `private_keys` 서브명령으로 특정 지갑에 연동된 공개키/비밀키 쌍 목록을 조회할 수 있다. 실행하려면 지갑의 비밀번호가 필요하며 비밀키까지 같이 확인할 수 있다.
 
-![Imgur](https://i.imgur.com/RFLQYo9.png)
+>cleos wallet private_keys
+
+![Imgur](https://i.imgur.com/nMamX8Q.png)
+
+
+>cleos wallet private_keys -n Homo-Efficio
+
+![Imgur](https://i.imgur.com/JOhBJGs.png)
+
+*참고: 키 2개를 연동한 Homo-Efficio를 지정해서 private_keys를 조회했는데 3개가 조회되어 나오는데, 이유는 지갑을 생성하면 따로 연동하지 않아도 기본으로 1개의 키(default 지갑에 연동된 것과 같은 키)가 새로 생성한 지갑에 연동되기 때문*
 
 `cleos wallet create_key` 명령을 사용하면 `cleos create key`와 `cleos wallet import` 두 번의 명령으로 하던 작업을 한 번의 명령으로 실행할 수 있다.
 
-![Imgur](https://i.imgur.com/wIiC0R3.png)
+![Imgur](https://i.imgur.com/l0svF16.png)
 
+>cleos wallet keys
+
+![Imgur](https://i.imgur.com/SG4coWx.png)
+
+>cleos wallet private_keys -n Homo-Efficio
+
+![Imgur](https://i.imgur.com/QZNJkNB.png)
+
+*참고: 3개가 아니라 4개가 나오는 이유는 앞서 말한 것과 같음*
 
 ## 지갑 백업
 
 지갑의 백업은 단순하다 `~/eosio-wallet` 디렉터리에 있는 지갑 파일을 다른 곳으로 복사해서 백업하면 된다.
 
-![Imgur](https://i.imgur.com/ZmBVfbf.png)
+![Imgur](https://i.imgur.com/qIVEGAq.png)
+
 
