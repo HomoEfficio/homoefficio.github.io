@@ -180,7 +180,7 @@ EOSIO의 공개키/비밀키를 생성하는 방법은 여러가지가 있지만
 
 ![Imgur](https://i.imgur.com/JOhBJGs.png)
 
-*참고: 키 2개를 연동한 Homo-Efficio를 지정해서 private_keys를 조회했는데 3개가 조회되어 나오는데, 이유는 지갑을 생성하면 따로 연동하지 않아도 기본으로 1개의 키(default 지갑에 연동된 것과 같은 키)가 새로 생성한 지갑에 연동되기 때문*
+*참고: 키 2개를 연동한 Homo-Efficio를 지정해서 private_keys를 조회했는데 3개가 조회되어 나오는데, 이유는 지갑을 생성하면 따로 연동하지 않아도 기본으로 1개의 키(default 지갑에 연동된 것과 같은 키)가 새로 생성한 지갑에 연동되기 때문 -> 이 부분은 v1.0.4에서 패치되어 default 지갑에 연동된 것과 같은 키는 지갑에 연동되지 않고 사용자가 직접 지갑에 연동한 키만 연동된다.*
 
 `cleos wallet create_key` 명령을 사용하면 `cleos create key`와 `cleos wallet import` 두 번의 명령으로 하던 작업을 한 번의 명령으로 실행할 수 있다.
 
