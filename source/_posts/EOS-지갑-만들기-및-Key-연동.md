@@ -17,7 +17,7 @@ coverImage: cover-EOS-eosio-blockchain.jpg
 ---
 # EOS 지갑 만들기 및 Key 연동
 
-공식 문서인 https://github.com/EOSIO/eos/wiki/Tutorial-Comprehensive-Accounts-and-Wallets 를 기준으로 약간의 커스터마이징과 과도한 친절함을 가미했다.
+공식 문서인 https://developers.eos.io/eosio-nodeos/docs/learn-about-wallets-keys-and-accounts-with-cleos 를 기준으로 약간의 커스터마이징과 과도한 친절함을 가미했다.
 
 
 ## EOSIO 아키텍처 다시 보기
@@ -27,11 +27,25 @@ coverImage: cover-EOS-eosio-blockchain.jpg
 이 글에서는 위 3가지 컴포넌트 중 `cleos`와 `keosd`에 대해 알아본다.
 
 
-## 지갑
+## 지갑과 계정
 
-지갑은 블록체인의 상태에 영향을 미치는 액션을 승인할 때 필요한 비밀키를 담고 있는 저장소다. 지갑 데이터는 `keosd`에 의해 관리 되지만 대부분 직접 `keosd` 명령을 실행하지 않고 `cleos`를 통해 `keosd`를 실행한다.
+### 지갑(Wallet)
+
+지갑은 블록체인의 상태에 영향을 미치는 연산을 승인할 때 필요한 공개키-비밀키 쌍을 담고 있는 저장소다. 지갑 데이터는 `keosd`에 의해 관리 되지만 대부분 직접 `keosd` 명령을 실행하지 않고 `cleos`를 통해 `keosd`를 실행한다.
 
 `keosd`는 지갑 파일을 기본 옵션으로 `~/eosio-wallet` 디렉터리에 저장한다.
+
+
+### 계정(Account)
+
+계정은 블록체인에 대한 접근 권한을 가진 식별자라고 할 수 있다. `nodeos`가 계정의 발행과 블록체인에 대한 계정 관련 액션(action)을 관리하지만, `cleos`를 통해서도 관리할 수 있다.
+
+
+### 지갑과 계정의 관계
+
+직관적으로는 계정이 지갑을 가지고 있을 것 같지만, EOS의 지갑과 계정은 직접적인 관계가 없다. 계정은 지갑의 존재를 모르고, 지갑은 계정의 존재를 모른다. 둘 사이에 직접적인 관계가 없음은 위의 EOSIO 아키텍처 그림에서도 알 수 있다. `nodeos`와 `keosd` 사이에는 직접적인 관계가 없고 서로의 존재를 모른다.
+
+둘 사이에 간접적이나마 관계가 발생하는 것은 서명이 필요할 때다. 지갑을 사용하면 보안을 위해 암호화되어 잠금 처리를 할 수 있는 로컬 저장 공간에서 서명을 효율적으로 가져올 수 있다. `cleos`가 키 조회를 담당하는 `keosd`와 키를 사용하는 서명을 필요로 하는 액션 처리를 담당하는 `nodeos` 사이에서 효과적인 중재자 역할을 담당한다.
 
 
 ## 지갑 목록 확인
@@ -57,7 +71,7 @@ coverImage: cover-EOS-eosio-blockchain.jpg
 
 ![Imgur](https://i.imgur.com/aykCLV4.png)
 
-이름이 default인 지갑은 이제 `keosd`의 관리 대상에 포함되며 마스터 패스워드가 생성되고 화면에 표시된다. 이 패스워드로 지갑 파일의 잠금을 해제할 수 있으므로 분실되지 않도록 잘 보관해야 한다.
+이름이 default인 지갑은 이제 `keosd`의 관리 대상에 포함되며, 생성된 지갑의 마스터 패스워드가 생성되고 화면에 표시된다. 이 패스워드로 지갑 파일의 잠금을 해제할 수 있으므로 분실되지 않도록 잘 보관해야 한다.
 
 `keosd`는 지갑 파일을 `~/eosio-wallet` 폴더에 저장한다(eos/programs/keosd/main.cpp 에 하드코딩 되어 있음).
 
@@ -65,14 +79,13 @@ coverImage: cover-EOS-eosio-blockchain.jpg
 
 ![Imgur](https://i.imgur.com/E7AjVZC.png)
 
-*참고: 공식 문서(https://github.com/EOSIO/eos/wiki/Tutorial-Comprehensive-Accounts-and-Wallets)에는 `--data-dir` 옵션으로 지갑 파일이 저장되는 데이터 폴더를 지정할 수 있다고 언급되어 있지만, 어느 명령의 `--data-dir` 옵션으로 지정해야하는지 정확하게 나와있지 않다. `keosd` 명령의 `--data-dir`이나 `--wallet-dir` 옵션으로 다른 폴더를 지정하더라도 `~/eosio-wallet` 폴더에 지갑 파일이 생성된다.*
+*참고: 공식 문서(https://developers.eos.io/eosio-nodeos/docs/learn-about-wallets-keys-and-accounts-with-cleos)에는 `keosd`의 `--data-dir` 옵션으로 지갑 파일이 저장되는 데이터 폴더를 지정할 수 있다고 언급되어 있다. 하지만 이후 내용에서 `keosd`를 직접 실행하는 부분이 없고 `cleos`만을 사용하며, `keosd`를 사용하지 않으므로 `--data-dir`를 써서 지갑 데이터가 저장될 위치를 따로 지정할 기회가 없고, 결국 기본값대로 `~/eosio-wallet` 폴더에 지갑 파일이 생성된다.*
 
 `-n` 옵션을 이용하면 이름을 지정해서 지갑을 생성할 수도 있다. ~~따옴표를 이용하면 공백이 포함된 이름도 가능하다.~~ 이 글을 처음 쓸 때는 공백이 허용됐었는데 아래 화면과 같이 2018-06-07에 관련 소스가 변경되어 **공백은 허용되지 않고 알파벳과 숫자, `._-`만 허용**된다.
 
 ![Imgur](https://i.imgur.com/7OHbxxl.png)
 
 ~~따라서 아래에 나오는, 공백이 포함된 `Homo Efficio`는 더이상 유효하지 않으며 `Homo-Efficio`라고 썼다고 가정하자(다시 다 캡처해서 올리자니 눈물이.. ㅠㅜ).~~ 다시 캡처해서 업데이트 완료.
-
 
 >cleos wallet create -n Homo-Efficio
 
@@ -168,6 +181,7 @@ EOSIO의 공개키/비밀키를 생성하는 방법은 여러가지가 있지만
 
 ![Imgur](https://i.imgur.com/oX2XZpd.png)
 
+*참고: 키 2개를 연동한 Homo-Efficio를 지정해서 공개키를 조회했는데 3개가 조회되어 나온다. 이유는 지갑을 생성하면 따로 연동하지 않아도 기본으로 1개의 키(default 지갑에 연동된 것과 같은 키)가 새로 생성한 지갑에 연동되기 때문 -> 이 부분은 v1.0.4에서 패치되어 default 지갑에 연동된 것과 같은 키는 지갑에 연동되지 않고 사용자가 직접 지갑에 연동한 키만 연동된다. 따라서 v1.0.4 이후 버전에서는 직접 연동한 2개만 화면에 표시된다.*
 
 ~~특정 지갑에 연동된 키 목록만을 조회하는 방법은 없는 것 같다.~~ EOSIO 1.0.2 에서는 다음과 같이 `private_keys` 서브명령으로 특정 지갑에 연동된 공개키/비밀키 쌍 목록을 조회할 수 있다. 실행하려면 지갑의 비밀번호가 필요하며 비밀키까지 같이 확인할 수 있다.
 
@@ -180,7 +194,7 @@ EOSIO의 공개키/비밀키를 생성하는 방법은 여러가지가 있지만
 
 ![Imgur](https://i.imgur.com/JOhBJGs.png)
 
-*참고: 키 2개를 연동한 Homo-Efficio를 지정해서 private_keys를 조회했는데 3개가 조회되어 나오는데, 이유는 지갑을 생성하면 따로 연동하지 않아도 기본으로 1개의 키(default 지갑에 연동된 것과 같은 키)가 새로 생성한 지갑에 연동되기 때문 -> 이 부분은 v1.0.4에서 패치되어 default 지갑에 연동된 것과 같은 키는 지갑에 연동되지 않고 사용자가 직접 지갑에 연동한 키만 연동된다.*
+*참고: 키 2개를 연동한 Homo-Efficio를 지정해서 비밀키를 조회했는데 3개가 조회되어 나온다. 이유는 지갑을 생성하면 따로 연동하지 않아도 기본으로 1개의 키(default 지갑에 연동된 것과 같은 키)가 새로 생성한 지갑에 연동되기 때문 -> 이 부분은 v1.0.4에서 패치되어 default 지갑에 연동된 것과 같은 키는 지갑에 연동되지 않고 사용자가 직접 지갑에 연동한 키만 연동된다. 따라서 v1.0.4 이후 버전에서는 직접 연동한 2개만 화면에 표시된다.*
 
 `cleos wallet create_key` 명령을 사용하면 `cleos create key`와 `cleos wallet import` 두 번의 명령으로 하던 작업을 한 번의 명령으로 실행할 수 있다.
 
