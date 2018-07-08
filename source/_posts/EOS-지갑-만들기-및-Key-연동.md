@@ -5,6 +5,11 @@ categories:
 tags:
   - BlockChain
   - EOS
+  - Wallet
+  - Account
+  - nodeos
+  - keosd
+  - cleos
   - 블록체인
   - 이오스
   - development
