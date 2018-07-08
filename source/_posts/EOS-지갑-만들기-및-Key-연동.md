@@ -22,7 +22,7 @@ coverImage: cover-EOS-eosio-blockchain.jpg
 
 ## EOSIO 아키텍처 다시 보기
 
-![Imgur](https://i.imgur.com/6rtKs0Z.png)
+![Imgur](https://i.imgur.com/nnJYbmt.png)
 
 이 글에서는 위 3가지 컴포넌트 중 `cleos`와 `keosd`에 대해 알아본다.
 

@@ -28,7 +28,7 @@ https://homoefficio.github.io/2018/06/06/EOS-로컬-개발-환경-구성/ 에서
 
 ## EOSIO 아키텍처 다시 보기
 
-![Imgur](https://i.imgur.com/6rtKs0Z.png)
+![Imgur](https://i.imgur.com/nnJYbmt.png)
 
 이 글에서는 위 3가지 컴포넌트 중 `nodeos` 실행에 대해 알아본다.
 
