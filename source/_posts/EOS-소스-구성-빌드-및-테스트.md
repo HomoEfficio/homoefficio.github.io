@@ -1,4 +1,4 @@
-title: EOS 로컬 개발 환경 구성
+title: EOS 소스 구성, 빌드 및 테스트
 date: 2018-06-06 08:28:37
 categories:
   - BlockChain
@@ -15,7 +15,7 @@ tags:
 thumbnailImage: https://streamity.org/uploads/media/coin/0001/01/62322d7972d7c0fe7831736e4f4e9baf1d44108d.svg
 coverImage: cover-EOS-eosio-blockchain.jpg
 ---
-# EOS 로컬 개발 환경 구성
+# EOS 소스 구성, 빌드 및 테스트
 
 [EOSIO 1.0.0](https://github.com/EOSIO/eos/releases/tag/v1.0.0)이 출시되었다. 
 
