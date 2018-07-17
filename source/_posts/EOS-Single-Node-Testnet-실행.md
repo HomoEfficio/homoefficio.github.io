@@ -38,6 +38,9 @@ https://homoefficio.github.io/2018/06/06/EOS-소스-구성-빌드-및-테스트/
 >cd build/programs/nodeos
 >
 >./nodeos -e -p eosio \-\-plugin eosio::chain_api_plugin \-\-plugin eosio::history_api_plugin
+>
+>1.0.9 부터는 
+>./nodeos -e -p eosio \-\-plugin eosio::chain_api_plugin \-\-plugin eosio::history_api_plugin \-\-http-validate-host=false
 
 - `-e`: 체인이 stale 상태이더라도 블록을 생성할 수 있도록 한다.
 - `-p`: 실행될 노드에 의해 제어되는 블록 생산자의 계정 이름을 지정한다.
