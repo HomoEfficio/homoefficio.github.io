@@ -21,7 +21,7 @@ coverImage: cover-EOS-eosio-blockchain.jpg
 
 공식 문서인 https://github.com/EOSIO/eos/wiki/Local-Environment 를 기준으로 약간의 커스터마이징과 과도한 친절함을 가미했다. 
 
-참고로 이 글은 EOSIO 1.0.0의 바로 앞 버전인 [EOSIO Dawn 4.2](https://github.com/EOSIO/eos/releases/tag/dawn-v4.2.0)를 기준으로 작성되었으나 EOSIO 1.0.0 에서도 그대로 적용할 수 있다.
+참고로 이 글은 EOSIO 1.0.0의 바로 앞 버전인 [EOSIO Dawn 4.2](https://github.com/EOSIO/eos/releases/tag/dawn-v4.2.0)를 기준으로 작성되었으나 EOSIO 1.0.0 에서도 그대로 적용할 수 있다. *EOS는 버전업이 상당히 잦다. 내용 일부는 버전업에 맞춰 계속 업데이트 한다.*
 
 ## EOSIO 아키텍처
 
@@ -178,7 +178,7 @@ mongoDB 설치까지 완료된 후 지루할만 하니 에러가 나준다(이�
 
 ## 설치
 
-`/eos/build` 디렉터리에서 `sudo make install`을 실행해서 설치하면 실행 파일이 `/usr/local/bin`에 설치된다.
+`/eos/build` 디렉터리에서 `sudo make install`을 실행해서 설치하면 실행 파일이 `/usr/local/bin`에 설치된다. v1.1.0 부터는 `/usr/local/eosio/bin`에 설치된다.
 
 ![Imgur](https://i.imgur.com/jgB2MUx.png)
 
