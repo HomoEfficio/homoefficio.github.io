@@ -178,7 +178,7 @@ mongoDB 설치까지 완료된 후 지루할만 하니 에러가 나준다(이�
 
 ## 설치
 
-`/eos/build` 디렉터리에서 `sudo make install`을 실행해서 설치하면 실행 파일이 `/usr/local/bin`에 설치된다. v1.1.0 부터는 `/usr/local/eosio/bin`에 설치된다.
+`/eos/build` 디렉터리에서 `sudo make install`을 실행해서 설치하면 실행 파일이 v1.1.0 부터는 `/usr/local/eosio/bin`에 설치된다(1.0.#에서는 `/usr/local/bin`에 설치됐었다). 따라서, `sudo update-alternatives --install /usr/local/bin/nodeos nodeos /usr/local/eosio/bin/nodeos 1`와 같이 해줘야 PATH 설정 없이도 편리하게 사용할 수 있다.
 
 ![Imgur](https://i.imgur.com/jgB2MUx.png)
 
