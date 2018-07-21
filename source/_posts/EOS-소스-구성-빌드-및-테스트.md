@@ -33,7 +33,7 @@ EOSIO는 여러개의 컴포넌트로 구성되어 있다. 가장 중요한 3가
 
 위 3가지 컴포넌트의 관계는 다음 그림과 같다.
 
-![[Imgur](https://i.imgur.com/nnJYbmt.png)
+![Imgur](https://i.imgur.com/nnJYbmt.png)
 
 ## 사전 조건
 
