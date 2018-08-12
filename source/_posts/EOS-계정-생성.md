@@ -23,6 +23,8 @@ coverImage: cover-EOS-eosio-blockchain.jpg
 ---
 # EOS 계정 생성
 
+공식 문서 https://developers.eos.io/eosio-nodeos/docs/learn-about-wallets-keys-and-accounts-with-cleos#section-creating-an-account 를 기준으로 약간의 커스터마이징과 과도한 친절함을 가미했다.
+
 블록체인의 상태에 영향을 미치는 액션을 수행하려면 계정이 필요하다.
 
 `cleos`를 써서 `nodeos`로 하여금 계정을 생성하고 생성된 계정을 블록체인에 발행하게 할 수 있다. 계정을 생성하려면 기존 계정과 기존 계정의 key가 필요하다. 이를 위해 지갑이 필요하며, 지갑을 사용하려면 `keosd`를 실행해야 한다.
@@ -36,7 +38,7 @@ coverImage: cover-EOS-eosio-blockchain.jpg
 
 ## keosd 실행
 
-계정 생성을 하려면 `keosd`와 `nodeos`를 동시에 띄워야 하는데, `keosd`를 `cleos`를 통하지 않고 직접 실행하면 8888 포트에서 실행되는데 `nodeos`도 8888 포트에서 실행되게 설정되어 있으므로 `keosd`의 설정을 변경해야 한다.
+계정 생성을 하려면 `keosd`와 `nodeos`를 동시에 띄워야 하는데, `keosd`를 `cleos`를 통하지 않고 직접 실행하면 8888 포트에서 실행되는데 `nodeos`도 8888 포트에서 실행되게 설정되어 있으므로 `keosd`의 설정을 변경해야 하는데, 아래 두 가지 방식 중 하나를 택해서 `keosd`를 실행하면 된다. 여기에서는 `keosd` 실행 시 옵션 지정 방식으로 진행한다.
 
 ### keosd 설정 파일 수정
 
@@ -44,20 +46,28 @@ coverImage: cover-EOS-eosio-blockchain.jpg
 
 ![Imgur](https://i.imgur.com/QETOABh.png)
 
-### keosd 실행
+### keosd 실행 시 옵션 지정
 
 다음과 같이 혹시 실행 중일 수 있는 `keosd`를 종료하고 새로 `keosd`를 실행한다. EOSIO 빌드 및 설치 과정에서 `make install`을 해줬다면 어느 디렉터리에서 실행해도 무방하다.
 
 >pkill keosd
 >
->keosd --http-server-address=localhost:8899
+>keosd \-\-http-server-address=localhost:8899
+>
+>1.0.9부터는 아래와 같이 \-\-http-validate-host=false를 추가해줘야 cleos로 계정 생성 시 에러가 발생하지 않는다.
+>
+>keosd \-\-http-server-address=localhost:8899 \-\-http-validate-host=false
 
 ![Imgur](https://i.imgur.com/W2LvKKU.png)
 
 
 ## nodeos 실행
 
-`nodeos` 명령으로 EOS 노드를 띄우는 방법은 [EOS Single Node Testnet 실행](https://homoefficio.github.io/2018/06/06/EOS-Single-Node-Testnet-실행/)을 참고한다.
+새로운 터미널에서 `nodeos` 명령으로 EOS 노드를 띄운다.
+
+>nodeos -e -p eosio \-\-plugin eosio::chain_api_plugin \-\-plugin eosio::history_api_plugin \-\-http-validate-host=false
+
+*`nodeos` 명령으로 EOS 노드를 띄우는 자세한 내용은 [EOS Single Node Testnet 실행](https://homoefficio.github.io/2018/06/06/EOS-Single-Node-Testnet-실행/)을 참고한다.*
 
 ![Imgur](https://i.imgur.com/PQ3oqEt.png)
 
@@ -66,15 +76,43 @@ coverImage: cover-EOS-eosio-blockchain.jpg
 
 ### 사전 준비
 
-EOS 블록체인에서 계정을 생성할 때 필요한 요소는 다음과 같다.
+EOS 블록체인에서 계정을 생성하려면 여러가지 사전 준비가 필요하다.
 
-- 이미 존재하는 계정
+- nodeos: 계정 생성도 트랜잭션이므로 nodeos가 실행되어 있어야 한다.
+- 이미 존재하는 계정: 계정 생성이 이미 존재하는 계정이 실행하는 트랜잭션이므로 이미 존재하는 계정이 필요하다.
+- 이미 존재하는 계정의 키가 연동된 지갑: 계정 생성의 주체인 authorizing_account의 서명, 즉 authorizing_account의 개인키가 필요하며, 개인키를 읽어올 수 있도록 authorizing_account의 개인키가 연동된 지갑이 있어야한다.
+- keosd: 지갑을 사용하므로, `keosd`가 실행되어 있어야 한다.
 - 새로 생성할 계정의 owner 자격에 사용될 공개키
 - 새로 생성할 계정의 active 자격에 사용될 공개키
 
 Single Node Testnet 에는 EOS 노드를 부트스트랩하는 `eosio` 계정 하나만 존재하므로, 최초의 사용자 계정을 만들 때는 `eosio` 계정을 사용할 수 밖에 없다. 그리고 `eosio` 계정으로 서명을 하므로 `eosio` 계정의 비밀키가 필요하다.
 
 `eosio` 계정의 비밀키는 리눅스의 경우 `~/.local/share/eosio/nodeos/config/config.ini`, 맥의 경우 `~/Libraries/Application Support/eosio/nodeos/config/config.ini` 파일 안에 `signature-provider`라는 항목의 `KEY`에 명시되어 있다.
+
+### 이미 존재하는 계정의 키가 연동된 지갑 생성
+
+아래의 명령으로 계정 생성에 사용되는 `eosio` 계정의 키와 연동된 지갑 `temp`를 만든다.
+
+>cleos \-\-wallet-url=http://localhost:8899 wallet create -n temp
+
+!15
+
+아래와 같이 지갑 목록을 조회하면 `temp` 지갑이 표시되며, 지갑 이름 옆의 `*` 표시는 지갑의 잠금이 해제되어 있음을 의미한다.
+
+!16
+
+### 새로 생성할 계정에 사용될 키 생성
+
+새로 생성할 계정의 `owner_key`, `active_key`에 사용될 키 두 개 생성
+
+>cleos create key
+
+!17
+
+
+
+
+
 
 ![Imgur](https://i.imgur.com/ecbRbVy.png)
 
@@ -165,7 +203,7 @@ Single Node Testnet에 이미 존재하는 유일한 계정은 Single Node를 �
 
 ### 지갑 잠금 해제 후 계정 생성
 
-새로 생성될 계정의 `owner_key`와 `active_key`로 사용한 키가 연동되어 있는 `Homo-Efficio` 지갑을 해제한 후, `homo.efficio` 계정 생성을 실행하면 다음과 같은 에러가 발생한다.
+계정 생성의 주체인 `eosio` 계정의 키를 연동하는 지갑가 연동되어 있는 지갑을 해제한 후, `homo.efficio` 계정 생성을 실행하면 다음과 같은 에러가 발생한다.
 
 ![Imgur](https://i.imgur.com/Sj1QugF.png)
 
