@@ -45,7 +45,7 @@ scheduler.scheduleJob(jobDetail, trigger);
 
 ### HelloJob
 
-단순히 로그를 찍은 일을 하는 Job
+단순히 로그를 찍는 Job
 
 ```java
 package io.homo.efficio.scratchpad.quartz;
@@ -304,7 +304,7 @@ Job과 JobDataMap은 일대일 관계이므로,
 
 Job 3개를 Chaining해서 실행할 수 있도록 테스트 코드를 변경한다. 
 
-예제에서는 편의상 3개의 Job에 모두 `HelloJob.class`만을 사용했지만, 실제로는 서로 다른 클래스를 사용해도 무방하다. 또한 [JobBuilder API](http://www.quartz-scheduler.org/api/2.2.1/org/quartz/JobBuilder.html)를 참고하면 Job마다 원하는 대로 식별자를 줄 수도 있고 오류 시 재실행 옵션 등 다양하게 설정할 수 있다. [TriggerBuilder API](http://www.quartz-scheduler.org/api/2.2.1/org/quartz/TriggerBuilder.html)를 참고하면 Trigger도 원하는 대로 더 다양하게 구성할 수 있다.
+예제에서는 편의상 3개의 Job에 모두 `HelloJob.class`만을 사용했지만, 실제로는 서로 다른 클래스를 사용해도 무방하다. 또한 [JobBuilder API](http://www.quartz-scheduler.org/api/2.2.1/org/quartz/JobBuilder.html)를 참고하면 Job마다 원하는 대로 식별자를 줄 수도 있고 오류 시 재실행 옵션 등 다양하게 설정할 수 있다. [TriggerBuilder API](http://www.quartz-scheduler.org/api/2.2.1/org/quartz/TriggerBuilder.html)를 참고하면 `Trigger`도 원하는 대로 더 다양하게 구성할 수 있다.
 
 ```java
 public class QuartzTest {
@@ -336,7 +336,7 @@ public class QuartzTest {
 
 ### Job 정보를 JobDataMap에 저장
 
-실행할 모든 Job의 JobDetail를 첫 번째 JobDetail의 JobDataMap에 담는다.
+실행할 모든 Job의 `JobDetail`를 첫 번째 `JobDetail`의 `JobDataMap`에 담는다.
 
 ```java
         // 실행할 모든 Job의 JobDetail를 jobDetail1의 JobDataMap에 담는다.
@@ -372,7 +372,7 @@ public class QuartzTest {
 
 ### 다음 Job 스케줄링
 
-`scheduleNextJob()` 메서드를 다음과 같이 변경해서, 완료된 Job이 제거된 큐를 `JobDataMap`에 담고 즉시 실행하는 Trigger를 만들어서 스케줄링 한다.
+`scheduleNextJob()` 메서드를 다음과 같이 변경해서, 완료된 Job이 제거된 큐를 `JobDataMap`에 담고 즉시 실행하는 `Trigger`를 만들어서 스케줄링 한다.
 
 ```java
     private void scheduleNextJob(JobExecutionContext context) {
@@ -420,7 +420,7 @@ public class QuartzTest {
 ...
 ```
 
-예제에서는 단순함을 위해 여러 연속적으로 실행될 Job을 관리하는 객체 없이 테스트 객체가 그 역할을 담당했지만, 실무에서는 예를 들면 `Batch` 같은 객체를 두고 그 안에 `List<Job>`을 둬서 책임 분리를 하는 것도 좋다.
+예제에서는 단순함을 위해 연속적으로 실행될 여러 Job을 관리하는 객체를 따로 만들지 않고 테스트 객체가 그 역할을 담당했지만, 실무에서는 예를 들면 `Batch` 같은 객체를 두고 그 안에 `List<Job>`을 둬서 책임 분리를 하는 것도 좋다.
 
 ## 정리
 
