@@ -206,8 +206,7 @@ Consumer 앱은 OAuth 1.0a 흐름을 파악하는데 필요한 최소한의 기�
 - 권한 부여 요청 전송 (시퀀스 다이어그램 2번)
 - 서명 생성 기능
 - 접근 토큰 요청 전송 (시퀀스 다이어그램 14번)
-- 서명 생성 기능
-- 트위터에 글 쓰기 (시퀀퀀스 다이어그램 20번)
+- 트위터에 글 쓰기 (시퀀스 다이어그램 20번)
 
 편의상 스프링 부트로 개발하며, 프로젝트 생성 등의 자세한 과정은 생략한다.
 
@@ -346,7 +345,7 @@ dj82h48djs9d2&oauth_nonce=7d8f3e4a&oauth_signature_method=HMAC-SHA1
 &oauth_timestamp=137131201&oauth_token=kkk9d7dh3k39sjv7
 ```
 
-토큰 발급 요청 파라미터를 구하는 로직을 스펙을 읽고 정확하게 파악하는 것이 어렵지만, 일단 파악하면 구현 자체는 어렵지 않다. 필요하다면 [이걸](https://github.com/HomoEfficio/scratchpad-oauth10a-consumer/blob/master/src/main/java/io/homo/efficio/scratchpad/oauth10a/consumer/util/OAuth10aSupport.java) 참고하면 된다.
+토큰 발급 요청 파라미터를 구하는 로직을 스펙을 읽고 정확하게 파악하는 것이 어렵지만, 일단 파악하면 구현 자체는 어렵지 않다. 필요하다면 [이걸](https://github.com/HomoEfficio/scratchpad-oauth10a-consumer/blob/master/src/main/java/io/homo/efficio/scratchpad/oauth10a/consumer/util/OAuth10aSignatureSupport.java) 참고하면 된다.
 
 
 ### 서명 생성
