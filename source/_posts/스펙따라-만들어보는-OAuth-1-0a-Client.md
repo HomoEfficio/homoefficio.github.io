@@ -485,8 +485,7 @@ public String requestTokenCredentials(HttpServletRequest request, VerifierRespon
 
     // 자원 접근 요청 전송
     final NextAction nextAction = (NextAction) session.getAttribute(OAuth10aConstants.NEXT_ACTION);
-    log.info("nextAction: {}", nextAction);
-    final URI nextUri = nextAction.getUri();
+    log.info("nextAction: {}", nextAction);    
     final OAuth10aProtectedResourcesRequestHeader resourcesRequestHeader =
             new OAuth10aProtectedResourcesRequestHeader(
                     nextAction,
