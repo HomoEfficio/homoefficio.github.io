@@ -138,7 +138,7 @@ console.log(obj['method1']());  // objProp1
 `method1`으로 참조되는 함수 안에서 사용된 **this**는 `method1`을 메서드로 가지는, 다시 말해, **쩜 앞에 있는 객체 `obj`를 가리킨다.**
 따라서 `obj.method1() === obj.prop1`는 true.
 
-쩜 대신 대괄호를 이용하는 호출 방식도 이 방식에 해당한다.
+쩜 대신 대괄호를 이용해서 호출(`obj['method1']()`)할 때도 **this**는 `obj`를 가리킨다.
 
 
 ### 2.2 prototype 객체의 메서드로 정의되는 함수 안의 this
