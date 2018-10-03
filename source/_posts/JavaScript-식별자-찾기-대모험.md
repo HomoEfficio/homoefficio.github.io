@@ -11,6 +11,12 @@ tags:
   - 프로토타입 체인
   - JavaScript internal  
   - ES6
+  - Global Environment
+  - Lexical Environment
+  - Environment Record
+  - Execution Context
+  - outer
+  - HasBinding
 thumbnailImage: http://www.clker.com/cliparts/Y/x/X/j/U/f/search-button-without-text-hi.png
 coverImage: cover-chain.jpg
 
