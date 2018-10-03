@@ -101,8 +101,8 @@ function Country(name) {
     this.name = name;
 }
 
-var korea = new Country('대한민국');
-var ukraine = new Country('우크라이나');
+const korea = new Country('대한민국');
+const ukraine = new Country('우크라이나');
 
 console.log(korea.name);    // 대한민국
 console.log(ukraine.name);  // 우크라이나
@@ -123,13 +123,13 @@ console.log(ukraine.name);  // 우크라이나
 Java에 익숙한 사람에게는 가장 직관적으로 이해할 수 있는 방식이다.
 
 {% codeblock lang:javascript 객체의 메서드 안의 this %}
-var obj = {
+const obj = {
     prop1: 'objProp1',
     method1: function() {
         return this.prop1;
     }
 }
-var prop1 = 'globalProp1';
+const prop1 = 'globalProp1';
 
 console.log(obj.method1());    // objProp1
 {% endcodeblock %}
@@ -151,7 +151,7 @@ Person.prototype.getFullName = function() {
     return this.fullName;
 }
 
-var kim = new Person('Kim Tae Hee');
+const kim = new Person('Kim Tae Hee');
 console.log(kim.getFullName());    // Kim Tae Hee
 {% endcodeblock %}
 
@@ -190,7 +190,7 @@ console.log(globalFunc());    // true
 ### 2.4 함수 안에 중첩된 함수 안의 this
 
 {% codeblock lang:javascript prototype 객체의 메서드 안의 this %}
-var obj = {
+const obj = {
     name: 'Plain Object',
     method1: function outerFunc() {
         console.log('in outerFunc, this : ', this);
@@ -249,9 +249,9 @@ Java에서는 모든 함수가 어떤 객체의 메서드로 존재한다. 하�
 참고로 call과 apply의 차이는 함수에 전달할 파라미터를 쉼표로 나열해서 전달하느냐, 배열로 묶어서 전달하느냐 밖에 없다.
 
 {% codeblock lang:javascript call이나 apply로 호출되는 함수 안의 this %}
-var plainObj = {};
+const plainObj = {};
 
-var aFunction = function(param0, param1) {
+const aFunction = function(param0, param1) {
     this.prop0 = param0;
     this.prop1 = param1;
 }
@@ -265,18 +265,18 @@ console.log(plainObj);
 `함수B.bind(객체A)`는 함수B의 this에 객체A를 고정 바인딩한 새로운 함수를 반환한다. 따라서 bind가 반환하는 새 함수는 다음과 같이 전역으로 호출되거나 apply, call을 통해 호출되어도, 즉 호출되는 방식과 무관하게 this가 항상 객체A를 가리킨다.
 
 {% codeblock lang:javascript bind로 this가 고정되는 함수 %}
-var a = 'global';
+var a = 'global';  // var로 선언해서 a는 전역 객체의 속성이 됨
 
-var fun = function() { return this.a };
+const fun = function() { return this.a };
 
 console.log(fun());  // 'global'
 
 console.log(fun.apply({ a: 1 }));  // 1
 
-var obj = { a: 'fixed' };
+const obj = { a: 'fixed' };
 
 // fun.bind(obj)는 fun 함수의 this를 obj로 완전히 고정시킨 새로운 함수를 반환
-var boundFun = fun.bind(obj);
+const boundFun = fun.bind(obj);
 
 console.log(boundFun());  // 'fixed'
 
@@ -337,7 +337,7 @@ Array.prototype.forEach.call([1], function(d){ console.log(this); });
 3에 나온 내용을 코드로 살펴보자.
 
 {% codeblock lang:javascript 화살표 함수 정의 코드가 평가될 때 정적으로 this가 결정 %}
-var obj = {
+const obj = {
 	prop1: 1,
 	prop2: this,
 	method1: function() {
@@ -348,7 +348,7 @@ var obj = {
 	},
 	method3: function() {
 		console.log(this);
-		var arrow = () => {
+		const arrow = () => {
 			console.log(this.prop1);
 		};
 		arrow();
@@ -363,9 +363,13 @@ console.log(obj.method3());  // obj, 1
 
 method1은 일반 함수로 정의되어 있으므로 앞에서 `뉴쩜콜라바`에 해당한다. 즉, `obj.method1()`으로 호출될 때 `this`가 가리키는 값이 obj로 정해진다.
 
-method2는 화살표 함수로 정의되어 있으므로, 함수 정의 코드가 평가될 때 정적으로 `this`가 결정된다. **즉, 호출될 때가 아니라 그냥 코드가 해석될 때 `this`가 가리키는 값으로 정적으로 정해진다.** 화살표 함수 정의 코드가 해석될 때는 아직 obj의 정의가 완료되지도 않은 시점이다. 그래서 `this`는 전역 객체를 가리킨다. 전역 객체에는 prop1 속성이 없으므로 `undefined`가 출력된다. 바로 다음 행에서 `obj.prop2`를 찍어보면 전역 객체인 `Window`가 표시되는 것을 확인할 수 있다.
+method2는 화살표 함수로 정의되어 있으므로, 함수 정의 코드가 평가(evaluate)될 때 정적으로 `this`가 결정된다. **즉, 화살표 함수 안에 있는 `this`는 화살표 함수가 호출되는 방식에 따라 동적으로 정해지는 것이 아니라, 화살표 함수 코드가 평가되는 시점에 이미 정해져 있는 `this`의 값으로 정적으로 결정된다.**
 
-method3은 일반 함수 안에서 화살표 함수가 정의되어 있다. 이렇게 일반 함수 안에 있는 화살표 함수의 코드는 감싸고 있는 일반 함수가 호출될 때 평가된다. 결국 일반 함수가 호출될 때 정해져 있는 `this` 값이 일반 함수 내에 있는 화살표 함수의 `this` 값이 된다. 최종적인 결과만 놓고 보면 일반 함수가 호출되는 시점의 상황에 따라 `this`가 동적으로 결정되지만, 화살표 함수 입장에서는 **화살표 함수 정의 코드가 평가될 때 정적으로 `this`가 결정되는 것은 마찬가지다.**
+위 코드에서 화살표 함수는 객체 리터럴 안에 있으므로, 화살표 함수 정의 코드는 obj 객체 정의 코드가 평가되면서 즉, obj의 해석이 완료되지도 않은 시점에 평가된다. 그래서 `this`는 obj를 가리킬 수 없으며, 실제로 전역 객체를 가리킨다. 전역 객체에는 prop1 속성이 없으므로 `obj.method2()`를 실행하면 `undefined`가 출력된다. 바로 다음 행에서 `obj.prop2`를 찍어보면 꼭 화살표 함수가 아니더라도 객체 리터럴 안에 있는 `this`는 전역 객체인 `Window`를 가리키는 것을 확인할 수 있다.
+
+method3은 일반 함수의 내부에 화살표 함수가 정의되어 있다. 함수 내부의 코드는 함수가 호출될 때 평가된다. 따라서 일반 함수 안에 있는 화살표 함수의 코드는 감싸고 있는 일반 함수가 호출될 때 평가된다. 결국 일반 함수가 호출될 때 정해져 있는 `this` 값이 일반 함수 내에 있는 화살표 함수의 `this` 값이 된다. 최종적인 결과만 놓고 보면 일반 함수가 호출되는 시점의 상황에 따라 `this`가 동적으로 결정되지만, 화살표 함수 입장에서 보면 **화살표 함수 안에 있는 `this`는 화살표 함수 정의 코드가 평가될 때 정해져 있던 `this` 값으로 정적으로 결정되는 것은 마찬가지다.**
+
+위 말을 좀 다르게 표현하면, **'화살표 함수 안에 있는 `this`는 화살표 함수가 정의되어 있는 스코프(scope)에서 어휘적(lexical)으로 이미 정해져 있는 `this` 값으로 정해진다.'**라고 할 수 있다. 화살표 함수 안에 있는 `this`처럼 코드가 평가될 때 값이 정해지는 `this`를 **`lexical this`**라고 부르기도 한다.
 
 위 예에서 알 수 있듯이 화살표 함수를 객체의 메서드로 사용하는 것은 대체로 적절하지 않으며, 다른 함수의 인자로 넘겨지는 익명 콜백 함수 용도로 사용하는 것이 적절하다.
 
@@ -399,10 +403,12 @@ JavaScript의 **this**는 기초적인 내용이지만, 다른 데서 다른 방
 
 	오오~~ 다시 봐도 아득하고 현란하다.
 
-	**this에 바인딩 되는 값은, 함수가 호출되는 방식에 따라 달라진다.**
-	> **new 로 생성되는 객체로 바인딩 된다.**
-	> **쩜(.) 앞에 있는 객체로 바인딩 된다.**
-	> **call(), apply(), bind()의 첫번째 인자로 바인딩 된다.**
+	**this에 바인딩 되는 값은, 함수가 호출되는 방식에 따라 동적으로 결정된다.**
+	> 뉴: **new 로 생성되는 객체로 바인딩 된다.**
+	>
+	> 쩜: **쩜(.) 앞에 있는 객체로 바인딩 된다.**
+	>
+	> 콜라바: **call(), apply(), bind()의 첫번째 인자로 바인딩 된다.**
 
 	**함수 A가 다른 함수 B의 인자로 넘겨지는 경우에는, 함수 A가 호출되는 방식을 볼 수 없는 경우도 있으므로, 실제로 테스트 해봐야 알 수 있다.**
 
