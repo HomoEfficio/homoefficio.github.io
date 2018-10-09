@@ -30,3 +30,22 @@
         }
     }
 }
+
+// homo.efficio
+//// border-bottom
+.markdown {
+    @each $key, $value in $markdown-border-bottom {
+        #{$key} {
+            border-bottom: $value
+        }
+    }
+}
+
+//// padding-bottom
+.markdown {
+    @each $key, $value in $markdown-padding-bottom {
+        #{$key} {
+            padding-bottom: $value
+        }
+    }
+}
