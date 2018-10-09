@@ -183,9 +183,9 @@ code {
   font-family: 'Nanum Gothic Coding';
   font-weight: 400;
   border-radius: 3px;
-  background: #eaeaea;
+  background: #fdefef;
   color: deeppink;
-  padding: 0 3px; }
+  padding: 0 5px; }
 
 acronym,
 abbr {
@@ -193,7 +193,8 @@ abbr {
 
 blockquote {
   border-left: 7px solid #d1dced;
-  padding: 10px 20px; }
+  padding: 10px 20px;
+  margin-left: 10px; }
   blockquote cite:before {
     content: ' — ';
     padding: 0 0.3em; }
@@ -1573,45 +1574,57 @@ a.link-unstyled a.link, a.link-unstyled a.link:hover, a.link-unstyled a.link:act
 
 @media only screen and (min-width: 1024px) {
   .markdown h1 {
-    font-size: 2.15rem; }
+    font-size: 3rem; }
   .markdown h2 {
+    font-size: 2.5rem; }
+  .markdown h3 {
     font-size: 2rem; }
-  .markdown h3 {
-    font-size: 1.8rem; }
-  .markdown h4 {
-    font-size: 1.7rem; }
-  .markdown h5 {
-    font-size: 1.6rem; }
-  .markdown h6 {
-    font-size: 1.5rem; } }
-
-@media only screen and (max-width: 767px) {
-  .markdown h1 {
-    font-size: 1.8rem; }
-  .markdown h2 {
-    font-size: 1.65rem; }
-  .markdown h3 {
-    font-size: 1.45rem; }
-  .markdown h4 {
-    font-size: 1.35rem; }
-  .markdown h5 {
-    font-size: 1.25rem; }
-  .markdown h6 {
-    font-size: 1.15rem; } }
-
-@media only screen and (min-width: 768px) and (max-width: 1023px) {
-  .markdown h1 {
-    font-size: 1.95rem; }
-  .markdown h2 {
-    font-size: 1.8rem; }
-  .markdown h3 {
-    font-size: 1.6rem; }
   .markdown h4 {
     font-size: 1.5rem; }
   .markdown h5 {
-    font-size: 1.4rem; }
+    font-size: 1.3rem; }
   .markdown h6 {
-    font-size: 1.3rem; } }
+    font-size: 1.2rem; } }
+
+@media only screen and (max-width: 767px) {
+  .markdown h1 {
+    font-size: 2.65rem; }
+  .markdown h2 {
+    font-size: 2.15rem; }
+  .markdown h3 {
+    font-size: 1.65rem; }
+  .markdown h4 {
+    font-size: 1.15rem; }
+  .markdown h5 {
+    font-size: 0.95rem; }
+  .markdown h6 {
+    font-size: 0.85rem; } }
+
+@media only screen and (min-width: 768px) and (max-width: 1023px) {
+  .markdown h1 {
+    font-size: 2.8rem; }
+  .markdown h2 {
+    font-size: 2.3rem; }
+  .markdown h3 {
+    font-size: 1.8rem; }
+  .markdown h4 {
+    font-size: 1.3rem; }
+  .markdown h5 {
+    font-size: 1.1rem; }
+  .markdown h6 {
+    font-size: 1rem; } }
+
+.markdown h1 {
+  border-bottom: 1.5px solid #dadcdf; }
+
+.markdown h2 {
+  border-bottom: 1.1px solid #dadcdf; }
+
+.markdown h1 {
+  padding-bottom: 0.3em; }
+
+.markdown h2 {
+  padding-bottom: 0.3em; }
 
 .pagination-bar {
   height: auto;
