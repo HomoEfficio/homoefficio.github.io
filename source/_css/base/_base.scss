@@ -53,6 +53,31 @@ h6 {
     margin: 1em 0 0.5em 0;
 }
 
+h1 {
+    font-size:32px;
+    font-weight:600
+}
+h2 {
+    font-size:24px;
+    font-weight:600
+}
+h3 {
+    font-size:20px;
+    font-weight:600
+}
+h4 {
+    font-size:16px;
+    font-weight:600
+}
+h5 {
+    font-size:14px;
+    font-weight:600
+}
+h6 {
+    font-size:12px;
+    font-weight:600
+}
+
 // List each header with his font size
 @each $key, $value in $headings-font-size {
     #{$key} {
@@ -134,6 +159,7 @@ blockquote {
 //    border-left: 2px solid darken(#dce4f1, 3);
     border-left: 7px solid darken(#dce4f1, 3);
     padding:     10px 20px;
+    margin-left: 10px;
 
     cite {
         &:before {
