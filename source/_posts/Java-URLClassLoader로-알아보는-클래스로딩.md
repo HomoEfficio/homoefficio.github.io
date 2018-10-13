@@ -31,7 +31,7 @@ coverImage: cover-java-urlclassloader-background.png
 Bootstrap ClassLoader, Extension ClassLoader, Application ClassLoader 이 3가지 기본 클래스로더 말고도 자주 사용되는`URLClassLoader`가 있다. 
 사실 Java 8의 Extension ClassLoader와 Application ClassLoader는 `URLClassLoader`를 상속받아서 만들어진 클래스다.
 
-3가지 기본 클래스로더에 대한 자세한 내용은 [여기](https://github.com/HomoEfficio/dev-tips/blob/master/Java%20ClassLoader%20훑어보기.md)를 참고한다.
+3가지 기본 클래스로더에 대한 자세한 내용은 [여기](https://homoefficio.github.io/2018/10/13/Java-클래스로더-훑어보기/)를 참고한다.
 
 간단한 `URLClassLoader` 예제로 클래스로딩 과정을 짚어보자.
 
