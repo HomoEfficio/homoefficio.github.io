@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="null">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="뒤태지존의 끄적거림">
+    <title>JavaScript 식별자 찾기 대모험 - 뒤태지존의 끄적거림</title>
+    <meta name="author" content="HomoEfficio">
+    <meta name="description" content="뒤태지존의 끄적거림">
+    
+        <link rel="icon" href="/assets/images/favicon.ico">
+    
+    
+        <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <meta name="description" content="Quiz아래 코드를 실행하면 1이 출력된다. 12345function f1() &amp;#123;    console.log(a);&amp;#125;Object.prototype.a = 1;f1(); 왜 그럴까?얼핏 생각하면 쉽게 답을 말할 수 있지만,왜 그런 답이 나오는지 조금 더 생각해보면 아래와 같은 질문이 떠오른다.  변수 찾으려면 스코프 체인을 뒤지고 없으면 에">
+<meta name="keywords" content="JavaScript,자바스크립트,Scope Chain,스코프 체인,Prototype Chain,프로토타입 체인,JavaScript internal,ES6,Global Environment,Lexical Environment,Environment Record,Execution Context,outer,HasBinding">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="JavaScript 식별자 찾기 대모험">
+<meta property="og:url" content="http://homoefficio.github.io/2016/01/16/JavaScript-식별자-찾기-대모험/index.html">
+<meta property="og:site_name" content="뒤태지존의 끄적거림">
+<meta property="og:description" content="Quiz아래 코드를 실행하면 1이 출력된다. 12345function f1() &amp;#123;    console.log(a);&amp;#125;Object.prototype.a = 1;f1(); 왜 그럴까?얼핏 생각하면 쉽게 답을 말할 수 있지만,왜 그런 답이 나오는지 조금 더 생각해보면 아래와 같은 질문이 떠오른다.  변수 찾으려면 스코프 체인을 뒤지고 없으면 에">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://i.imgur.com/n4nqzCd.png">
+<meta property="og:image" content="http://i.imgur.com/Ittr4GG.png">
+<meta property="og:image" content="http://i.imgur.com/9MnRZsT.png">
+<meta property="og:image" content="http://i.imgur.com/hidyqCU.png">
+<meta property="og:image" content="http://i.imgur.com/kH311d9.png">
+<meta property="og:image" content="http://i.imgur.com/xDbqxBw.png">
+<meta property="og:updated_time" content="2018-10-13T15:49:56.237Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JavaScript 식별자 찾기 대모험">
+<meta name="twitter:description" content="Quiz아래 코드를 실행하면 1이 출력된다. 12345function f1() &amp;#123;    console.log(a);&amp;#125;Object.prototype.a = 1;f1(); 왜 그럴까?얼핏 생각하면 쉽게 답을 말할 수 있지만,왜 그런 답이 나오는지 조금 더 생각해보면 아래와 같은 질문이 떠오른다.  변수 찾으려면 스코프 체인을 뒤지고 없으면 에">
+<meta name="twitter:image" content="http://i.imgur.com/n4nqzCd.png">
+    
+        <meta rel="publisher" content="https://plus.google.com/+오명운"/>
+    
+    
+    
+        <meta property="og:image" content="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=640"/>
+    
+    
+        <meta property="og:image" content="/2016/01/16/JavaScript-식별자-찾기-대모험/http:/www.clker.com/cliparts/Y/x/X/j/U/f/search-button-without-text-hi.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2016/01/16/JavaScript-식별자-찾기-대모험/http://www.clker.com/cliparts/Y/x/X/j/U/f/search-button-without-text-hi.png" />
+    
+    
+        <meta property="og:image" content="/2016/01/16/JavaScript-식별자-찾기-대모험/cover-chain.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2016/01/16/JavaScript-식별자-찾기-대모험/cover-chain.jpg" />
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style.min.css">
+    <!--STYLES END-->
+    
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-79893978-1']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6494847158566766",
+    enable_page_level_ads: true
+  });
+</script>
+</head>
+
+    <body>
+        <div id="blog">
+            <header id="header" data-behavior="1">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="/ ">뒤태지존의 끄적거림</a>
+    </h1>
+    
+        <a class="header-right-picture" href="/#about">
+            <img class="header-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+        </a>
+    
+</header>
+            <nav id="sidebar" data-behavior="1">
+    
+    <div class="sidebar-profile">
+        <a href="/#about">
+            
+            <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+            
+        </a>
+        <span class="sidebar-profile-name">HomoEfficio</span>
+    </div>
+    
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/ 
+                    ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">Home</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-categories
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">Categories</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-tags
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">Tags</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-archives
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">Archives</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link st-search-show-outputs"
+                    href="#search
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                    <span class="sidebar-button-desc">Search</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="#about
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">About me</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="https://github.com/HomoEfficio" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                    <span class="sidebar-button-desc">GitHub</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="mailto:homo.efficio@gmail.com" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-envelope-o"></i>
+                    <span class="sidebar-button-desc">Mail</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/atom.xml
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+            <div id="main" data-behavior="1">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+        <div class="post-header-cover" style="background-image:url('/2016/01/16/JavaScript-식별자-찾기-대모험/cover-chain.jpg');">
+            <div class="post-header main-content-wrap">
+    
+        <h1 class="post-title" itemprop="headline">JavaScript 식별자 찾기 대모험</h1>
+    
+    <div class="post-meta">
+    <time  itemprop="datePublished" content="Sat Jan 16 2016 21:22:14 GMT+0900">
+        Jan 16, 2016
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/JavaScript/">JavaScript</a>
+
+
+    
+</div>
+</div>
+        </div>
+    
+    <div class="post-content markdown main-content-wrap" itemprop="articleBody">
+        
+            <h1 id="Quiz"><a href="#Quiz" class="headerlink" title="Quiz"></a>Quiz</h1><p>아래 코드를 실행하면 1이 출력된다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f1</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(a);</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">Object</span>.prototype.a = <span class="number">1</span>;</span><br><span class="line">f1();</span><br></pre></td></tr></table></figure>
+<p>왜 그럴까?<br>얼핏 생각하면 쉽게 답을 말할 수 있지만,<br>왜 그런 답이 나오는지 조금 더 생각해보면 아래와 같은 질문이 떠오른다.</p>
+<blockquote>
+<p><strong>변수 찾으려면 스코프 체인을 뒤지고 없으면 에러를 내야지, 왜 프로토타입 체인까지 뒤지는걸까?</strong></p>
+</blockquote>
+<h1 id="스코프-체인"><a href="#스코프-체인" class="headerlink" title="스코프 체인"></a>스코프 체인</h1><p>스코프 체인(Scope Chain)은 식별자 중에서도 어떤 객체(전역 객체가 아닌)의 속성(propety)이 아닌 식별자를 찾아내는 메커니즘이다. 코드를 보는게 더 금방 감이 올 것이다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">A</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> a = <span class="number">1</span>;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">B</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">function</span> <span class="title">C</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">            <span class="comment">// 함수 C 안에서 a를 선언한 적이 없지만,</span></span><br><span class="line">            <span class="comment">// 스코프 체인을 따라 위로 찾아 올라가서, </span></span><br><span class="line">            <span class="comment">// 함수 A 안에서 선언된 a에 접근할 수 있다.</span></span><br><span class="line">            <span class="built_in">console</span>.log(a);  <span class="comment">// 1이 출력된다.</span></span><br><span class="line">        &#125;</span><br><span class="line">        C();</span><br><span class="line">    &#125;</span><br><span class="line">    B();</span><br><span class="line">&#125;</span><br><span class="line">A();</span><br></pre></td></tr></table></figure>
+<p>스코프 체인은 주로 함수의 중첩 및 변수와 관련이 있다고 볼 수 있다.</p>
+<h1 id="프로토타입-체인"><a href="#프로토타입-체인" class="headerlink" title="프로토타입 체인"></a>프로토타입 체인</h1><p>프로토타입 체인(Prototype Chain)은 식별자 중에서도 어떤 객체의 속성(property)을 찾아내는 메커니즘이다. 역시 코드를 보자.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> obj = &#123;</span><br><span class="line">    prop1: <span class="string">'value1'</span>,</span><br><span class="line">    prop2: <span class="string">'value2'</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// obj에 hasOwnProperty라는 메서드를 정의한 적 없지만,</span></span><br><span class="line"><span class="comment">// 프로토타입 체인을 따라 상속 체계 위로 찾아 올라가서,</span></span><br><span class="line"><span class="comment">// Object.prototype.hasOwnProperty에 접근할 수 있다. </span></span><br><span class="line"><span class="built_in">console</span>.log(obj.hasOwnProperty(<span class="string">'prop1'</span>));  <span class="comment">// true 가 출력된다.</span></span><br></pre></td></tr></table></figure>
+<p>프로토타입 체인은 주로 객체의 상속 및 속성과 관련이 있다고 볼 수 있다.</p>
+<h1 id="둘의-관계"><a href="#둘의-관계" class="headerlink" title="둘의 관계"></a>둘의 관계</h1><p>스코프 체인은 주로 함수의 중첩 및 변수와 관련이 있고, 프로토타입 체인은 주로 객체의 상속 및 속성과 관련이 있으니, 둘은 뭔가 위로 찾아간다는 공통점이 있다는 것 외에는, 다루는 대상이 확연히 달라서 별로 관계가 없을 것 같다.</p>
+<p>하지만 둘은 <strong>식별자를 찾기 위해 함께 협업하는 관계</strong>다. 위의 두 예제를 섞어보자.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">A</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> a = &#123;</span><br><span class="line">        prop1: <span class="string">'value1'</span>,</span><br><span class="line">        prop2: <span class="string">'value2'</span></span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">B</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">function</span> <span class="title">C</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">            <span class="built_in">console</span>.log(a.hasOwnProperty(<span class="string">'prop1'</span>));  <span class="comment">// true 출력</span></span><br><span class="line">            <span class="built_in">console</span>.log(a[<span class="string">'hasOwnProperty'</span>](<span class="string">'prop1'</span>));  <span class="comment">// true 출력</span></span><br><span class="line">        &#125;</span><br><span class="line">        C();</span><br><span class="line">    &#125;</span><br><span class="line">    B();</span><br><span class="line">&#125;</span><br><span class="line">A();</span><br></pre></td></tr></table></figure>
+<p><code>a</code>를 찾을 때까지는 스코프 체인이 사용되고, <code>a</code>를 찾은 후 <code>a.hasOwnProperty</code>나 <code>a[&#39;hasOwnProperty&#39;]</code>와 같이 <code>.</code>이나 <code>[]</code>를 이용해서 속성을 찾을 때는 프로토타입 체인이 사용된다.</p>
+<p>그럼 스코프 체인에서 <code>a</code>를 못찾으면 어떻게 될까?</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">A</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">B</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">function</span> <span class="title">C</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">            <span class="built_in">console</span>.log(a.hasOwnProperty(<span class="string">'prop1'</span>));  <span class="comment">// true 출력</span></span><br><span class="line">            <span class="built_in">console</span>.log(a[<span class="string">'hasOwnProperty'</span>](<span class="string">'prop1'</span>));  <span class="comment">// true 출력</span></span><br><span class="line">        &#125;</span><br><span class="line">        C();</span><br><span class="line">    &#125;</span><br><span class="line">    B();</span><br><span class="line">&#125;</span><br><span class="line">A();  </span><br><span class="line"><span class="comment">// Uncaught ReferenceError: a is not defined(…)</span></span><br></pre></td></tr></table></figure>
+<p>에러가 발생한다. <strong>스코프 체인에서 식별자를 찾지 못하면, 그 다음의 프로토타입 체인은 작동하지 못한다.</strong></p>
+<h1 id="퀴즈-다시-보기"><a href="#퀴즈-다시-보기" class="headerlink" title="퀴즈 다시 보기"></a>퀴즈 다시 보기</h1><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f1</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(a);</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">Object</span>.prototype.a = <span class="number">1</span>;</span><br><span class="line">f1();</span><br></pre></td></tr></table></figure>
+<p><code>a</code>는 전역 공간에서조차 선언한 적이 없다. 즉, 스코프 체인에 없다.<br>그럼 위에서 본 것처럼 스코프 체인에서 식별자를 찾지 못하면, 프로토타입 체인이 작동하지 못하고 에러가 발생해야 되는 것 아닌가?<br>그런데 왜 에러가 발생하지 않고 Object.prototype에 정의한 값이 찍히는걸까?</p>
+<h1 id="스코프-체인-들여다보기"><a href="#스코프-체인-들여다보기" class="headerlink" title="스코프 체인 들여다보기"></a>스코프 체인 들여다보기</h1><p>이제부터 ES6 스펙 속으로 들어가 대모험을 시작해보자.</p>
+<p>흔히 스코프 체인이라고 하는 것은 ES3에서는 스펙에 정식으로 존재했던 용어인데, ES6에서는 스코프 체인이라는 용어는 존재하지 않는다. 정식 용어라고까지 할 수는 없겠지만, ES6에서는 스코프 체인 대신에 Lexical nesting이라는 표현을 쓴다. 체인 보다는 중첩에 더 의미를 두려는 것 같다. 어차피 정식 용어가 없으므로 여기서는 편의상 스코프 체인이라는 용어를 그대로 쓰기로 한다.</p>
+<p>스코프 체인은 <code>Lexical Environment</code>를 원소로 하는 단방향 링크드 리스트다. 아래의 그림에서 파란색 선으로 이어진 것이 스코프 체인이다.</p>
+<p><img src="http://i.imgur.com/n4nqzCd.png" alt=""></p>
+<p>스코프 체인의 원소인 <code>Lexical Environment</code>는 함수 선언, 블록문, catch절 같은 코드가 평가될 때 생성된다. 이 중에서 함수로 대상을 좁혀보면, <strong><code>Lexical Environment</code>는 함수가 호출될 때 생성되는 것이 아니라, 그에 앞서 함수 선언 코드가 평가될 때  생성된다</strong>는 점을 기억하자. 바로 이 점이 <code>closure</code>가 성립할 수 있는 열쇠라는 점까지만 알아두고, <code>closure</code>는 이 글에서는 다루지 않겠다.</p>
+<p><code>Lexical Environment</code>는 <code>environment record</code>와 <code>outer</code>를 포함하고 있다.<br><code>environment record</code>는 <code>Environment Record</code>객체를 가리키는데 이는 ES3에서의 변수 객체(Variable Object)와 비슷하다. <code>HasBinding</code>이라는 추상 메서드를 가지고 있다는 점을 기억해두자.<br><code>outer</code>는 자신을 감싸고 있는, 즉, 중첩 구조에서 상위에 있는 다른 <code>Lexical Environment</code>를 가리킨다. 이 <code>outer</code>를 통해 스코프 체인이 형성된다. 스코프 체인은 <code>outer</code> 값이 <code>null</code>로 설정되는 <code>Global Environment</code>를 만날때까지 이어진다.</p>
+<h2 id="식별자를-찾는-과정-1"><a href="#식별자를-찾는-과정-1" class="headerlink" title="식별자를 찾는 과정 - 1"></a>식별자를 찾는 과정 - 1</h2><p>이제 식별자 찾기가 스코프 체인 내에서 구체적으로 어떻게 동작하는지 알아보자.</p>
+<p>어떤 함수 내에서 식별자를 찾는 일은 그 함수가 호출되어 실행될 때 일어나는 일이다. 그리고 함수가 호출되면 실행 컨텍스트(Execution Context)가 생성된다는 것은 ES3에서와 같다. 따라서 식별자를 찾는 일은 실행 컨텍스트가 존재하는 상황에서 수행된다.</p>
+<p><code>v1</code>이라는 식별자를 찾으려면 가장 먼저 <code>ResolveBinding(&#39;v1&#39;, [env])</code>와 같은 형식([env]는 배열을 의미하는 것이 아니라 옵션임을 의미)으로 <code>ResolveBinding</code> 함수가 호출되는데, 이 함수는 현재 실행 컨텍스트에 있는 <code>Lexical Environment</code>에서 <code>v1</code>이라는 식별자를 찾는다.<br><code>ResolveBinding</code>은 내부적으로 <code>GetIdentifierReference(env, &#39;v1&#39;, strict)</code>와 같은 형식으로 <code>GetIdentifierReference</code> 함수를 호출하고, 이 함수가 반환하는 값을 결과값으로 반환한다.(스펙 8.3.1)</p>
+<p><code>GetIdentifierReference</code>는 인자로 받은 <code>env</code>가 null이면, 즉, <code>global environment</code>까지 뒤졌는데도 찾지 못하면 ReferenceError를 유발하게 하는 참조값을 반환한다.<br><code>env</code>가 null이 아니면 <code>env</code>의 environment record(줄여서 <code>envRec</code>라 한다)의 메서드인 <code>HasBinding</code>을 <code>envRec.HasBinding(&#39;v1&#39;)</code>와 같은 형식으로 호출한다.<br><code>envRec.HasBinding(&#39;v1&#39;)</code>은 <code>envRec</code> 내에 <code>v1</code>이 있는지 확인해서 있으면 true를 반환하고, <code>GetIdentifierReference</code>는 결과적으로 <code>v1</code>에 해당하는 참조(Reference)를 반환한다. <code>envRec.HasBinding(&#39;v1&#39;)</code>가 false를 반환하면 <code>GetIdentifierReference(env.outer, &#39;v1&#39;, strict)</code>와 같은 형식으로 <code>outer</code>를 인자로 해서 재귀 호출하는 방식으로 스코프 체인을 따라 올라가면서 계속 <code>env.HasBinding(&#39;v1&#39;)</code>을 실행한다.(스펙 8.1.2.1)</p>
+<p>여기까지 슈도 코드로 정리해보면 아래와 같다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">ResolveBinding(<span class="string">'v1'</span>, env)    </span><br><span class="line">    <span class="keyword">return</span> GetIdentifierReference(env, <span class="string">'v1'</span>, strict)</span><br><span class="line"></span><br><span class="line">GetIdentifierReference(env, <span class="string">'v1'</span>, strict)</span><br><span class="line">    <span class="keyword">if</span> (env == <span class="literal">null</span>)</span><br><span class="line">        <span class="keyword">return</span> referenceToTriggerReferenceError</span><br><span class="line">    exist = env.envRec.HasBinding(<span class="string">'v1'</span>)</span><br><span class="line">    <span class="keyword">if</span> (exist == <span class="literal">true</span>)</span><br><span class="line">        <span class="keyword">return</span> referenceToV1</span><br><span class="line">    GetIdentifierReference(env.outer, <span class="string">'v1'</span>, strict)</span><br></pre></td></tr></table></figure>
+<p>중첩 함수들 사이에서의 식별자 찾기는 여기까지의 과정에서 모두 찾아진다. 이제 중첩 함수의 범위를 넘어서 스코프 체인의 마지막인 <code>Global Environment</code>에 도달했을때 어떤 일이 벌어지는지 알아보자.</p>
+<h2 id="식별자를-찾는-과정-2"><a href="#식별자를-찾는-과정-2" class="headerlink" title="식별자를 찾는 과정 - 2"></a>식별자를 찾는 과정 - 2</h2><p>사실 앞에서 보여준 스코프 체인 그림에는 잘못된 점이 하나 있다. 바로 <code>Global Environment</code>의 <code>environment record</code>가 가리키는 부분이다. 올바르게 그리면 아래와 같다.</p>
+<p><img src="http://i.imgur.com/Ittr4GG.png" alt=""></p>
+<p><code>Global Environment Record</code>에서의 식별자 찾기 함수 호출 과정을 알아보기 전에, 먼저 <code>Global Environment Record</code>의 구성 요소를 알아보자.</p>
+<h3 id="Declarative-Environment-Record"><a href="#Declarative-Environment-Record" class="headerlink" title="Declarative Environment Record"></a>Declarative Environment Record</h3><ul>
+<li><code>Declarative Environment Record</code>는 ECMAScript 언어로 표현되는 값들과 식별자를 직접적으로 연결해주는 함수 선언, 변수 선언, catch절과 같은 문법 요소의 효과를 정의하기 위해 사용된다. </li>
+<li>쉽게 말하면 함수 선언, 변수 선언, catch절에서 사용되는 식별자 정보를 <code>Declarative Environment Record</code>에서 찾을 수 있다고 보면 된다.</li>
+<li><code>Declarative Environment Record</code>는 이름에서 추측할 수 있듯이, <code>Environment Record</code>를 상속한 서브클래스이며, 따라서 <code>HasBinding</code> 메서드를 구현하고 있다.</li>
+<li><code>Global Environment Record</code>에 있는 <code>declarative Environment Record</code>는 <code>Declarative Environment Record</code>의 인스턴스라고 할 수 있다.</li>
+</ul>
+<h3 id="Object-Environment-Record"><a href="#Object-Environment-Record" class="headerlink" title="Object Environment Record"></a>Object Environment Record</h3><ul>
+<li><code>Object Environment Record</code>는 with문과 같이 식별자를 어떤 특정 객체 A의 속성으로 취급할 때 사용되며, 이를 위해 <code>binding object</code>라는 속성으로 A를 가리킨다.</li>
+<li>쉽게 말하면 with문의 효과를 정의하는 내용이 <code>Object Environment Record</code>에 담겨 있다고 보면 된다.</li>
+<li><code>Object Environment Record</code>도 이름에서 추측할 수 있듯이, <code>Environment Record</code>를 상속한 서브클래스이며, 따라서 <code>HasBinding</code> 메서드를 구현하고 있다.</li>
+<li><code>Object Environment Record</code>의 <code>HasBinding</code> 메서드는 내부적으로 <code>HasProperty(binding_object, id)</code>와 같은 형식으로 <code>HasProperty</code> 함수를 호출한다.<ul>
+<li><strong><code>HasProperty</code> 함수는 프로토타입 체인을 뒤져서 식별자를 찾아낸다. 바로 이 함수가 문제 해결의 실마리를 가지고 있다!!</strong></li>
+</ul>
+</li>
+<li><code>Global Environment Record</code>에 있는 <code>object Environment Record</code>는 <code>Object Environment Record</code>의 인스턴스다.</li>
+</ul>
+<h3 id="Global-Environment-Record의-object-Environment-Record"><a href="#Global-Environment-Record의-object-Environment-Record" class="headerlink" title="Global Environment Record의 object Environment Record"></a>Global Environment Record의 object Environment Record</h3><ul>
+<li><code>Global Environment Record</code>에 있는 <code>object Environment Record</code>(소문자 object로 시작하는 것은 Global Environment Record의 object Environment Record를 의미)의 <code>binding object</code>는 전역 객체를 가리킨다. </li>
+<li>따라서 일반적인 <code>Object Environment Record</code>와는 다르게 <code>Object</code>, <code>Array</code>, <code>Function</code>, <code>parseInt</code>, <code>Infinity</code> 같은 모든 built-in global과 전역 코드에서의 함수 선언, 제너레이터 선언, 변수 선언에 의해 생성된 모든 식별자 정보를 <code>binding object</code>, 즉, 전역 객체에서 찾을 수 있다. </li>
+<li><code>binding object</code>가 전역 객체를 가리키는 바람에, <code>declarative Environment Record</code>와 역할이 바뀐 것 같은 모양새가 되었다.</li>
+</ul>
+<h3 id="Global-Environment-Record의-declarative-Environment-Record"><a href="#Global-Environment-Record의-declarative-Environment-Record" class="headerlink" title="Global Environment Record의 declarative Environment Record"></a>Global Environment Record의 declarative Environment Record</h3><ul>
+<li><code>Global Environment Record</code>에 있는 <code>declarative Environment Record</code>(소문자 declarative로 시작하는 것은 Global Environment Record의 declarative Environment Record를 의미)도 일반적인 <code>Declarative Environment Record</code>와 동작 방식이 다르며, 전역 코드에서 <code>object Environment Record</code>에 포함되지 않은 식별자 정보만 보유한다.</li>
+<li>이유는 <code>Declarative Environment Record</code>의 역할을 <code>object Environment Record</code>가 가져가버렸기 때문이다.</li>
+</ul>
+<h3 id="Global-Environment와-꼬붕들"><a href="#Global-Environment와-꼬붕들" class="headerlink" title="Global Environment와 꼬붕들"></a>Global Environment와 꼬붕들</h3><p>식별자를 찾다가 스코프 체인의 끝인  <code>Global Environment</code>에 도달했을때 식별자를 찾는데 동원되는 꼬붕들은 다음과 같다. </p>
+<p><img src="http://i.imgur.com/9MnRZsT.png" alt=""></p>
+<p>전역 객체까지 나오니 이제 좀 실마리가 보이는 것도 같다.</p>
+<ul>
+<li><code>Global Environment</code>에서 <code>Global Environment Record</code>를 통해 식별자를 찾으면, </li>
+<li>결국 <code>object Environment Record</code>에서 찾게 되고, </li>
+<li>결국 <code>binding object</code>가 가리키는 전역 객체에서 찾게 된다.</li>
+</ul>
+<h3 id="식별자를-찾는-함수-호출-과정"><a href="#식별자를-찾는-함수-호출-과정" class="headerlink" title="식별자를 찾는 함수 호출 과정"></a>식별자를 찾는 함수 호출 과정</h3><p>이제 앞의 ‘식별자를 찾는 함수 호출 과정 - 1’에서 정리했던 슈도 코드에 <code>Global Environment</code>에 관한 내용을 추가해보자.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">ResolveBinding(<span class="string">'v1'</span>, env)    </span><br><span class="line">    <span class="keyword">return</span> GetIdentifierReference(env, <span class="string">'v1'</span>, strict)</span><br><span class="line"></span><br><span class="line">GetIdentifierReference(env, <span class="string">'v1'</span>, strict)</span><br><span class="line">    <span class="keyword">if</span> (env == <span class="literal">null</span>)</span><br><span class="line">        <span class="keyword">return</span> referenceToTriggerReferenceError</span><br><span class="line">    exist = env.envRec.HasBinding(<span class="string">'v1'</span>)  <span class="comment">// 여기에서 env가 `Global Environment`일때 아래 '여기부터 추가'로 이동</span></span><br><span class="line">    <span class="keyword">if</span> (exist == <span class="literal">true</span>)</span><br><span class="line">        <span class="keyword">return</span> referenceToV1</span><br><span class="line">    GetIdentifierReference(env.outer, <span class="string">'v1'</span>, strict)</span><br><span class="line"></span><br><span class="line"><span class="comment">//여기부터 추가</span></span><br><span class="line"><span class="comment">// 스펙 8.1.1.4.1</span></span><br><span class="line">globalEnv.globalEnvRec.HasBinding(<span class="string">'v1'</span>)</span><br><span class="line">    <span class="keyword">if</span> (declarativeEnvRec.HasBinding(<span class="string">'v1'</span>) == <span class="literal">true</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">    <span class="keyword">return</span> objectEnvRec.HasBinding(<span class="string">'v1'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 스펙 8.1.1.2.1</span></span><br><span class="line">objectEnvRec.HasBinding(<span class="string">'v1'</span>)</span><br><span class="line">    <span class="keyword">return</span> HasProperty(global_object, <span class="string">'v1'</span>)</span><br><span class="line">    <span class="comment">// 원래 objectEnvRec는 with문 관련 처리 내용이 있으나</span></span><br><span class="line">    <span class="comment">// 여기에서는 생략</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 스펙 7.3.10</span></span><br><span class="line">HasProperty(global_object, <span class="string">'v1'</span>)</span><br><span class="line">    global_object.HasProperty(<span class="string">'v1'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 스펙 9.1.7, 9.1.7.1</span></span><br><span class="line">global_object.HasProperty(<span class="string">'v1'</span>)</span><br><span class="line">    global_object의 프로토타입 체인을 뒤져서 찾아서 있으면 <span class="literal">true</span>, 없으면 <span class="literal">false</span> 반환</span><br></pre></td></tr></table></figure>
+<h1 id="결론"><a href="#결론" class="headerlink" title="결론"></a>결론</h1><p>스코프 체인을 뒤지다가 왜 프로토타입 체인까지 뒤지는가? 에 대한 결론은 다음과 같다.</p>
+<blockquote>
+<ul>
+<li><strong>스코프 체인을 뒤지다가 안 나오면 전역 객체에서 찾게 되고,</strong> </li>
+<li><strong>전역 객체에서 찾을 때는 프로토타입 체인이 동원 된다.</strong></li>
+</ul>
+</blockquote>
+<p>따라서 Object.prototype에 변수를 추가하면 말 그대로 누구나 어디에서나 접근 가능한 전역 변수가 만들어지게 된다!</p>
+<p>아. 아직까지는 언제나 그렇다고 할 수는 없다. 전역 객체의 프로토타입 체인에 Object.prototype이 언제나 존재하는지 확실하지 않기 때문이다.</p>
+<h1 id="전역-객체의-Prototype"><a href="#전역-객체의-Prototype" class="headerlink" title="전역 객체의 [[Prototype]]"></a>전역 객체의 [[Prototype]]</h1><p>실제로 전역 객체의 [[Prototype]]은 구현자가 알아서 구현하도록 스펙에 명시되어 있다.(스펙 18)<br>따라서 구현체에 따라 Object.prototype에 추가한 변수가 전역 변수가 될 수도 있고 아닐 수도 있다.</p>
+<p>크롬과 node.js만 구현체를 확인해보면,</p>
+<ul>
+<li><p>크롬</p>
+<p>  <img src="http://i.imgur.com/hidyqCU.png" alt=""></p>
+<p>  전역 객체의 증조 할아버지가 Object.prototype이다.</p>
+</li>
+<li><p>node.js</p>
+<p>  <img src="http://i.imgur.com/kH311d9.png" alt=""><br>  <img src="http://i.imgur.com/xDbqxBw.png" alt=""></p>
+<p>  node.js에서는 전역 객체의 할아버지가 Object.prototype이다.</p>
+</li>
+</ul>
+<p>따라서 위 두 가지 환경에서는 Object.prototype에 추가한 변수는 누구나 어디에서나 접근 가능한 전역 변수가 된다.<br>다른 JavaScript엔진에서는 어떻게 다른지는 궁금한 사람이 스스로 해보기로.. =3=3=3</p>
+<h1 id="정리"><a href="#정리" class="headerlink" title="정리"></a>정리</h1><blockquote>
+<ul>
+<li>스코프 체인과 프로토타입 체인은 식별자를 찾기 위해 협업하는 관계다.</li>
+<li>식별자를 찾을 때는 먼저 스코프 체인을 따라서 찾고,<ul>
+<li>식별자와 바인딩 된 값이 객체라면,<ul>
+<li>그 객체의 프로토타입 체인을 따라서 속성을 찾는다.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>스코프 체인에서 식별자를 찾지 못하면, 전역 객체에서 찾게 되고,</strong></li>
+<li><strong>전역 객체에서 찾을 때는 프로토타입 체인이 동원된다.</strong></li>
+</ul>
+</blockquote>
+<p>쓸데없는 궁금증이 떠올라서 스펙의 바다에서 허우적대며 대모험을 하고 다행히 답을 알아내기는 했지만,<br>그다지 직접적인 쓸모는 별로 없는 뻘짓인 것 같다.. ㅠㅜ</p>
+<p>그래도 겉으로는 비슷한 것 같지만 내부적으로는 상당히 달라져 있는 ES6의 Scope Chain을 이해하게 되었고,<br>구체적으로 와닿지 않았던 <code>Lexical Environment</code>, <code>Global Object</code>의 개념과 여러가지 <code>Environment Record</code>에 대해 알게 되었다는 걸로 위안을..</p>
+<p>그리고 대충 훑어본 걸로는, 다행스럽게도 아직 진행 중인 ES7의 스코프 체인 개념은 ES6와 거의 다르지 않은 것으로 보인다.</p>
+<h1 id="참고-자료"><a href="#참고-자료" class="headerlink" title="참고 자료"></a>참고 자료</h1><ul>
+<li><a href="http://ecma-international.org/ecma-262/6.0/index.html" target="_blank" rel="noopener">http://ecma-international.org/ecma-262/6.0/index.html</a></li>
+</ul>
+
+        
+        
+            
+        
+        <hr/>
+        <div>
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="크리에이티브 커먼즈 라이선스" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><a href='https://github.com/homoefficio' target='_blank'>HomoEfficio</a>가 작성한 이 저작물은(는) <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스</a>에 따라 이용할 수 있습니다.
+        </div>
+    </div>
+    <div class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/ES6/">ES6</a> <a class="tag tag--primary tag--small t-link" href="/tags/Environment-Record/">Environment Record</a> <a class="tag tag--primary tag--small t-link" href="/tags/Execution-Context/">Execution Context</a> <a class="tag tag--primary tag--small t-link" href="/tags/Global-Environment/">Global Environment</a> <a class="tag tag--primary tag--small t-link" href="/tags/HasBinding/">HasBinding</a> <a class="tag tag--primary tag--small t-link" href="/tags/JavaScript/">JavaScript</a> <a class="tag tag--primary tag--small t-link" href="/tags/JavaScript-internal/">JavaScript internal</a> <a class="tag tag--primary tag--small t-link" href="/tags/Lexical-Environment/">Lexical Environment</a> <a class="tag tag--primary tag--small t-link" href="/tags/Prototype-Chain/">Prototype Chain</a> <a class="tag tag--primary tag--small t-link" href="/tags/Scope-Chain/">Scope Chain</a> <a class="tag tag--primary tag--small t-link" href="/tags/outer/">outer</a> <a class="tag tag--primary tag--small t-link" href="/tags/스코프-체인/">스코프 체인</a> <a class="tag tag--primary tag--small t-link" href="/tags/자바스크립트/">자바스크립트</a> <a class="tag tag--primary tag--small t-link" href="/tags/프로토타입-체인/">프로토타입 체인</a>
+
+            </div>
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/01/23/BlockChain-기초-개념/"  data-tooltip="BlockChain 기초 개념">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/10/17/Hello-Triangle-in-WebGL/" data-tooltip="Hello Triangle in WebGL">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2016/01/16/JavaScript-식별자-찾기-대모험/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2016/01/16/JavaScript-식별자-찾기-대모험/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2016/01/16/JavaScript-식별자-찾기-대모험/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+        
+            <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2018 HomoEfficio. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="1">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/01/23/BlockChain-기초-개념/"  data-tooltip="BlockChain 기초 개념">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/10/17/Hello-Triangle-in-WebGL/" data-tooltip="Hello Triangle in WebGL">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2016/01/16/JavaScript-식별자-찾기-대모험/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2016/01/16/JavaScript-식별자-찾기-대모험/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2016/01/16/JavaScript-식별자-찾기-대모험/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="1">
+    <ul class="share-options">
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2016/01/16/JavaScript-식별자-찾기-대모험/">
+                <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2016/01/16/JavaScript-식별자-찾기-대모험/">
+                <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2016/01/16/JavaScript-식별자-찾기-대모험/">
+                <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+            
+        </div>
+        <div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=110"/>
+        
+            <h4 id="about-card-name">HomoEfficio</h4>
+        
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Seoul, Korea.
+            </h5>
+        
+    </div>
+</div>
+        <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/script.min.js"></script>
+<!--SCRIPTS END-->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'hanmomhanda';
+        (function() {
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+
+
+
+</html>

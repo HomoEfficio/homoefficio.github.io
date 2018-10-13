@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="null">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="뒤태지존의 끄적거림">
+    <title>Spring - [ ]가 포함된 URL 파라미터 바인딩 하기 - 뒤태지존의 끄적거림</title>
+    <meta name="author" content="HomoEfficio">
+    <meta name="description" content="뒤태지존의 끄적거림">
+    
+        <link rel="icon" href="/assets/images/favicon.ico">
+    
+    
+        <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <meta name="description" content="스프링에서 Servlet Request에 포함된 parameter들의 모델 객체(또는 DTO 객체)로의 바인딩은 ServletRequestDataBinder에서 담당한다. 큰 흐름을 살펴보면 다음과 같다.  parameterName을 key로, parameterValue를 value로 해서 request 내의 모든 parameter를 MutablePrope">
+<meta name="keywords" content="Spring,Data Binding,URL,스프링,데이터 바인딩">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Spring - [ ]가 포함된 URL 파라미터 바인딩 하기">
+<meta property="og:url" content="http://homoefficio.github.io/2017/04/25/Spring-가-포함된-URL-파라미터-바인딩-하기/index.html">
+<meta property="og:site_name" content="뒤태지존의 끄적거림">
+<meta property="og:description" content="스프링에서 Servlet Request에 포함된 parameter들의 모델 객체(또는 DTO 객체)로의 바인딩은 ServletRequestDataBinder에서 담당한다. 큰 흐름을 살펴보면 다음과 같다.  parameterName을 key로, parameterValue를 value로 해서 request 내의 모든 parameter를 MutablePrope">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-10-13T15:49:56.255Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring - [ ]가 포함된 URL 파라미터 바인딩 하기">
+<meta name="twitter:description" content="스프링에서 Servlet Request에 포함된 parameter들의 모델 객체(또는 DTO 객체)로의 바인딩은 ServletRequestDataBinder에서 담당한다. 큰 흐름을 살펴보면 다음과 같다.  parameterName을 key로, parameterValue를 value로 해서 request 내의 모든 parameter를 MutablePrope">
+    
+        <meta rel="publisher" content="https://plus.google.com/+오명운"/>
+    
+    
+    
+        <meta property="og:image" content="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=640"/>
+    
+    
+        <meta property="og:image" content="/2017/04/25/Spring-가-포함된-URL-파라미터-바인딩-하기/http:/www.logicbig.com/tutorials/spring-framework/spring-core/data-binding/images/db.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2017/04/25/Spring-가-포함된-URL-파라미터-바인딩-하기/http://www.logicbig.com/tutorials/spring-framework/spring-core/data-binding/images/db.png" />
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style.min.css">
+    <!--STYLES END-->
+    
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-79893978-1']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6494847158566766",
+    enable_page_level_ads: true
+  });
+</script>
+</head>
+
+    <body>
+        <div id="blog">
+            <header id="header" data-behavior="1">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="/ ">뒤태지존의 끄적거림</a>
+    </h1>
+    
+        <a class="header-right-picture" href="/#about">
+            <img class="header-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+        </a>
+    
+</header>
+            <nav id="sidebar" data-behavior="1">
+    
+    <div class="sidebar-profile">
+        <a href="/#about">
+            
+            <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+            
+        </a>
+        <span class="sidebar-profile-name">HomoEfficio</span>
+    </div>
+    
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/ 
+                    ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">Home</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-categories
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">Categories</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-tags
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">Tags</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-archives
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">Archives</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link st-search-show-outputs"
+                    href="#search
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                    <span class="sidebar-button-desc">Search</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="#about
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">About me</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="https://github.com/HomoEfficio" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                    <span class="sidebar-button-desc">GitHub</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="mailto:homo.efficio@gmail.com" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-envelope-o"></i>
+                    <span class="sidebar-button-desc">Mail</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/atom.xml
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+            <div id="main" data-behavior="1">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+        <div class="post-header main-content-wrap">
+    
+        <h1 class="post-title" itemprop="headline">Spring - [ ]가 포함된 URL 파라미터 바인딩 하기</h1>
+    
+    <div class="post-meta">
+    <time  itemprop="datePublished" content="Tue Apr 25 2017 23:42:02 GMT+0900">
+        Apr 25, 2017
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Technique/">Technique</a>
+
+
+    
+</div>
+</div>
+    
+    <div class="post-content markdown main-content-wrap" itemprop="articleBody">
+        
+            <p>스프링에서 Servlet Request에 포함된 parameter들의 모델 객체(또는 DTO 객체)로의 바인딩은 <code>ServletRequestDataBinder</code>에서 담당한다.</p>
+<p>큰 흐름을 살펴보면 다음과 같다.</p>
+<ol>
+<li>parameterName을 key로, parameterValue를 value로 해서 request 내의 모든 parameter를 <code>MutablePropertyValues</code>에 넣은 후, </li>
+<li><code>MutablePropertyValues</code>에 저장된 값을 <code>DataBinder</code>를 통해 모델 객체(또는 DTO 객체)로 바인딩힌다.</li>
+</ol>
+<h2 id="문제"><a href="#문제" class="headerlink" title="문제"></a>문제</h2><p>parameterName이 특별한 점 없이 그냥 일반적이라면 모든 과정이 행복하게 끝나는데, parameterName이 아래와 같이 </p>
+<blockquote>
+<p>items[0][count]</p>
+</blockquote>
+<p>같은 형식으로 들어오면 다음과 같은 에러를 만나게 되는데, 더 안타까운 것은 이 에러는 <code>BindingResult</code>로는 잡히지도 않는다는 점이다.</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">org.springframework.beans.InvalidPropertyException: </span><br><span class="line">  Invalid property 'items[<span class="string">0</span>][<span class="symbol">count</span>]' of bean class [어쩌구DTO]: </span><br><span class="line"><span class="code">    Property referenced in indexed property path 'items[0][count]' is neither an array nor a List nor a Map</span></span><br><span class="line"></span><br><span class="line"><span class="code">`items[0][count]`</span>가 가리키는 값이 배열도, 리스트도, 맵도 아니라서 예외 발생</span><br></pre></td></tr></table></figure>
+<p>참고로 위 예외가 발생하는 정확한 위치는 스프링의 <code>AbstractNestablePropertyAccessor</code> 클래스의 <code>setPropertyValue</code> 메서드다.</p>
+<p>암튼, 저런 형식의 데이터가 들어올까?</p>
+<p>들어온다. 브라우저에서 jQuery로 다음과 같이 데이터를 서버에 보내면,</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">$.ajax(&#123;</span><br><span class="line">    url: <span class="string">'어쩌구-서버-API'</span>,</span><br><span class="line">    contentType: <span class="string">'application/json'</span>,</span><br><span class="line">    method: <span class="string">'GET'</span>,</span><br><span class="line">    crossDomain: <span class="literal">true</span>,</span><br><span class="line">    data: &#123;</span><br><span class="line">        id: <span class="string">"321"</span>,</span><br><span class="line">        items: [</span><br><span class="line">            &#123;</span><br><span class="line">                id: <span class="string">"abc987"</span>,</span><br><span class="line">                count: <span class="number">3</span></span><br><span class="line">            &#125;</span><br><span class="line">        ],</span><br><span class="line">        emails: [<span class="string">'abc@abc.com'</span>, <span class="string">'sdf@sdf.com'</span>]</span><br><span class="line">    &#125;</span><br><span class="line">&#125;).done(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 성공 시 처리 </span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>다음과 같은 URL로 서버에 요청이 전달된다.</p>
+<figure class="highlight maxima"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET /어쩌구-서버-API?id=<span class="number">321</span>&amp;items%<span class="number">5B0</span>%5D%5Bid%5D=abc987&amp;items%<span class="number">5B0</span>%5D%5Bcount%5D=<span class="number">3</span>&amp;emails%5B%5D=abc%40abc.com&amp;emails%5B%5D=sdf%40sdf.com</span><br></pre></td></tr></table></figure>
+<p>눈으로 읽을 수 있도록 URL Decoding하면 다음과 같다.</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET /어쩌구-서버-API?id=321&amp;items[<span class="string">0</span>][<span class="symbol">id</span>]=abc987&amp;items[<span class="string">0</span>][<span class="symbol">count</span>]=3&amp;emails[]=abc@abc.com&amp;emails[]=sdf@sdf.com</span><br></pre></td></tr></table></figure>
+<p>물론 이런 경우라면 원론적으로는 GET 보다는 POST로 보내는 게 적절하다. </p>
+<p>POST로 보냈다면(클라이언트에서도 <code>JSON.stringify()</code>를 이미 했을테고), <code>@RequestBody</code>로 읽어서 모델 객체에 문제 없이 바인딩 할 수 있다.</p>
+<p>하지만 이미 클라이언트가 모두 GET 방식으로 보내고 있고, 클라이언트가 한 군데가 아니라 꽤 많다면, 현실적으로는 그냥 서버 쪽에서 해결하는 것이 좋다.</p>
+<p>하지만 서버 쪽의 스프링은, 앞에서 얘기한 것처럼 이런 형식의 URL 파라미터를 자연스럽게 모델 객체로 바인딩 해 주지 못한다는..</p>
+<h2 id="해결"><a href="#해결" class="headerlink" title="해결"></a>해결</h2><p>그래서 이를 보완할 수 있는 유틸 메서드를 만들어봤다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> parameterMap  request.getParameterMap()</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> dto           바인딩 할 DTO의 클래스 리터럴</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> &lt;T&gt;           바인딩 할 DTO의 타입</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">T <span class="title">getDTOFromParamMap</span><span class="params">(Map&lt;String, String[]&gt; parameterMap, Class&lt;T&gt; dto)</span> </span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> IllegalAccessException, InstantiationException </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">final</span> MutablePropertyValues sourceProps = getPropsFrom(parameterMap);</span><br><span class="line"></span><br><span class="line">    T targetDTO = dto.newInstance();</span><br><span class="line">    DataBinder binder = <span class="keyword">new</span> DataBinder(targetDTO);</span><br><span class="line">    binder.bind(sourceProps);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> targetDTO;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> MutablePropertyValues <span class="title">getPropsFrom</span><span class="params">(Map&lt;String, String[]&gt; parameterMap)</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">final</span> MutablePropertyValues mpvs = <span class="keyword">new</span> MutablePropertyValues();</span><br><span class="line"></span><br><span class="line">    parameterMap.forEach(</span><br><span class="line">            (k, v) -&gt; &#123;</span><br><span class="line">                String dotKey =</span><br><span class="line">                        k.replaceAll(<span class="string">"\\[]"</span>, <span class="string">""</span>)</span><br><span class="line">                         .replaceAll(<span class="string">"\\[(\\D+)"</span>, <span class="string">".$1"</span>)</span><br><span class="line">                         .replaceAll(<span class="string">"]\\[(\\D)"</span>, <span class="string">".$1"</span>)</span><br><span class="line">                         .replaceAll(<span class="string">"(\\.\\w+)]"</span>, <span class="string">"$1"</span>);</span><br><span class="line">                mpvs.addPropertyValue(dotKey, v);</span><br><span class="line">            &#125;</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> mpvs;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>핵심 로직은 private 메서드의 람다식 안의 정규표현식에 담겨 있는데, 테스트 코드를 보면 금방 이해할 수 있다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> object인덱스형_key를_dot형으로_변환() <span class="keyword">throws</span> Exception &#123;</span><br><span class="line"></span><br><span class="line">    String k = <span class="string">"items[0][options][1][a][12][b][abc][c][1234][c1][33][_1][___][99][a33][b3][aa3]"</span>;</span><br><span class="line"></span><br><span class="line">    String result =</span><br><span class="line">            k.replaceAll(<span class="string">"\\[]"</span>, <span class="string">""</span>)</span><br><span class="line">             .replaceAll(<span class="string">"\\[(\\D+)"</span>, <span class="string">".$1"</span>)</span><br><span class="line">             .replaceAll(<span class="string">"]\\[(\\D)"</span>, <span class="string">".$1"</span>)</span><br><span class="line">             .replaceAll(<span class="string">"(\\.\\w+)]"</span>, <span class="string">"$1"</span>);</span><br><span class="line"></span><br><span class="line">    assertThat(result, is(<span class="string">"items[0].options[1].a[12].b.abc.c[1234].c1[33]._1.___[99].a33.b3.aa3"</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>쉽게 말해 <code>[ ]</code>로 구성된 parameterName을 스프링이 이해할 수 있는 <code>.</code> 형식으로 적절하게 변환해서 <code>MutablePropertyValues</code>에 에러 없이 집어넣을 수 있게 하고, <code>DataBinder</code>를 통해 모델 객체로 바인딩 하게 해준다.</p>
+<p>단, 한 가지 제약 조건이 있는데 <strong>[ ] 안에 들어가는 parameterName이 숫자로 시작하면 안된다</strong>는 점이다.</p>
+
+        
+        
+            
+        
+        <hr/>
+        <div>
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="크리에이티브 커먼즈 라이선스" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><a href='https://github.com/homoefficio' target='_blank'>HomoEfficio</a>가 작성한 이 저작물은(는) <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스</a>에 따라 이용할 수 있습니다.
+        </div>
+    </div>
+    <div class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/Data-Binding/">Data Binding</a> <a class="tag tag--primary tag--small t-link" href="/tags/Spring/">Spring</a> <a class="tag tag--primary tag--small t-link" href="/tags/URL/">URL</a> <a class="tag tag--primary tag--small t-link" href="/tags/데이터-바인딩/">데이터 바인딩</a> <a class="tag tag--primary tag--small t-link" href="/tags/스프링/">스프링</a>
+
+            </div>
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/07/18/Ever-wonder-how-Bitcoin-and-other-cryptocurrencies-actually-work/"  data-tooltip="(번역) Ever wonder how Bitcoin (and other cryptocurrencies) actually work?">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/04/16/Git-과거의-특정-커밋-수정하기/" data-tooltip="Git 과거의 특정 커밋 수정하기">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2017/04/25/Spring-가-포함된-URL-파라미터-바인딩-하기/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2017/04/25/Spring-가-포함된-URL-파라미터-바인딩-하기/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2017/04/25/Spring-가-포함된-URL-파라미터-바인딩-하기/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+        
+            <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2018 HomoEfficio. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="1">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/07/18/Ever-wonder-how-Bitcoin-and-other-cryptocurrencies-actually-work/"  data-tooltip="(번역) Ever wonder how Bitcoin (and other cryptocurrencies) actually work?">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/04/16/Git-과거의-특정-커밋-수정하기/" data-tooltip="Git 과거의 특정 커밋 수정하기">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2017/04/25/Spring-가-포함된-URL-파라미터-바인딩-하기/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2017/04/25/Spring-가-포함된-URL-파라미터-바인딩-하기/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2017/04/25/Spring-가-포함된-URL-파라미터-바인딩-하기/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="1">
+    <ul class="share-options">
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2017/04/25/Spring-가-포함된-URL-파라미터-바인딩-하기/">
+                <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2017/04/25/Spring-가-포함된-URL-파라미터-바인딩-하기/">
+                <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2017/04/25/Spring-가-포함된-URL-파라미터-바인딩-하기/">
+                <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+            
+        </div>
+        <div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=110"/>
+        
+            <h4 id="about-card-name">HomoEfficio</h4>
+        
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Seoul, Korea.
+            </h5>
+        
+    </div>
+</div>
+        <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/script.min.js"></script>
+<!--SCRIPTS END-->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'hanmomhanda';
+        (function() {
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+
+
+
+</html>

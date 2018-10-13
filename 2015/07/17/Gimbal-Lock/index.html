@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="null">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="뒤태지존의 끄적거림">
+    <title>Gimbal Lock - 뒤태지존의 끄적거림</title>
+    <meta name="author" content="HomoEfficio">
+    <meta name="description" content="뒤태지존의 끄적거림">
+    
+        <link rel="icon" href="/assets/images/favicon.ico">
+    
+    
+        <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <meta name="description" content="Gimbal LockGimbal Lock에 대해 자세히 알아보기 전에 정확하진 않지만 대략 착한놈인지 나쁜놈인지 정도는 감을 잡을 수 있는 문장을 읽어보자.  Gimbal Lock(김벌락)은 3차원 공간에서 오일러 각을 이용하는 방식으로 회전을 다룰 때 맞닥뜨리게 되는 부작용이다.  그렇다. 부작용이라고 표현한 것처럼 Gimbal Lock은 일단은 나쁜놈이">
+<meta name="keywords" content="Computer Graphics,WebGL,Gimbal Lock,3D,Rotation,김벌락,그래픽,웹지엘,3차원,회전">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Gimbal Lock">
+<meta property="og:url" content="http://homoefficio.github.io/2015/07/17/Gimbal-Lock/index.html">
+<meta property="og:site_name" content="뒤태지존의 끄적거림">
+<meta property="og:description" content="Gimbal LockGimbal Lock에 대해 자세히 알아보기 전에 정확하진 않지만 대략 착한놈인지 나쁜놈인지 정도는 감을 잡을 수 있는 문장을 읽어보자.  Gimbal Lock(김벌락)은 3차원 공간에서 오일러 각을 이용하는 방식으로 회전을 다룰 때 맞닥뜨리게 되는 부작용이다.  그렇다. 부작용이라고 표현한 것처럼 Gimbal Lock은 일단은 나쁜놈이">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://download.autodesk.com/global/docs/maya2014/en_us/images/comp_EulerAxes.png">
+<meta property="og:image" content="http://viz.aset.psu.edu/gho/sem_notes/3d_fundamentals/gifs/left_right_hand.gif">
+<meta property="og:image" content="http://adaptivemap.ma.psu.edu/websites/moments/moments/images/rhr.png">
+<meta property="og:updated_time" content="2018-10-13T15:49:56.203Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Gimbal Lock">
+<meta name="twitter:description" content="Gimbal LockGimbal Lock에 대해 자세히 알아보기 전에 정확하진 않지만 대략 착한놈인지 나쁜놈인지 정도는 감을 잡을 수 있는 문장을 읽어보자.  Gimbal Lock(김벌락)은 3차원 공간에서 오일러 각을 이용하는 방식으로 회전을 다룰 때 맞닥뜨리게 되는 부작용이다.  그렇다. 부작용이라고 표현한 것처럼 Gimbal Lock은 일단은 나쁜놈이">
+<meta name="twitter:image" content="http://download.autodesk.com/global/docs/maya2014/en_us/images/comp_EulerAxes.png">
+    
+        <meta rel="publisher" content="https://plus.google.com/+오명운"/>
+    
+    
+    
+        <meta property="og:image" content="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=640"/>
+    
+    
+        <meta property="og:image" content="/2015/07/17/Gimbal-Lock/https:/i.imgur.com/WhRCV3n.gif"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2015/07/17/Gimbal-Lock/https://i.imgur.com/WhRCV3n.gif" />
+    
+    
+        <meta property="og:image" content="/2015/07/17/Gimbal-Lock/gimbal-lock-cover.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2015/07/17/Gimbal-Lock/gimbal-lock-cover.png" />
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style.min.css">
+    <!--STYLES END-->
+    
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-79893978-1']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6494847158566766",
+    enable_page_level_ads: true
+  });
+</script>
+</head>
+
+    <body>
+        <div id="blog">
+            <header id="header" data-behavior="1">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="/ ">뒤태지존의 끄적거림</a>
+    </h1>
+    
+        <a class="header-right-picture" href="/#about">
+            <img class="header-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+        </a>
+    
+</header>
+            <nav id="sidebar" data-behavior="1">
+    
+    <div class="sidebar-profile">
+        <a href="/#about">
+            
+            <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+            
+        </a>
+        <span class="sidebar-profile-name">HomoEfficio</span>
+    </div>
+    
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/ 
+                    ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">Home</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-categories
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">Categories</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-tags
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">Tags</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-archives
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">Archives</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link st-search-show-outputs"
+                    href="#search
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                    <span class="sidebar-button-desc">Search</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="#about
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">About me</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="https://github.com/HomoEfficio" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                    <span class="sidebar-button-desc">GitHub</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="mailto:homo.efficio@gmail.com" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-envelope-o"></i>
+                    <span class="sidebar-button-desc">Mail</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/atom.xml
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+            <div id="main" data-behavior="1">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+        <div class="post-header-cover" style="background-image:url('/2015/07/17/Gimbal-Lock/gimbal-lock-cover.png');">
+            <div class="post-header main-content-wrap">
+    
+        <h1 class="post-title" itemprop="headline">Gimbal Lock</h1>
+    
+    <div class="post-meta">
+    <time  itemprop="datePublished" content="Fri Jul 17 2015 13:49:49 GMT+0900">
+        Jul 17, 2015
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/WebGL/">WebGL</a>
+
+
+    
+</div>
+</div>
+        </div>
+    
+    <div class="post-content markdown main-content-wrap" itemprop="articleBody">
+        
+            <h1 id="Gimbal-Lock"><a href="#Gimbal-Lock" class="headerlink" title="Gimbal Lock"></a>Gimbal Lock</h1><p><code>Gimbal Lock</code>에 대해 자세히 알아보기 전에 정확하진 않지만 대략 착한놈인지 나쁜놈인지 정도는 감을 잡을 수 있는 문장을 읽어보자.</p>
+<blockquote>
+<p><strong>Gimbal Lock(김벌락)은 3차원 공간에서 오일러 각을 이용하는 방식으로 회전을 다룰 때 맞닥뜨리게 되는 부작용이다.</strong></p>
+</blockquote>
+<p>그렇다. 부작용이라고 표현한 것처럼 <code>Gimbal Lock</code>은 일단은 나쁜놈이다. 이제부터 위 문장에 나온 단어 중 별로 친숙하지 않은 <code>김벌</code>, <code>오일러 각</code>에 대한 이야기를 시작으로 <code>김벌락</code>이 왜 나쁜놈인지 어떻게 이 나쁜놈을 피해갈 수 있는지 차례로 알아보자.</p>
+<h1 id="Gimbal"><a href="#Gimbal" class="headerlink" title="Gimbal"></a>Gimbal</h1><p>먼저 김벌은 무엇인지 영상으로 보자.<br>일단 4분 46초부터 5분 30초 까지만 보면 된다.</p>
+<div class="video-container"><iframe src="//www.youtube.com/embed/syQnn_xuB8U?t=4m46s" frameborder="0" allowfullscreen></iframe></div>
+<p>김벌은 어릴 때 한 번쯤은 가지고 놀아봤을테지만 이름은 몰랐던 바로 그 장난감이다. 김벌은 3가지 축으로 물체를 회전시켜 볼 수 있는 장난감인데, 아래와 같은 특징을 가지고 있다.</p>
+<ul>
+<li><p>안쪽의 고리는 중간의 고리에 연결되어 있어 중간의 고리가 회전할 때 함께 회전하고,</p>
+</li>
+<li><p>중간의 고리는 바깥의 고리와 연결되어 있어 바깥의 고리가 회전할 때 함께 회전한다.</p>
+</li>
+</ul>
+<p>다음 이야기를 이어가기 전에 여기서 꼭 기억하고 넘어가야 할 것이 한 가지 있다.</p>
+<blockquote>
+<p><strong>중간에 있는 고리가 회전할 때는 안쪽에 있는 고리를 물고 함께 회전한다.</strong></p>
+</blockquote>
+<p>바로 이것이 <code>Gimbal Lock</code>이 발생하는 핵심 원인이다. <strong>물고 함께 회전하기 때문에 Lock이라는 잠김 현상이 발생한다</strong>.</p>
+<h1 id="오일러-각"><a href="#오일러-각" class="headerlink" title="오일러 각"></a>오일러 각</h1><p><code>오일러 각(Euler&#39;s Angle)</code>은 이름에서 풍겨나오는 아우라와는 달리 단순하다. x축 기준의 회전각, y축 기준의 회전각, z축 기준의 회전각을 말한다.</p>
+<p><code>오일러 각</code>은 단순해서 그림이 오히려 글보다 보다 복잡해보이지만 그래도 한 번 보고 가자.</p>
+<p><img src="http://download.autodesk.com/global/docs/maya2014/en_us/images/comp_EulerAxes.png" alt=""></p>
+<p><code>오일러 각</code>을 이용한 회전이라 함은 결국 x, y, z축별 회전각을 통해 계산하는 회전 방식을 의미한다.</p>
+<p>그렇다면 축별 회전 순서는? 그건 정하기 나름이다. 보통은 단순하게 x축 회전을 가장 먼저, 그 다음 y축, z축의 순서로 회전을 적용하며, 이 글에서도 그 기준을 따른다.</p>
+<h1 id="오른손-법칙-왼손-법칙"><a href="#오른손-법칙-왼손-법칙" class="headerlink" title="오른손 법칙, 왼손 법칙"></a>오른손 법칙, 왼손 법칙</h1><p>x, y, z축이 등장했다. 앞으로 이 글에서의 설명은 모두 오른손 법칙을 기준으로 한다.</p>
+<p>오른손 법칙, 왼손 법칙도 그냥 그림으로 보고 넘어가자.</p>
+<p><img src="http://viz.aset.psu.edu/gho/sem_notes/3d_fundamentals/gifs/left_right_hand.gif" alt=""></p>
+<p>오른손 법칙은 오른손을 손바닥이 하늘을 향하도록 폈을 때, 엄지손가락이 가리키는 방향을 x축, 손바닥이 가리키는 방향을 y축, 오른 팔꿈치가 가리키는 방향이 z축이다.</p>
+<p>회전과 관련해서 오른손 법칙은 반시계 방향을 기본 회전 방향으로 한다. 손을 세로로 편 상태에서 주먹을 쥐어보자. 엄지를 회전 축이라고 한다면 나머지 네 손가락은 반시계 방향으로 회전한다.</p>
+<p><img src="http://adaptivemap.ma.psu.edu/websites/moments/moments/images/rhr.png" alt=""></p>
+<h1 id="영상으로-보는-김벌락"><a href="#영상으로-보는-김벌락" class="headerlink" title="영상으로 보는 김벌락"></a>영상으로 보는 김벌락</h1><p>이제 맨 처음 <code>김벌락</code>을 소개하는 문장에 나온 단어는 다 알게 되었고 오른손 법칙도 이해했으니, 이제 <code>김벌락</code>이 어떤 현상인지 실제 눈으로 확인해보자.</p>
+<p>영어로 나오지만, <strong>각 고리는 축별 회전면을 의미한다</strong>는 것만 이해하고 있으면 보는 데 큰 무리 없을 것이다. 06:24에서 06:50 까지만 보면 된다.</p>
+<div class="video-container"><iframe src="//www.youtube.com/embed/syQnn_xuB8U?t=6m24s" frameborder="0" allowfullscreen></iframe></div>
+<p>글로는 길었지만 영상으로는 겨우 25초 정도만 보면 이해할 수 있는 현상이 바로 <code>김벌락</code>이다.</p>
+<h1 id="김벌락의-정의"><a href="#김벌락의-정의" class="headerlink" title="김벌락의 정의"></a>김벌락의 정의</h1><p>이제 <code>김벌락</code>을 조금 더 폼나게 정의할 수 있을 것 같다.</p>
+<blockquote>
+<p><strong>김벌락은 3차원 공간에서 오일러 각 회전을 적용할 때, 특정 회전 상황에서 세 축 중 두 축이 겹치는 현상이다.</strong></p>
+</blockquote>
+<h1 id="김벌락이-왜-문제인가"><a href="#김벌락이-왜-문제인가" class="headerlink" title="김벌락이 왜 문제인가"></a>김벌락이 왜 문제인가</h1><p>위의 영상을 보면 알겠지만 y축을 기준으로 90도의 회전을 적용하면 x축과 z축이 겹친다. 두 축이 겹친다는 것은 x축을 기준으로 회전하는 것과 z축을 기준으로 회전하는 것이 결국에는 동일한 하나의 축을 기준으로 회전한다는 소리다.</p>
+<p>처음에 x, y, z축 별 회전각을 a, b, c로 정했을 때는 각 축 별로 a, b, c만큼 회전하길 원했던 건데, b가 90도가 되면 x축 기준의 회전과 z축 기준의 회전이 같아진 다는 것은 원래 원했던 상황이 아니다. 그래서 <code>김벌락</code>이 문제아 취급을 받는다.</p>
+<p>영상에서는 y축 기준 90도 회전을 예로 보여줬는데, 사실 아주 엄밀히 얘기하면 y축을 기준으로 90도가 아니라 -90도를 회전시켜야 x축과 z축이 완전히 동일해진다. 90도로 회전하면 x축과 z축이 일직선상에 있지만 방향은 반대인 상태가 된다.</p>
+<p>y축이 -90도 회전하면 x축, z축이 동일해지므로 그 동일한 축을 기준으로 a + c 만큼 회전이 발생하고, y축이 90도 회전하면 x축, z축이 방향이 반대인 상태가 되므로 회전이 서로 상쇄되어 x축 기준으로 a - c 만큼, z축 기준으로는 c - a 만큼 회전이 발생한다. 물론 이 내용은 앞에서도 얘기했듯이 오른손 법칙, 반시계 방향 회전 기준이며, 회전은 x축, y축, z축 순서 기준이다.</p>
+<h1 id="다른-관점에서-보는-김벌락의-원인"><a href="#다른-관점에서-보는-김벌락의-원인" class="headerlink" title="다른 관점에서 보는 김벌락의 원인"></a>다른 관점에서 보는 김벌락의 원인</h1><p>오일러 회전을 얘기할 때 <strong>축별 회전 순서</strong>라는 것을 잠깐 얘기 했었다. <code>김벌락</code>의 원인은 축별 순서가 존재하고, 그 순서에 따라 어떤 축의 회전이 다른 축의 회전에 영향을 미치기 때문에 발생한다. 어떤 점(point)을 오일러 회전을 적용해서 x축, y축, z축 순서로 회전 시키는 방법을 단순하게 표현하면 다음과 같다.</p>
+<blockquote>
+<p><code>회전 후 점의 좌표</code> =<br>    <code>z축 기준 회전</code> &#215; <code>y축 기준 회전</code> &#215; <code>x축 기준 회전</code> &#215; <code>회전 전 점의 좌표</code></p>
+</blockquote>
+<p>안쪽 고리(<code>x축 기준 회전</code>)는 다른 고리에 영향을 안 미치고 회전하는 물체(<code>회전 점의 좌표</code>)에만 영향을 미치며, 중간 고리(<code>y축 기준 회전</code>)는 회전할 때 안쪽 고리(<code>x축 기준 회전</code>)를 물고 함께 회전하고, 바깥쪽 고리(<code>z축 기준 회전</code>)는 회전할 때 중간 고리(<code>y축 기준 회전</code>)를 물고 회전하는 이유가 이 식에 담겨 있다.</p>
+<p>그리고 <code>김벌락</code>의 발생을 피할 수 있는 방법에 대한 힌트도 이 식에 담겨 있다.</p>
+<h1 id="김벌락-회피-방법"><a href="#김벌락-회피-방법" class="headerlink" title="김벌락 회피 방법"></a>김벌락 회피 방법</h1><p>결국 <code>김벌락</code>은 회전을 여러 축(x축, y축, z축)의 회전으로 계산하기 떄문에 발생하는 현상이었던 것이다.</p>
+<p>이쯤 되면 <code>김벌락</code>을 피할 수 있는 방법을 이미 알아버린거나 마찬가지다.</p>
+<blockquote>
+<p><strong>회전을 여러 행렬의 곱이 아니라 다른 방식으로 계산해 낼 수 있다면 김벌락의 발생을 막을 수 있다!!</strong></p>
+</blockquote>
+<p>이 다른 방식의 회전 중의 하나가 바로 <strong><code>4원수를 이용한 회전</code></strong> 되시겠다.</p>
+<p><strong><code>4원수를 이용한 회전</code></strong>은 다음 글에서..</p>
+<h1 id="정리"><a href="#정리" class="headerlink" title="정리"></a>정리</h1><ul>
+<li><p><code>김벌락</code>은 3차원 공간 상에서 <code>오일러 회전</code>을 적용할 때 발생하는 부작용이다.</p>
+</li>
+<li><p><code>김벌락</code>은 y축의 회전에 따라 x축과 z축이 완전히 겹쳐지면서 x축 회전과 z축 회전이 합쳐지거나 상쇄되는 현상이다.</p>
+</li>
+<li><p><code>김벌락</code>은 회전을 x축, y축, z축별 회전의 곱으로 계산하기 때문에 발생한다.</p>
+</li>
+<li><p>회전을 다른 방식으로 계산하면 <code>김벌락</code>의 발생을 막을 수 있다.</p>
+</li>
+</ul>
+
+        
+        
+            
+        
+        <hr/>
+        <div>
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="크리에이티브 커먼즈 라이선스" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><a href='https://github.com/homoefficio' target='_blank'>HomoEfficio</a>가 작성한 이 저작물은(는) <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스</a>에 따라 이용할 수 있습니다.
+        </div>
+    </div>
+    <div class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/3D/">3D</a> <a class="tag tag--primary tag--small t-link" href="/tags/3차원/">3차원</a> <a class="tag tag--primary tag--small t-link" href="/tags/Computer-Graphics/">Computer Graphics</a> <a class="tag tag--primary tag--small t-link" href="/tags/Gimbal-Lock/">Gimbal Lock</a> <a class="tag tag--primary tag--small t-link" href="/tags/Rotation/">Rotation</a> <a class="tag tag--primary tag--small t-link" href="/tags/WebGL/">WebGL</a> <a class="tag tag--primary tag--small t-link" href="/tags/그래픽/">그래픽</a> <a class="tag tag--primary tag--small t-link" href="/tags/김벌락/">김벌락</a> <a class="tag tag--primary tag--small t-link" href="/tags/웹지엘/">웹지엘</a> <a class="tag tag--primary tag--small t-link" href="/tags/회전/">회전</a>
+
+            </div>
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/07/17/게임-프로그래밍을-위한-3차원-그래픽스/"  data-tooltip="게임 프로그래밍을 위한 3차원 그래픽스">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/07/14/Java-객체-지향-디자인-패턴/" data-tooltip="Java 객체 지향 디자인 패턴">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2015/07/17/Gimbal-Lock/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2015/07/17/Gimbal-Lock/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2015/07/17/Gimbal-Lock/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+        
+            <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2018 HomoEfficio. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="1">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/07/17/게임-프로그래밍을-위한-3차원-그래픽스/"  data-tooltip="게임 프로그래밍을 위한 3차원 그래픽스">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/07/14/Java-객체-지향-디자인-패턴/" data-tooltip="Java 객체 지향 디자인 패턴">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2015/07/17/Gimbal-Lock/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2015/07/17/Gimbal-Lock/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2015/07/17/Gimbal-Lock/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="1">
+    <ul class="share-options">
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2015/07/17/Gimbal-Lock/">
+                <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2015/07/17/Gimbal-Lock/">
+                <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2015/07/17/Gimbal-Lock/">
+                <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+            
+        </div>
+        <div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=110"/>
+        
+            <h4 id="about-card-name">HomoEfficio</h4>
+        
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Seoul, Korea.
+            </h5>
+        
+    </div>
+</div>
+        <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/script.min.js"></script>
+<!--SCRIPTS END-->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'hanmomhanda';
+        (function() {
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+
+
+
+</html>

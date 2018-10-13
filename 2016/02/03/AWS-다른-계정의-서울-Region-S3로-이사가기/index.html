@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="null">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="뒤태지존의 끄적거림">
+    <title>AWS - 다른 계정의 서울 Region S3로 이사가기 - 뒤태지존의 끄적거림</title>
+    <meta name="author" content="HomoEfficio">
+    <meta name="description" content="뒤태지존의 끄적거림">
+    
+        <link rel="icon" href="/assets/images/favicon.ico">
+    
+    
+        <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <meta name="description" content="다른 계정의 서울 Region S3로 이사가기AWS 프리티어 기간 만료가 가까워서 새 계정을 개설해서 옮겨보려고 한다.마침 AWS에 서울 리전(Region)이 개설되었고, S3도 개설 서비스 목록에 포함되어 있다.  새 계정의 S3로 이사가는 대략적인 큰 순서는 다음과 같다.  AWS 새 계정 생성, IAM Group 생성, IAM 계정 생성, ACCESS">
+<meta name="keywords" content="Amazon Web Services,AWS,Region,S3,Migration,sync,Simple Storage Service,Seoul,아마존 웹 서비스,서울 리전">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="AWS - 다른 계정의 서울 Region S3로 이사가기">
+<meta property="og:url" content="http://homoefficio.github.io/2016/02/03/AWS-다른-계정의-서울-Region-S3로-이사가기/index.html">
+<meta property="og:site_name" content="뒤태지존의 끄적거림">
+<meta property="og:description" content="다른 계정의 서울 Region S3로 이사가기AWS 프리티어 기간 만료가 가까워서 새 계정을 개설해서 옮겨보려고 한다.마침 AWS에 서울 리전(Region)이 개설되었고, S3도 개설 서비스 목록에 포함되어 있다.  새 계정의 S3로 이사가는 대략적인 큰 순서는 다음과 같다.  AWS 새 계정 생성, IAM Group 생성, IAM 계정 생성, ACCESS">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://i.imgur.com/4mcAI8G.png">
+<meta property="og:image" content="http://i.imgur.com/ASkOyEe.png">
+<meta property="og:image" content="http://i.imgur.com/fYcSdoT.png">
+<meta property="og:image" content="http://i.imgur.com/DNQpVSN.png">
+<meta property="og:image" content="http://i.imgur.com/LPe9g4y.png">
+<meta property="og:image" content="http://i.imgur.com/PtyJSOM.png">
+<meta property="og:image" content="http://i.imgur.com/j3MJJXZ.png">
+<meta property="og:image" content="http://i.imgur.com/aRowuEu.png">
+<meta property="og:image" content="http://i.imgur.com/Syc5gGp.png">
+<meta property="og:image" content="http://i.imgur.com/ZdkINg5.png">
+<meta property="og:image" content="http://i.imgur.com/NJ9mnZg.png">
+<meta property="og:image" content="http://i.imgur.com/jps84sj.png">
+<meta property="og:image" content="http://i.imgur.com/PuSGBtm.png">
+<meta property="og:image" content="http://i.imgur.com/vPbr3LI.png">
+<meta property="og:updated_time" content="2018-10-13T15:49:56.177Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="AWS - 다른 계정의 서울 Region S3로 이사가기">
+<meta name="twitter:description" content="다른 계정의 서울 Region S3로 이사가기AWS 프리티어 기간 만료가 가까워서 새 계정을 개설해서 옮겨보려고 한다.마침 AWS에 서울 리전(Region)이 개설되었고, S3도 개설 서비스 목록에 포함되어 있다.  새 계정의 S3로 이사가는 대략적인 큰 순서는 다음과 같다.  AWS 새 계정 생성, IAM Group 생성, IAM 계정 생성, ACCESS">
+<meta name="twitter:image" content="http://i.imgur.com/4mcAI8G.png">
+    
+        <meta rel="publisher" content="https://plus.google.com/+오명운"/>
+    
+    
+    
+        <meta property="og:image" content="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=640"/>
+    
+    
+        <meta property="og:image" content="/2016/02/03/AWS-다른-계정의-서울-Region-S3로-이사가기/https:/fliphtml5.com/images/cloud-s3-2.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2016/02/03/AWS-다른-계정의-서울-Region-S3로-이사가기/https://fliphtml5.com/images/cloud-s3-2.png" />
+    
+    
+        <meta property="og:image" content="/2016/02/03/AWS-다른-계정의-서울-Region-S3로-이사가기/coverImage-s3-migration.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2016/02/03/AWS-다른-계정의-서울-Region-S3로-이사가기/coverImage-s3-migration.jpg" />
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style.min.css">
+    <!--STYLES END-->
+    
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-79893978-1']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6494847158566766",
+    enable_page_level_ads: true
+  });
+</script>
+</head>
+
+    <body>
+        <div id="blog">
+            <header id="header" data-behavior="1">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="/ ">뒤태지존의 끄적거림</a>
+    </h1>
+    
+        <a class="header-right-picture" href="/#about">
+            <img class="header-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+        </a>
+    
+</header>
+            <nav id="sidebar" data-behavior="1">
+    
+    <div class="sidebar-profile">
+        <a href="/#about">
+            
+            <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+            
+        </a>
+        <span class="sidebar-profile-name">HomoEfficio</span>
+    </div>
+    
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/ 
+                    ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">Home</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-categories
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">Categories</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-tags
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">Tags</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-archives
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">Archives</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link st-search-show-outputs"
+                    href="#search
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                    <span class="sidebar-button-desc">Search</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="#about
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">About me</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="https://github.com/HomoEfficio" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                    <span class="sidebar-button-desc">GitHub</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="mailto:homo.efficio@gmail.com" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-envelope-o"></i>
+                    <span class="sidebar-button-desc">Mail</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/atom.xml
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+            <div id="main" data-behavior="1">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+        <div class="post-header-cover" style="background-image:url('/2016/02/03/AWS-다른-계정의-서울-Region-S3로-이사가기/coverImage-s3-migration.jpg');">
+            <div class="post-header main-content-wrap">
+    
+        <h1 class="post-title" itemprop="headline">AWS - 다른 계정의 서울 Region S3로 이사가기</h1>
+    
+    <div class="post-meta">
+    <time  itemprop="datePublished" content="Wed Feb 03 2016 17:44:59 GMT+0900">
+        Feb 03, 2016
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/개발-환경-및-도구/">개발 환경 및 도구</a>
+
+
+    
+</div>
+</div>
+        </div>
+    
+    <div class="post-content markdown main-content-wrap" itemprop="articleBody">
+        
+            <h1 id="다른-계정의-서울-Region-S3로-이사가기"><a href="#다른-계정의-서울-Region-S3로-이사가기" class="headerlink" title="다른 계정의 서울 Region S3로 이사가기"></a>다른 계정의 서울 Region S3로 이사가기</h1><p>AWS 프리티어 기간 만료가 가까워서 새 계정을 개설해서 옮겨보려고 한다.<br>마침 AWS에 서울 리전(Region)이 개설되었고, S3도 <a href="http://www.awsseoul.kr/sub01.html#introseoul02" target="_blank" rel="noopener">개설 서비스 목록</a>에 포함되어 있다.</p>
+<p><img src="http://i.imgur.com/4mcAI8G.png" alt=""></p>
+<p>새 계정의 S3로 이사가는 대략적인 큰 순서는 다음과 같다.</p>
+<ol>
+<li>AWS 새 계정 생성, IAM Group 생성, IAM 계정 생성, ACCESS_KEY 발급</li>
+<li>credentials 파일에 새 IAM 계정 정보 추가</li>
+<li>config 파일에 profile 정보 추가</li>
+<li>새 계정의 S3에 버킷 생성</li>
+<li>기존 S3 버킷 권한 수정</li>
+<li>새 계정의 Custom Policy 설정</li>
+<li>AWS CLI 설치</li>
+<li>aws sync 명령 실행</li>
+<li>Application 설정</li>
+</ol>
+<p>이 중에서 1번은 AWS 사용자라면 다들 알만한 내용이니 과감히 뛰어넘고 2번부터 정주행하자.</p>
+<h1 id="credentials-파일에-새-IAM-계정-정보-추가"><a href="#credentials-파일에-새-IAM-계정-정보-추가" class="headerlink" title="credentials 파일에 새 IAM 계정 정보 추가"></a>credentials 파일에 새 IAM 계정 정보 추가</h1><p>보통 ~/.aws/ 에 위치한 credentials 파일에 새 IAM 계정의 ACCESS_KEY 정보를 아래와 같이 <code>[프로파일이름]</code>의 형식으로 프로파일 이름을 지정해서 추가한다.</p>
+<p>기존 계정의 ACCESS_KEY 정보에는 일단 default 라는 프로파일 이름을 지정한다.</p>
+<p><img src="http://i.imgur.com/ASkOyEe.png" alt=""></p>
+<p>credentials 관련 정보는 <a href="http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html#cli-multiple-profiles" target="_blank" rel="noopener">http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html#cli-multiple-profiles</a> 를 참고한다.</p>
+<h1 id="config-파일에-profile-정보-추가"><a href="#config-파일에-profile-정보-추가" class="headerlink" title="config 파일에 profile 정보 추가"></a>config 파일에 profile 정보 추가</h1><p>~/.aws/config 파일에 아래와 같이 Region과 출력 형식(output)을 지정해준다.<br>서울은 ap-northeast-2 이며, 출력 형식은 json과 text가 가능한데 CLI에서는 text가 아무래도 익숙하다.</p>
+<p>Region에 지정할 값은 <a href="http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region" target="_blank" rel="noopener">http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region</a> 를 참고한다.</p>
+<p> <img src="http://i.imgur.com/fYcSdoT.png" alt=""></p>
+<p>config 관련 정보도 <a href="http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html#cli-multiple-profiles" target="_blank" rel="noopener">http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html#cli-multiple-profiles</a> 를 참고한다.</p>
+<h1 id="새-계정의-S3에-버킷-생성"><a href="#새-계정의-S3에-버킷-생성" class="headerlink" title="새 계정의 S3에 버킷 생성"></a>새 계정의 S3에 버킷 생성</h1><p>아래와 같이 Bucket 이름을 지정하고, Region에 Seoul을 지정하고 Create를 클릭</p>
+<p><img src="http://i.imgur.com/DNQpVSN.png" alt=""></p>
+<h1 id="기존-S3-버킷-권한-수정"><a href="#기존-S3-버킷-권한-수정" class="headerlink" title="기존 S3 버킷 권한 수정"></a>기존 S3 버킷 권한 수정</h1><p>기존 S3 버킷에서 새 계정의 S3 버킷으로 복사하려면, 새 계정으로 기존의 S3 버킷에 접근할 수 있어야 한다.  </p>
+<h2 id="새-계정의-정보-파악"><a href="#새-계정의-정보-파악" class="headerlink" title="새 계정의 정보 파악"></a>새 계정의 정보 파악</h2><p>기존 S3 버킷에 새 계정으로 접근할 수 있도록 설정하려면 먼저 새 계정의 <code>account number</code>와 <code>account_name</code> 정보를 파악해둬야 한다.</p>
+<ul>
+<li><p>해당 정보는 아래와 같이 새로 생성한 계정의 AWS Console &gt; Security &amp; Credentials &gt;  Continue to Security Credentials &gt; Users 에서 새로 생성한 계정을 선택하면 확인할 수 있다.</p>
+<p>  <img src="http://i.imgur.com/LPe9g4y.png" alt=""></p>
+<p>  <img src="http://i.imgur.com/PtyJSOM.png" alt=""></p>
+<p>  <img src="http://i.imgur.com/j3MJJXZ.png" alt=""></p>
+</li>
+</ul>
+<h2 id="기존-S3-버킷의-Policy-수정"><a href="#기존-S3-버킷의-Policy-수정" class="headerlink" title="기존 S3 버킷의 Policy 수정"></a>기존 S3 버킷의 Policy 수정</h2><p>기존 S3 버킷의 Permissions &gt; Bucket Policy Editor 에 아래의 내용을 입력한다.</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"Version"</span>: <span class="string">"2012-10-17"</span>,</span><br><span class="line">    <span class="attr">"Statement"</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">"Sid"</span>: <span class="string">"DelegateS3Access"</span>,</span><br><span class="line">            <span class="attr">"Effect"</span>: <span class="string">"Allow"</span>,</span><br><span class="line">            <span class="attr">"Principal"</span>: &#123;</span><br><span class="line">                <span class="attr">"AWS"</span>: <span class="string">"arn:aws:iam::ACCOUNT_NUMBER:user/NEW_ACCOUNT_NAME"</span></span><br><span class="line">            &#125;,</span><br><span class="line">            <span class="attr">"Action"</span>: <span class="string">"s3:*"</span>,</span><br><span class="line">            <span class="attr">"Resource"</span>: [</span><br><span class="line">                <span class="string">"arn:aws:s3:::기존.버킷.이름"</span>,</span><br><span class="line">                <span class="string">"arn:aws:s3:::기존.버킷.이름/*"</span></span><br><span class="line">            ]</span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>ACCOUNT_NUMBER</code>와 <code>NEW_ACCOUNT_NAME</code>에는 앞에서 파악한 <strong>새 계정의 정보</strong>를 입력한다. </li>
+<li><code>Action</code> 항목에는 현재는 편의상 s3의 모든 권한을 부여했는데, <strong>실무에서는 필요한 권한만 부여하는 것이 안전</strong>하다.</li>
+<li><code>기존.버킷.이름</code>에는 말 그대로 복사할 때 source가 되는 기존 버킷 이름을 기술한다. </li>
+</ul>
+<h1 id="새-계정의-Custom-Policy-설정"><a href="#새-계정의-Custom-Policy-설정" class="headerlink" title="새 계정의 Custom Policy 설정"></a>새 계정의 Custom Policy 설정</h1><p>이제 새 계정이 기존 계정의 S3 버킷에 접근할 수 있도록 계정의 Policy를 설정해줘야 한다.<br>IAM Group에 Policy를 설정할 수도 있고, IAM User에 Policy를 설정할 수도 있는데, 여기서는 User에 설정하는 방식을 설명한다.</p>
+<ul>
+<li><p>새로 생성한 계정의 AWS Console &gt; Security &amp; Credentials &gt; Continue to Security Credentials &gt; Users 에서 새로 생성한 계정을 선택하고,    </p>
+</li>
+<li><p>하단의 Permisions 탭 &gt; Inline Policies &gt; (최초 생성일 경우는 아래와 같이 click here를 클릭, 이미 추가된 Policy가 있는 경우 Create User Policy를 클릭) &gt; Custom Policy &gt; Select를 클릭해서,</p>
+<p>  <img src="http://i.imgur.com/aRowuEu.png" alt=""></p>
+<ul>
+<li>Policy Name : GetObjectsFromOldGradnetS3 와 같이 적당한 이름을 지정</li>
+<li><p>Policy Document : 아래의 Policy 입력</p>
+  <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"Version"</span>: <span class="string">"2012-10-17"</span>,</span><br><span class="line">    <span class="attr">"Statement"</span>: &#123;</span><br><span class="line">        <span class="attr">"Effect"</span>: <span class="string">"Allow"</span>,</span><br><span class="line">        <span class="attr">"Action"</span>: <span class="string">"s3:*"</span>,</span><br><span class="line">        <span class="attr">"Resource"</span>: [</span><br><span class="line">            <span class="string">"arn:aws:s3:::기존.버킷.이름"</span>,</span><br><span class="line">            <span class="string">"arn:aws:s3:::기존.버킷.이름/*"</span>,</span><br><span class="line">            <span class="string">"arn:aws:s3:::새.버킷.이름"</span>,</span><br><span class="line">            <span class="string">"arn:aws:s3:::새.버킷.이름/*"</span>                    </span><br><span class="line">        ]</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>입력 화면 예시        </p>
+<p>  <img src="http://i.imgur.com/Syc5gGp.png" alt=""></p>
+</li>
+<li><p>Validate Policy 를 클릭해서 입력 내용을 검증하고, Apply Policy를 클릭해서 Policy를 등록하면 아래와 같이 Policy가 추가된다.</p>
+<p>  <img src="http://i.imgur.com/ZdkINg5.png" alt=""></p>
+</li>
+</ul>
+</li>
+</ul>
+<p>이걸로 AWS 콘솔에서 준비할 일은 끝이다. 이제 실제 복사 명령을 내려보자.</p>
+<h1 id="AWS-CLI-설치"><a href="#AWS-CLI-설치" class="headerlink" title="AWS CLI 설치"></a>AWS CLI 설치</h1><p>일반적인 리눅스라면 <code>sudo pip install awscli</code> 라는 명령으로 손쉽게 설치할 수 있지만, 만약 이 명령이 안 먹는다면 python도 깔아야 하고 pip도 깔아야 한다. </p>
+<p>AWS CLI 설치를 위한 정보는 <a href="http://docs.aws.amazon.com/ko_kr/cli/latest/userguide/installing.html" target="_blank" rel="noopener">http://docs.aws.amazon.com/ko_kr/cli/latest/userguide/installing.html</a> 를 참고한다.</p>
+<h1 id="aws-sync-명령-실행"><a href="#aws-sync-명령-실행" class="headerlink" title="aws sync 명령 실행"></a>aws sync 명령 실행</h1><p>복사 하나 하는게 뭐 이리 힘든지.. 드디어 마지막이다. AWS 문서를 샅샅이 뒤져야 찾을 수 있었던..</p>
+<p>이 글의 토대가 된 <a href="https://aws.amazon.com/ko/premiumsupport/knowledge-center/account-transfer-s3/" target="_blank" rel="noopener">https://aws.amazon.com/ko/premiumsupport/knowledge-center/account-transfer-s3/</a> 에 마땅히 있어야 할 내용이고, 있었다면 이런 글 쓸 필요도 없었겠지만..</p>
+<p>먼저 터미널에서 아래의 명령을 실행해서 source인 기존 S3 버킷의 Region을 파악한다. </p>
+<blockquote>
+<p>aws s3api get-bucket-location –bucket 기존.버킷.이름</p>
+</blockquote>
+<p><img src="http://i.imgur.com/NJ9mnZg.png" alt=""></p>
+<p>내 경우 기존의 S3 버킷이 Tokyo에 있었으므로 ap-northeast-1이라는 값이 결과로 나온다.</p>
+<p>이번엔 target이 될 새 S3 버킷의 Region을 파악한다. 주의할 점은 새 S3 버킷은 새로 생성한 계정으로만 접근할 수 있으므로, <code>--profile</code> 옵션으로 프로파일을 지정해줘야 한다.<br>결과는 물론 Seoul이니까 ap-northeast-2가 나올 것이다.</p>
+<blockquote>
+<p>aws s3api get-bucket-location –bucket 새.버킷.이름 –profile 프로파일이름</p>
+</blockquote>
+<p><img src="http://i.imgur.com/jps84sj.png" alt=""></p>
+<p>자 이제 마지막 복사 명령만 남았다. AWS 문서에는 달랑 아래의 명령을 실행하면 된다고 나와있지만,</p>
+<blockquote>
+<p>aws s3 sync s3://sourcebucket s3://destinationbucket</p>
+</blockquote>
+<p>이건 source와 target이 동일한 Region 내에 있을 때만, 그리고 새 계정이 AWS CLI의 default 프로파일로 설정되어 있을 때나 쓸 수 있는 특별한 사례에 불과하다.</p>
+<p>내 경우처럼 기존 계정이 default로 되어 있지 않아 프로파일을 지정해줘야 하고, source 버킷과 target 버킷의 Region이 다르고, 접근 권한을 변경해줘야 할 때도 쓸 수 있는 일반적인 해법이 필요하다. 더 많은 옵션이 필요할 수도 있지만 일단 다음의 명령으로 해결했다. </p>
+<blockquote>
+<p>aws s3 sync s3://기존.버킷.이름 s3://새.버킷.이름 –source-region 기존버킷의Region –region 새버킷의Region –grants read=uri=<a href="http://acs.amazonaws.com/groups/global/AllUsers" target="_blank" rel="noopener">http://acs.amazonaws.com/groups/global/AllUsers</a> full=id=새계정의CanonicalID –storage-class REDUCED_REDUNDANCY –profile onetouch</p>
+</blockquote>
+<p><img src="http://i.imgur.com/PuSGBtm.png" alt=""></p>
+<p>필요한 옵션은 아래와 같다.</p>
+<ul>
+<li>--source-region : source 버킷의 Region 정보</li>
+<li>--region : target 버킷의 Region 정보</li>
+<li>--grants : 복사되는 자원에 대한 접근 권한 설정<ul>
+<li><code>Permission=Grantee_type=Grantee_ID [Permission=Grantee_type=Grantee_ID ...]</code>의 형태로 여러 권한을 한 번에 설정할 수 있다.<ul>
+<li>Permission은 <code>read</code>, <code>readacl</code>, <code>writeacl</code>, <code>full</code> 중 하나로 설정 가능</li>
+<li>Grantee_type은 <code>uri</code>, <code>emailaddress</code>, <code>id</code> 중 하나로 설정 가능</li>
+<li>Grantee_ID는 Grantee_type의 설정 내용에 따라 달라지는데, Grantee_type이 <code>uri</code> 인 경우 <a href="http://docs.aws.amazon.com/ko_kr/AmazonS3/latest/dev/acl-overview.html#canned-acl" target="_blank" rel="noopener">http://docs.aws.amazon.com/ko_kr/AmazonS3/latest/dev/acl-overview.html#canned-acl</a> 를 참고, <code>emailaddress</code>인 경우 이메일주소, <code>id</code>인 경우 계정의 Canonical ID를 입력한다.<ul>
+<li>Canonical ID는 AWS 콘솔 &gt; Security Credentials &gt; Continue to Security Credentials &gt; Account Identifiers 를 클릭하면 확인할 수 있다.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>--storage-class와 --profile은 설명 생략~</li>
+</ul>
+<p>더 자세한 옵션 설정이 필요하다면, <a href="http://docs.aws.amazon.com/cli/latest/reference/s3/sync.html" target="_blank" rel="noopener">http://docs.aws.amazon.com/cli/latest/reference/s3/sync.html</a> 를 참고한다.</p>
+<p>여기까지 하면 기존 S3 버킷에 있던 내용물의 복사는 완료된다. 하지만 실제 Application에서 접근해서 사용하기 위해서는 할 일이 더 남아있다.</p>
+<h1 id="Application-설정"><a href="#Application-설정" class="headerlink" title="Application 설정"></a>Application 설정</h1><p>구체적인 설정 내용은 Spring을 기준으로 한다.</p>
+<h2 id="계정-정보-업데이트"><a href="#계정-정보-업데이트" class="headerlink" title="계정 정보 업데이트"></a>계정 정보 업데이트</h2><p>먼저 새 계정으로 새 S3 버킷에 접근하도록 계정 정보를 업데이트 해줘야 한다. </p>
+<p>단순하게는 ~/.aws/credentials 파일에서 새 계정의 ACCESS_KEY 정보 위에 [default]를 지정해서 기본 프로파일로 지정해주면 된다.</p>
+<p>아니면 프로파일을 명시적으로 지정해주는 방식을 쓸 수도 있는데, AmazonS3Client를 아래와 같이 설정해준다.</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"awsCredentialsProvider"</span> <span class="attr">class</span>=<span class="string">"com.amazonaws.auth.profile.ProfileCredentialsProvider"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">value</span>=<span class="string">"#&#123;app['aws.credential.profile']&#125;"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"s3Client"</span> <span class="attr">class</span>=<span class="string">"com.amazonaws.services.s3.AmazonS3Client"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">ref</span>=<span class="string">"awsCredentialsProvider"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><code>ProfileCredentialsProvider</code>의 생성자 인자로 들어갈 값은 ~/.aws/credentials나 ~/.aws/config에서 지정한 프로파일 이름이다. 읽어오는 방식은 Application의 property 사용 방식을 따르면 된다.</p>
+<h2 id="S3-Endpoint-지정"><a href="#S3-Endpoint-지정" class="headerlink" title="S3 Endpoint 지정"></a>S3 Endpoint 지정</h2><p><a href="http://docs.aws.amazon.com/ko_kr/general/latest/gr/rande.html#s3_region" target="_blank" rel="noopener">서울 Region에서 서비스하는 S3는 Signature Version 4만 지원한다</a>.<br>따라서 AmazonS3Client 생성 시 Endpoint나 Region을 지정해주지 않으면, Signature Version 2를 지원하는 S3에서는 볼 수 없었던 아래와 같은 경고 메시지가 나온다.</p>
+<p><img src="http://i.imgur.com/vPbr3LI.png" alt=""></p>
+<p>이를 해결하려면 Enpoint나 Region을 지정해줘야 하는데, 아무래도 텍스트로 지정할 수 있는 Endpoint를 지정해주는 것이 더 편리하다.</p>
+<p>앞에서 AmazonS3Client를 설정한 부분에 아래와 같이 endpoint라는 속성 값을 추가로 지정해준다. 서울 Region의 경우 실제 들어갈 문자열은 <code>s3.ap-northeast-2.amazonaws.com</code>이다. </p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"awsCredentialsProvider"</span> <span class="attr">class</span>=<span class="string">"com.amazonaws.auth.profile.ProfileCredentialsProvider"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">value</span>=<span class="string">"#&#123;app['aws.credential.profile']&#125;"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"s3Client"</span> <span class="attr">class</span>=<span class="string">"com.amazonaws.services.s3.AmazonS3Client"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">ref</span>=<span class="string">"awsCredentialsProvider"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"endpoint"</span> <span class="attr">value</span>=<span class="string">"#&#123;app['s3.endpoint']&#125;"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>이제 정말 끝이다. 언제나 그렇듯 이사가는 건 작은 일이 아니라 큰 일이다.</p>
+<div class="video-container"><iframe src="//www.youtube.com/embed/iBun8y3hZOo?t=1m4s" frameborder="0" allowfullscreen></iframe></div>
+<p>1:04 부터 보면 정말 작은 일이 아니라 큰 일인 걸 알 수 있다.</p>
+<h1 id="정리"><a href="#정리" class="headerlink" title="정리"></a>정리</h1><blockquote>
+<ul>
+<li>AWS가 서울 Region을 개설했다.</li>
+</ul>
+</blockquote>
+<blockquote>
+<ul>
+<li>S3를 서울 Region으로 이사시켜보자.</li>
+</ul>
+</blockquote>
+<blockquote>
+<ul>
+<li>계정까지 새로 만든다면 S3를 이사하는게 꽤 복잡하다.<ol>
+<li>AWS 새 계정 생성, IAM Group 생성, IAM 계정 생성, ACCESS_KEY 발급</li>
+<li>credentials 파일에 새 IAM 계정 정보 추가</li>
+<li>config 파일에 profile 정보 추가</li>
+<li>새 계정의 S3에 버킷 생성</li>
+<li>기존 S3 버킷 권한 수정</li>
+<li>새 계정의 Custom Policy 설정</li>
+<li>AWS CLI 설치</li>
+<li>aws sync 명령 실행</li>
+<li>Application 설정</li>
+</ol>
+</li>
+</ul>
+</blockquote>
+<blockquote>
+<ul>
+<li>복잡하지만 약간이나마 가격도 싸고 속도도 좋다고 하니 이 글 참고 삼아서 옮겨보자.</li>
+</ul>
+</blockquote>
+<h1 id="참고-자료"><a href="#참고-자료" class="headerlink" title="참고 자료"></a>참고 자료</h1><ul>
+<li><a href="https://aws.amazon.com/ko/premiumsupport/knowledge-center/account-transfer-s3/" target="_blank" rel="noopener">https://aws.amazon.com/ko/premiumsupport/knowledge-center/account-transfer-s3/</a></li>
+<li><a href="http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html#cli-multiple-profiles" target="_blank" rel="noopener">http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html#cli-multiple-profiles</a></li>
+<li><a href="http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region" target="_blank" rel="noopener">http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region</a></li>
+<li><a href="http://docs.aws.amazon.com/ko_kr/cli/latest/userguide/installing.html" target="_blank" rel="noopener">http://docs.aws.amazon.com/ko_kr/cli/latest/userguide/installing.html</a></li>
+<li><a href="http://docs.aws.amazon.com/cli/latest/reference/s3/sync.html" target="_blank" rel="noopener">http://docs.aws.amazon.com/cli/latest/reference/s3/sync.html</a></li>
+<li><a href="http://docs.aws.amazon.com/ko_kr/general/latest/gr/rande.html#s3_region" target="_blank" rel="noopener">http://docs.aws.amazon.com/ko_kr/general/latest/gr/rande.html#s3_region</a></li>
+</ul>
+
+        
+        
+            
+        
+        <hr/>
+        <div>
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="크리에이티브 커먼즈 라이선스" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><a href='https://github.com/homoefficio' target='_blank'>HomoEfficio</a>가 작성한 이 저작물은(는) <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스</a>에 따라 이용할 수 있습니다.
+        </div>
+    </div>
+    <div class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/AWS/">AWS</a> <a class="tag tag--primary tag--small t-link" href="/tags/Amazon-Web-Services/">Amazon Web Services</a> <a class="tag tag--primary tag--small t-link" href="/tags/Migration/">Migration</a> <a class="tag tag--primary tag--small t-link" href="/tags/Region/">Region</a> <a class="tag tag--primary tag--small t-link" href="/tags/S3/">S3</a> <a class="tag tag--primary tag--small t-link" href="/tags/Seoul/">Seoul</a> <a class="tag tag--primary tag--small t-link" href="/tags/Simple-Storage-Service/">Simple Storage Service</a> <a class="tag tag--primary tag--small t-link" href="/tags/sync/">sync</a> <a class="tag tag--primary tag--small t-link" href="/tags/서울-리전/">서울 리전</a> <a class="tag tag--primary tag--small t-link" href="/tags/아마존-웹-서비스/">아마존 웹 서비스</a>
+
+            </div>
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/06/26/for-loop-를-Stream-forEach-로-바꾸지-말아야-할-3가지-이유/"  data-tooltip="for-loop 를 Stream.forEach() 로 바꾸지 말아야 할 3가지 이유">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/01/27/Selenide-꿀팁/" data-tooltip="Selenide 꿀팁">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2016/02/03/AWS-다른-계정의-서울-Region-S3로-이사가기/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2016/02/03/AWS-다른-계정의-서울-Region-S3로-이사가기/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2016/02/03/AWS-다른-계정의-서울-Region-S3로-이사가기/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+        
+            <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2018 HomoEfficio. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="1">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/06/26/for-loop-를-Stream-forEach-로-바꾸지-말아야-할-3가지-이유/"  data-tooltip="for-loop 를 Stream.forEach() 로 바꾸지 말아야 할 3가지 이유">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/01/27/Selenide-꿀팁/" data-tooltip="Selenide 꿀팁">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2016/02/03/AWS-다른-계정의-서울-Region-S3로-이사가기/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2016/02/03/AWS-다른-계정의-서울-Region-S3로-이사가기/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2016/02/03/AWS-다른-계정의-서울-Region-S3로-이사가기/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="1">
+    <ul class="share-options">
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2016/02/03/AWS-다른-계정의-서울-Region-S3로-이사가기/">
+                <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2016/02/03/AWS-다른-계정의-서울-Region-S3로-이사가기/">
+                <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2016/02/03/AWS-다른-계정의-서울-Region-S3로-이사가기/">
+                <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+            
+        </div>
+        <div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=110"/>
+        
+            <h4 id="about-card-name">HomoEfficio</h4>
+        
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Seoul, Korea.
+            </h5>
+        
+    </div>
+</div>
+        <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/script.min.js"></script>
+<!--SCRIPTS END-->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'hanmomhanda';
+        (function() {
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+
+
+
+</html>

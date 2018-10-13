@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="null">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="뒤태지존의 끄적거림">
+    <title>EOS Visual Studio Code 개발 환경 구성 - 뒤태지존의 끄적거림</title>
+    <meta name="author" content="HomoEfficio">
+    <meta name="description" content="뒤태지존의 끄적거림">
+    
+        <link rel="icon" href="/assets/images/favicon.ico">
+    
+    
+        <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <meta name="description" content="EOS Visual Studio Code 개발 환경 구성https://infinitexlabs.com/setup-ide-for-eos-development/ 를 참고해서 작성한 EOS 개발 환경 구성 Visual Studio Code다운로드 및 설치https://code.visualstudio.com/docs/setup/linux 참고해서 .deb 파일 다">
+<meta name="keywords" content="BlockChain,EOS,블록체인,이오스,development,개발,dapp,디앱,Visual Studio Code,vscode,IDE,개발 환경,비주얼 스튜디오 코드">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="EOS Visual Studio Code 개발 환경 구성">
+<meta property="og:url" content="http://homoefficio.github.io/2018/06/06/EOS-Visual-Studio-Code-개발-환경-구성/index.html">
+<meta property="og:site_name" content="뒤태지존의 끄적거림">
+<meta property="og:description" content="EOS Visual Studio Code 개발 환경 구성https://infinitexlabs.com/setup-ide-for-eos-development/ 를 참고해서 작성한 EOS 개발 환경 구성 Visual Studio Code다운로드 및 설치https://code.visualstudio.com/docs/setup/linux 참고해서 .deb 파일 다">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://i.imgur.com/etrHfut.png">
+<meta property="og:image" content="https://i.imgur.com/ml1iOWX.png">
+<meta property="og:image" content="https://i.imgur.com/5mhpfwG.png">
+<meta property="og:image" content="https://i.imgur.com/ZnIGQD8.png">
+<meta property="og:image" content="https://i.imgur.com/VGfTDvh.png">
+<meta property="og:image" content="https://i.imgur.com/gcvmYnM.png">
+<meta property="og:image" content="https://i.imgur.com/lAFDUyE.png">
+<meta property="og:image" content="https://i.imgur.com/SQEEum1.png">
+<meta property="og:image" content="https://i.imgur.com/KmYnWqz.png">
+<meta property="og:image" content="https://i.imgur.com/KmYnWqz.png">
+<meta property="og:image" content="https://i.imgur.com/0akpWnP.png">
+<meta property="og:image" content="https://i.imgur.com/B41aoV5.png">
+<meta property="og:image" content="https://i.imgur.com/UdBaQzE.png">
+<meta property="og:image" content="https://i.imgur.com/VEluHdM.png">
+<meta property="og:image" content="https://i.imgur.com/aO5SviF.png">
+<meta property="og:updated_time" content="2018-10-13T15:49:56.189Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="EOS Visual Studio Code 개발 환경 구성">
+<meta name="twitter:description" content="EOS Visual Studio Code 개발 환경 구성https://infinitexlabs.com/setup-ide-for-eos-development/ 를 참고해서 작성한 EOS 개발 환경 구성 Visual Studio Code다운로드 및 설치https://code.visualstudio.com/docs/setup/linux 참고해서 .deb 파일 다">
+<meta name="twitter:image" content="https://i.imgur.com/etrHfut.png">
+    
+        <meta rel="publisher" content="https://plus.google.com/+오명운"/>
+    
+    
+    
+        <meta property="og:image" content="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=640"/>
+    
+    
+        <meta property="og:image" content="/2018/06/06/EOS-Visual-Studio-Code-개발-환경-구성/https:/streamity.org/uploads/media/coin/0001/01/62322d7972d7c0fe7831736e4f4e9baf1d44108d.svg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2018/06/06/EOS-Visual-Studio-Code-개발-환경-구성/https://streamity.org/uploads/media/coin/0001/01/62322d7972d7c0fe7831736e4f4e9baf1d44108d.svg" />
+    
+    
+        <meta property="og:image" content="/2018/06/06/EOS-Visual-Studio-Code-개발-환경-구성/cover-EOS-eosio-blockchain.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2018/06/06/EOS-Visual-Studio-Code-개발-환경-구성/cover-EOS-eosio-blockchain.jpg" />
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style.min.css">
+    <!--STYLES END-->
+    
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-79893978-1']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6494847158566766",
+    enable_page_level_ads: true
+  });
+</script>
+</head>
+
+    <body>
+        <div id="blog">
+            <header id="header" data-behavior="1">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="/ ">뒤태지존의 끄적거림</a>
+    </h1>
+    
+        <a class="header-right-picture" href="/#about">
+            <img class="header-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+        </a>
+    
+</header>
+            <nav id="sidebar" data-behavior="1">
+    
+    <div class="sidebar-profile">
+        <a href="/#about">
+            
+            <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+            
+        </a>
+        <span class="sidebar-profile-name">HomoEfficio</span>
+    </div>
+    
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/ 
+                    ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">Home</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-categories
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">Categories</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-tags
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">Tags</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-archives
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">Archives</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link st-search-show-outputs"
+                    href="#search
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                    <span class="sidebar-button-desc">Search</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="#about
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">About me</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="https://github.com/HomoEfficio" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                    <span class="sidebar-button-desc">GitHub</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="mailto:homo.efficio@gmail.com" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-envelope-o"></i>
+                    <span class="sidebar-button-desc">Mail</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/atom.xml
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+            <div id="main" data-behavior="1">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+        <div class="post-header-cover" style="background-image:url('/2018/06/06/EOS-Visual-Studio-Code-개발-환경-구성/cover-EOS-eosio-blockchain.jpg');">
+            <div class="post-header main-content-wrap">
+    
+        <h1 class="post-title" itemprop="headline">EOS Visual Studio Code 개발 환경 구성</h1>
+    
+    <div class="post-meta">
+    <time  itemprop="datePublished" content="Wed Jun 06 2018 08:31:22 GMT+0900">
+        Jun 06, 2018
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/BlockChain/">BlockChain</a>
+
+
+    
+</div>
+</div>
+        </div>
+    
+    <div class="post-content markdown main-content-wrap" itemprop="articleBody">
+        
+            <h1 id="EOS-Visual-Studio-Code-개발-환경-구성"><a href="#EOS-Visual-Studio-Code-개발-환경-구성" class="headerlink" title="EOS Visual Studio Code 개발 환경 구성"></a>EOS Visual Studio Code 개발 환경 구성</h1><p><a href="https://infinitexlabs.com/setup-ide-for-eos-development/" target="_blank" rel="noopener">https://infinitexlabs.com/setup-ide-for-eos-development/</a> 를 참고해서 작성한 EOS 개발 환경 구성</p>
+<h2 id="Visual-Studio-Code"><a href="#Visual-Studio-Code" class="headerlink" title="Visual Studio Code"></a>Visual Studio Code</h2><h3 id="다운로드-및-설치"><a href="#다운로드-및-설치" class="headerlink" title="다운로드 및 설치"></a>다운로드 및 설치</h3><p><a href="https://code.visualstudio.com/docs/setup/linux" target="_blank" rel="noopener">https://code.visualstudio.com/docs/setup/linux</a> 참고해서 .deb 파일 다운로드 후 설치</p>
+<h3 id="VS-Code-Extension-설치"><a href="#VS-Code-Extension-설치" class="headerlink" title="VS Code Extension 설치"></a>VS Code Extension 설치</h3><p>아래와 같이 Extension 버튼을 누르고</p>
+<p><img src="https://i.imgur.com/etrHfut.png" alt="Imgur"></p>
+<p>다음 항목을 차례로 설치한다.</p>
+<ul>
+<li><p>C/C++ by MicroSoft</p>
+</li>
+<li><p>CMake by twxs</p>
+</li>
+<li><p>CMake Tools by vector-of-bool</p>
+</li>
+<li><p>WebAssembly Dmitriy Tsvettsikh</p>
+</li>
+</ul>
+<p><img src="https://i.imgur.com/ml1iOWX.png" alt="Imgur"></p>
+<p>Extension은 아래와 같이 <code>~/.vscode</code> 아래에 설치된다.</p>
+<p><img src="https://i.imgur.com/5mhpfwG.png" alt="Imgur"></p>
+<h2 id="EOS-프로젝트-열기"><a href="#EOS-프로젝트-열기" class="headerlink" title="EOS 프로젝트 열기"></a>EOS 프로젝트 열기</h2><p>VS Code에는 IntelliJ나 Eclipse에 익숙한 개발자에게는 살짝 당황스러운 것이 <code>New Project...</code>나 <code>Import...</code> 같은 메뉴가 없다.</p>
+<p>아래 화면과 같이 Explorer 버튼을 누른 후 Open Folder를 클릭해서 EOS 프로젝트 루트 폴더를 지정한다.</p>
+<p><img src="https://i.imgur.com/ZnIGQD8.png" alt="Imgur"></p>
+<p>열고 나면 다음과 같이 파일 변화를 감지하는 watch가 제대로 동작을 할 수 없다고 나온다.</p>
+<p><img src="https://i.imgur.com/VGfTDvh.png" alt="Imgur"></p>
+<p>버튼을 눌러보면 <a href="https://code.visualstudio.com/docs/setup/linux#_visual-studio-code-is-unable-to-watch-for-file-changes-in-this-large-workspace-error-enospc" target="_blank" rel="noopener">여기</a> 로 이동해서 아래와 같은 내용이 표시된다.</p>
+<p><img src="https://i.imgur.com/gcvmYnM.png" alt="Imgur"></p>
+<p>대략 워크스페이스가 너무 많은 파일을 가지고 있는 게 문제라는 얘기인데, 설명에 나온 것처럼 <code>/etc/sysctl.conf</code> 파일을 열어서 아래의 내용을 추가해준다. 524,288개의 파일까지 변경 감지가 가능하다는 설정이다.</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fs<span class="selector-class">.inotify</span><span class="selector-class">.max_user_watches</span>=<span class="number">524288</span></span><br></pre></td></tr></table></figure>
+<p>파일을 저장하고 <code>sudo sysctl -p</code> 명령을 실행해서 설정 내용을 적용한다.</p>
+<p>아래 화면을 보면 설정 내용을 적용하기 전에는 8192 였고, 설정 후 524288 이 적용되었음을 확인할 수 있다.</p>
+<p><img src="https://i.imgur.com/lAFDUyE.png" alt="Imgur"></p>
+<p>언어 팩 설치 관련 팝업은 아래와 같이 설정 아이콘을 누르고 Don’t Show Again 을 클릭해서 다시 안 보이게 할 수도 있고, 설치해서 한글로 사용할 수도 있다.</p>
+<p><img src="https://i.imgur.com/SQEEum1.png" alt="Imgur"></p>
+<h2 id="작업-편의를-위한-Tasks-작성"><a href="#작업-편의를-위한-Tasks-작성" class="headerlink" title="작업 편의를 위한 Tasks 작성"></a>작업 편의를 위한 Tasks 작성</h2><p>일반적인 컴파일, 빌드를 위한 Tasks와 스마트 컨트랙의 ABI를 만들어내는 Tasks를 작성한다.</p>
+<p><code>SHIFT+CTRL+P</code>를 눌러서 Command Palette를 띄우고 <code>Tasks</code>를 입력한 후 <code>Configure Task</code>를 선택한다.</p>
+<p><img src="https://i.imgur.com/KmYnWqz.png" alt="Imgur"></p>
+<p><code>Create tasks.json file from template</code>를 선택한다.</p>
+<p><img src="https://i.imgur.com/KmYnWqz.png" alt="Imgur"></p>
+<p><code>Others</code>를 선택한다.</p>
+<p><img src="https://i.imgur.com/0akpWnP.png" alt="Imgur"></p>
+<p>아래와 같이 <code>.vscode</code> 폴더 아래에 <code>tasks.json</code> 파일 템플릿이 표시된다.</p>
+<p><img src="https://i.imgur.com/B41aoV5.png" alt="Imgur"></p>
+<p><code>tasks.json</code> 파일 내용을 다음과 같이 수정한다.</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"version"</span>: <span class="string">"2.0.0"</span>,</span><br><span class="line">    <span class="attr">"reveal"</span>: <span class="string">"always"</span>,</span><br><span class="line">    <span class="attr">"options"</span>: &#123;</span><br><span class="line">        <span class="attr">"cwd"</span>: <span class="string">"$&#123;workspaceRoot&#125;"</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">"tasks"</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">"label"</span>: <span class="string">"CMake"</span>,</span><br><span class="line">            <span class="attr">"type"</span>: <span class="string">"shell"</span>,</span><br><span class="line">            <span class="attr">"command"</span>: <span class="string">"sh $&#123;workspaceRoot&#125;/.vscode/scripts/compile.sh"</span></span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">"label"</span>: <span class="string">"Build"</span>,</span><br><span class="line">            <span class="attr">"type"</span>: <span class="string">"shell"</span>,</span><br><span class="line">            <span class="attr">"command"</span>: <span class="string">"sh $&#123;workspaceRoot&#125;/.vscode/scripts/build.sh"</span>            </span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">"label"</span>: <span class="string">"Generate ABI"</span>,</span><br><span class="line">            <span class="attr">"type"</span>: <span class="string">"shell"</span>,</span><br><span class="line">            <span class="attr">"command"</span>: <span class="string">"sh $&#123;workspaceRoot&#125;/.vscode/scripts/generate.sh $&#123;fileDirname&#125; $&#123;fileBasenameNoExtension&#125;"</span>,</span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>각 Task에 해당하는 셸 파일을 작성한다.</p>
+<h3 id="compile-sh"><a href="#compile-sh" class="headerlink" title="compile.sh"></a>compile.sh</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p build</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> build</span><br><span class="line"></span><br><span class="line"><span class="comment"># 필요한 모든 빌드 파일 생성</span></span><br><span class="line">cmake -G <span class="string">'Unix Makefiles'</span> -DCMAKE_BUILD_TYPE=Debug ..</span><br></pre></td></tr></table></figure>
+<h3 id="build-sh"><a href="#build-sh" class="headerlink" title="build.sh"></a>build.sh</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p build</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> build</span><br><span class="line"></span><br><span class="line"><span class="comment"># 필요한 모든 빌드 파일 생성</span></span><br><span class="line">cmake -G <span class="string">'Unix Makefiles'</span> -DCMAKE_BUILD_TYPE=Debug ..</span><br><span class="line"></span><br><span class="line"><span class="comment"># 빌드</span></span><br><span class="line">make</span><br></pre></td></tr></table></figure>
+<h3 id="generate-sh"><a href="#generate-sh" class="headerlink" title="generate.sh"></a>generate.sh</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">"Current working directory -"</span> <span class="variable">$1</span></span><br><span class="line"><span class="built_in">cd</span> <span class="variable">$1</span></span><br><span class="line"></span><br><span class="line">eosiocpp -g <span class="variable">$2</span>.abi <span class="variable">$2</span>.cpp</span><br></pre></td></tr></table></figure>
+<h2 id="Tasks를-위한-단축키-설정"><a href="#Tasks를-위한-단축키-설정" class="headerlink" title="Tasks를 위한 단축키 설정"></a>Tasks를 위한 단축키 설정</h2><p><code>compile</code>, <code>build</code>, <code>generate</code> task를 편리하게 실행할 수 있는 단축키를 등록한다. </p>
+<p><code>File &gt; Preferences &gt; Keyboard Shortcuts</code> 클릭</p>
+<p><img src="https://i.imgur.com/UdBaQzE.png" alt="Imgur"></p>
+<p><code>keybindings.json</code> 클릭</p>
+<p><img src="https://i.imgur.com/VEluHdM.png" alt="Imgur"></p>
+<p>아래와 같이 단축키를 등록한다. 기존의 단축키와 충돌만 나지 않는다면 취향에 맞게 다른 키를 등록할 수도 있다. </p>
+<p><img src="https://i.imgur.com/aO5SviF.png" alt="Imgur"></p>
+
+        
+        
+            
+        
+        <hr/>
+        <div>
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="크리에이티브 커먼즈 라이선스" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><a href='https://github.com/homoefficio' target='_blank'>HomoEfficio</a>가 작성한 이 저작물은(는) <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스</a>에 따라 이용할 수 있습니다.
+        </div>
+    </div>
+    <div class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/BlockChain/">BlockChain</a> <a class="tag tag--primary tag--small t-link" href="/tags/EOS/">EOS</a> <a class="tag tag--primary tag--small t-link" href="/tags/IDE/">IDE</a> <a class="tag tag--primary tag--small t-link" href="/tags/Visual-Studio-Code/">Visual Studio Code</a> <a class="tag tag--primary tag--small t-link" href="/tags/dapp/">dapp</a> <a class="tag tag--primary tag--small t-link" href="/tags/development/">development</a> <a class="tag tag--primary tag--small t-link" href="/tags/vscode/">vscode</a> <a class="tag tag--primary tag--small t-link" href="/tags/개발/">개발</a> <a class="tag tag--primary tag--small t-link" href="/tags/개발-환경/">개발 환경</a> <a class="tag tag--primary tag--small t-link" href="/tags/디앱/">디앱</a> <a class="tag tag--primary tag--small t-link" href="/tags/블록체인/">블록체인</a> <a class="tag tag--primary tag--small t-link" href="/tags/비주얼-스튜디오-코드/">비주얼 스튜디오 코드</a> <a class="tag tag--primary tag--small t-link" href="/tags/이오스/">이오스</a>
+
+            </div>
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2018/06/06/EOS-Single-Node-Testnet-실행/"  data-tooltip="EOS Single Node Testnet 실행">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2018/06/06/EOS-소스-구성-빌드-및-테스트/" data-tooltip="EOS 소스 구성, 빌드 및 테스트">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2018/06/06/EOS-Visual-Studio-Code-개발-환경-구성/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2018/06/06/EOS-Visual-Studio-Code-개발-환경-구성/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2018/06/06/EOS-Visual-Studio-Code-개발-환경-구성/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+        
+            <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2018 HomoEfficio. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="1">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2018/06/06/EOS-Single-Node-Testnet-실행/"  data-tooltip="EOS Single Node Testnet 실행">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2018/06/06/EOS-소스-구성-빌드-및-테스트/" data-tooltip="EOS 소스 구성, 빌드 및 테스트">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2018/06/06/EOS-Visual-Studio-Code-개발-환경-구성/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2018/06/06/EOS-Visual-Studio-Code-개발-환경-구성/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2018/06/06/EOS-Visual-Studio-Code-개발-환경-구성/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="1">
+    <ul class="share-options">
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2018/06/06/EOS-Visual-Studio-Code-개발-환경-구성/">
+                <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2018/06/06/EOS-Visual-Studio-Code-개발-환경-구성/">
+                <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2018/06/06/EOS-Visual-Studio-Code-개발-환경-구성/">
+                <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+            
+        </div>
+        <div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=110"/>
+        
+            <h4 id="about-card-name">HomoEfficio</h4>
+        
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Seoul, Korea.
+            </h5>
+        
+    </div>
+</div>
+        <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/script.min.js"></script>
+<!--SCRIPTS END-->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'hanmomhanda';
+        (function() {
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+
+
+
+</html>

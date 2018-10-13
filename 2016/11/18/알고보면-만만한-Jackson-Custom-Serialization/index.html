@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="null">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="뒤태지존의 끄적거림">
+    <title>알고보면 만만한 Jackson Custom Serialization - 뒤태지존의 끄적거림</title>
+    <meta name="author" content="HomoEfficio">
+    <meta name="description" content="뒤태지존의 끄적거림">
+    
+        <link rel="icon" href="/assets/images/favicon.ico">
+    
+    
+        <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <meta name="description" content="API 서버를 만들다보면 어떤 객체를 JSON으로 만들때, 특정 필드만 제외하거나 특정 필드의 이름을 바꿔야 하는 일이 생길 수 있다.  그 객체를 JSON으로 만들 때 특정 필드의 이름을 항상 바꾸려면 해당 필드에 @JsonProperty(&amp;quot;새이름&amp;quot;)을 명시하면 되고, 특정 필드를 항상 제외한다면 그냥 객체 클래스에 @JsonIgnore">
+<meta name="keywords" content="Jackson,Java,ObjectMapper,자바,잭슨,Jackson Custom Serializer">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="알고보면 만만한 Jackson Custom Serialization">
+<meta property="og:url" content="http://homoefficio.github.io/2016/11/18/알고보면-만만한-Jackson-Custom-Serialization/index.html">
+<meta property="og:site_name" content="뒤태지존의 끄적거림">
+<meta property="og:description" content="API 서버를 만들다보면 어떤 객체를 JSON으로 만들때, 특정 필드만 제외하거나 특정 필드의 이름을 바꿔야 하는 일이 생길 수 있다.  그 객체를 JSON으로 만들 때 특정 필드의 이름을 항상 바꾸려면 해당 필드에 @JsonProperty(&amp;quot;새이름&amp;quot;)을 명시하면 되고, 특정 필드를 항상 제외한다면 그냥 객체 클래스에 @JsonIgnore">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://i.imgur.com/JUYnjRE.png">
+<meta property="og:updated_time" content="2018-10-13T15:49:56.293Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="알고보면 만만한 Jackson Custom Serialization">
+<meta name="twitter:description" content="API 서버를 만들다보면 어떤 객체를 JSON으로 만들때, 특정 필드만 제외하거나 특정 필드의 이름을 바꿔야 하는 일이 생길 수 있다.  그 객체를 JSON으로 만들 때 특정 필드의 이름을 항상 바꾸려면 해당 필드에 @JsonProperty(&amp;quot;새이름&amp;quot;)을 명시하면 되고, 특정 필드를 항상 제외한다면 그냥 객체 클래스에 @JsonIgnore">
+<meta name="twitter:image" content="http://i.imgur.com/JUYnjRE.png">
+    
+        <meta rel="publisher" content="https://plus.google.com/+오명운"/>
+    
+    
+    
+        <meta property="og:image" content="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=640"/>
+    
+    
+        <meta property="og:image" content="/2016/11/18/알고보면-만만한-Jackson-Custom-Serialization/http:/4.bp.blogspot.com/-poCXvOuQJv8/Vqn3rnJF6oI/AAAAAAAAAKY/71aidaD-7Co/s1600/java%2Bpojo%2Bto%2Bjson%2Busing%2Bobjectmapper.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2016/11/18/알고보면-만만한-Jackson-Custom-Serialization/http://4.bp.blogspot.com/-poCXvOuQJv8/Vqn3rnJF6oI/AAAAAAAAAKY/71aidaD-7Co/s1600/java%2Bpojo%2Bto%2Bjson%2Busing%2Bobjectmapper.jpg" />
+    
+    
+        <meta property="og:image" content="/2016/11/18/알고보면-만만한-Jackson-Custom-Serialization/coverImage-jackson-custom-serialization.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2016/11/18/알고보면-만만한-Jackson-Custom-Serialization/coverImage-jackson-custom-serialization.png" />
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style.min.css">
+    <!--STYLES END-->
+    
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-79893978-1']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6494847158566766",
+    enable_page_level_ads: true
+  });
+</script>
+</head>
+
+    <body>
+        <div id="blog">
+            <header id="header" data-behavior="1">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="/ ">뒤태지존의 끄적거림</a>
+    </h1>
+    
+        <a class="header-right-picture" href="/#about">
+            <img class="header-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+        </a>
+    
+</header>
+            <nav id="sidebar" data-behavior="1">
+    
+    <div class="sidebar-profile">
+        <a href="/#about">
+            
+            <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+            
+        </a>
+        <span class="sidebar-profile-name">HomoEfficio</span>
+    </div>
+    
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/ 
+                    ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">Home</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-categories
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">Categories</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-tags
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">Tags</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-archives
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">Archives</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link st-search-show-outputs"
+                    href="#search
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                    <span class="sidebar-button-desc">Search</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="#about
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">About me</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="https://github.com/HomoEfficio" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                    <span class="sidebar-button-desc">GitHub</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="mailto:homo.efficio@gmail.com" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-envelope-o"></i>
+                    <span class="sidebar-button-desc">Mail</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/atom.xml
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+            <div id="main" data-behavior="1">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+        <div class="post-header-cover" style="background-image:url('/2016/11/18/알고보면-만만한-Jackson-Custom-Serialization/coverImage-jackson-custom-serialization.png');">
+            <div class="post-header main-content-wrap">
+    
+        <h1 class="post-title" itemprop="headline">알고보면 만만한 Jackson Custom Serialization</h1>
+    
+    <div class="post-meta">
+    <time  itemprop="datePublished" content="Fri Nov 18 2016 22:44:56 GMT+0900">
+        Nov 18, 2016
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Technique/">Technique</a>
+
+
+    
+</div>
+</div>
+        </div>
+    
+    <div class="post-content markdown main-content-wrap" itemprop="articleBody">
+        
+            <p>API 서버를 만들다보면 어떤 객체를 JSON으로 만들때, 특정 필드만 제외하거나 특정 필드의 이름을 바꿔야 하는 일이 생길 수 있다. </p>
+<p>그 객체를 JSON으로 만들 때 특정 필드의 이름을 항상 바꾸려면 해당 필드에 <code>@JsonProperty(&quot;새이름&quot;)</code>을 명시하면 되고, 특정 필드를 항상 제외한다면 그냥 객체 클래스에 <code>@JsonIgnoreProperties({&quot;제외할필드명1&quot;, &quot;제외할필드명2&quot;})</code>을 명시하면 된다. 하지만, 항상이 아니라 상황에 따라 다른 방식으로 Serialize 해야한다면 이 방법이 통하지 않는다.</p>
+<p>Java 기반 API 서버라면 JSON 처리를 위해 <a href="https://github.com/FasterXML/jackson" target="_blank" rel="noopener">Jackson</a>을 많이 사용하는데, Jackson으로 Java 객체를 JSON으로 Serialize 할 때 특정 필드 제외/이름바꾸기 등 커스터마이징 하는 방법을 검색해보면, 앞에서 말한 <code>@JsonProperty</code>나 <code>@JsonIgnoreProperties</code>를 포함해서 꽤나 다양하게 많이 나온다. </p>
+<ul>
+<li>뭔 필터를 만들고, 프로바이더를 꽂고 어쩌고 자시고 지지고 볶고 태우는 방법도 있고, </li>
+<li><code>@JsonView</code>라고 하는, 일종의 profile과 비슷한 기능을 하는 애노테이션을 사용하는 방법도 있고,</li>
+<li>Jackson을 커스터마이징 할 생각은 아예 포기하고, 그 대신 JSON 화 할 대상 객체 A를 커스터마이징해서 별도의 객체 B를 다시 만들고, B를 대상으로 그냥 <code>objectMapper.writeValueAsString(B)</code>로 시원하게 처리하는 방법도 있고..(이건 좀.. ㅋㅋ),</li>
+<li>기타 등등 다양하다.</li>
+</ul>
+<p>Jackson을 기준으로, 개인적으로 생각할 때 가장 직관적이어서 이해하기 쉽고, 유지보수 하기도 쉽고, 코드량도 적은 커스터마이징 방법 중의 하나인 <strong>Jackson Custom Serializer</strong>를 만드는 방법을 알아보자.</p>
+<h1 id="얼개"><a href="#얼개" class="headerlink" title="얼개"></a>얼개</h1><p>Jackson을 이용한 JSON Serialization은 결국 <code>objectMapper.writeValueAsString(객체)</code>고, 따라서 <code>objectMapper</code>에 Custom Serializer를 어떤 식으로 집어 넣느냐 하는 문제인데, 이와 관련된 구조만을 추려서 요약하면 다음 그림과 같다.</p>
+<p><img src="http://i.imgur.com/JUYnjRE.png" alt="Imgur"></p>
+<p><code>objectMapper</code>는 여러 개의 <code>module</code>을 가질 수 있고, <code>module</code>도 여러 개의 <code>customSerializer</code>를 가질 수 있다.</p>
+<h1 id="절차"><a href="#절차" class="headerlink" title="절차"></a>절차</h1><p>이 얼개를 바탕으로 serialization을 커스터마이징하려면 다음의 절차가 필요하다.</p>
+<ol>
+<li>실제 커스터마이징을 담당하는 customSerializer를 만든다</li>
+<li>customSerializer를 module에 추가한다.</li>
+<li>module을 objectMapper에 등록한다.</li>
+</ol>
+<p>결국 <code>customSerializer</code>만 <strong>잘</strong> 만들어주면 된다. 참 쉽다 ㅋㅋ.</p>
+<h2 id="CustomSerializer-만들기"><a href="#CustomSerializer-만들기" class="headerlink" title="CustomSerializer 만들기"></a>CustomSerializer 만들기</h2><p>JSON serialization 과정에서 커스터마이징이라고 할 수 있는 것은, 결국 앞에서 말한대로 특정 필드의 의도적인 제외, 특정 필드 이름의 변경 정도다. 그래서 만들어야 할 코드는 대략 아래 정도일 것 같다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">필드<span class="number">1</span>이름지정(field1Key);</span><br><span class="line">필드<span class="number">1</span>값지정(field1Value);</span><br><span class="line"></span><br><span class="line">필드<span class="number">2</span>이름지정(field2Key);  <span class="comment">// 필드2를 serialization에서 제외하려면 이 행을 아예 안 써버리면 된다.</span></span><br><span class="line">필드<span class="number">2</span>값지정(field2Value);  <span class="comment">// 필드2를 serialization에서 제외하려면 이 행을 아예 안 써버리면 된다.</span></span><br><span class="line"></span><br><span class="line">필드<span class="number">3</span>이름지정(field3KeyWhateverYouWant);  <span class="comment">//필드3의 이름을 바꾸려면 원하는 이름으로 지정해주면 된다.</span></span><br><span class="line">필드<span class="number">3</span>값지정(field3Value);  <span class="comment">// 필드3의 값은 원래 그대로 써준다.</span></span><br><span class="line"></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>CustomSerializer를 만들려면 <code>JsonSerializer</code> 클래스를 상속해야 한다. 그리고 IDE를 통해 Override 해야할 메서드를 자동 생성하면 대략 아래와 같은 코드가 자동 생성 된다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> homo.efficio.json.selective.serialization.jackson;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.core.JsonGenerator;</span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.core.JsonProcessingException;</span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.databind.JsonSerializer;</span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.databind.SerializerProvider;</span><br><span class="line"><span class="keyword">import</span> homo.efficio.json.selective.serialization.domain.FamilyMember;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Created by HomoEfficio on 2016-10-22.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FamilyMemberSerializer</span> <span class="keyword">extends</span> <span class="title">JsonSerializer</span>&lt;<span class="title">FamilyMember</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">serialize</span><span class="params">(FamilyMember value, JsonGenerator gen, SerializerProvider serializers)</span> <span class="keyword">throws</span> IOException, JsonProcessingException </span>&#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>이제 앞에서 예상했던 코드를 JsonSerializer가 정해준 방식에 맞게 구현해주면 되는데, 그 방식이라는게 아주 간단하다.</p>
+<p>다만, 아래 코드의 주석에 표시한 대로 <code>gen.writeObject()</code> 부분이 중첩되어 있는 객체를 재귀 방식으로 풀어서 마법 같은 묘수를 부린다는 점만 기억해두면 좋겠다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">serialize</span><span class="params">(FamilyMember value, JsonGenerator gen, SerializerProvider serializers)</span> <span class="keyword">throws</span> IOException, JsonProcessingException </span>&#123;</span><br><span class="line"></span><br><span class="line">    gen.writeStartObject();</span><br><span class="line"></span><br><span class="line">    gen.writeFieldName(<span class="string">"id"</span>);</span><br><span class="line">    gen.writeString(String.valueOf(value.getId()));</span><br><span class="line"></span><br><span class="line">    gen.writeFieldName(<span class="string">"name"</span>);</span><br><span class="line">    gen.writeString(value.getName());</span><br><span class="line"></span><br><span class="line">    gen.writeFieldName(<span class="string">"cellPhone"</span>);</span><br><span class="line">    <span class="comment">// 요 아래 부분이 묘수다. writeObject(object)가 재귀적으로 object의 Serializer를 호출하며, customSerializer가 있다면 customSerializer를 호출한다.</span></span><br><span class="line">    gen.writeObject(value.getCellPhone());</span><br><span class="line"></span><br><span class="line">    gen.writeFieldName(<span class="string">"children"</span>);</span><br><span class="line">    <span class="comment">// 요 아래 부분이 묘수다. writeObject(object)가 재귀적으로 object의 Serializer를 호출하며, customSerializer가 있다면 customSerializer를 호출한다.</span></span><br><span class="line">    gen.writeObject(value.getChildren());</span><br><span class="line"></span><br><span class="line">    gen.writeEndObject();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>글로 바꿔써보면 그냥 JSON 문자열을 만드는 것과 똑같다.</p>
+<blockquote>
+<ul>
+<li><code>gen.writeStartObject()</code>로 <code>{</code>를 열고,<ul>
+<li><code>gen.writeFieldName(fieldName)</code>로 필드 이름을 쓰고,<ul>
+<li>serialize 할 값이 primitive라면 <code>gen.writeString(primitive)</code>로 값을 쓰고,</li>
+<li>serialize 할 값이 reference라면 <code>gen.writeObject(reference)</code>로 값을 쓰고,</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>gen.writeEndObject()</code>로 <code>}</code>를 닫는다.</li>
+</ul>
+<p><code>&quot;&quot;</code>, <code>:</code>, <code>,</code>, <code>[]</code> 등은 고맙게도 Jackson이 알아서 처리해준다능..</p>
+</blockquote>
+<p>이렇게 보니 엄청 직관적이고 당연해 보이기도 한다. 근데 필터나 프로바이더 방식은 이렇게 당연해보이지 않고 복잡하더라능..</p>
+<p>이제 방금 만든 <code>customSerializer</code>를 <code>module</code>에 추가해보자.</p>
+<h2 id="module-만들고-customSerializer-추가"><a href="#module-만들고-customSerializer-추가" class="headerlink" title="module 만들고 customSerializer 추가"></a>module 만들고 customSerializer 추가</h2><p><code>customSerializer</code>는 만들었는데, <code>module</code>은 어떻게 만들어야 하지?</p>
+<p>간단하다. Jackson은 <code>SimpleModule</code>이라는 클래스를 제공해주며, 아래의 코드가 전부다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SimpleModule simpleModule = <span class="keyword">new</span> SimpleModule();</span><br></pre></td></tr></table></figure>
+<p><code>module</code>에 <code>customSerializer</code>를 추가하는 코드도 간단하다. 하지만 주석에 표시한 의미는 이해하고 넘어가자.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// FamilyMember 클래스는 FamilyMemberSerializer로 Serialize 하겠다는 의지의 표현.</span></span><br><span class="line">simpleModule.addSerializer(FamilyMember.class, <span class="keyword">new</span> FamilyMemberSerializer());</span><br></pre></td></tr></table></figure>
+<h2 id="objectMapper-만들고-module-추가"><a href="#objectMapper-만들고-module-추가" class="headerlink" title="objectMapper 만들고 module 추가"></a>objectMapper 만들고 module 추가</h2><p><code>objectMapper</code>는 익숙하니까 설명할 것도 없다. 그냥 코드를 보자.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ObjectMapper objectMapper = <span class="keyword">new</span> ObjectMapper();</span><br><span class="line"></span><br><span class="line">SimpleModule simpleModule = <span class="keyword">new</span> SimpleModule();</span><br><span class="line"><span class="comment">// FamilyMember 클래스는 FamilyMemberSerializer로 Serialize 하겠다는 의지의 표현.</span></span><br><span class="line">simpleModule.addSerializer(FamilyMember.class, <span class="keyword">new</span> FamilyMemberSerializer());</span><br><span class="line"></span><br><span class="line">objectMapper.registerModule(simpleModule);</span><br></pre></td></tr></table></figure>
+<h2 id="실제-사용"><a href="#실제-사용" class="headerlink" title="실제 사용"></a>실제 사용</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">objectMapper.writeValueAsString(serialize_할_객체);</span><br></pre></td></tr></table></figure>
+<h1 id="실전-배치"><a href="#실전-배치" class="headerlink" title="실전 배치"></a>실전 배치</h1><p>더는 설명할 것도 없다. 잔소리 따위는 접고 그냥 코드를 보면 바로 이해된다. ㅋㅋ</p>
+<p><a href="https://gist.github.com/HomoEfficio/e3cee0071f0ce84ed6d7791d0410d8d5" target="_blank" rel="noopener">https://gist.github.com/HomoEfficio/e3cee0071f0ce84ed6d7791d0410d8d5</a></p>
+<h1 id="정리"><a href="#정리" class="headerlink" title="정리"></a>정리</h1><blockquote>
+<p>Jackson으로 JSON Serialize 할 때, 필드 이름 변경, 특정 필드 제외 등 커스터마이징이 필요하면,</p>
+<ul>
+<li><code>JsonSerializer</code>를 상속받아 <code>customSerializer</code>를 만들고,<ul>
+<li><code>gen.writeStartObject()</code>, <code>gen.writeFieldName()</code>, <code>gen.writeString()/gen.writeObject()</code>, <code>gen.writeEndObject()</code>로 serialize 로직을 원하는 대로 구성해서,</li>
+</ul>
+</li>
+<li><code>SimpleModule</code>에 <code>customSerializer</code>를 추가하고,</li>
+<li><code>objectMapper</code>에 <code>simpleModule</code>를 등록하고,</li>
+<li><code>objectMapper.writeValueAsString(serialize_할_객체)</code>로 serialize 하면 된다.</li>
+</ul>
+</blockquote>
+
+        
+        
+            
+        
+        <hr/>
+        <div>
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="크리에이티브 커먼즈 라이선스" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><a href='https://github.com/homoefficio' target='_blank'>HomoEfficio</a>가 작성한 이 저작물은(는) <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스</a>에 따라 이용할 수 있습니다.
+        </div>
+    </div>
+    <div class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/Jackson/">Jackson</a> <a class="tag tag--primary tag--small t-link" href="/tags/Jackson-Custom-Serializer/">Jackson Custom Serializer</a> <a class="tag tag--primary tag--small t-link" href="/tags/Java/">Java</a> <a class="tag tag--primary tag--small t-link" href="/tags/ObjectMapper/">ObjectMapper</a> <a class="tag tag--primary tag--small t-link" href="/tags/자바/">자바</a> <a class="tag tag--primary tag--small t-link" href="/tags/잭슨/">잭슨</a>
+
+            </div>
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/11/19/조금은-신경써줘야-하는-Jackson-Custom-Deserialization/"  data-tooltip="조금은 신경써줘야 하는 Jackson Custom Deserialization">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/08/13/대용량-파일을-AsynchronousFileChannel로-다뤄보기/" data-tooltip="대용량 파일을 AsynchronousFileChannel로 다뤄보기">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2016/11/18/알고보면-만만한-Jackson-Custom-Serialization/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2016/11/18/알고보면-만만한-Jackson-Custom-Serialization/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2016/11/18/알고보면-만만한-Jackson-Custom-Serialization/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+        
+            <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2018 HomoEfficio. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="1">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/11/19/조금은-신경써줘야-하는-Jackson-Custom-Deserialization/"  data-tooltip="조금은 신경써줘야 하는 Jackson Custom Deserialization">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/08/13/대용량-파일을-AsynchronousFileChannel로-다뤄보기/" data-tooltip="대용량 파일을 AsynchronousFileChannel로 다뤄보기">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2016/11/18/알고보면-만만한-Jackson-Custom-Serialization/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2016/11/18/알고보면-만만한-Jackson-Custom-Serialization/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2016/11/18/알고보면-만만한-Jackson-Custom-Serialization/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="1">
+    <ul class="share-options">
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2016/11/18/알고보면-만만한-Jackson-Custom-Serialization/">
+                <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2016/11/18/알고보면-만만한-Jackson-Custom-Serialization/">
+                <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2016/11/18/알고보면-만만한-Jackson-Custom-Serialization/">
+                <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+            
+        </div>
+        <div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=110"/>
+        
+            <h4 id="about-card-name">HomoEfficio</h4>
+        
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Seoul, Korea.
+            </h5>
+        
+    </div>
+</div>
+        <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/script.min.js"></script>
+<!--SCRIPTS END-->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'hanmomhanda';
+        (function() {
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+
+
+
+</html>

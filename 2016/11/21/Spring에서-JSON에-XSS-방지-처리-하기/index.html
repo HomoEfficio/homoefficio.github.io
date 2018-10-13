@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="null">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="뒤태지존의 끄적거림">
+    <title>Spring에서 JSON에 XSS 방지 처리 하기 - 뒤태지존의 끄적거림</title>
+    <meta name="author" content="HomoEfficio">
+    <meta name="description" content="뒤태지존의 끄적거림">
+    
+        <link rel="icon" href="/assets/images/favicon.ico">
+    
+    
+        <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <meta name="description" content="Spring에서 JSON에 XSS 방지 처리 하기고마운 lucy-xss-servlet-filter의 한계XSS(Cross Site Scripting) 방지를 위해 널리 쓰이는 훌륭한 lucy-xss-servlet-filter는 Servlet Filter 단에서 &amp;lt; 등의 특수 문자를 &amp;amp;lt; 등으로 변환해주며, 여러 가지 관련 설정을 편리하게 지">
+<meta name="keywords" content="Spring,스프링,XSS,JSON,lucy-xss-servlet-filter,Cross Site Scripting,MessageConverter,보안,크로스 사이트 스크립팅">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Spring에서 JSON에 XSS 방지 처리 하기">
+<meta property="og:url" content="http://homoefficio.github.io/2016/11/21/Spring에서-JSON에-XSS-방지-처리-하기/index.html">
+<meta property="og:site_name" content="뒤태지존의 끄적거림">
+<meta property="og:description" content="Spring에서 JSON에 XSS 방지 처리 하기고마운 lucy-xss-servlet-filter의 한계XSS(Cross Site Scripting) 방지를 위해 널리 쓰이는 훌륭한 lucy-xss-servlet-filter는 Servlet Filter 단에서 &amp;lt; 등의 특수 문자를 &amp;amp;lt; 등으로 변환해주며, 여러 가지 관련 설정을 편리하게 지">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-10-13T15:49:56.256Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring에서 JSON에 XSS 방지 처리 하기">
+<meta name="twitter:description" content="Spring에서 JSON에 XSS 방지 처리 하기고마운 lucy-xss-servlet-filter의 한계XSS(Cross Site Scripting) 방지를 위해 널리 쓰이는 훌륭한 lucy-xss-servlet-filter는 Servlet Filter 단에서 &amp;lt; 등의 특수 문자를 &amp;amp;lt; 등으로 변환해주며, 여러 가지 관련 설정을 편리하게 지">
+    
+        <meta rel="publisher" content="https://plus.google.com/+오명운"/>
+    
+    
+    
+        <meta property="og:image" content="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=640"/>
+    
+    
+        <meta property="og:image" content="/2016/11/21/Spring에서-JSON에-XSS-방지-처리-하기/http:/3.bp.blogspot.com/-8YJnx44aAwY/UOMgSLC4m1I/AAAAAAAAAMg/oNY_An21FxU/s1600/XSS+Vulnerability+Tutorial+BreakTheSec.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2016/11/21/Spring에서-JSON에-XSS-방지-처리-하기/http://3.bp.blogspot.com/-8YJnx44aAwY/UOMgSLC4m1I/AAAAAAAAAMg/oNY_An21FxU/s1600/XSS+Vulnerability+Tutorial+BreakTheSec.png" />
+    
+    
+        <meta property="og:image" content="/2016/11/21/Spring에서-JSON에-XSS-방지-처리-하기/coverImage-XSS-JSON-Spring.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2016/11/21/Spring에서-JSON에-XSS-방지-처리-하기/coverImage-XSS-JSON-Spring.jpg" />
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style.min.css">
+    <!--STYLES END-->
+    
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-79893978-1']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6494847158566766",
+    enable_page_level_ads: true
+  });
+</script>
+</head>
+
+    <body>
+        <div id="blog">
+            <header id="header" data-behavior="1">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="/ ">뒤태지존의 끄적거림</a>
+    </h1>
+    
+        <a class="header-right-picture" href="/#about">
+            <img class="header-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+        </a>
+    
+</header>
+            <nav id="sidebar" data-behavior="1">
+    
+    <div class="sidebar-profile">
+        <a href="/#about">
+            
+            <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+            
+        </a>
+        <span class="sidebar-profile-name">HomoEfficio</span>
+    </div>
+    
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/ 
+                    ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">Home</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-categories
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">Categories</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-tags
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">Tags</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-archives
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">Archives</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link st-search-show-outputs"
+                    href="#search
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                    <span class="sidebar-button-desc">Search</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="#about
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">About me</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="https://github.com/HomoEfficio" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                    <span class="sidebar-button-desc">GitHub</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="mailto:homo.efficio@gmail.com" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-envelope-o"></i>
+                    <span class="sidebar-button-desc">Mail</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/atom.xml
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+            <div id="main" data-behavior="1">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+        <div class="post-header-cover" style="background-image:url('/2016/11/21/Spring에서-JSON에-XSS-방지-처리-하기/coverImage-XSS-JSON-Spring.jpg');">
+            <div class="post-header main-content-wrap">
+    
+        <h1 class="post-title" itemprop="headline">Spring에서 JSON에 XSS 방지 처리 하기</h1>
+    
+    <div class="post-meta">
+    <time  itemprop="datePublished" content="Mon Nov 21 2016 23:32:08 GMT+0900">
+        Nov 21, 2016
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Technique/">Technique</a>
+
+
+    
+</div>
+</div>
+        </div>
+    
+    <div class="post-content markdown main-content-wrap" itemprop="articleBody">
+        
+            <h1 id="Spring에서-JSON에-XSS-방지-처리-하기"><a href="#Spring에서-JSON에-XSS-방지-처리-하기" class="headerlink" title="Spring에서 JSON에 XSS 방지 처리 하기"></a>Spring에서 JSON에 XSS 방지 처리 하기</h1><h2 id="고마운-lucy-xss-servlet-filter의-한계"><a href="#고마운-lucy-xss-servlet-filter의-한계" class="headerlink" title="고마운 lucy-xss-servlet-filter의 한계"></a>고마운 lucy-xss-servlet-filter의 한계</h2><p>XSS(Cross Site Scripting) 방지를 위해 널리 쓰이는 훌륭한 <a href="https://github.com/naver/lucy-xss-servlet-filter" target="_blank" rel="noopener">lucy-xss-servlet-filter</a>는 Servlet Filter 단에서 <code>&lt;</code> 등의 특수 문자를 <code>&amp;lt;</code> 등으로 변환해주며, 여러 가지 관련 설정을 편리하게 지정할 수 있어 정말 좋다.</p>
+<p>그런데 그 처리가 <strong>form-data에 대해서만 적용되고 Request Raw Body로 넘어가는 JSON에 대해서는 처리해주지 않는다</strong>는 단점이 있다. 그래서 JSON을 주고 받는 API 서버의 경우에는 직접 처리를 해줘야 한다.</p>
+<p><code>lucy-xss-servlet-filter</code>를 수정해서 JSON도 처리하도록 만드는 방법도 있겠지만, 여기에서는 Response를 클라이언트로 내보내는 단계에서 처리하는 방법을 알아본다.</p>
+<h2 id="HandlerInterceptor"><a href="#HandlerInterceptor" class="headerlink" title="HandlerInterceptor"></a>HandlerInterceptor</h2><p>Response 쪽에서 공통적으로 처리해줘야할 일이 있다면 금방 떠오르는 것이 <code>HanderInterceptor</code>의 <code>postHandle()</code>이다. 이 메서드의 파라미터는 <code>HttpServletRequest request</code>, <code>HttpServletResponse response</code>, <code>Object handler</code>, <code>ModelAndView modelAndView</code>이고, <code>response</code>에서 Response Body를 꺼내서, <code>&lt;</code> =&gt; <code>&amp;lt;</code> 등의 변환 처리를 하고 다시 <code>response</code>에 넣어주면 될 것 같다.</p>
+<p>하지만 <code>response</code>에서 Response Body를 끄집어 내는 것도 쉽지 않고, 그 내용을 바꿔서 다시 집어넣는 것도 여의치 않다. 다른 방법이 필요하다.</p>
+<h2 id="MessageConverter"><a href="#MessageConverter" class="headerlink" title="MessageConverter"></a>MessageConverter</h2><p>다음으로 생각나는 것은 <code>MessageConverter</code>다. 어차피 결국에는 Jackson 같은 Mapper를 통해 JSON 문자열로 Response에 담겨지므로, <strong>Mapper가 JSON 문자열을 생성할 때 XSS 방지 처리</strong>를 해주면 될 것 같다.</p>
+<p>찾아보니 역시나 <a href="http://stackoverflow.com/questions/25403676/initbinder-with-requestbody-escaping-xss-in-spring-3-2-4" target="_blank" rel="noopener">http://stackoverflow.com/questions/25403676/initbinder-with-requestbody-escaping-xss-in-spring-3-2-4</a> 이런 자료가 있다. 좀 오래된 버전이고 군더더기도 있어서 Jackson 2.#, SpringBoot 1.# 버전 기준으로 깔끔하게, 그리고 <strong>커스터마이징 할 수 있는 부분을 추가</strong>해서 정리해봤다.</p>
+<p>큰 흐름은 다음과 같다.</p>
+<blockquote>
+<ol>
+<li>처리할 특수 문자 지정</li>
+<li>특수 문자 인코딩 값 지정</li>
+<li>ObjectMapper에 특수 문자 처리 기능 적용</li>
+<li>MessageConverter에 ObjectMapper 설정</li>
+<li>WebMvcConfigurerAdapter에 MessageConverter 추가</li>
+</ol>
+</blockquote>
+<h3 id="처리할-특수-문자-지정"><a href="#처리할-특수-문자-지정" class="headerlink" title="처리할 특수 문자 지정"></a>처리할 특수 문자 지정</h3><p>XSS 방지 처리할 특수 문자를 다음과 같이 <code>CharacterEscapes</code>를 상속한 클래스를 직접 만들어서 지정해준다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.core.SerializableString;</span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.core.io.CharacterEscapes;</span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.core.io.SerializedString;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.lang3.text.translate.AggregateTranslator;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.lang3.text.translate.CharSequenceTranslator;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.lang3.text.translate.EntityArrays;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.lang3.text.translate.LookupTranslator;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HTMLCharacterEscapes</span> <span class="keyword">extends</span> <span class="title">CharacterEscapes</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span>[] asciiEscapes;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> CharSequenceTranslator translator;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">HTMLCharacterEscapes</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 1. XSS 방지 처리할 특수 문자 지정</span></span><br><span class="line">        asciiEscapes = CharacterEscapes.standardAsciiEscapesForJSON();</span><br><span class="line">        asciiEscapes[<span class="string">'&lt;'</span>] = CharacterEscapes.ESCAPE_CUSTOM;</span><br><span class="line">        asciiEscapes[<span class="string">'&gt;'</span>] = CharacterEscapes.ESCAPE_CUSTOM;</span><br><span class="line">        asciiEscapes[<span class="string">'&amp;'</span>] = CharacterEscapes.ESCAPE_CUSTOM;</span><br><span class="line">        asciiEscapes[<span class="string">'\"'</span>] = CharacterEscapes.ESCAPE_CUSTOM;</span><br><span class="line">        asciiEscapes[<span class="string">'('</span>] = CharacterEscapes.ESCAPE_CUSTOM;</span><br><span class="line">        asciiEscapes[<span class="string">')'</span>] = CharacterEscapes.ESCAPE_CUSTOM;</span><br><span class="line">        asciiEscapes[<span class="string">'#'</span>] = CharacterEscapes.ESCAPE_CUSTOM;</span><br><span class="line">        asciiEscapes[<span class="string">'\''</span>] = CharacterEscapes.ESCAPE_CUSTOM;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 2. XSS 방지 처리 특수 문자 인코딩 값 지정</span></span><br><span class="line">        translator = <span class="keyword">new</span> AggregateTranslator(</span><br><span class="line">            <span class="keyword">new</span> LookupTranslator(EntityArrays.BASIC_ESCAPE()),  <span class="comment">// &lt;, &gt;, &amp;, " 는 여기에 포함됨</span></span><br><span class="line">            <span class="keyword">new</span> LookupTranslator(EntityArrays.ISO8859_1_ESCAPE()),</span><br><span class="line">            <span class="keyword">new</span> LookupTranslator(EntityArrays.HTML40_EXTENDED_ESCAPE()),</span><br><span class="line">            <span class="comment">// 여기에서 커스터마이징 가능</span></span><br><span class="line">            <span class="keyword">new</span> LookupTranslator(</span><br><span class="line">                <span class="keyword">new</span> String[][]&#123;</span><br><span class="line">                    &#123;<span class="string">"("</span>,  <span class="string">"&amp;#40;"</span>&#125;,</span><br><span class="line">                    &#123;<span class="string">")"</span>,  <span class="string">"&amp;#41;"</span>&#125;,</span><br><span class="line">                    &#123;<span class="string">"#"</span>,  <span class="string">"&amp;#35;"</span>&#125;,</span><br><span class="line">                    &#123;<span class="string">"\'"</span>, <span class="string">"&amp;#39;"</span>&#125;</span><br><span class="line">                &#125;</span><br><span class="line">            )</span><br><span class="line">        );</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span>[] getEscapeCodesForAscii() &#123;</span><br><span class="line">        <span class="keyword">return</span> asciiEscapes;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> SerializableString <span class="title">getEscapeSequence</span><span class="params">(<span class="keyword">int</span> ch)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> SerializedString(translator.translate(Character.toString((<span class="keyword">char</span>) ch)));</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 참고 - 커스터마이징이 필요없다면 아래와 같이 Apache Commons Lang3에서 제공하는 메서드를 써도 된다.</span></span><br><span class="line">        <span class="comment">// return new SerializedString(StringEscapeUtils.escapeHtml4(Character.toString((char) ch)));</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="ObjectMapper에-특수-문자-처리-기능-적용-후-MessageConverter-등록"><a href="#ObjectMapper에-특수-문자-처리-기능-적용-후-MessageConverter-등록" class="headerlink" title="ObjectMapper에 특수 문자 처리 기능 적용 후 MessageConverter 등록"></a>ObjectMapper에 특수 문자 처리 기능 적용 후 MessageConverter 등록</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> WebMvcConfigurerAdapter <span class="title">controlTowerWebConfigurerAdapter</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> WebMvcConfigurerAdapter() &#123;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">configureMessageConverters</span><span class="params">(List&lt;HttpMessageConverter&lt;?&gt;&gt; converters)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">super</span>.configureMessageConverters(converters);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 5. WebMvcConfigurerAdapter에 MessageConverter 추가</span></span><br><span class="line">            converters.add(htmlEscapingConveter());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> HttpMessageConverter&lt;?&gt; htmlEscapingConveter() &#123;</span><br><span class="line">            ObjectMapper objectMapper = <span class="keyword">new</span> ObjectMapper();</span><br><span class="line">            <span class="comment">// 3. ObjectMapper에 특수 문자 처리 기능 적용</span></span><br><span class="line">            objectMapper.getFactory().setCharacterEscapes(<span class="keyword">new</span> HTMLCharacterEscapes());</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 4. MessageConverter에 ObjectMapper 설정</span></span><br><span class="line">            MappingJackson2HttpMessageConverter htmlEscapingConverter =</span><br><span class="line">                    <span class="keyword">new</span> MappingJackson2HttpMessageConverter();</span><br><span class="line">            htmlEscapingConverter.setObjectMapper(objectMapper);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> htmlEscapingConverter;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="정리"><a href="#정리" class="headerlink" title="정리"></a>정리</h2><blockquote>
+<p><code>lucy-xss-servlet-filter</code>는 JSON에 대한 XSS는 처리해주지 않는다.</p>
+<ul>
+<li>따라서, JSON에 대한 XSS가 필요하다면</li>
+<li>Jackson의 <code>com.fasterxml.jackson.core.io.CharacterEscapes</code>를 상속하는 클래스 A를 직접 만들어서 처리해야 할 특수문자를 지정하고,</li>
+<li><code>ObjectMapper</code>에 <code>A</code>를 설정하고,</li>
+<li><code>ObjectMapper</code>를 MessageConverter에 등록해서 Response가 클라이언트에 나가기 전에 XSS 방지 처리 해준다.</li>
+</ul>
+</blockquote>
+
+        
+        
+            
+        
+        <hr/>
+        <div>
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="크리에이티브 커먼즈 라이선스" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><a href='https://github.com/homoefficio' target='_blank'>HomoEfficio</a>가 작성한 이 저작물은(는) <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스</a>에 따라 이용할 수 있습니다.
+        </div>
+    </div>
+    <div class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/Cross-Site-Scripting/">Cross Site Scripting</a> <a class="tag tag--primary tag--small t-link" href="/tags/JSON/">JSON</a> <a class="tag tag--primary tag--small t-link" href="/tags/MessageConverter/">MessageConverter</a> <a class="tag tag--primary tag--small t-link" href="/tags/Spring/">Spring</a> <a class="tag tag--primary tag--small t-link" href="/tags/XSS/">XSS</a> <a class="tag tag--primary tag--small t-link" href="/tags/lucy-xss-servlet-filter/">lucy-xss-servlet-filter</a> <a class="tag tag--primary tag--small t-link" href="/tags/보안/">보안</a> <a class="tag tag--primary tag--small t-link" href="/tags/스프링/">스프링</a> <a class="tag tag--primary tag--small t-link" href="/tags/크로스-사이트-스크립팅/">크로스 사이트 스크립팅</a>
+
+            </div>
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/11/30/클래스-리터럴-타입-토큰-수퍼-타입-토큰/"  data-tooltip="클래스 리터럴, 타입 토큰, 수퍼 타입 토큰">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/11/19/Spring-Data-JPA-에서-Java8-Date-Time-JSR-310-사용하기/" data-tooltip="Spring Data JPA 에서 Java8 Date-Time(JSR-310) 사용하기">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2016/11/21/Spring에서-JSON에-XSS-방지-처리-하기/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2016/11/21/Spring에서-JSON에-XSS-방지-처리-하기/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2016/11/21/Spring에서-JSON에-XSS-방지-처리-하기/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+        
+            <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2018 HomoEfficio. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="1">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/11/30/클래스-리터럴-타입-토큰-수퍼-타입-토큰/"  data-tooltip="클래스 리터럴, 타입 토큰, 수퍼 타입 토큰">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/11/19/Spring-Data-JPA-에서-Java8-Date-Time-JSR-310-사용하기/" data-tooltip="Spring Data JPA 에서 Java8 Date-Time(JSR-310) 사용하기">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2016/11/21/Spring에서-JSON에-XSS-방지-처리-하기/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2016/11/21/Spring에서-JSON에-XSS-방지-처리-하기/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2016/11/21/Spring에서-JSON에-XSS-방지-처리-하기/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="1">
+    <ul class="share-options">
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2016/11/21/Spring에서-JSON에-XSS-방지-처리-하기/">
+                <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2016/11/21/Spring에서-JSON에-XSS-방지-처리-하기/">
+                <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2016/11/21/Spring에서-JSON에-XSS-방지-처리-하기/">
+                <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+            
+        </div>
+        <div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=110"/>
+        
+            <h4 id="about-card-name">HomoEfficio</h4>
+        
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Seoul, Korea.
+            </h5>
+        
+    </div>
+</div>
+        <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/script.min.js"></script>
+<!--SCRIPTS END-->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'hanmomhanda';
+        (function() {
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+
+
+
+</html>

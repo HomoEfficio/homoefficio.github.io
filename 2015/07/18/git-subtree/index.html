@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="null">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="뒤태지존의 끄적거림">
+    <title>git subtree - 프로젝트 안의 또 다른 프로젝트 - 뒤태지존의 끄적거림</title>
+    <meta name="author" content="HomoEfficio">
+    <meta name="description" content="뒤태지존의 끄적거림">
+    
+        <link rel="icon" href="/assets/images/favicon.ico">
+    
+    
+        <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <meta name="description" content="Context이 블로그는 hexo 블로그 플랫폼에 tranquilpeak 테마를 적용하고 GitHub 호스팅에서 돌고 있다. tranquilpeak이 아주 마음에 들었지만 기본 폰트가 눈에 거슬렸다. 그래서 고쳐쓰려고 보니, 지속적으로 계속 내가 원하는 폰트를 적용하려면 단순히 CSS 어딘가를 고치면 끝나는 환경이 아니었다. 테마 자체를 사용자 버전이 아닌">
+<meta name="keywords" content="git,subtree,subproject,hexo,서브트리,서브프로젝트">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="git subtree - 프로젝트 안의 또 다른 프로젝트">
+<meta property="og:url" content="http://homoefficio.github.io/2015/07/18/git-subtree/index.html">
+<meta property="og:site_name" content="뒤태지존의 끄적거림">
+<meta property="og:description" content="Context이 블로그는 hexo 블로그 플랫폼에 tranquilpeak 테마를 적용하고 GitHub 호스팅에서 돌고 있다. tranquilpeak이 아주 마음에 들었지만 기본 폰트가 눈에 거슬렸다. 그래서 고쳐쓰려고 보니, 지속적으로 계속 내가 원하는 폰트를 적용하려면 단순히 CSS 어딘가를 고치면 끝나는 환경이 아니었다. 테마 자체를 사용자 버전이 아닌">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-10-13T15:49:56.266Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="git subtree - 프로젝트 안의 또 다른 프로젝트">
+<meta name="twitter:description" content="Context이 블로그는 hexo 블로그 플랫폼에 tranquilpeak 테마를 적용하고 GitHub 호스팅에서 돌고 있다. tranquilpeak이 아주 마음에 들었지만 기본 폰트가 눈에 거슬렸다. 그래서 고쳐쓰려고 보니, 지속적으로 계속 내가 원하는 폰트를 적용하려면 단순히 CSS 어딘가를 고치면 끝나는 환경이 아니었다. 테마 자체를 사용자 버전이 아닌">
+    
+        <meta rel="publisher" content="https://plus.google.com/+오명운"/>
+    
+    
+    
+        <meta property="og:image" content="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=640"/>
+    
+    
+        <meta property="og:image" content="/2015/07/18/git-subtree/http:/blogs.wandisco.com/wp-content/uploads/2013/09/subtrees.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2015/07/18/git-subtree/http://blogs.wandisco.com/wp-content/uploads/2013/09/subtrees.png" />
+    
+    
+        <meta property="og:image" content="/2015/07/18/git-subtree/git-subtree.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2015/07/18/git-subtree/git-subtree.png" />
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style.min.css">
+    <!--STYLES END-->
+    
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-79893978-1']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6494847158566766",
+    enable_page_level_ads: true
+  });
+</script>
+</head>
+
+    <body>
+        <div id="blog">
+            <header id="header" data-behavior="1">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="/ ">뒤태지존의 끄적거림</a>
+    </h1>
+    
+        <a class="header-right-picture" href="/#about">
+            <img class="header-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+        </a>
+    
+</header>
+            <nav id="sidebar" data-behavior="1">
+    
+    <div class="sidebar-profile">
+        <a href="/#about">
+            
+            <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+            
+        </a>
+        <span class="sidebar-profile-name">HomoEfficio</span>
+    </div>
+    
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/ 
+                    ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">Home</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-categories
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">Categories</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-tags
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">Tags</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-archives
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">Archives</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link st-search-show-outputs"
+                    href="#search
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                    <span class="sidebar-button-desc">Search</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="#about
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">About me</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="https://github.com/HomoEfficio" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                    <span class="sidebar-button-desc">GitHub</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="mailto:homo.efficio@gmail.com" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-envelope-o"></i>
+                    <span class="sidebar-button-desc">Mail</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/atom.xml
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+            <div id="main" data-behavior="1">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+        <div class="post-header-cover" style="background-image:url('/2015/07/18/git-subtree/git-subtree.png');">
+            <div class="post-header main-content-wrap">
+    
+        <h1 class="post-title" itemprop="headline">git subtree - 프로젝트 안의 또 다른 프로젝트</h1>
+    
+    <div class="post-meta">
+    <time  itemprop="datePublished" content="Sat Jul 18 2015 12:54:46 GMT+0900">
+        Jul 18, 2015
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/개발-환경-및-도구/">개발 환경 및 도구</a>
+
+
+    
+</div>
+</div>
+        </div>
+    
+    <div class="post-content markdown main-content-wrap" itemprop="articleBody">
+        
+            <h1 id="Context"><a href="#Context" class="headerlink" title="Context"></a>Context</h1><p>이 블로그는 <a href="https://hexo.io/" target="_blank" rel="noopener">hexo</a> 블로그 플랫폼에 <a href="https://github.com/LouisBarranqueiro/tranquilpeak-hexo-theme" target="_blank" rel="noopener">tranquilpeak</a> 테마를 적용하고 GitHub 호스팅에서 돌고 있다.</p>
+<p><a href="https://github.com/LouisBarranqueiro/tranquilpeak-hexo-theme" target="_blank" rel="noopener">tranquilpeak</a>이 아주 마음에 들었지만 기본 폰트가 눈에 거슬렸다. 그래서 고쳐쓰려고 보니, 지속적으로 계속 내가 원하는 폰트를 적용하려면 단순히 CSS 어딘가를 고치면 끝나는 환경이 아니었다. 테마 자체를 사용자 버전이 아닌 개발자 버전으로 가지고 와서 빌드를 해야 내가 딱 원하는 환경을 구성할 수 있었다.</p>
+<p>생각해보면 <strong>테마 자체도 하나의 Git repo를 가지고 있는 개발 프로젝트이고, 블로그 포스트를 담고 있는 hexo 인스턴스 역시도 하나의 Git repo를 가지고 있는 일종의 개발 프로젝트다.</strong></p>
+<p>하지만 내 로컬 환경에서의 물리적인 파일 구조는 블로그 포스트를 담고 있는 hexo 인스턴스 내부에 themes/tranquilpeak 가 존재한다. 즉, hexo가 tranquilpeak 테마를 포함하고 있다. 다시 말해, <strong>프로젝트 안에 또 다른 프로젝트가 존재하는 생김새다.</strong></p>
+<pre><code>{% asset_img 파일구조.png %}
+</code></pre><p>나는 블로그 포스트도 계속 추가해 갈 것이고, 테마도 조금씩 바꿔갈 생각이다. <strong>즉, 포스트는 hexo repo에 반영하고, 테마 수정 내용은 tranquilpeak를 수정한 custom-tranquilpeak repo에 반영하고 싶다.</strong></p>
+<p>그럼 Git repo 내에 또 다른 Git repo를 둬야 되는건가?<br>hexo repo의 .gitignore에 themes/tranquilpeak 를 추가하고, 포스트를 쓰다가 미리보기로 보니 테마를 바꿔야 할 필요가 있어서 테마를 고치려면 custom-tranquilpeak repo에 가서 고치고 커밋하고 푸쉬해야 되나?</p>
+<h1 id="git-subtree"><a href="#git-subtree" class="headerlink" title="git subtree"></a>git subtree</h1><p>깃느님은 역시나 해법을 가지고 계셨다. 바로 <code>git subtree</code>다.</p>
+<p><code>git subtree</code>의 기능을 나름대로 정의하자면 다음과 같다.</p>
+<blockquote>
+<p>git subtree는 실제로는 개별 프로젝트인 여러 개의 프로젝트를 개발자의 로컬에서는 하나의 repo로 관리할 수 있게 해준다.</p>
+</blockquote>
+<p>앞에서 설명한 환경을 대입해서 구체적으로 설명하면,</p>
+<ul>
+<li><strong>실제로는 개별 프로젝트인 hexo 인스턴스와 custom-tranquilpeak 테마를</strong></li>
+<li><strong>내 로컬에서는 hexo 인스턴스 repo 하나로 관리할 수 있다.</strong></li>
+<li><strong>hexo 인스턴스의 수정 내용은 당연히 원격의 hexo repo push/pull 할 수 있고, custom-tranquilpeak 테마의 수정 내용은 원격에 개별 프로젝트로 존재하는 repo에 따로 push/pull 할 수 있다.</strong></li>
+</ul>
+<h1 id="작업-흐름"><a href="#작업-흐름" class="headerlink" title="작업 흐름"></a>작업 흐름</h1><p>작업 흐름도 간단하다.</p>
+<p>앞으로는 이해를 쉽게 하기 위해 포함하는 프로젝트를 <code>Parent</code>, 포함되는 프로젝트를 <code>Child</code> 라고 한다.</p>
+<h3 id="로컬-repo-구성"><a href="#로컬-repo-구성" class="headerlink" title="로컬 repo 구성"></a>로컬 repo 구성</h3><ul>
+<li><code>Parent</code>를 clone 해서 로컬로 가져온다.</li>
+</ul>
+<blockquote>
+<p>~/gitRepo $ git clone <a href="https://github.com/hanmomhanda/hanmomhanda.github.io" target="_blank" rel="noopener">https://github.com/hanmomhanda/hanmomhanda.github.io</a><br>Cloning into ‘hanmomhanda.github.io’…<br>remote: Counting objects: 10173, done.<br>remote: Compressing objects: 100% (4689/4689), done.<br>remote: Total 10173 (delta 3043), reused 0 (delta 0), pack-reused 5261<br>Receiving objects: 100% (10173/10173), 15.02 MiB | 3.39 MiB/s, done.<br>Resolving deltas: 100% (5565/5565), done.<br>Checking connectivity… done.</p>
+</blockquote>
+<ul>
+<li><code>Parent repo</code> 디렉토리로 이동</li>
+</ul>
+<blockquote>
+<p>~/gitRepo $ cd hanmomhanda.github.io</p>
+</blockquote>
+<h3 id="원격-repo-참조-추가"><a href="#원격-repo-참조-추가" class="headerlink" title="원격 repo 참조 추가"></a>원격 repo 참조 추가</h3><ul>
+<li>로컬의 hexo 인스턴스 repo 설정 파일에 <code>custom-tranquilpeak</code>에 대한 원격 참조를 추가한다.<br>  그래야 로컬의 custom-tranquilpeak의 내용과 원격의 <code>custom-tranquilpeak</code> 사이에 push/pull 할 수 있다.</li>
+</ul>
+<blockquote>
+<p>~/gitRepo/hanmomhanda.github.io $ git remote add custom-tranquilpeak <a href="https://github.com/hanmomhanda/custom-tranquilpeak-hexo-theme.git" target="_blank" rel="noopener">https://github.com/hanmomhanda/custom-tranquilpeak-hexo-theme.git</a></p>
+</blockquote>
+<h3 id="subtree-구성"><a href="#subtree-구성" class="headerlink" title="subtree 구성"></a>subtree 구성</h3><ul>
+<li>로컬의 hexo 인스턴스에 원격에 있는 <code>custom-tranquilpeak</code>의 내용을 clone이 아닌 <code>git subtree add</code>로 로컬에 물리적으로 가져온다.</li>
+</ul>
+<blockquote>
+<p>~/gitRepo/hanmomhanda.github.io $ git subtree add --prefix=themes/tranquilpeak/ custom-tranquilpeak dev</p>
+</blockquote>
+<ul>
+<li><p>위의 명령은 <code>custom-tranquilpeak</code>이 참조하는 원격 repo의 dev 브랜치의 내용을 <code>themes/tranquilpeak</code> 디렉토리로 물리적으로 가져온다.</p>
+</li>
+<li><p><strong>Git repo로서 가져오는 것이 아니라 단순히 디렉토리/파일을 가져오므로 <code>themes/tranquilpeak</code> 디렉토리에는 Git repo 설정을 담고 있는 .git 디렉토리가 없다.</strong></p>
+<ul>
+<li>사실 위의 명령 그대로 하면 prefix ‘themes/tranquilpeak/‘ already exists. 라는 에러가 난다. clone 해서 가져온 Parent가 이미 subtree로 구성되어 있기 때문이다. 이럴 때는 간단히 <code>rm -rf themes/tranquilpeak/</code> 로 지워주고 다시 위와 같이 <code>git subtree add</code> 명령을 실행하면 된다. 처음 subtree를 구성할 때는 이 에러는 발생하지 않는다.</li>
+</ul>
+</li>
+<li><p>git log 로 subtree 관련 내용을 확인할 수 있다.</p>
+</li>
+</ul>
+<blockquote>
+<p>~/gitRepo/hanmomhanda.github.io $ git log</p>
+</blockquote>
+<blockquote>
+<p>commit c807d42f2418be8a48c48575c3da00424393bda4<br>Merge: c6cf914 ddac951<br>Author: hanmomhanda <a href="mailto:&#x68;&#97;&#x6e;&#109;&#111;&#x6d;&#x68;&#x61;&#110;&#x64;&#x61;&#x40;&#x67;&#x6d;&#97;&#x69;&#108;&#46;&#99;&#x6f;&#109;" target="_blank" rel="noopener">&#x68;&#97;&#x6e;&#109;&#111;&#x6d;&#x68;&#x61;&#110;&#x64;&#x61;&#x40;&#x67;&#x6d;&#97;&#x69;&#108;&#46;&#99;&#x6f;&#109;</a><br>Date:   Sat Jul 18 12:03:16 2015 +0900</p>
+<p>   Add ‘themes/tranquilpeak/‘ from commit ‘ddac951e92d024aa42206f557029dc61fd3772da’</p>
+<p>   git-subtree-dir: themes/tranquilpeak<br>   git-subtree-mainline: c6cf914fe11306df562d8b2b2d37ef6fb8a980da<br>   git-subtree-split: ddac951e92d024aa42206f557029dc61fd3772da</p>
+</blockquote>
+<h3 id="Parent-내용의-git-싸이클"><a href="#Parent-내용의-git-싸이클" class="headerlink" title="Parent 내용의 git 싸이클"></a>Parent 내용의 git 싸이클</h3><ul>
+<li>일반적인 git 흐름과 동일하다. <code>git add</code>, <code>git commit</code>, <code>git push</code>, <code>git pull</code> 로 관리한다.</li>
+</ul>
+<h3 id="Child-내용의-git-싸이클"><a href="#Child-내용의-git-싸이클" class="headerlink" title="Child 내용의 git 싸이클"></a>Child 내용의 git 싸이클</h3><p>여기가 중요하다. <code>Child</code> 관리는 두 가지로 나뉜다.</p>
+<ul>
+<li><p><strong><code>Child</code>도 로컬에서는 <code>Parent</code>의 한 디렉토리에 불과하다.</strong> 따라서 <code>Child</code>의 내용도 <code>Parent</code>에서와 마찬가지로 일반적인 <code>git add</code>, <code>git commit</code>, <code>git push</code>, <code>git push</code> 로 <code>Parent</code>의 변경 관리에 포함된다.</p>
+</li>
+<li><p><code>Child</code>는 원래 별개의 프로젝트 였다. 원격에 있는 원래의 repo에도 변경 사항을 동기화 해야 한다. 이럴 떄는 <code>git push</code>, <code>git pull</code>이 아니라 <code>git subtree push</code>, <code>git subtree pull</code> 을 사용해야 한다.</p>
+<ul>
+<li><p><code>git subtree push</code></p>
+<blockquote>
+<p>~/gitRepo/hanmomhanda.github.io $ git subtree push --prefix=themes/tranquilpeak/ custom-tranquilpeak dev<br>git push using:  custom-tranquilpeak dev<br>Username for ‘<a href="https://github.com&#39;" target="_blank" rel="noopener">https://github.com&#39;</a>: hanmomhanda<br>Password for ‘<a href="https://hanmomhanda@github.com&#39;" target="_blank" rel="noopener">https://hanmomhanda@github.com&#39;</a>:<br>Counting objects: 5, done.<br>Delta compression using up to 4 threads.<br>Compressing objects: 100% (5/5), done.<br>Writing objects: 100% (5/5), 862 bytes | 0 bytes/s, done.<br>Total 5 (delta 4), reused 0 (delta 0)<br>To <a href="https://github.com/hanmomhanda/custom-tranquilpeak-hexo-theme.git" target="_blank" rel="noopener">https://github.com/hanmomhanda/custom-tranquilpeak-hexo-theme.git</a><br> ddac951..7c73ddd  7c73ddd16018e76b90de3baea21c8e78cef0b1cc -&gt; dev</p>
+</blockquote>
+</li>
+<li><p><code>git subtree pull</code></p>
+<blockquote>
+<p>~/gitRepo/hanmomhanda.github.io $ git subtree pull --prefix=themes/tranquilpeak/ custom-tranquilpeak dev<br>From <a href="https://github.com/hanmomhanda/custom-tranquilpeak-hexo-theme" target="_blank" rel="noopener">https://github.com/hanmomhanda/custom-tranquilpeak-hexo-theme</a></p>
+<ul>
+<li>branch            dev        -&gt; FETCH_HEAD<br>Already up-to-date.</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="좋은점"><a href="#좋은점" class="headerlink" title="좋은점"></a>좋은점</h1><ul>
+<li><p>여러 개의 프로젝트 repo를 로컬에서 하나의 프로젝트로 repo로 통합해서 관리할 수 있다.</p>
+</li>
+<li><p>원격은 원래와 마찬가지로 개별로 나뉘어진 상태로 계속 변경 사항을 동기화 할 수 있다.</p>
+</li>
+<li><p>예시로 든 것처럼 블로그 플랫폼과 테마를 관리하는 상황이 git subtree와 궁합이 완전히 딱 들어 맞는 Use case가 되며, 그 외 이런 저런 이유로 여러 개의 프로젝트를 통합 관리하고자 할 때 적용할 수 있다.</p>
+</li>
+</ul>
+<h1 id="아쉬운-점"><a href="#아쉬운-점" class="headerlink" title="아쉬운 점"></a>아쉬운 점</h1><ul>
+<li><p>subtree를 만들면 설정 파일에 설정 사항이 기록되면 좋겠는데, <code>git log</code> 에만 남는다. 따라서 <code>git subtree push</code>, <code>git subtree pull</code>을 할 때 어느 디렉토리를 <code>--prefix</code>로 지정해야 하는지 기억하고 있어야 한다.</p>
+<ul>
+<li>어느 디렉토리에 <code>.gitignore</code> 파일이 있는지를 검사하는 등의 방법으로 subtree인 디렉토리를 찾아낼 수도 있기는 하다. 하지만 불편하기는 마찬가지.</li>
+</ul>
+</li>
+</ul>
+<h1 id="정리"><a href="#정리" class="headerlink" title="정리"></a>정리</h1><ul>
+<li><p>여러 개의 프로젝트를 합쳐서 하나로 관리하고 싶다면 <code>git subtree</code>를 사용한다.</p>
+</li>
+<li><p>어느 디렉토리가 subtree인지 별도로 기록해두고 팀원들끼리 공유해야 한다.</p>
+<ul>
+<li>이에 관해 김경민 님이 작성하신 <a href="http://readme.skplanet.com/?p=8542" target="_blank" rel="noopener">SK Planet의 블로그 포스팅</a>에 보면 subtree로 추가한 디렉토리를 별도의 브랜치로 빼두는 방법이 있는데, 그 글의 질의응답에 내가 써둔 것처럼 아주 유용한 것 같지는 않다는 생각이다.</li>
+</ul>
+</li>
+</ul>
+<h1 id="참고-자료"><a href="#참고-자료" class="headerlink" title="참고 자료"></a>참고 자료</h1><ul>
+<li><a href="https://developer.atlassian.com/blog/2015/05/the-power-of-git-subtree/" target="_blank" rel="noopener">Atlassian 블로그 - 1</a></li>
+<li><a href="http://blogs.atlassian.com/2013/05/alternatives-to-git-submodule-git-subtree/" target="_blank" rel="noopener">Atlassian 블로그 - 2</a></li>
+<li><a href="http://readme.skplanet.com/?p=8542" target="_blank" rel="noopener">SK Planet 블로그</a></li>
+</ul>
+
+        
+        
+            
+        
+        <hr/>
+        <div>
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="크리에이티브 커먼즈 라이선스" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><a href='https://github.com/homoefficio' target='_blank'>HomoEfficio</a>가 작성한 이 저작물은(는) <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스</a>에 따라 이용할 수 있습니다.
+        </div>
+    </div>
+    <div class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/git/">git</a> <a class="tag tag--primary tag--small t-link" href="/tags/hexo/">hexo</a> <a class="tag tag--primary tag--small t-link" href="/tags/subproject/">subproject</a> <a class="tag tag--primary tag--small t-link" href="/tags/subtree/">subtree</a> <a class="tag tag--primary tag--small t-link" href="/tags/서브트리/">서브트리</a> <a class="tag tag--primary tag--small t-link" href="/tags/서브프로젝트/">서브프로젝트</a>
+
+            </div>
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/07/19/정적-분석과-D3-js를-이용한-JavaScript-상속-구조-다이어그램/"  data-tooltip="정적 분석과 D3.js를 이용한 JavaScript 상속 구조 다이어그램">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/07/17/게임-프로그래밍을-위한-3차원-그래픽스/" data-tooltip="게임 프로그래밍을 위한 3차원 그래픽스">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2015/07/18/git-subtree/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2015/07/18/git-subtree/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2015/07/18/git-subtree/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+        
+            <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2018 HomoEfficio. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="1">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/07/19/정적-분석과-D3-js를-이용한-JavaScript-상속-구조-다이어그램/"  data-tooltip="정적 분석과 D3.js를 이용한 JavaScript 상속 구조 다이어그램">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/07/17/게임-프로그래밍을-위한-3차원-그래픽스/" data-tooltip="게임 프로그래밍을 위한 3차원 그래픽스">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2015/07/18/git-subtree/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2015/07/18/git-subtree/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2015/07/18/git-subtree/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="1">
+    <ul class="share-options">
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2015/07/18/git-subtree/">
+                <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2015/07/18/git-subtree/">
+                <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2015/07/18/git-subtree/">
+                <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+            
+        </div>
+        <div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=110"/>
+        
+            <h4 id="about-card-name">HomoEfficio</h4>
+        
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Seoul, Korea.
+            </h5>
+        
+    </div>
+</div>
+        <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/script.min.js"></script>
+<!--SCRIPTS END-->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'hanmomhanda';
+        (function() {
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+
+
+
+</html>

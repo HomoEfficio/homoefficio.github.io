@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="null">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="뒤태지존의 끄적거림">
+    <title>BlockChain 기초 개념 - 뒤태지존의 끄적거림</title>
+    <meta name="author" content="HomoEfficio">
+    <meta name="description" content="뒤태지존의 끄적거림">
+    
+        <link rel="icon" href="/assets/images/favicon.ico">
+    
+    
+        <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <meta name="description" content="BlockChain 기초 개념상당히 피상적으로만 알고 있던, 그래서 얘기하다가 서로 질문을 던져보면 너도 모르고 나도 모르는..   블록이 정확히 뭘 말하는 거냐? …   그래서 채굴이 정확히 뭐라는 거냐? …   어려운 문제를 푼다는데 그게 대체 무슨 문제라는 거냐? …   분산된 어쩌구라는데 뭐가 어떻게 분산되어 있다는 거냐? …     사실 국내에서">
+<meta name="keywords" content="BlockChain,블록체인,BitCoin,비트코인,FinTech,핀테크,Proof of Work,작업증명">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="BlockChain 기초 개념">
+<meta property="og:url" content="http://homoefficio.github.io/2016/01/23/BlockChain-기초-개념/index.html">
+<meta property="og:site_name" content="뒤태지존의 끄적거림">
+<meta property="og:description" content="BlockChain 기초 개념상당히 피상적으로만 알고 있던, 그래서 얘기하다가 서로 질문을 던져보면 너도 모르고 나도 모르는..   블록이 정확히 뭘 말하는 거냐? …   그래서 채굴이 정확히 뭐라는 거냐? …   어려운 문제를 푼다는데 그게 대체 무슨 문제라는 거냐? …   분산된 어쩌구라는데 뭐가 어떻게 분산되어 있다는 거냐? …     사실 국내에서">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://i.imgur.com/KFtqafZ.png">
+<meta property="og:image" content="http://i.imgur.com/KFtqafZ.png">
+<meta property="og:image" content="http://i.imgur.com/caPbxeH.png">
+<meta property="og:updated_time" content="2018-10-13T15:49:56.179Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="BlockChain 기초 개념">
+<meta name="twitter:description" content="BlockChain 기초 개념상당히 피상적으로만 알고 있던, 그래서 얘기하다가 서로 질문을 던져보면 너도 모르고 나도 모르는..   블록이 정확히 뭘 말하는 거냐? …   그래서 채굴이 정확히 뭐라는 거냐? …   어려운 문제를 푼다는데 그게 대체 무슨 문제라는 거냐? …   분산된 어쩌구라는데 뭐가 어떻게 분산되어 있다는 거냐? …     사실 국내에서">
+<meta name="twitter:image" content="http://i.imgur.com/KFtqafZ.png">
+    
+        <meta rel="publisher" content="https://plus.google.com/+오명운"/>
+    
+    
+    
+        <meta property="og:image" content="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=640"/>
+    
+    
+        <meta property="og:image" content="/2016/01/23/BlockChain-기초-개념/https:/www.dinastycoin.com/wp-content/uploads/2016/08/blockchain.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2016/01/23/BlockChain-기초-개념/https://www.dinastycoin.com/wp-content/uploads/2016/08/blockchain.jpg" />
+    
+    
+        <meta property="og:image" content="/2016/01/23/BlockChain-기초-개념/cover-blockchain-01.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2016/01/23/BlockChain-기초-개념/cover-blockchain-01.jpg" />
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style.min.css">
+    <!--STYLES END-->
+    
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-79893978-1']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6494847158566766",
+    enable_page_level_ads: true
+  });
+</script>
+</head>
+
+    <body>
+        <div id="blog">
+            <header id="header" data-behavior="1">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="/ ">뒤태지존의 끄적거림</a>
+    </h1>
+    
+        <a class="header-right-picture" href="/#about">
+            <img class="header-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+        </a>
+    
+</header>
+            <nav id="sidebar" data-behavior="1">
+    
+    <div class="sidebar-profile">
+        <a href="/#about">
+            
+            <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+            
+        </a>
+        <span class="sidebar-profile-name">HomoEfficio</span>
+    </div>
+    
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/ 
+                    ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">Home</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-categories
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">Categories</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-tags
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">Tags</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-archives
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">Archives</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link st-search-show-outputs"
+                    href="#search
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                    <span class="sidebar-button-desc">Search</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="#about
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">About me</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="https://github.com/HomoEfficio" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                    <span class="sidebar-button-desc">GitHub</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="mailto:homo.efficio@gmail.com" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-envelope-o"></i>
+                    <span class="sidebar-button-desc">Mail</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/atom.xml
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+            <div id="main" data-behavior="1">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+        <div class="post-header-cover" style="background-image:url('/2016/01/23/BlockChain-기초-개념/cover-blockchain-01.jpg');">
+            <div class="post-header main-content-wrap">
+    
+        <h1 class="post-title" itemprop="headline">BlockChain 기초 개념</h1>
+    
+    <div class="post-meta">
+    <time  itemprop="datePublished" content="Sat Jan 23 2016 14:28:22 GMT+0900">
+        Jan 23, 2016
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/BlockChain/">BlockChain</a>
+
+
+    
+</div>
+</div>
+        </div>
+    
+    <div class="post-content markdown main-content-wrap" itemprop="articleBody">
+        
+            <h1 id="BlockChain-기초-개념"><a href="#BlockChain-기초-개념" class="headerlink" title="BlockChain 기초 개념"></a>BlockChain 기초 개념</h1><p>상당히 피상적으로만 알고 있던, 그래서 얘기하다가 서로 질문을 던져보면 너도 모르고 나도 모르는..</p>
+<blockquote>
+<ul>
+<li>블록이 정확히 뭘 말하는 거냐?<ul>
+<li>…</li>
+</ul>
+</li>
+<li>그래서 채굴이 정확히 뭐라는 거냐?<ul>
+<li>…</li>
+</ul>
+</li>
+<li>어려운 문제를 푼다는데 그게 대체 무슨 문제라는 거냐?<ul>
+<li>…</li>
+</ul>
+</li>
+<li>분산된 어쩌구라는데 뭐가 어떻게 분산되어 있다는 거냐?<ul>
+<li>…</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<p>사실 국내에서 찾을 수 있는 이런 저런 자료를 봐도 우연의 일치일까, 딱 어떤 정해진 선까지만 다루고 더 깊은 얘기가 없다. 그래서 그 수준까지의 내용을 보고 떠오르는 질문에 대한 답을 찾기는 쉽지 않았는데, <a href="http://www.yes24.com/24/goods/22357437" target="_blank" rel="noopener">이 책</a>에 바로 그 수준 너머에 있는 내용이 담겨 있다.</p>
+<p>블록체인에 칭칭 감길 수 있게 해주는 길잡이로서 아주 좋은 책이다. 하지만 원문이 원래 그런건지 아니면 번역이 좀 그런건지, 여튼 번역 결과는 그리 높은 점수를 줄 수는 없을 듯..</p>
+<p>시작하기 전에 블록체인과 비트코인의 구분 정도는 해보자. 블록체인은 비트코인의 운영 바탕이 되는 체계이고, 비트코인은 블록체인을 화폐 발행과 운영에 응용한 것이다. 고로 핵심이 되는 기반 기술 체계는 블록체인이고, 비트코인은 블록체인을 바탕으로 만들어낸 서비스의 하나이다.</p>
+<p>그럼 블록체인이 어떻게 작동하는지 기초부터 한 번 들여다보자.</p>
+<h2 id="BlockChain"><a href="#BlockChain" class="headerlink" title="BlockChain"></a>BlockChain</h2><p>블록체인은 최초의 블록(Genesis Block)부터 시작해서 바로 앞의 블록에 대한 링크를 가지고 있는 링크드 리스트다. 블록체인은 여러 노드에 걸쳐 분산되어 저장 및 관리되며, 블록에는 거래 정보가 포함되어 있으므로, 블록의 집합체인 <strong>블록체인은 모든 거래 정보를 포함하는 거대한 분산 장부</strong>라고 할 수 있다.</p>
+<h2 id="Block"><a href="#Block" class="headerlink" title="Block"></a>Block</h2><p>블록은 블록체인의 원소로서 개념적으로는 <strong>다수의 거래 정보의 묶음</strong>을 의미한다.<br>블록은 블록 헤더와 거래 정보, 기타 정보로 구성된다.</p>
+<ul>
+<li>블록 헤더는 <code>version</code>, <code>previousblockhash</code>, <code>merklehash</code>, <code>time</code>, <code>bits</code>, <code>nonce</code> 이렇게 6개의 정보로 구성된다.</li>
+<li>거래 정보는 입출금과 관련한 여러가지 정보를 가지고 있다.</li>
+<li>기타 정보는 블록 내에 있는 정보 중에서 블록 헤더와 거래 정보에 해당하지 않는 정보를 말하며, 블록 해쉬 계산에 사용되지 않는다.</li>
+</ul>
+<h2 id="Block-Header"><a href="#Block-Header" class="headerlink" title="Block Header"></a>Block Header</h2><p>블록 헤더는 다음의 6가지 정보로 구성</p>
+<ol>
+<li><code>version</code> : 소프트웨어/프로토콜 버전</li>
+<li><code>previousblockhash</code> : 블록 체인에서 바로 앞에 위치하는 블록의 블록 해쉬</li>
+<li><code>merklehash</code> : 개별 거래 정보의 거래 해쉬를 2진 트리 형태로 구성할 때, 트리 루트에 위치하는 해쉬값</li>
+<li><code>time</code> : 블록이 생성된 시간</li>
+<li><code>bits</code> : 난이도 조절용 수치</li>
+<li><code>nonce</code> : 최초 0에서 시작하여 조건을 만족하는 해쉬값을 찾아낼때까지의 1씩 증가하는 계산 회수</li>
+</ol>
+<h2 id="Block-Hash"><a href="#Block-Hash" class="headerlink" title="Block Hash"></a>Block Hash</h2><p>블록의 식별자 역할을 하는 블록 해쉬는 6가지의 블록 헤더 정보를 입력값으로 하고, 여기에 SHA256 해쉬 함수를 2회 적용해서 계산되는 값으로, 32바이트의 숫자값이다. <strong>이름은 블록 해쉬이지만 그 값은 블록 전체를 해쉬한 값이 아니라, 블록 헤더를 해쉬한 값</strong>이다.</p>
+<p>지금까지의 내용을 바탕으로 블록 해쉬를 구하는 과정을 그림으로 나타내면 다음과 같다.</p>
+<p><img src="http://i.imgur.com/KFtqafZ.png" alt="Imgur"></p>
+<p>이제 이 그림을 중심으로 얘기를 풀어가보자.</p>
+<h2 id="완료된-거래-정보의-변경이-사실상-불가능한-이유"><a href="#완료된-거래-정보의-변경이-사실상-불가능한-이유" class="headerlink" title="완료된 거래 정보의 변경이 사실상 불가능한 이유"></a>완료된 거래 정보의 변경이 사실상 불가능한 이유</h2><p>거래 정보의 해쉬값은 해당 거래가 포함된 블록의 <code>merklehash</code> 계산에 입력값으로 사용되고, <code>merklehash</code>는 블록 해쉬의 계산에 입력값으로 사용된다. 블록 해쉬는 다음 블록(A라 하면)의 <code>previousblockhash</code> 값으로 저장되며, <code>previousblockhash</code>은 A 블록의 블록 헤더 정보로서, A 블록의 블록 해쉬를 계산하는데 입력값으로 사용된다.</p>
+<p>따라서, 거래 정보가 변경되면 <code>merklehash</code>가 변경되고, <code>merklehash</code>가 변경되면 블록 해쉬가 변경되고, 블록 해쉬의 변경은 다음 블록의 블록 해쉬 변경으로 연쇄적으로 이어지게 된다. 그리고 블록 해쉬는 작업 증명의 해답(<code>nonce</code> 값)을 찾아내야 구할 수 있으므로, 거래 정보를 변경한 블록부터 그 이후의 모든 블록을 순서대로 다시 채굴해야 한다.</p>
+<p>블록 하나 채굴하는데 평균 10분이 소요되고, <a href="http://bitcoincharts.com/bitcoin/" target="_blank" rel="noopener">http://bitcoincharts.com/bitcoin/</a> 에서 확인한 2016-01-23 현재 총 블록 수가 약 40만 블록이므로, 최초의 원조 블록인 Genesis 블록에 포함된 거래를 변경하면 약 400만 분, 약 7.6년의 시간이 소요된다.</p>
+<p>그 7.6년의 시간 동안에도 새로운 블록들도 평균 10분 마다 하나 씩 계속 생성되므로 이를 모두 뒤집는 것은 사실 상 불가능하다.</p>
+<blockquote>
+<p>완료된 거래 정보를 변경하려면,<br>변경하려는 거래 정보가 포함된 블록부터 그 이후의 모든 블록을 순서대로 다시 채굴해야 하는데,<br>이는 많은 시간이 소요되고, 그 동안 다른 노드들에 의해 블록이 계속 추가되므로, 완료된 거래 정보의 변경은 현실적으로 사실상 불가능하다. </p>
+</blockquote>
+<h2 id="채굴"><a href="#채굴" class="headerlink" title="채굴"></a>채굴</h2><p>채굴은 일반인들이 비트코인을 쉽게 이해할 수 있도록 만든 용어로서, <strong>작업 증명(Proof of Work)과 보상을 합친 개념</strong>이라고 생각하면 된다.</p>
+<h2 id="Proof-of-Work-작업-증명"><a href="#Proof-of-Work-작업-증명" class="headerlink" title="Proof of Work(작업 증명)"></a>Proof of Work(작업 증명)</h2><p>작업 증명은 새로운 블록을 블록체인에 추가하는 ‘작업’을 완료했음을 ‘증명’하는 것이라고 이해하면 된다. 새로운 블록을 블록체인에 추가하려면, 그 새로운 블록의 블록 해쉬를 계산해내야하고, 그 블록 해쉬를 계산해내려면 그 블록의 블록 헤더 정보 중의 하나인 <code>nonce</code>값을 계산을 통해 구해야 한다. </p>
+<blockquote>
+<p>결론적으로 이 <code>nonce</code>값을 구하는 것이 바로 작업 증명이다.</p>
+</blockquote>
+<h2 id="nonce-값의-계산"><a href="#nonce-값의-계산" class="headerlink" title="nonce 값의 계산"></a>nonce 값의 계산</h2><p>결론부터 말하면 <code>nonce</code> 값은, 이 <code>nonce</code> 값을 입력값 중의 하나로 해서 계산되는 <strong>블록 해쉬값이 특정 숫자보다 작아지게 하는 값</strong>을 말한다.</p>
+<p>그리고 해쉬 함수의 특성상, 어떤 해쉬값(A라고 하면)을 결과로 나오게 하는 입력값을 찾으려면, A에서 역산을 하는 방식으로는 찾을 수 없고, 결과가 A가 될 때까지 무작위로 입력값을 계속 바꿔가면서 찾아낼 수 밖에 없다.</p>
+<p>그 입력값을 바꿀 수 있는 유일한 통로가 바로 <code>nonce</code>다. 다시 말해, 아래 그림의 ‘블록 헤더’란에 포함된 6가지 정보 중에서 확정되지 않아서 값을 바꿀 수 있는 유일한 항목이 <code>nonce</code>다. </p>
+<p><img src="http://i.imgur.com/KFtqafZ.png" alt="Imgur"></p>
+<p>이 <code>nonce</code> 값을 1씩 증가시키면서 반복적으로 계산한 블록 해쉬값이 특정 숫자보다 작은 값이 나오면, 그 때의 <code>nonce</code> 값으로 계산한 블록 해쉬가 그 블록의 블록 해쉬로 확정되고, 블록 해쉬라는 식별자를 얻은 그 블록은 새로운 블록으로서 블록 체인에 추가되며 작업이 완료 된다.</p>
+<blockquote>
+<p>블록 해쉬가 특정 숫자보다 낮게 나올 떄의 <code>nonce</code> 값이 바로 작업 증명을 나타내는 <code>nonce</code> 값이다.</p>
+</blockquote>
+<p>이 과정을 그림으로 살펴보면 아래와 같다. 아래의 그림은 블록 해쉬가 <code>000000a84...</code>보다 작게 나오는 <code>nonce</code>값을 구하는 과정을 나타내고 있다. </p>
+<p><img src="http://i.imgur.com/caPbxeH.png" alt="Imgur"></p>
+<p>앞에서 설명한 대로 <code>nonce</code> 외의 모든 항목의 값은 이미 정해져 있다. </p>
+<p><code>nonce</code> 값이 0 일 때의 해쉬를 구해보니 <code>000000a84...</code>보다 큰 <code>fa8cbaeed...</code> 가 나와서 작업 증명에 실패 했다. </p>
+<p>다시 <code>nonce</code>가 1 일 때의 해쉬를 구해보니 <code>932d16e2e...</code> 가 나와서 또 실패.. <code>nonce</code>가 2 일 때의 해쉬, 3 일 때의 해쉬.. 를 계속 반복해서 구하고 실패하다가, <code>nonce</code>가 82,764,351 일 때의 해쉬를 구해보니 드디어 <code>000000a84...</code> 보다 작은 <code>000000a83...</code>이 나와서 작업 증명에 성공했다.</p>
+<p>그렇다면 작업 증명 성공 여부의 기준이 되는  <code>000000a84...</code>라는 값은 어떻게 정해지나?</p>
+<p>바로 <strong>작업 난이도</strong>에 의해 정해진다(앞의 그림에서는 이해를 돕기 위해 <code>작업 난이도</code>보다는 더 구체적인 <code>채굴 난이도</code>로 표시했으나, 이제 그 작업이 무엇인지 알았으니 앞으로는 <code>작업 난이도</code>라고 한다.)</p>
+<h2 id="작업-난이도"><a href="#작업-난이도" class="headerlink" title="작업 난이도"></a>작업 난이도</h2><p>블록 해쉬가 특정 숫자보다 낮게 나올 때의 <code>nonce</code> 값을 찾아내는 것이 작업 증명이라고 했다. <strong>작업 난이도는 <code>nonce</code> 값 계산의 어려운 정도</strong>를 나타낸다. 작업 난이도는 블록 헤더 정보에서 <code>bits</code>라는 값으로 조절된다.</p>
+<p>앞에서 블록 해쉬는 32바이트의 숫자라고 했는데, 이해를 쉽게 하기 위해 블록 해쉬를 부호 없는 1바이트의 숫자라고 해보자. 그럼 1바이트의 숫자값을 블록 해쉬값으로 산출하는 해쉬 함수는 0 ~ 255 사이의 값을 결과로 산출한다.</p>
+<p>블록 해쉬가 128보다 작아야 한다고 하면, 0 ~ 255 사이의 값을 산출하는 해쉬 함수를 적용해서 128보다 작은 블록 해쉬값이 나올 확률은 <code>128보다 작은 수(0~127)의 개수 = 128</code>/<code>해쉬 함수가 산출할 수 있는 모든 값(0~255)의 개수 = 256</code>, 즉, <code>128/256</code>이므로, 50%의 확률이다.</p>
+<p>블록 해쉬가 64보다 작아야 한다면 64/256, 즉 25%의 확률로 <code>nonce</code> 값을 구할 수 있다. 블록 해쉬가 32보다 작아야 한다면 확률은 12.5%로 줄어든다. 여기서 128, 64, 32라는 특정 숫자가 바로 블록 헤더 정보의 <code>bits</code>이다. </p>
+<p>실제로 <code>bits</code>의 값이 128, 256 이런 식으로 저장되지는 않고, 지수와 계수를 사용하는 별도의 표현 방식이 있다.</p>
+<p>난이도는 2,160개의 블록이 생성되는데 소요되는 시간이 평균 시간인 21,600분(10분/블록 * 2,160블록)보다 오래 걸리면 낮아지고, 적게 걸리면 높아지는 방식으로, 대략 21,600분을 주기로 전체적으로 평균 10분이 소요되는 하나의 난이도가 전체에 적용된다.</p>
+<blockquote>
+<p>블록 헤더의 <code>bits</code>는 <code>nonce</code> 값을 계산하는데 기준이 되는 특정 숫자를 나타내며,<br>블록체인 전체에 걸쳐 일률적으로 적용되는 숫자다.</p>
+</blockquote>
+<h2 id="보상"><a href="#보상" class="headerlink" title="보상"></a>보상</h2><p>보상은 <strong>새로 발행되는 비트코인과 해당 블록에 포함되는 거래의 거래 수수료의 합</strong>이다. 비트코인의 새로운 발행은, 채굴자가 블록을 처음 구성할 때 채굴자의 지갑으로 일정량의 비트코인이 입금되는 거래를 그 블록의 첫 거래(generation transaction)로 추가하는 방식으로 이루어진다. 새로 발행되는 비트코인은 최초에 50BTC에서 시작해서 블록 체인에 21만개의 블록이 추가될 때마다 절반으로 줄어든다.</p>
+<p>거래 수수료는 각 거래 당사자끼리 자율적으로 정할 수 있고, 거래가 블록에 추가되는 우선 순위를 결정하는데 거래 수수료가 입력값으로 사용되기도 한다.</p>
+<blockquote>
+<p>보상은 <code>nonce</code> 값을 찾아내고, 그 결과 새로운 블록을 블록 체인에 추가해서,<br>해당 블록에 포함된 모든 거래를 유효한 거래로 확정시켜준 대가라고 할 수 있다.</p>
+</blockquote>
+<h2 id="채굴-보상이-줄어든다면-채굴에-의해-유지되는-블록체인이-지속될-수-있나"><a href="#채굴-보상이-줄어든다면-채굴에-의해-유지되는-블록체인이-지속될-수-있나" class="headerlink" title="채굴 보상이 줄어든다면 채굴에 의해 유지되는 블록체인이 지속될 수 있나?"></a>채굴 보상이 줄어든다면 채굴에 의해 유지되는 블록체인이 지속될 수 있나?</h2><p>비트코인의 총 발행량은 2,100만BTC로 정해져 있다. 결국 채굴하더라도 언젠가는 비트코인은 더 이상 발행되지 않으므로, 거래 수수료만이 유일한 보상으로 남게 된다.</p>
+<p>어떤 상황에서든 채굴이 의미가 있으려면, 채굴에 소요되는 비용보다 수익이 더 커야하며, 이는 비트코인의 신규 발행이 없는 상황에서도 마찬가지다. 이 조건을 만족시켜야 채굴이 계속되고 블록체인이 지속될 수 있다. 비트코인 신규 발행이 없는 상황에서 이 조건이 만족되려면 다음과 같은 시나리오가 충족되어야 한다.</p>
+<h3 id="채굴-비용의-감소"><a href="#채굴-비용의-감소" class="headerlink" title="채굴 비용의 감소"></a>채굴 비용의 감소</h3><p>채굴 비용의 감소는 결국 작업 증명 해답을 찾는데 얼마의 시간이 소요되느냐에 달려있다. 이는 작업의 난이도에 달려 있으므로, 거래 수수료만이 유일한 보상인 상황에서 블록체인이 유지되려면 작업의 난이도가 현재보다 더 낮아져서 소요 비용을 낮춰야 할 것이다.</p>
+<h3 id="거래-수수료의-증가"><a href="#거래-수수료의-증가" class="headerlink" title="거래 수수료의 증가"></a>거래 수수료의 증가</h3><p>거래 수수료의 증가는 결국 거래 수수료율의 증가를 의미하는데, 거래의 성격과 다른 화폐와의 경쟁 등 시장 상황에 따라 정해지겠으나 대폭 높아지기는 어려울 것이다. 따라서 수수료율의 증가가 아니라 수수료 총액의 증가로 이어질 것이다. 즉, 블록의 크기를 늘려서 블록 안에 더 많은 거래를 담아서 블록 당 수수료 총액을 높게 유지하는 방식으로 전개될 것이다.</p>
+<blockquote>
+<p>신규 발행이 사라지는 2140년 경 이후에는 결국은 채굴 난이도가 낮아지거나 블록 크기를 늘리는 방식으로 블록체인이 유지될 것이다.</p>
+</blockquote>
+<h1 id="정리"><a href="#정리" class="headerlink" title="정리"></a>정리</h1><blockquote>
+<ul>
+<li>블록체인은 모든 거래 정보를 포함하는 거대한 장부로서, 여러 채굴자의 컴퓨터에 복제되어 관리되는 분산 장부다.</li>
+</ul>
+</blockquote>
+<blockquote>
+<ul>
+<li>블록은 다수의 거래 정보의 묶음이며, 이런 블록이 체인처럼 연결되어 전체 블록체인을 형성한다.</li>
+</ul>
+</blockquote>
+<blockquote>
+<ul>
+<li>채굴은 블록에 담긴 거래 정보를 유효한 것으로 확정시키기 위해 어떤 숫자값을 찾아내는 작업 증명(Proof of Work)과 그에 따른 보상을 합친 개념이다.</li>
+</ul>
+</blockquote>
+<blockquote>
+<ul>
+<li>비트코인은 블록체인 시스템을 암호화 화폐 분야에 적용한 서비스의 일종이다.</li>
+</ul>
+</blockquote>
+<p>물론 이게 다가 아니므로 2탄도 쓰긴 해야할텐데 언제가 될지는..</p>
+
+        
+        
+            
+        
+        <hr/>
+        <div>
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="크리에이티브 커먼즈 라이선스" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><a href='https://github.com/homoefficio' target='_blank'>HomoEfficio</a>가 작성한 이 저작물은(는) <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스</a>에 따라 이용할 수 있습니다.
+        </div>
+    </div>
+    <div class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/BitCoin/">BitCoin</a> <a class="tag tag--primary tag--small t-link" href="/tags/BlockChain/">BlockChain</a> <a class="tag tag--primary tag--small t-link" href="/tags/FinTech/">FinTech</a> <a class="tag tag--primary tag--small t-link" href="/tags/Proof-of-Work/">Proof of Work</a> <a class="tag tag--primary tag--small t-link" href="/tags/블록체인/">블록체인</a> <a class="tag tag--primary tag--small t-link" href="/tags/비트코인/">비트코인</a> <a class="tag tag--primary tag--small t-link" href="/tags/작업증명/">작업증명</a> <a class="tag tag--primary tag--small t-link" href="/tags/핀테크/">핀테크</a>
+
+            </div>
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/01/27/Selenide-꿀팁/"  data-tooltip="Selenide 꿀팁">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/01/16/JavaScript-식별자-찾기-대모험/" data-tooltip="JavaScript 식별자 찾기 대모험">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2016/01/23/BlockChain-기초-개념/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2016/01/23/BlockChain-기초-개념/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2016/01/23/BlockChain-기초-개념/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+        
+            <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2018 HomoEfficio. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="1">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/01/27/Selenide-꿀팁/"  data-tooltip="Selenide 꿀팁">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/01/16/JavaScript-식별자-찾기-대모험/" data-tooltip="JavaScript 식별자 찾기 대모험">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2016/01/23/BlockChain-기초-개념/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2016/01/23/BlockChain-기초-개념/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2016/01/23/BlockChain-기초-개념/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="1">
+    <ul class="share-options">
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2016/01/23/BlockChain-기초-개념/">
+                <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2016/01/23/BlockChain-기초-개념/">
+                <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2016/01/23/BlockChain-기초-개념/">
+                <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+            
+        </div>
+        <div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=110"/>
+        
+            <h4 id="about-card-name">HomoEfficio</h4>
+        
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Seoul, Korea.
+            </h5>
+        
+    </div>
+</div>
+        <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/script.min.js"></script>
+<!--SCRIPTS END-->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'hanmomhanda';
+        (function() {
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+
+
+
+</html>

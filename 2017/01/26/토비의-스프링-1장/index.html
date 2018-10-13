@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="null">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="뒤태지존의 끄적거림">
+    <title>토비의 스프링 - 1장 - 뒤태지존의 끄적거림</title>
+    <meta name="author" content="HomoEfficio">
+    <meta name="description" content="뒤태지존의 끄적거림">
+    
+        <link rel="icon" href="/assets/images/favicon.ico">
+    
+    
+        <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <meta name="description" content="Chapter 1본 내용은 토비의 스프링 3 책의 내용을 정리한 것입니다. 토비의 스프링은 스프링 뿐아니라 객체 지향의 기본 원리, 테스팅, 예외 처리, 디자인 패턴 등 Java 개발자라면 반드시 알아야 하는 내용을 스토리 전개 방식으로 점진적으로 친절하게 설명해주는 명저입니다.  똑같은 내용으로 미국에서 영어로 출간되었다면 Jolt상을 받기에도 충분한 책">
+<meta name="keywords" content="Spring,스프링,Java,자바,ApplicationContext,DAO,Strategy Pattern,애플리케이션 컨텍스트,전략 패턴">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="토비의 스프링 - 1장">
+<meta property="og:url" content="http://homoefficio.github.io/2017/01/26/토비의-스프링-1장/index.html">
+<meta property="og:site_name" content="뒤태지존의 끄적거림">
+<meta property="og:description" content="Chapter 1본 내용은 토비의 스프링 3 책의 내용을 정리한 것입니다. 토비의 스프링은 스프링 뿐아니라 객체 지향의 기본 원리, 테스팅, 예외 처리, 디자인 패턴 등 Java 개발자라면 반드시 알아야 하는 내용을 스토리 전개 방식으로 점진적으로 친절하게 설명해주는 명저입니다.  똑같은 내용으로 미국에서 영어로 출간되었다면 Jolt상을 받기에도 충분한 책">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://i.imgur.com/PqTQZZo.png">
+<meta property="og:image" content="http://i.imgur.com/RDvtJlU.png">
+<meta property="og:image" content="http://i.imgur.com/aRJkn4k.png">
+<meta property="og:image" content="http://i.imgur.com/k28BmGo.png">
+<meta property="og:image" content="http://i.imgur.com/jLqHgfo.png">
+<meta property="og:updated_time" content="2018-10-13T15:49:56.314Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="토비의 스프링 - 1장">
+<meta name="twitter:description" content="Chapter 1본 내용은 토비의 스프링 3 책의 내용을 정리한 것입니다. 토비의 스프링은 스프링 뿐아니라 객체 지향의 기본 원리, 테스팅, 예외 처리, 디자인 패턴 등 Java 개발자라면 반드시 알아야 하는 내용을 스토리 전개 방식으로 점진적으로 친절하게 설명해주는 명저입니다.  똑같은 내용으로 미국에서 영어로 출간되었다면 Jolt상을 받기에도 충분한 책">
+<meta name="twitter:image" content="http://i.imgur.com/PqTQZZo.png">
+    
+        <meta rel="publisher" content="https://plus.google.com/+오명운"/>
+    
+    
+    
+        <meta property="og:image" content="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=640"/>
+    
+    
+        <meta property="og:image" content="/2017/01/26/토비의-스프링-1장/http:/www.unixstickers.com/image/cache/data/stickers/spring/xspring-leaf.sh-340x340.png.pagespeed.ic.K5PrZIokfE.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2017/01/26/토비의-스프링-1장/http://www.unixstickers.com/image/cache/data/stickers/spring/xspring-leaf.sh-340x340.png.pagespeed.ic.K5PrZIokfE.png" />
+    
+    
+        <meta property="og:image" content="/2017/01/26/토비의-스프링-1장/coverImage-toby-spring-01.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2017/01/26/토비의-스프링-1장/coverImage-toby-spring-01.png" />
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style.min.css">
+    <!--STYLES END-->
+    
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-79893978-1']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6494847158566766",
+    enable_page_level_ads: true
+  });
+</script>
+</head>
+
+    <body>
+        <div id="blog">
+            <header id="header" data-behavior="1">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="/ ">뒤태지존의 끄적거림</a>
+    </h1>
+    
+        <a class="header-right-picture" href="/#about">
+            <img class="header-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+        </a>
+    
+</header>
+            <nav id="sidebar" data-behavior="1">
+    
+    <div class="sidebar-profile">
+        <a href="/#about">
+            
+            <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+            
+        </a>
+        <span class="sidebar-profile-name">HomoEfficio</span>
+    </div>
+    
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/ 
+                    ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">Home</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-categories
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">Categories</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-tags
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">Tags</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-archives
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">Archives</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link st-search-show-outputs"
+                    href="#search
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                    <span class="sidebar-button-desc">Search</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="#about
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">About me</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="https://github.com/HomoEfficio" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                    <span class="sidebar-button-desc">GitHub</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="mailto:homo.efficio@gmail.com" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-envelope-o"></i>
+                    <span class="sidebar-button-desc">Mail</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/atom.xml
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+            <div id="main" data-behavior="1">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+        <div class="post-header-cover" style="background-image:url('/2017/01/26/토비의-스프링-1장/coverImage-toby-spring-01.png');">
+            <div class="post-header main-content-wrap">
+    
+        <h1 class="post-title" itemprop="headline">토비의 스프링 - 1장</h1>
+    
+    <div class="post-meta">
+    <time  itemprop="datePublished" content="Thu Jan 26 2017 00:58:22 GMT+0900">
+        Jan 26, 2017
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Technique/">Technique</a>
+
+
+    
+</div>
+</div>
+        </div>
+    
+    <div class="post-content markdown main-content-wrap" itemprop="articleBody">
+        
+            <h1 id="Chapter-1"><a href="#Chapter-1" class="headerlink" title="Chapter 1"></a>Chapter 1</h1><p>본 내용은 토비의 스프링 3 책의 내용을 정리한 것입니다.</p>
+<p>토비의 스프링은 스프링 뿐아니라 객체 지향의 기본 원리, 테스팅, 예외 처리, 디자인 패턴 등 Java 개발자라면 반드시 알아야 하는 내용을 스토리 전개 방식으로 점진적으로 친절하게 설명해주는 명저입니다. </p>
+<p>똑같은 내용으로 미국에서 영어로 출간되었다면 Jolt상을 받기에도 충분한 책이라고 생각합니다.</p>
+<p>책의 절대적인 가격은 높아보이지만 웬만한 책 두어권 보는 것보다 이 한 권의 책을 여러번 보는 것이 비용 대비 효과가 훨씬 좋을 것입니다.<br>이 책을 읽고 아낄 수 있는 많은 시간, 높아질 몸값을 생각하면 충분히 투자할 가치가 있는 책입니다.</p>
+<p><a href="http://www.acornpub.co.kr/book/toby-spring3-1-set" target="_blank" rel="noopener">http://www.acornpub.co.kr/book/toby-spring3-1-set</a></p>
+<h2 id="초난감-DAO"><a href="#초난감-DAO" class="headerlink" title="초난감 DAO"></a>초난감 DAO</h2><p>DAO의 클래스 하나에서 DB연결, SQL, CRUD, DB연결자원반납을 다 책임진다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserDao</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Connection <span class="title">getConnection</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Class.forName(<span class="string">"com.mysql.jdbc.Driver"</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (ClassNotFoundException e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> DriverManager.getConnection(<span class="string">"jdbc:mysql://localhost~~~"</span>, <span class="string">"id"</span>, <span class="string">"password"</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">crud1</span><span class="params">(User user)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        Connection c = getConnection();</span><br><span class="line">        PreparedStatement ps = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            ps = c.prepareStatement(<span class="string">"update user set password = ? where id = ?"</span>);</span><br><span class="line">            ps.setString(<span class="number">1</span>, user.getPassword());</span><br><span class="line">            ps.setString(<span class="number">2</span>, user.getId());</span><br><span class="line"></span><br><span class="line">            ps.executeUpdate();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (ps != <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123; ps.close(); &#125; <span class="keyword">catch</span> (SQLException e) &#123;&#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (c != <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123; c.close(); &#125; <span class="keyword">catch</span> (SQLException e) &#123;&#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="http://i.imgur.com/PqTQZZo.png" alt="Imgur"></p>
+<p>클래스 다이어그램은 참 단순 깨끗하지만, DAO가 북치고 장구치고 다하는 모양새다. SRP에 따라 DAO 클래스도 하나의 책임만을 가지도록 바꿔보자.</p>
+<p>먼저 DB 연결 부분부터 분리해보자!</p>
+<h2 id="템플릿-메서드-패턴을-이용한-DB-연결-부분-분리"><a href="#템플릿-메서드-패턴을-이용한-DB-연결-부분-분리" class="headerlink" title="템플릿 메서드 패턴을 이용한 DB 연결 부분 분리"></a>템플릿 메서드 패턴을 이용한 DB 연결 부분 분리</h2><p>아래와 같이 <code>getConnection()</code> 메서드를 <code>abstract</code>로 지정해서 DB 연결에 대한 구체적인 내용을 subclass에서 구현하게 한다. 이렇게 하면 DB 연결 내용을 UserDao에서 subclass로 분리해낼 수 있다.</p>
+<p><code>crud1()</code> 메서드는 템플릿 메서드로서 subclass에서 구현할 <code>getConnection()</code>를 호출해서 DB 연결을 가져와서 사용한다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">UserDao</span> </span>&#123;</span><br><span class="line">    <span class="comment">// DB연결 부분은 subclass에서 결정 </span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> Connection <span class="title">getConnection</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">crud1</span><span class="params">(User user)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        Connection c = getConnection();</span><br><span class="line">        PreparedStatement ps = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            ps = c.prepareStatement(<span class="string">"update user set password = ? where id = ?"</span>);</span><br><span class="line">            ps.setString(<span class="number">1</span>, user.getPassword());</span><br><span class="line">            ps.setString(<span class="number">2</span>, user.getId());</span><br><span class="line"></span><br><span class="line">            ps.executeUpdate();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (ps != <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123; ps.close(); &#125; <span class="keyword">catch</span> (SQLException e) &#123;&#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (c != <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123; c.close(); &#125; <span class="keyword">catch</span> (SQLException e) &#123;&#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>템플릿 메서드 패턴을 이용한 DB 연결 분리를 정리하면 다음과 같다.</p>
+<ul>
+<li><code>getConnection()</code>을 <code>abstract</code>로 해서 DB연결 부분을 subclass로 분리</li>
+<li>UserDao는 더이상 구체적인 DB연결 부분을 신경쓰지 않는다.</li>
+</ul>
+<p>클래스 다이어그램은 다음과 같다.</p>
+<p><img src="http://i.imgur.com/RDvtJlU.png" alt="Imgur"></p>
+<p>그런데 템플릿 메서드 패턴처럼 상속을 이용한 방법만 있는 것은 아니다.</p>
+<h2 id="전략-패턴"><a href="#전략-패턴" class="headerlink" title="전략 패턴"></a>전략 패턴</h2><p>다음과 같이 전략 패턴을 사용하면 DB 연결 부분을 subclass가 아니라 인터페이스(여기에서는 DataSource)를 통해 외부의 객체로 분리할 수도 있다. </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">DataSource</span> </span>&#123;</span><br><span class="line">    <span class="function">Connection <span class="title">getConnection</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserDao</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> DataSource dataSource;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">UserDao</span><span class="params">(DataSource dataSource)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.dataSource = dataSource;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Connection <span class="title">getConnection</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> dataSource.getConnection();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">crud1</span><span class="params">(User user)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        Connection c = getConnection();</span><br><span class="line">        PreparedStatement ps = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            ps = c.prepareStatement(<span class="string">"update user set password = ? where id = ?"</span>);</span><br><span class="line">            ps.setString(<span class="number">1</span>, user.getPassword());</span><br><span class="line">            ps.setString(<span class="number">2</span>, user.getId());</span><br><span class="line"></span><br><span class="line">            ps.executeUpdate();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (ps != <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123; ps.close(); &#125; <span class="keyword">catch</span> (SQLException e) &#123;&#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (c != <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123; c.close(); &#125; <span class="keyword">catch</span> (SQLException e) &#123;&#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>전략 패턴을 통한 DB 연결 부분 분리를 정리하면,</p>
+<ul>
+<li>DataSource 인터페이스를 통해 DB 연결의 구체적 내용을 외부로 분리해서 UserDao의 소스 코드 변경 없이도 dataSource를 다른 것으로 교체할 수 있다.</li>
+<li>UserDao에 주입되는 DataSource 인터페이스의 구현체는 외부에서 주입받는다.</li>
+</ul>
+<p>전략 패턴을 적용한 클래스 다이어그램은 다음과 같다.</p>
+<p><img src="http://i.imgur.com/aRJkn4k.png" alt="Imgur"></p>
+<p>그렇다면 DB 연결의 구체적인 내용을 담고 있는 DataSource 구현체는 누가 주입해주나?</p>
+<h2 id="Factory-Pattern"><a href="#Factory-Pattern" class="headerlink" title="Factory Pattern"></a>Factory Pattern</h2><p>호출 관계로만 보면 UserDao를 사용하는 UserDaoTest가 구체적인 DataSource 구현체의 생성과 주입을 모두 담당할 수도 있다. 하지만 그런 것은 단순히 테스트를 실행하는 UserDaoTest의 역할이 아니다. </p>
+<p>따라서 상황에 맞는 객체를 선별해서 생성할 수 있는 팩토리를 두어 위임하는 것이 좋을 것 같다.</p>
+<p>아래와 같이 UserDaoFactory에서 구체적인 DataSource(여기에서는 ADataSource)를 UserDao에 주입한다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DaoFactory</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> UserDao <span class="title">getUserDao</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> UserDao(<span class="keyword">new</span> ADataSource()); </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserDaoTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        UserDao dao = <span class="keyword">new</span> DaoFactory().getUserDao();</span><br><span class="line"></span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>전략 패턴에 더하여 팩토리 패턴을 적용한 클래스 다이어그램은 다음과 같다.</p>
+<p><img src="http://i.imgur.com/k28BmGo.png" alt="Imgur"></p>
+<p>다시 정리하면, </p>
+<p>DaoFactory가 필요한 객체 생성(<code>new ADataSource()</code>, <code>new UserDao()</code>) 및 <strong>관계 설정</strong>(<code>userDao.setDataSource(new ADataSource())</code>)을 담당한다.</p>
+<p>객체 지향은 결국 협업이고, 협업의 바탕은 관계 설정인데, 그 <strong>관계 설정을 Factory가 담당하는 것이다. 이렇게 보니 Factory가 중요하다.</strong> Factory를 제대로 만들어보자.</p>
+<h2 id="ApplicationContext"><a href="#ApplicationContext" class="headerlink" title="ApplicationContext"></a>ApplicationContext</h2><p>Factory에서 생성하는 객체들을 Bean이라 하면, Bean을 생성하고 관계를 맺어주는 것은 BeanFactory의 책임이다.</p>
+<p>BeanFactory에 Bean을 Singleton 방식으로 관리하는 능력, 의존 관계 탐색 기능 등을 추가해서 BeanFactory의 기능을 확장한 것이 바로 <strong>ApplicationContext</strong>다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserDaoTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        ApplicationContext context = <span class="keyword">new</span> AnnotationConfigApplicationContext(DaoFactory.class);</span><br><span class="line">        UserDao dao = context.getBean(<span class="string">"userDao"</span>, UserDao.class);</span><br><span class="line"></span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>ApplicationContext에서 Bean의 생성 및 관계 설정에 대한 정보를 application-context.xml로 분리할 수 있다. 이렇게 하면 ApplicationContext는 Bean을 물리적으로 생성하고 관계를 맺어주는 역할만을 담당하고, 그에 필요한 논리적인 정보는 외부(application-context.xml)로 분리할 수 있다. </p>
+<p>ApplicationContext과 application-context.xml을 반영하면 클래스 다이어그램이 다음과 같이 변한다.</p>
+<p><img src="http://i.imgur.com/jLqHgfo.png" alt="Imgur"></p>
+<p>이렇게 해서 초난감 DAO에서 시작해서 Spring의 근간을 이루는 ApplicationContext까지 살펴봤다.</p>
+<p>정리해보면,</p>
+<blockquote>
+<ol>
+<li>DB 연결, SQL, CRUD, DB연결자원반납 기능을 모두 가진 초난감 DAO는 너무 많은 역할을 한 몸에 가지고 있다.</li>
+<li>템플릿 메서드 패턴이나 전략 패턴으로 DB 연결을 외부로 분리할 수 있다.</li>
+<li>역할에 따라 객체를 분리하면 분리된 객체 사이에 관계를 맺어줘야 객체 끼리 협력이 가능한데, 이런 역할을 ApplicationContext와 application-context.xml이 담당한다.</li>
+</ol>
+</blockquote>
+<p>2장에서는 테스트에 대한 내용이 나오는데, 중요하지만 일단은 건너뛰고 3장에서 초난감 DAO에 여전히 남아 있는 DB 자원 반납 기능을 분리하는 방법을 알아본다.</p>
+
+        
+        
+            
+        
+        <hr/>
+        <div>
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="크리에이티브 커먼즈 라이선스" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><a href='https://github.com/homoefficio' target='_blank'>HomoEfficio</a>가 작성한 이 저작물은(는) <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스</a>에 따라 이용할 수 있습니다.
+        </div>
+    </div>
+    <div class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/ApplicationContext/">ApplicationContext</a> <a class="tag tag--primary tag--small t-link" href="/tags/DAO/">DAO</a> <a class="tag tag--primary tag--small t-link" href="/tags/Java/">Java</a> <a class="tag tag--primary tag--small t-link" href="/tags/Spring/">Spring</a> <a class="tag tag--primary tag--small t-link" href="/tags/Strategy-Pattern/">Strategy Pattern</a> <a class="tag tag--primary tag--small t-link" href="/tags/스프링/">스프링</a> <a class="tag tag--primary tag--small t-link" href="/tags/애플리케이션-컨텍스트/">애플리케이션 컨텍스트</a> <a class="tag tag--primary tag--small t-link" href="/tags/자바/">자바</a> <a class="tag tag--primary tag--small t-link" href="/tags/전략-패턴/">전략 패턴</a>
+
+            </div>
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/01/28/토비의-스프링-3장-템플릿/"  data-tooltip="토비의-스프링-3장-템플릿">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/11/30/클래스-리터럴-타입-토큰-수퍼-타입-토큰/" data-tooltip="클래스 리터럴, 타입 토큰, 수퍼 타입 토큰">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2017/01/26/토비의-스프링-1장/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2017/01/26/토비의-스프링-1장/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2017/01/26/토비의-스프링-1장/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+        
+            <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2018 HomoEfficio. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="1">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/01/28/토비의-스프링-3장-템플릿/"  data-tooltip="토비의-스프링-3장-템플릿">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/11/30/클래스-리터럴-타입-토큰-수퍼-타입-토큰/" data-tooltip="클래스 리터럴, 타입 토큰, 수퍼 타입 토큰">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2017/01/26/토비의-스프링-1장/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2017/01/26/토비의-스프링-1장/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2017/01/26/토비의-스프링-1장/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="1">
+    <ul class="share-options">
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2017/01/26/토비의-스프링-1장/">
+                <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2017/01/26/토비의-스프링-1장/">
+                <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2017/01/26/토비의-스프링-1장/">
+                <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+            
+        </div>
+        <div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=110"/>
+        
+            <h4 id="about-card-name">HomoEfficio</h4>
+        
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Seoul, Korea.
+            </h5>
+        
+    </div>
+</div>
+        <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/script.min.js"></script>
+<!--SCRIPTS END-->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'hanmomhanda';
+        (function() {
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+
+
+
+</html>

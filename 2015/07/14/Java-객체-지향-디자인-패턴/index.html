@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="null">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="뒤태지존의 끄적거림">
+    <title>Java 객체 지향 디자인 패턴 - 뒤태지존의 끄적거림</title>
+    <meta name="author" content="HomoEfficio">
+    <meta name="description" content="뒤태지존의 끄적거림">
+    
+        <link rel="icon" href="/assets/images/favicon.ico">
+    
+    
+        <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <meta name="description" content="들어가기무언가를 가능한 쉽게 익히려면 둘 중의 한가지가 필요하다.  무언가를 필요로 하는 컨텍스트를 직관적으로 파악할 수 있을 만큼 적절한 예제 무언가를 쓰기 전과 쓴 후를 비교해서 이해할 수 있는 설명  사실 어떤 것이든 직관적으로 파악할 수 있는 것이 가장 좋지만, 다루는 내용 자체가 원천적으로 복잡한 경우에는 직관적으로 알 수 있게 해주는 것이 현실">
+<meta name="keywords" content="디자인패턴,객체지향">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Java 객체 지향 디자인 패턴">
+<meta property="og:url" content="http://homoefficio.github.io/2015/07/14/Java-객체-지향-디자인-패턴/index.html">
+<meta property="og:site_name" content="뒤태지존의 끄적거림">
+<meta property="og:description" content="들어가기무언가를 가능한 쉽게 익히려면 둘 중의 한가지가 필요하다.  무언가를 필요로 하는 컨텍스트를 직관적으로 파악할 수 있을 만큼 적절한 예제 무언가를 쓰기 전과 쓴 후를 비교해서 이해할 수 있는 설명  사실 어떤 것이든 직관적으로 파악할 수 있는 것이 가장 좋지만, 다루는 내용 자체가 원천적으로 복잡한 경우에는 직관적으로 알 수 있게 해주는 것이 현실">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://image.yes24.com/goods/12501269/L">
+<meta property="og:updated_time" content="2018-10-13T15:49:56.229Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java 객체 지향 디자인 패턴">
+<meta name="twitter:description" content="들어가기무언가를 가능한 쉽게 익히려면 둘 중의 한가지가 필요하다.  무언가를 필요로 하는 컨텍스트를 직관적으로 파악할 수 있을 만큼 적절한 예제 무언가를 쓰기 전과 쓴 후를 비교해서 이해할 수 있는 설명  사실 어떤 것이든 직관적으로 파악할 수 있는 것이 가장 좋지만, 다루는 내용 자체가 원천적으로 복잡한 경우에는 직관적으로 알 수 있게 해주는 것이 현실">
+<meta name="twitter:image" content="http://image.yes24.com/goods/12501269/L">
+    
+        <meta rel="publisher" content="https://plus.google.com/+오명운"/>
+    
+    
+    
+        <meta property="og:image" content="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=640"/>
+    
+    
+        <meta property="og:image" content="/2015/07/14/Java-객체-지향-디자인-패턴/http:/image.yes24.com/goods/12501269/L"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2015/07/14/Java-객체-지향-디자인-패턴/http://image.yes24.com/goods/12501269/L" />
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style.min.css">
+    <!--STYLES END-->
+    
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-79893978-1']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6494847158566766",
+    enable_page_level_ads: true
+  });
+</script>
+</head>
+
+    <body>
+        <div id="blog">
+            <header id="header" data-behavior="1">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="/ ">뒤태지존의 끄적거림</a>
+    </h1>
+    
+        <a class="header-right-picture" href="/#about">
+            <img class="header-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+        </a>
+    
+</header>
+            <nav id="sidebar" data-behavior="1">
+    
+    <div class="sidebar-profile">
+        <a href="/#about">
+            
+            <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+            
+        </a>
+        <span class="sidebar-profile-name">HomoEfficio</span>
+    </div>
+    
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/ 
+                    ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">Home</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-categories
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">Categories</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-tags
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">Tags</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-archives
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">Archives</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link st-search-show-outputs"
+                    href="#search
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                    <span class="sidebar-button-desc">Search</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="#about
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">About me</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="https://github.com/HomoEfficio" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                    <span class="sidebar-button-desc">GitHub</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="mailto:homo.efficio@gmail.com" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-envelope-o"></i>
+                    <span class="sidebar-button-desc">Mail</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/atom.xml
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+            <div id="main" data-behavior="1">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+        <div class="post-header main-content-wrap">
+    
+        <h1 class="post-title" itemprop="headline">Java 객체 지향 디자인 패턴</h1>
+    
+    <div class="post-meta">
+    <time  itemprop="datePublished" content="Tue Jul 14 2015 12:21:44 GMT+0900">
+        Jul 14, 2015
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/서평/">서평</a>
+
+
+    
+</div>
+</div>
+    
+    <div class="post-content markdown main-content-wrap" itemprop="articleBody">
+        
+            <img src="http://image.yes24.com/goods/12501269/L">
+<h1 id="들어가기"><a href="#들어가기" class="headerlink" title="들어가기"></a>들어가기</h1><p>무언가를 가능한 쉽게 익히려면 둘 중의 한가지가 필요하다.</p>
+<ul>
+<li>무언가를 필요로 하는 컨텍스트를 직관적으로 파악할 수 있을 만큼 적절한 예제</li>
+<li>무언가를 쓰기 전과 쓴 후를 비교해서 이해할 수 있는 설명</li>
+</ul>
+<p>사실 어떤 것이든 직관적으로 파악할 수 있는 것이 가장 좋지만, 다루는 내용 자체가 원천적으로 복잡한 경우에는 직관적으로 알 수 있게 해주는 것이 현실적으로는 쉽지 않다.</p>
+<p>게다가 같은 예제라도 누구에게는 직관적일 수 있지만 다른 누구에게는 직관적이지 않을 수도 있다.</p>
+<p>이 책은 디자인 패턴의 적용 전과 후를 비교하는 설명을 친절하게 풀어주는 방법을 택해서 가능한 많은 사람들이 디자인 패턴을 좀더 쉽게 이해할 수 있게 해준다.</p>
+<h1 id="이래서-좋다"><a href="#이래서-좋다" class="headerlink" title="이래서 좋다"></a>이래서 좋다</h1><ul>
+<li>객체 지향 원리를 적용하지 않은 코드에서 출발해서 변경 사항이 생기면 코드의 어느 부분이 변경되는지 보여주므로써 문제점을 대단히 구체적으로 인식할 수 있게 해준다.</li>
+<li>디자인 패턴을 적용하는 과정도 1회에 그치지 않고 단계를 밟아가며 보여주므로 디자인 패턴 적용 전의 문제점과 적용 후의 좋은 점을 속속들이 이해할 수 있게 해준다.</li>
+<li>객체의 관계(연관, 의존, 집약/합성, 일반화/실체화)과 UML 다이어그램을 맛깔나게 훑어준다.</li>
+<li>복합적인 사고를 요구하는 좋은 연습문제가 많다.</li>
+</ul>
+<h1 id="이래서-아쉽다"><a href="#이래서-아쉽다" class="headerlink" title="이래서 아쉽다"></a>이래서 아쉽다</h1><ul>
+<li>큰 틀에서는 훌륭한 전개 구조를 가졌지만, 꼼꼼하게 보면 아마도 실수이겠지만 틀린 곳이 군데군데 있다.</li>
+<li>자주 쓰이는 패턴 10개만을 다루고 있다. 이런 전개로 GoF의 23개 패턴을 모두 다뤄줬다면 얼마나 좋았을까.</li>
+</ul>
+<h1 id="나가기"><a href="#나가기" class="headerlink" title="나가기"></a>나가기</h1><p>운 좋게도 최근에 이 책을 포함해서 훌륭한 객체 지향 책을 두 권이나 보게 되었다. 나머지 하나는 <a href="http://www.yes24.com/24/goods/18249021" target="_blank" rel="noopener"><strong>객체 지향의 사실과 오해</strong></a>다.</p>
+<p>다음과 같이 책을 보는 것도 객체 지향을 이해하는 좋은 코스가 될 수 있을 것 같다.</p>
+<ul>
+<li>먼저 <a href="http://www.yes24.com/24/goods/18249021" target="_blank" rel="noopener"><strong>객체 지향의 사실과 오해</strong></a>를 읽고 코드 없이 그림과 이야기로 객체 지향을 살펴 보고,</li>
+<li>이 책을 보고 디자인 패턴과 디자인 패턴을 공부하는 방법을 익히고,</li>
+<li><a href="http://www.yes24.com/24/Goods/2918928" target="_blank" rel="noopener"><strong>Java 언어로 배우는 디자인 패턴 입문</strong></a>을 보고 이 책에 없는 패턴도 맛보고,</li>
+<li>다시 <a href="http://www.yes24.com/24/goods/18249021" target="_blank" rel="noopener"><strong>객체 지향의 사실과 오해</strong></a>를 읽는다.</li>
+</ul>
+
+        
+        
+            
+        
+        <hr/>
+        <div>
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="크리에이티브 커먼즈 라이선스" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><a href='https://github.com/homoefficio' target='_blank'>HomoEfficio</a>가 작성한 이 저작물은(는) <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스</a>에 따라 이용할 수 있습니다.
+        </div>
+    </div>
+    <div class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/객체지향/">객체지향</a> <a class="tag tag--primary tag--small t-link" href="/tags/디자인패턴/">디자인패턴</a>
+
+            </div>
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/07/17/Gimbal-Lock/"  data-tooltip="Gimbal Lock">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/07/12/HexoTest/" data-tooltip="HexoTest">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2015/07/14/Java-객체-지향-디자인-패턴/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2015/07/14/Java-객체-지향-디자인-패턴/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2015/07/14/Java-객체-지향-디자인-패턴/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+        
+            <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2018 HomoEfficio. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="1">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/07/17/Gimbal-Lock/"  data-tooltip="Gimbal Lock">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/07/12/HexoTest/" data-tooltip="HexoTest">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2015/07/14/Java-객체-지향-디자인-패턴/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2015/07/14/Java-객체-지향-디자인-패턴/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2015/07/14/Java-객체-지향-디자인-패턴/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="1">
+    <ul class="share-options">
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2015/07/14/Java-객체-지향-디자인-패턴/">
+                <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2015/07/14/Java-객체-지향-디자인-패턴/">
+                <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2015/07/14/Java-객체-지향-디자인-패턴/">
+                <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+            
+        </div>
+        <div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=110"/>
+        
+            <h4 id="about-card-name">HomoEfficio</h4>
+        
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Seoul, Korea.
+            </h5>
+        
+    </div>
+</div>
+        <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/script.min.js"></script>
+<!--SCRIPTS END-->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'hanmomhanda';
+        (function() {
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+
+
+
+</html>

@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="null">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="뒤태지존의 끄적거림">
+    <title>Spring Data JPA 에서 Java8 Date-Time(JSR-310) 사용하기 - 뒤태지존의 끄적거림</title>
+    <meta name="author" content="HomoEfficio">
+    <meta name="description" content="뒤태지존의 끄적거림">
+    
+        <link rel="icon" href="/assets/images/favicon.ico">
+    
+    
+        <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <meta name="description" content="Java8에는 시간 데이터를 더 편리하게 처리할 수 있게 해주는 LocalDate, LocalDateTime 등의 클래스들이 java.time 패키지에 추가되었다. 날짜/시간 차이 계산, 비교, 년/월/일/시/분/초 단위 별 추출 등 풍부한 기능을 제공해주므로 사용성이 아주 좋다. Joda-Time을 사용하고 있었다면, Java8에서는 java.time (">
+<meta name="keywords" content="Spring,스프링,Java,자바,JPA,Spring Data JPA,JSR-310,DateTime,Java8,날짜시간">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Spring Data JPA 에서 Java8 Date-Time(JSR-310) 사용하기">
+<meta property="og:url" content="http://homoefficio.github.io/2016/11/19/Spring-Data-JPA-에서-Java8-Date-Time-JSR-310-사용하기/index.html">
+<meta property="og:site_name" content="뒤태지존의 끄적거림">
+<meta property="og:description" content="Java8에는 시간 데이터를 더 편리하게 처리할 수 있게 해주는 LocalDate, LocalDateTime 등의 클래스들이 java.time 패키지에 추가되었다. 날짜/시간 차이 계산, 비교, 년/월/일/시/분/초 단위 별 추출 등 풍부한 기능을 제공해주므로 사용성이 아주 좋다. Joda-Time을 사용하고 있었다면, Java8에서는 java.time (">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://i.imgur.com/oXXnfnO.png">
+<meta property="og:updated_time" content="2018-10-13T15:49:56.253Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring Data JPA 에서 Java8 Date-Time(JSR-310) 사용하기">
+<meta name="twitter:description" content="Java8에는 시간 데이터를 더 편리하게 처리할 수 있게 해주는 LocalDate, LocalDateTime 등의 클래스들이 java.time 패키지에 추가되었다. 날짜/시간 차이 계산, 비교, 년/월/일/시/분/초 단위 별 추출 등 풍부한 기능을 제공해주므로 사용성이 아주 좋다. Joda-Time을 사용하고 있었다면, Java8에서는 java.time (">
+<meta name="twitter:image" content="http://i.imgur.com/oXXnfnO.png">
+    
+        <meta rel="publisher" content="https://plus.google.com/+오명운"/>
+    
+    
+    
+        <meta property="og:image" content="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=640"/>
+    
+    
+        <meta property="og:image" content="/2016/11/19/Spring-Data-JPA-에서-Java8-Date-Time-JSR-310-사용하기/http:/image.slidesharecdn.com/datetimejava8jsr-310-140730095432-phpapp02/95/date-time-java-8-jsr-310-23-638.jpg?cb=1406714182"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2016/11/19/Spring-Data-JPA-에서-Java8-Date-Time-JSR-310-사용하기/http://image.slidesharecdn.com/datetimejava8jsr-310-140730095432-phpapp02/95/date-time-java-8-jsr-310-23-638.jpg?cb=1406714182" />
+    
+    
+        <meta property="og:image" content="/2016/11/19/Spring-Data-JPA-에서-Java8-Date-Time-JSR-310-사용하기/coverImage-java-time.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2016/11/19/Spring-Data-JPA-에서-Java8-Date-Time-JSR-310-사용하기/coverImage-java-time.jpg" />
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style.min.css">
+    <!--STYLES END-->
+    
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-79893978-1']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6494847158566766",
+    enable_page_level_ads: true
+  });
+</script>
+</head>
+
+    <body>
+        <div id="blog">
+            <header id="header" data-behavior="1">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="/ ">뒤태지존의 끄적거림</a>
+    </h1>
+    
+        <a class="header-right-picture" href="/#about">
+            <img class="header-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+        </a>
+    
+</header>
+            <nav id="sidebar" data-behavior="1">
+    
+    <div class="sidebar-profile">
+        <a href="/#about">
+            
+            <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+            
+        </a>
+        <span class="sidebar-profile-name">HomoEfficio</span>
+    </div>
+    
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/ 
+                    ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">Home</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-categories
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">Categories</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-tags
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">Tags</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-archives
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">Archives</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link st-search-show-outputs"
+                    href="#search
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                    <span class="sidebar-button-desc">Search</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="#about
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">About me</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="https://github.com/HomoEfficio" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                    <span class="sidebar-button-desc">GitHub</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="mailto:homo.efficio@gmail.com" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-envelope-o"></i>
+                    <span class="sidebar-button-desc">Mail</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/atom.xml
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+            <div id="main" data-behavior="1">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+        <div class="post-header-cover" style="background-image:url('/2016/11/19/Spring-Data-JPA-에서-Java8-Date-Time-JSR-310-사용하기/coverImage-java-time.jpg');">
+            <div class="post-header main-content-wrap">
+    
+        <h1 class="post-title" itemprop="headline">Spring Data JPA 에서 Java8 Date-Time(JSR-310) 사용하기</h1>
+    
+    <div class="post-meta">
+    <time  itemprop="datePublished" content="Sat Nov 19 2016 19:20:48 GMT+0900">
+        Nov 19, 2016
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Technique/">Technique</a>
+
+
+    
+</div>
+</div>
+        </div>
+    
+    <div class="post-content markdown main-content-wrap" itemprop="articleBody">
+        
+            <p>Java8에는 시간 데이터를 더 편리하게 처리할 수 있게 해주는 <code>LocalDate</code>, <code>LocalDateTime</code> 등의 클래스들이 <code>java.time</code> 패키지에 추가되었다. 날짜/시간 차이 계산, 비교, 년/월/일/시/분/초 단위 별 추출 등 풍부한 기능을 제공해주므로 사용성이 아주 좋다. <a href="http://www.joda.org/joda-time/" target="_blank" rel="noopener">Joda-Time</a>을 사용하고 있었다면, Java8에서는 <code>java.time (JSR-310)</code>으로 마이크레이션 하는 것이 좋다.</p>
+<p>하지만, <code>java.time (JSR-310)</code>를 별다른 처리 없이 JPA를 이용해서 MySQL에 저장하면 버전에 따라서 아래와 같은 에러가 날 수도 있다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">Caused by: com.mysql.jdbc.MsqlDataTruncation: Data truncation: Incorrect dateme value: <span class="string">'\xAC\xED\x00\x05sr\x0Djava.time.Ser\x95]\x84\xBA\x1B"H\xB2\x0C\0\x00xpw\x07\x03\x00\x00\x07\xE0\x05\x1Fx'</span> <span class="keyword">for</span> column <span class="string">'start_date'</span> at row <span class="number">1</span></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>또는 날짜/시간을 나타내는 컬럼이 MySQL에서 <code>datetime</code> 타입이 아니라 <code>tinyblob</code> 타입으로 생성되어서 아래와 같이 원치 않는 형식으로 저장되기도 한다.</p>
+<p><img src="http://i.imgur.com/oXXnfnO.png" alt=""></p>
+<p>어느 경우든, JPA와 Java8 Date/Time은 뭔가 조치를 취해주지 않으면 원하는 대로 쓸 수 없다.</p>
+<p>데이터의 생성/수정 시각을 기록하는 JPA Auditing을 대상으로 그 조치 방법을 알아보자. 모든 엔티티가 상속해야 하는 <code>BaseEntity</code>라는 추상 클래스를 만들어서 이 클래스에 JPA Auditing을 적용하는 상황이다.</p>
+<h2 id="Jsr310JpaConverters-class를-활용하는-방법"><a href="#Jsr310JpaConverters-class를-활용하는-방법" class="headerlink" title="Jsr310JpaConverters.class를 활용하는 방법"></a>Jsr310JpaConverters.class를 활용하는 방법</h2><p><strong>Spring Data JPA 1.8 이상부터 사용가능한 방법</strong>으로, 아마 가장 간단한 방법일 것 같다.</p>
+<p>아래와 같이 <strong><code>@EntityScan</code>에 <code>Jsr310JpaConverters.class</code>를 지정</strong>해주기만 하면 된다. 다만, <code>Jsr310JpaConverters.class</code>를 사용하지 않았다면 굳이 지정해 주지 않아도 자동 설정으로 처리될 <strong><code>basePackages</code>도 명시적으로 지정해줘야만 엔티티를 로딩할 수 있다는 단점</strong>이 있다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.boot.SpringApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.domain.EntityScan;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.jpa.repository.config.EnableJpaAuditing;</span><br><span class="line"></span><br><span class="line"><span class="meta">@EnableJpaAuditing</span></span><br><span class="line"><span class="meta">@EntityScan</span>(</span><br><span class="line">        basePackageClasses = &#123;Jsr310JpaConverters.class&#125;,  <span class="comment">// basePackageClasses에 지정</span></span><br><span class="line">        basePackages = &#123;<span class="string">"homo.efficio.toy.member.domain"</span>&#125;) <span class="comment">// basePackages도 추가로 반드시 지정해줘야 한다</span></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MemberApplication</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SpringApplication.run(MemberApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>엔티티에도 날짜/시간형 필드에 <code>@Temporal(TemporalType.TIMESTAMP)</code>를 붙여주지 않아도 된다. 사실은 붙이고 싶어도 붙일 수가 없다. <a href="http://docs.oracle.com/javaee/7/api/javax/persistence/Temporal.html" target="_blank" rel="noopener">Java EE API 문서</a>에 보면 <code>@Temporal</code>은 <code>java.util.Date</code>이나 <code>java.util.Calendar</code>에만 붙일 수 있게 되어 있다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.data.annotation.CreatedDate;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.annotation.LastModifiedDate;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.jpa.domain.support.AuditingEntityListener;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.persistence.*;</span><br><span class="line"><span class="keyword">import</span> java.io.Serializable;</span><br><span class="line"><span class="keyword">import</span> java.time.LocalDateTime;</span><br><span class="line"></span><br><span class="line"><span class="meta">@EntityListeners</span>(AuditingEntityListener.class)</span><br><span class="line"><span class="meta">@MappedSuperclass</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">BaseEntity</span> <span class="keyword">implements</span> <span class="title">Serializable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@CreatedDate</span></span><br><span class="line">    <span class="meta">@Column</span>(name = <span class="string">"created_at"</span>, updatable = <span class="keyword">false</span>)</span><br><span class="line">    <span class="keyword">private</span> LocalDateTime createdDateTime;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@LastModifiedDate</span></span><br><span class="line">    <span class="meta">@Column</span>(name = <span class="string">"last_modified_at"</span>, updatable = <span class="keyword">true</span>)</span><br><span class="line">    <span class="keyword">private</span> LocalDateTime lastModifiedDateTime;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>위의 코드를 보면 <code>BaseEntity</code>에는 따로 무슨 조치를 취한 것 없이 깔끔하다.</p>
+<p><code>Jsr310JpaConverters</code> 클래스는 사실 다음에 설명할 Attribute Converter를 활용하는 방법을 Spring에서 구현해서 쓰기 편하게 Wrapping 해준 <code>Jsr310Converters</code> 클래스를 JPA에서 사용할 수 있게 해주는 클래스다.</p>
+<h2 id="Attribute-Converter를-활용하는-방법"><a href="#Attribute-Converter를-활용하는-방법" class="headerlink" title="Attribute Converter를 활용하는 방법"></a>Attribute Converter를 활용하는 방법</h2><p>JPA 2.1 부터 <code>Attribute Converter</code>라는 기능이 도입되었다. <strong><code>AttributeConverter</code> 클래스를 상속받는 자체 Converter를 만들면, Java8의 날짜/시간 데이터 타입을 JPA에서 인식할 수 있는 타입으로 자동으로 변환</strong>되게 할 수 있다.<br>아래는 <code>java.time.LocalDateTime</code>에 대한 Converter다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> javax.persistence.AttributeConverter;</span><br><span class="line"><span class="keyword">import</span> javax.persistence.Converter;</span><br><span class="line"><span class="keyword">import</span> java.time.Instant;</span><br><span class="line"><span class="keyword">import</span> java.time.LocalDateTime;</span><br><span class="line"><span class="keyword">import</span> java.util.Date;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> java.time.Instant.ofEpochMilli;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> java.time.LocalDateTime.ofInstant;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> java.time.ZoneId.systemDefault;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Converter</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LocalDateTimePersistenceConverter</span> <span class="keyword">implements</span> <span class="title">AttributeConverter</span>&lt;<span class="title">LocalDateTime</span>, <span class="title">Date</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Date <span class="title">convertToDatabaseColumn</span><span class="params">(LocalDateTime localDateTime)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Date.from(localDateTime.atZone(systemDefault()).toInstant());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> LocalDateTime <span class="title">convertToEntityAttribute</span><span class="params">(Date date)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> ofInstant(ofEpochMilli(date.getTime()), systemDefault());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>위의 코드는 <code>LocalDateTime</code>에 대한 구현체만 들어있는데, 앞에서 언급한 <code>org.springframework.data.convert.Jsr310Converters</code> 클래스는 <code>LocalDate</code>, <code>LocalTime</code>, <code>LocalDateTime</code>, <code>Instant</code>, <code>ZoneId</code> 모두에 대한 변환 기능을 구현해서 제공해주며, Spring Data JPA 1.8 이상이라면 앞에서 살펴본 것처럼 <code>Jsr310JpaConverters</code>를 통해 Spring Data JPA에서 사용할 수 있다.</p>
+<p>자체 Converter를 만들었다고 끝난 것이 아니다. 어느 데이터에 이 Converter를 적용할지 지정해줘야 한다. 따라서 아래와 같이 <code>BaseEntity</code>에서 <strong>Converter에 의한 자동변환이 필요한 데이터에 <code>@Convert</code> 애노테이션을 지정</strong>해준다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.data.annotation.CreatedDate;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.annotation.LastModifiedDate;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.jpa.domain.support.AuditingEntityListener;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.persistence.*;</span><br><span class="line"><span class="keyword">import</span> java.io.Serializable;</span><br><span class="line"><span class="keyword">import</span> java.time.LocalDateTime;</span><br><span class="line"></span><br><span class="line"><span class="meta">@EntityListeners</span>(AuditingEntityListener.class)</span><br><span class="line"><span class="meta">@MappedSuperclass</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">BaseEntity</span> <span class="keyword">implements</span> <span class="title">Serializable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@CreatedDate</span></span><br><span class="line">    <span class="meta">@Convert</span>(converter = LocalDateTimePersistenceConverter.class)  <span class="comment">// &lt;- @Converter를 지정 해줘야 한다.</span></span><br><span class="line">    <span class="meta">@Column</span>(name = <span class="string">"created_at"</span>, updatable = <span class="keyword">false</span>)</span><br><span class="line">    <span class="keyword">private</span> LocalDateTime createdDateTime;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@LastModifiedDate</span></span><br><span class="line">    <span class="meta">@Convert</span>(converter = LocalDateTimePersistenceConverter.class)  <span class="comment">// &lt;- @Converter를 지정 해줘야 한다.</span></span><br><span class="line">    <span class="meta">@Column</span>(name = <span class="string">"last_modified_at"</span>, updatable = <span class="keyword">true</span>)</span><br><span class="line">    <span class="keyword">private</span> LocalDateTime lastModifiedDateTime;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="getter-setter를-변형해서-활용하는-방법"><a href="#getter-setter를-변형해서-활용하는-방법" class="headerlink" title="getter, setter를 변형해서 활용하는 방법"></a>getter, setter를 변형해서 활용하는 방법</h2><p>이 방법은 <code>Jsr310Converters</code>이나 <code>AttributeConverter</code> 등에 포함된 변환 로직을 그냥 getter, setter에 직접 심어버리는 방법으로 가장 직관적이고 간단하며, 외부 의존성도 적다. <strong>Spring을 사용하지 않는다면 이 방법으로 해결하면 된다.</strong> 다만, 타이핑 양은 좀 되지만 복붙신공이면 될 일이고.. ㅋㅋ</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.data.annotation.CreatedDate;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.annotation.LastModifiedDate;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.jpa.domain.support.AuditingEntityListener;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.persistence.*;</span><br><span class="line"><span class="keyword">import</span> java.io.Serializable;</span><br><span class="line"><span class="keyword">import</span> java.time.LocalDateTime;</span><br><span class="line"><span class="keyword">import</span> java.util.Date;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> java.time.Instant.ofEpochMilli;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> java.time.LocalDateTime.ofInstant;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> java.time.ZoneId.systemDefault;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> java.util.Objects.isNull;</span><br><span class="line"></span><br><span class="line"><span class="meta">@EntityListeners</span>(AuditingEntityListener.class)</span><br><span class="line"><span class="meta">@MappedSuperclass</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">BaseEntity</span> <span class="keyword">implements</span> <span class="title">Serializable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@CreatedDate</span></span><br><span class="line">    <span class="meta">@Temporal</span>(TemporalType.TIMESTAMP)  <span class="comment">// java.util.Date이므로 @Temporal을 붙여준다.</span></span><br><span class="line">    <span class="meta">@Column</span>(name = <span class="string">"created_at"</span>, updatable = <span class="keyword">false</span>)</span><br><span class="line">    <span class="keyword">private</span> Date createdDateTime;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@LastModifiedDate</span></span><br><span class="line">    <span class="meta">@Temporal</span>(TemporalType.TIMESTAMP)  <span class="comment">// java.util.Date이므로 @Temporal을 붙여준다.</span></span><br><span class="line">    <span class="meta">@Column</span>(name = <span class="string">"last_modified_at"</span>, updatable = <span class="keyword">true</span>)</span><br><span class="line">    <span class="keyword">private</span> Date lastModifiedDateTime;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 변환 로직을 직접 구현</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> LocalDateTime <span class="title">getCreatedDateTime</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> getLocalDateTimeFrom(createdDateTime);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setCreatedDateTime</span><span class="params">(<span class="keyword">final</span> LocalDateTime createdDateTime)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.createdDateTime = getDateFrom(createdDateTime);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> LocalDateTime <span class="title">getLastModifiedDateTime</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> getLocalDateTimeFrom(lastModifiedDateTime);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setLastModifiedDateTime</span><span class="params">(<span class="keyword">final</span> LocalDateTime lastModifiedDateTime)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.lastModifiedDateTime = getDateFrom(lastModifiedDateTime);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> LocalDateTime <span class="title">getLocalDateTimeFrom</span><span class="params">(Date date)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> isNull(date) ? <span class="keyword">null</span> : ofInstant(ofEpochMilli(date.getTime()), systemDefault());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> Date <span class="title">getDateFrom</span><span class="params">(LocalDateTime localDateTime)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> isNull(localDateTime) ? <span class="keyword">null</span> : Date.from(localDateTime.atZone(systemDefault()).toInstant());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="정리"><a href="#정리" class="headerlink" title="정리"></a>정리</h2><p>Java8의 <code>java.time (JSR-310)</code> 데이터를 DB에 저장해야 한다면,</p>
+<blockquote>
+<ul>
+<li><p>Spring Data JPA 1.8 이상이라면 <code>Jsr310JpaConverters</code> 클래스를 사용하자.</p>
+</li>
+<li><p>Spring Data JPA 1.8 미만이지만, JPA 2.1 이상이라면 <code>Jsr310Converters</code> 클래스를 사용해서 <code>AttributeConverter</code>를 상속하고 변환 로직을 구현해서 사용하자.</p>
+</li>
+<li><p>이도 저도 아니라면 <code>java.time (JSR-310)</code>과 <code>java.util.Date</code>를 상호 변환할 수 있는 로직을 <code>getter/setter</code> 안에 직접 구현해서 사용하자.</p>
+</li>
+</ul>
+</blockquote>
+<h2 id="더-읽을-거리"><a href="#더-읽을-거리" class="headerlink" title="더 읽을 거리"></a>더 읽을 거리</h2><blockquote>
+<ul>
+<li><a href="http://docs.oracle.com/javaee/7/api/javax/persistence/Convert.html" target="_blank" rel="noopener">Java EE 7 API - javax.persistence.Convert</a><ul>
+<li><code>@Converter(autoApply=true)</code>, <code>@Convert(disableConversion=true)</code>, <code>@ElementCollection</code>, <code>@Embedded</code>, <code>@Converts</code> 등 변환 관련 다양한 애노테이션 사용법</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+
+        
+        
+            
+        
+        <hr/>
+        <div>
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="크리에이티브 커먼즈 라이선스" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><a href='https://github.com/homoefficio' target='_blank'>HomoEfficio</a>가 작성한 이 저작물은(는) <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스</a>에 따라 이용할 수 있습니다.
+        </div>
+    </div>
+    <div class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/DateTime/">DateTime</a> <a class="tag tag--primary tag--small t-link" href="/tags/JPA/">JPA</a> <a class="tag tag--primary tag--small t-link" href="/tags/JSR-310/">JSR-310</a> <a class="tag tag--primary tag--small t-link" href="/tags/Java/">Java</a> <a class="tag tag--primary tag--small t-link" href="/tags/Java8/">Java8</a> <a class="tag tag--primary tag--small t-link" href="/tags/Spring/">Spring</a> <a class="tag tag--primary tag--small t-link" href="/tags/Spring-Data-JPA/">Spring Data JPA</a> <a class="tag tag--primary tag--small t-link" href="/tags/날짜시간/">날짜시간</a> <a class="tag tag--primary tag--small t-link" href="/tags/스프링/">스프링</a> <a class="tag tag--primary tag--small t-link" href="/tags/자바/">자바</a>
+
+            </div>
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/11/21/Spring에서-JSON에-XSS-방지-처리-하기/"  data-tooltip="Spring에서 JSON에 XSS 방지 처리 하기">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/11/19/조금은-신경써줘야-하는-Jackson-Custom-Deserialization/" data-tooltip="조금은 신경써줘야 하는 Jackson Custom Deserialization">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2016/11/19/Spring-Data-JPA-에서-Java8-Date-Time-JSR-310-사용하기/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2016/11/19/Spring-Data-JPA-에서-Java8-Date-Time-JSR-310-사용하기/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2016/11/19/Spring-Data-JPA-에서-Java8-Date-Time-JSR-310-사용하기/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+        
+            <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2018 HomoEfficio. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="1">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/11/21/Spring에서-JSON에-XSS-방지-처리-하기/"  data-tooltip="Spring에서 JSON에 XSS 방지 처리 하기">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/11/19/조금은-신경써줘야-하는-Jackson-Custom-Deserialization/" data-tooltip="조금은 신경써줘야 하는 Jackson Custom Deserialization">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2016/11/19/Spring-Data-JPA-에서-Java8-Date-Time-JSR-310-사용하기/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2016/11/19/Spring-Data-JPA-에서-Java8-Date-Time-JSR-310-사용하기/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2016/11/19/Spring-Data-JPA-에서-Java8-Date-Time-JSR-310-사용하기/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="1">
+    <ul class="share-options">
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2016/11/19/Spring-Data-JPA-에서-Java8-Date-Time-JSR-310-사용하기/">
+                <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2016/11/19/Spring-Data-JPA-에서-Java8-Date-Time-JSR-310-사용하기/">
+                <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2016/11/19/Spring-Data-JPA-에서-Java8-Date-Time-JSR-310-사용하기/">
+                <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+            
+        </div>
+        <div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=110"/>
+        
+            <h4 id="about-card-name">HomoEfficio</h4>
+        
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Seoul, Korea.
+            </h5>
+        
+    </div>
+</div>
+        <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/script.min.js"></script>
+<!--SCRIPTS END-->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'hanmomhanda';
+        (function() {
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+
+
+
+</html>

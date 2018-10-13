@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="null">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="뒤태지존의 끄적거림">
+    <title>정적 분석과 D3.js를 이용한 JavaScript 상속 구조 다이어그램 - 뒤태지존의 끄적거림</title>
+    <meta name="author" content="HomoEfficio">
+    <meta name="description" content="뒤태지존의 끄적거림">
+    
+        <link rel="icon" href="/assets/images/favicon.ico">
+    
+    
+        <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <meta name="description" content="Context모바일에 최적화 된 WebGL 라이브러리를 만들고 있는 MoGL 프로젝트에서는 MoGL이라는 최상위 클래스를 기준으로 여러 클래스들이 상속 구조를 형성하고 있다. 상속 방법은 아래와 같이 표준화 되어 있다. 123MoGL.extend(&apos;Matrix&apos;,&amp;#123;    ...&amp;#125; 그렇다면 정적 분석을 통해서 위계(Hierarchy) 정보를">
+<meta name="keywords" content="JavaScript,자바스크립트,Static Analysis,정적 분석,D3,다이어그램,Visualization,MoGL">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="정적 분석과 D3.js를 이용한 JavaScript 상속 구조 다이어그램">
+<meta property="og:url" content="http://homoefficio.github.io/2015/07/19/정적-분석과-D3-js를-이용한-JavaScript-상속-구조-다이어그램/index.html">
+<meta property="og:site_name" content="뒤태지존의 끄적거림">
+<meta property="og:description" content="Context모바일에 최적화 된 WebGL 라이브러리를 만들고 있는 MoGL 프로젝트에서는 MoGL이라는 최상위 클래스를 기준으로 여러 클래스들이 상속 구조를 형성하고 있다. 상속 방법은 아래와 같이 표준화 되어 있다. 123MoGL.extend(&apos;Matrix&apos;,&amp;#123;    ...&amp;#125; 그렇다면 정적 분석을 통해서 위계(Hierarchy) 정보를">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-10-13T15:49:56.304Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="정적 분석과 D3.js를 이용한 JavaScript 상속 구조 다이어그램">
+<meta name="twitter:description" content="Context모바일에 최적화 된 WebGL 라이브러리를 만들고 있는 MoGL 프로젝트에서는 MoGL이라는 최상위 클래스를 기준으로 여러 클래스들이 상속 구조를 형성하고 있다. 상속 방법은 아래와 같이 표준화 되어 있다. 123MoGL.extend(&apos;Matrix&apos;,&amp;#123;    ...&amp;#125; 그렇다면 정적 분석을 통해서 위계(Hierarchy) 정보를">
+    
+        <meta rel="publisher" content="https://plus.google.com/+오명운"/>
+    
+    
+    
+        <meta property="og:image" content="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=640"/>
+    
+    
+        <meta property="og:image" content="/2015/07/19/정적-분석과-D3-js를-이용한-JavaScript-상속-구조-다이어그램/https:/camo.githubusercontent.com/e1a1948f0bcfa095d54793afd3ab96af97731773/687474703a2f2f64336a732e6f72672f65782f636c75737465722e706e67"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2015/07/19/정적-분석과-D3-js를-이용한-JavaScript-상속-구조-다이어그램/https://camo.githubusercontent.com/e1a1948f0bcfa095d54793afd3ab96af97731773/687474703a2f2f64336a732e6f72672f65782f636c75737465722e706e67" />
+    
+    
+        <meta property="og:image" content="/2015/07/19/정적-분석과-D3-js를-이용한-JavaScript-상속-구조-다이어그램/cover-static-analysis.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2015/07/19/정적-분석과-D3-js를-이용한-JavaScript-상속-구조-다이어그램/cover-static-analysis.png" />
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style.min.css">
+    <!--STYLES END-->
+    
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-79893978-1']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6494847158566766",
+    enable_page_level_ads: true
+  });
+</script>
+</head>
+
+    <body>
+        <div id="blog">
+            <header id="header" data-behavior="1">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="/ ">뒤태지존의 끄적거림</a>
+    </h1>
+    
+        <a class="header-right-picture" href="/#about">
+            <img class="header-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+        </a>
+    
+</header>
+            <nav id="sidebar" data-behavior="1">
+    
+    <div class="sidebar-profile">
+        <a href="/#about">
+            
+            <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+            
+        </a>
+        <span class="sidebar-profile-name">HomoEfficio</span>
+    </div>
+    
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/ 
+                    ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">Home</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-categories
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">Categories</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-tags
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">Tags</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-archives
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">Archives</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link st-search-show-outputs"
+                    href="#search
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                    <span class="sidebar-button-desc">Search</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="#about
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">About me</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="https://github.com/HomoEfficio" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                    <span class="sidebar-button-desc">GitHub</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="mailto:homo.efficio@gmail.com" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-envelope-o"></i>
+                    <span class="sidebar-button-desc">Mail</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/atom.xml
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+            <div id="main" data-behavior="1">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+        <div class="post-header-cover" style="background-image:url('/2015/07/19/정적-분석과-D3-js를-이용한-JavaScript-상속-구조-다이어그램/cover-static-analysis.png');">
+            <div class="post-header main-content-wrap">
+    
+        <h1 class="post-title" itemprop="headline">정적 분석과 D3.js를 이용한 JavaScript 상속 구조 다이어그램</h1>
+    
+    <div class="post-meta">
+    <time  itemprop="datePublished" content="Sun Jul 19 2015 13:18:14 GMT+0900">
+        Jul 19, 2015
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/시각화/">시각화</a>
+
+
+    
+</div>
+</div>
+        </div>
+    
+    <div class="post-content markdown main-content-wrap" itemprop="articleBody">
+        
+            <h1 id="Context"><a href="#Context" class="headerlink" title="Context"></a>Context</h1><p>모바일에 최적화 된 WebGL 라이브러리를 만들고 있는 <a href="https://github.com/projectBS/MoGL" target="_blank" rel="noopener">MoGL 프로젝트</a>에서는 <code>MoGL</code>이라는 최상위 클래스를 기준으로 여러 클래스들이 상속 구조를 형성하고 있다.</p>
+<p>상속 방법은 아래와 같이 표준화 되어 있다.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MoGL.extend(<span class="string">'Matrix'</span>,&#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>그렇다면 정적 분석을 통해서 위계(Hierarchy) 정보를 담고 있는 자료 구조를 뽑아내서 시각화 라이브러리와 버무리면, <strong>실제 소스 코드와 언제나 Sync가 맞는 살아있는 다이어그램</strong>을 만들어 낼 수 있지 않을까?</p>
+<h1 id="정적-분석"><a href="#정적-분석" class="headerlink" title="정적 분석"></a>정적 분석</h1><p>소스 코드에서 <code>.extend(</code>을 포함하는 행만 추려서 간단한 위계 정보를 추출할 수 있다.<br>방법은 여러가지가 있겠지만 약간의 정규표현식과 substring()으로 다음과 같이 추출할 수 있다.</p>
+<figure class="highlight javascript"><figcaption><span>Hierarchy 정보 추출 및 구성</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 표준화 된 상속 코드</span></span><br><span class="line"><span class="keyword">var</span> extendingPattern = <span class="string">'.extend('</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 표준화 된 상속 코드를 포함하고 있는 행</span></span><br><span class="line"><span class="comment">// 물론 실무에서는 실제 소스 코드에서 추출해와야 된다.</span></span><br><span class="line"><span class="keyword">var</span> lines = [</span><br><span class="line">    <span class="string">"var BlendMode = MoGL.extend('BlendMode', &#123;"</span>,</span><br><span class="line">    <span class="string">"return Matrix.extend('Camera',&#123;"</span>,</span><br><span class="line">    <span class="string">"return MoGL.extend('Geometry', &#123;"</span>,</span><br><span class="line">    <span class="string">"var Group = Matrix.extend('Group', &#123;"</span>,</span><br><span class="line">    <span class="string">"return MoGL.extend('Material',&#123;"</span></span><br><span class="line">];</span><br><span class="line"></span><br><span class="line"><span class="comment">// child 이름을 추출하기 위한 정규표현식</span></span><br><span class="line"><span class="keyword">var</span> regexp0 = <span class="regexp">/'\w+'|"\w+"/</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 추출에 사용되는 변수들</span></span><br><span class="line"><span class="keyword">var</span> line, splitted, parent, child, tmp, k;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 위계 정보를 담고 있는 객체를 담는 Map</span></span><br><span class="line"><span class="keyword">var</span> clsMoGLMap = &#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (k <span class="keyword">in</span> lines) &#123;</span><br><span class="line">    line = lines[k];</span><br><span class="line">    <span class="comment">// parent, child 이름을 추출</span></span><br><span class="line">    <span class="keyword">if</span> (line.indexOf(extendingPattern) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        splitted = line.split(extendingPattern);</span><br><span class="line">        parent = splitted[<span class="number">0</span>].substring(splitted[<span class="number">0</span>].lastIndexOf(<span class="string">' '</span>) + <span class="number">1</span>);</span><br><span class="line">        tmp = regexp0.exec(splitted[<span class="number">1</span>])[<span class="number">0</span>];</span><br><span class="line">        child = tmp.substring(<span class="number">1</span>, tmp.length - <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 위계 정보를 담고 있는 객체를 구성해서 clsMoGLMap 에 추가</span></span><br><span class="line">    <span class="keyword">if</span> (clsMoGLMap[parent]) &#123;</span><br><span class="line">        clsMoGLMap[parent].childrenNames = child;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        clsMoGLMap[parent] = <span class="keyword">new</span> ClsMoGL();</span><br><span class="line">        clsMoGLMap[parent].name = parent;</span><br><span class="line">        clsMoGLMap[parent].childrenNames = child;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (clsMoGLMap[child]) &#123;</span><br><span class="line">        clsMoGLMap[child].parentName = parent;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        clsMoGLMap[child] = <span class="keyword">new</span> ClsMoGL();</span><br><span class="line">        clsMoGLMap[child].name = child;</span><br><span class="line">        clsMoGLMap[child].parentName = parent;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>위계 정보를 담는 객체 <code>ClsMoGL</code>은 <code>LinkedList</code>와 비슷한 자료구조다. 애초에 단순히 텍스트에서 정보를 추출했기 때문에 텍스트를 담는 <code>parentName</code>, <code>childrenNames</code>가 추가되어 있다. 그리고 나중에 필요하다면 <code>methods</code>나 <code>fields</code> 같은 필드를 추가해서 더 많은 정보를 다이어그램에 표시할 수도 있다.</p>
+<p>부모는 하나고 자식은 여럿일 수 있으므로 자식만 배열로 하면 된다. <code>children</code>, <code>childrenNames</code> 배열에는 편리하게 그냥 값 할당을 하면 내부적으로는 <code>push()</code>가 호출되도록 구현했다.</p>
+<figure class="highlight javascript"><figcaption><span>Hierarchy 정보를 담는 자료 구조</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> ClsMoGL = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> name, parentName, parent, childrenNames = [], children = [];</span><br><span class="line">    <span class="built_in">Object</span>.defineProperties(<span class="keyword">this</span>, &#123;</span><br><span class="line">        <span class="string">'name'</span>:&#123;</span><br><span class="line">            enumerable:<span class="literal">true</span>,</span><br><span class="line">            get:<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">                <span class="keyword">return</span> name;</span><br><span class="line">            &#125;,</span><br><span class="line">            set:<span class="function"><span class="keyword">function</span>(<span class="params">value</span>) </span>&#123;</span><br><span class="line">                name = value;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">'parentName'</span>:&#123;</span><br><span class="line">            enumerable:<span class="literal">true</span>,</span><br><span class="line">            get:<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">                <span class="keyword">return</span> parentName;</span><br><span class="line">            &#125;,</span><br><span class="line">            set:<span class="function"><span class="keyword">function</span>(<span class="params">value</span>) </span>&#123;</span><br><span class="line">                parentName = value;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">'parent'</span>:&#123;</span><br><span class="line">            enumerable:<span class="literal">true</span>,</span><br><span class="line">            get:<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">                <span class="keyword">return</span> parent;</span><br><span class="line">            &#125;,</span><br><span class="line">            set:<span class="function"><span class="keyword">function</span>(<span class="params">value</span>) </span>&#123;</span><br><span class="line">                parent = value;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">'childrenNames'</span>:&#123;</span><br><span class="line">            enumerable:<span class="literal">true</span>,</span><br><span class="line">            get:<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">                <span class="keyword">return</span> childrenNames;</span><br><span class="line">            &#125;,</span><br><span class="line">            set:<span class="function"><span class="keyword">function</span>(<span class="params">childName</span>) </span>&#123;</span><br><span class="line">                childrenNames.push(childName);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">'children'</span>:&#123;</span><br><span class="line">            enumerable:<span class="literal">true</span>,</span><br><span class="line">            get:<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">                <span class="keyword">return</span> children;</span><br><span class="line">            &#125;,</span><br><span class="line">            set:<span class="function"><span class="keyword">function</span>(<span class="params">child</span>) </span>&#123;</span><br><span class="line">                children.push(child);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><code>ClsMoGL</code>을 담고 있는 <code>clsMoGLMap</code>를 재귀 함수 등을 이용해서 가공하면(사실 이 부분이 좀 복잡했는데 쉽게 이해할 수 있도록 설명하기는 어렵고, 이 방식이 가장 좋은 방식이라는 보장도 없으니, 필요하다면 그냥 소스 코드를 참고..) 대략 다음과 같은 json을 얻을 수 있다.</p>
+<figure class="highlight javascript"><figcaption><span>json으로 정리된 Hierarchy 정보</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="string">"name"</span>: <span class="string">"MoGL"</span>,</span><br><span class="line">    <span class="string">"children"</span>: [&#123;</span><br><span class="line">        <span class="string">"name"</span>: <span class="string">"BlendMode"</span></span><br><span class="line">    &#125;, &#123;</span><br><span class="line">        <span class="string">"name"</span>: <span class="string">"Geometry"</span></span><br><span class="line">    &#125;, &#123;</span><br><span class="line">        <span class="string">"name"</span>: <span class="string">"Material"</span></span><br><span class="line">    &#125;, &#123;</span><br><span class="line">        <span class="string">"name"</span>: <span class="string">"Matrix"</span>,</span><br><span class="line">        <span class="string">"children"</span>: [&#123;</span><br><span class="line">            <span class="string">"name"</span>: <span class="string">"Camera"</span></span><br><span class="line">        &#125;, &#123;</span><br><span class="line">            <span class="string">"name"</span>: <span class="string">"Group"</span></span><br><span class="line">        &#125;, &#123;</span><br><span class="line">            <span class="string">"name"</span>: <span class="string">"Mesh"</span></span><br><span class="line">        &#125;]</span><br><span class="line">    &#125;, &#123;</span><br><span class="line">        <span class="string">"name"</span>: <span class="string">"Primitive"</span></span><br><span class="line">    &#125;, &#123;</span><br><span class="line">        <span class="string">"name"</span>: <span class="string">"Scene"</span></span><br><span class="line">    &#125;, &#123;</span><br><span class="line">        <span class="string">"name"</span>: <span class="string">"Shader"</span></span><br><span class="line">    &#125;, &#123;</span><br><span class="line">        <span class="string">"name"</span>: <span class="string">"Shading"</span></span><br><span class="line">    &#125;, &#123;</span><br><span class="line">        <span class="string">"name"</span>: <span class="string">"Texture"</span></span><br><span class="line">    &#125;, &#123;</span><br><span class="line">        <span class="string">"name"</span>: <span class="string">"Vector"</span></span><br><span class="line">    &#125;, &#123;</span><br><span class="line">        <span class="string">"name"</span>: <span class="string">"Vertex"</span></span><br><span class="line">    &#125;, &#123;</span><br><span class="line">        <span class="string">"name"</span>: <span class="string">"World"</span></span><br><span class="line">    &#125;]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>자료 구조를 만들었으면 나머지 일은 <strong>D3.js</strong> 가 접수한다.</p>
+<h1 id="D3-js"><a href="#D3-js" class="headerlink" title="D3.js"></a>D3.js</h1><p>두말이 필요없는 굉장한 시각화 라이브러리인 <a href="https://github.com/mbostock/d3/wiki/Gallery" target="_blank" rel="noopener"><strong>D3.js</strong></a>에는 이런 위계 정보를 나타내는 다이어그램을 쉽게 만들 수 있는 여러가지 built-in 템플릿을 제공해준다. D3.js에는 이런 built-in 템플릿을 <code>layout</code>이라고 부른다.</p>
+<p>D3.js의 <code>Cluster layout</code>을 사용하면 쉽게(?) 다이어그램을 그릴 수 있다.</p>
+<p>여기서는 사실 <a href="http://bl.ocks.org/mbostock/4063570" target="_blank" rel="noopener">http://bl.ocks.org/mbostock/4063570</a> 에 있는 예제 중에서 <code>d3.json()</code>으로 json을 외부에서 가져오는 대신 위에서 만든 내부의 json을 사용하도록 변경한 부분 외에는 거의 그대로 갖다 썼다. 그래서 ‘쉽게’라고 할 수 있지만, 사실 D3.js가 그렇게 쉽지만은 않다.</p>
+<p>D3.js는 여러가지 다이어그램을 쉽게 그릴 수 있게 해주는 다양한 built-in API가 제공되지만, D3.js를 만든 <strong>Mike Bostock</strong> 형님도 늘 강조하듯, 화려한 시각화 뒤에 숨어있는 <strong>D3.js의 진정한 마술은 데이터와 DOM 요소를 매핑해주는 부분에 있다.</strong> 이 부분을 시각화를 이용해서 잘 설명해준 글이 있는데, 너무 좋아서 번역을 해뒀으니 <a href="http://hanmomhanda.github.io/Docs/d3/How-Selections-Work.html" target="_blank" rel="noopener"><strong>여기</strong></a>를 참고하면 D3.js를 배우는 데 도움이 될 것이다.</p>
+<p>결과와 소스 코드는 <a href="http://projectbs.github.io/MoGL/lab/diagram/index.html" target="_blank" rel="noopener"><strong>여기</strong></a>에서 볼 수 있다.</p>
+<p>화려하진 않지만(물론 공을 더 들이면 화려하게 만들 수도 있다), 소스 코드가 바뀌면 다이어그램도 따라서 바뀌는 살아있는 문서라는 점에서 쓸모는 꽤 있을 것이다.</p>
+<h1 id="정리"><a href="#정리" class="headerlink" title="정리"></a>정리</h1><ul>
+<li>JavaScript 프로젝트에서 <strong>표준화 된 상속 구문</strong>을 사용하면, <strong>정적 분석</strong>과 <strong>D3.js</strong>를 엮어서 <strong>살아있는 상속 구조 다이어그램</strong>을 만들 수 있다.</li>
+</ul>
+
+        
+        
+            
+        
+        <hr/>
+        <div>
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="크리에이티브 커먼즈 라이선스" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><a href='https://github.com/homoefficio' target='_blank'>HomoEfficio</a>가 작성한 이 저작물은(는) <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스</a>에 따라 이용할 수 있습니다.
+        </div>
+    </div>
+    <div class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/D3/">D3</a> <a class="tag tag--primary tag--small t-link" href="/tags/JavaScript/">JavaScript</a> <a class="tag tag--primary tag--small t-link" href="/tags/MoGL/">MoGL</a> <a class="tag tag--primary tag--small t-link" href="/tags/Static-Analysis/">Static Analysis</a> <a class="tag tag--primary tag--small t-link" href="/tags/Visualization/">Visualization</a> <a class="tag tag--primary tag--small t-link" href="/tags/다이어그램/">다이어그램</a> <a class="tag tag--primary tag--small t-link" href="/tags/자바스크립트/">자바스크립트</a> <a class="tag tag--primary tag--small t-link" href="/tags/정적-분석/">정적 분석</a>
+
+            </div>
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/07/21/Cross-Origin-Resource-Sharing/"  data-tooltip="Cross Origin Resource Sharing - CORS">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/07/18/git-subtree/" data-tooltip="git subtree - 프로젝트 안의 또 다른 프로젝트">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2015/07/19/정적-분석과-D3-js를-이용한-JavaScript-상속-구조-다이어그램/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2015/07/19/정적-분석과-D3-js를-이용한-JavaScript-상속-구조-다이어그램/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2015/07/19/정적-분석과-D3-js를-이용한-JavaScript-상속-구조-다이어그램/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+        
+            <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2018 HomoEfficio. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="1">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/07/21/Cross-Origin-Resource-Sharing/"  data-tooltip="Cross Origin Resource Sharing - CORS">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/07/18/git-subtree/" data-tooltip="git subtree - 프로젝트 안의 또 다른 프로젝트">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2015/07/19/정적-분석과-D3-js를-이용한-JavaScript-상속-구조-다이어그램/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2015/07/19/정적-분석과-D3-js를-이용한-JavaScript-상속-구조-다이어그램/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2015/07/19/정적-분석과-D3-js를-이용한-JavaScript-상속-구조-다이어그램/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="1">
+    <ul class="share-options">
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2015/07/19/정적-분석과-D3-js를-이용한-JavaScript-상속-구조-다이어그램/">
+                <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2015/07/19/정적-분석과-D3-js를-이용한-JavaScript-상속-구조-다이어그램/">
+                <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2015/07/19/정적-분석과-D3-js를-이용한-JavaScript-상속-구조-다이어그램/">
+                <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+            
+        </div>
+        <div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=110"/>
+        
+            <h4 id="about-card-name">HomoEfficio</h4>
+        
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Seoul, Korea.
+            </h5>
+        
+    </div>
+</div>
+        <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/script.min.js"></script>
+<!--SCRIPTS END-->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'hanmomhanda';
+        (function() {
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+
+
+
+</html>

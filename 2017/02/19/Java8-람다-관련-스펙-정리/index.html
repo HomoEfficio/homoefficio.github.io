@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="null">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="뒤태지존의 끄적거림">
+    <title>Java8 람다 관련 스펙 정리 - 뒤태지존의 끄적거림</title>
+    <meta name="author" content="HomoEfficio">
+    <meta name="description" content="뒤태지존의 끄적거림">
+    
+        <link rel="icon" href="/assets/images/favicon.ico">
+    
+    
+        <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <meta name="description" content="자바는 아직 함수가 독립적으로 어떤 값에 할당되거나, 어떤 함수의 인자로 사용되거나, 반환값으로 사용될 수 없다.  대신에 Java8에서부터는 추상 메서드를 한 개만 가지고 있는 함수형 인터페이스라는 것을 언어의 기능으로 추가해서 할당, 인자 또는 반환에 사용하고, 함수형 인터페이스의 자리에 람다식이나 메서드 레퍼런스를 사용할 수 있게 해서, 간접적이지만">
+<meta name="keywords" content="Java,자바,Java8,자바8,JLS,Lambda,Method Reference,Functional Interface,Method Type,Function Type입,자바 스펙,람다,메서드 레퍼런스,함수형 인터페이스,메서드 타입,함수 타입">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Java8 람다 관련 스펙 정리">
+<meta property="og:url" content="http://homoefficio.github.io/2017/02/19/Java8-람다-관련-스펙-정리/index.html">
+<meta property="og:site_name" content="뒤태지존의 끄적거림">
+<meta property="og:description" content="자바는 아직 함수가 독립적으로 어떤 값에 할당되거나, 어떤 함수의 인자로 사용되거나, 반환값으로 사용될 수 없다.  대신에 Java8에서부터는 추상 메서드를 한 개만 가지고 있는 함수형 인터페이스라는 것을 언어의 기능으로 추가해서 할당, 인자 또는 반환에 사용하고, 함수형 인터페이스의 자리에 람다식이나 메서드 레퍼런스를 사용할 수 있게 해서, 간접적이지만">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-10-13T15:49:56.236Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java8 람다 관련 스펙 정리">
+<meta name="twitter:description" content="자바는 아직 함수가 독립적으로 어떤 값에 할당되거나, 어떤 함수의 인자로 사용되거나, 반환값으로 사용될 수 없다.  대신에 Java8에서부터는 추상 메서드를 한 개만 가지고 있는 함수형 인터페이스라는 것을 언어의 기능으로 추가해서 할당, 인자 또는 반환에 사용하고, 함수형 인터페이스의 자리에 람다식이나 메서드 레퍼런스를 사용할 수 있게 해서, 간접적이지만">
+    
+        <meta rel="publisher" content="https://plus.google.com/+오명운"/>
+    
+    
+    
+        <meta property="og:image" content="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=640"/>
+    
+    
+        <meta property="og:image" content="/2017/02/19/Java8-람다-관련-스펙-정리/http:/www.abbreviations.com/images/142606_JLS.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2017/02/19/Java8-람다-관련-스펙-정리/http://www.abbreviations.com/images/142606_JLS.png" />
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style.min.css">
+    <!--STYLES END-->
+    
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-79893978-1']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6494847158566766",
+    enable_page_level_ads: true
+  });
+</script>
+</head>
+
+    <body>
+        <div id="blog">
+            <header id="header" data-behavior="1">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="/ ">뒤태지존의 끄적거림</a>
+    </h1>
+    
+        <a class="header-right-picture" href="/#about">
+            <img class="header-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+        </a>
+    
+</header>
+            <nav id="sidebar" data-behavior="1">
+    
+    <div class="sidebar-profile">
+        <a href="/#about">
+            
+            <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+            
+        </a>
+        <span class="sidebar-profile-name">HomoEfficio</span>
+    </div>
+    
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/ 
+                    ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">Home</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-categories
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">Categories</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-tags
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">Tags</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-archives
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">Archives</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link st-search-show-outputs"
+                    href="#search
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                    <span class="sidebar-button-desc">Search</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="#about
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">About me</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="https://github.com/HomoEfficio" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                    <span class="sidebar-button-desc">GitHub</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="mailto:homo.efficio@gmail.com" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-envelope-o"></i>
+                    <span class="sidebar-button-desc">Mail</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/atom.xml
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+            <div id="main" data-behavior="1">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+        <div class="post-header main-content-wrap">
+    
+        <h1 class="post-title" itemprop="headline">Java8 람다 관련 스펙 정리</h1>
+    
+    <div class="post-meta">
+    <time  itemprop="datePublished" content="Sun Feb 19 2017 21:23:05 GMT+0900">
+        Feb 19, 2017
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Technique/">Technique</a>
+
+
+    
+</div>
+</div>
+    
+    <div class="post-content markdown main-content-wrap" itemprop="articleBody">
+        
+            <p>자바는 아직 함수가 독립적으로 어떤 값에 할당되거나, 어떤 함수의 인자로 사용되거나, 반환값으로 사용될 수 없다. </p>
+<p>대신에 Java8에서부터는 추상 메서드를 한 개만 가지고 있는 함수형 인터페이스라는 것을 언어의 기능으로 추가해서 할당, 인자 또는 반환에 사용하고, 함수형 인터페이스의 자리에 람다식이나 메서드 레퍼런스를 사용할 수 있게 해서, 간접적이지만 실질적으로 람다식이나 메서드 레퍼런스를 할당, 인자, 반환에 사용될 수 있게 했다.</p>
+<p>어떤 A가 사용되는 곳에 A와는 다른 어떤 B가 사용되려면, B는 A에 대해 어떤 형태로든 호환성이 있어야 한다. 같은 맥락으로 람다나 메서드 레퍼런스가 함수형 인터페이스가 들어갈 자리에 들어가서 대신 사용되려면, 일종의 타입 비교 같은 호환성 체크가 필요하다. </p>
+<p>그렇다면 무엇을 기준으로 타입을 정해서 비교할 수 있을까?</p>
+<p>자바 가상머신 스펙(JVMS)에는 <code>메서드 시그너처</code>라는 용어가 있고, 자바 언어 스펙(JLS)에는 <code>메서드 시그너처(signature)</code>, <code>메서드 디스크립터(descriptor)</code>, <code>메서드 타입</code>, <code>함수 타입</code>이라는, 뭔가 타입을 정할 목적으로 사용되는 것 같은 용어가 여러가지 등장하는데, 일단 결론적으로 <strong>호환성 검사를 하는데 필요한 기본 정보는 메서드 타입과 함수 타입이다</strong>.</p>
+<p>메서드 시그너처나 메서드 디스크립터는 나중에 <a href="https://github.com/HomoEfficio/dev-tips/blob/master/%EC%9A%95%20%EB%82%98%EC%98%A4%EB%8A%94%20%EC%9E%90%EB%B0%94%20%EC%8A%A4%ED%8E%99%20-%20%EB%A9%94%EC%84%9C%EB%93%9C%20%EC%8B%9C%EA%B7%B8%EB%84%88%EC%B2%98.md" target="_blank" rel="noopener">여기</a>를 참고하는 걸로 하고 지금은 일단 넘어가자. 먼저 람다와 메서드 레퍼런스의 타입 기준이 되는 <code>메서드 타입</code>부터 알아보자. </p>
+<h2 id="메서드-타입"><a href="#메서드-타입" class="headerlink" title="메서드 타입"></a>메서드 타입</h2><p><code>메서드 타입</code>, 즉, 메서드의 타입은 <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.2" target="_blank" rel="noopener">JLS 8.2</a>에 기술되어 있다.</p>
+<blockquote>
+<p><a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.2" target="_blank" rel="noopener">https://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.2</a></p>
+<p>For a method, an ordered 4-tuple consisting of:</p>
+<ul>
+<li><p><strong>type parameters</strong>: the declarations of any type parameters of the method member.</p>
+</li>
+<li><p><strong>argument types</strong>: a list of the types of the arguments to the method member.</p>
+</li>
+<li><p><strong>return type</strong>: the return type of the method member.</p>
+</li>
+<li><p><strong>throws clause</strong>: exception types declared in the throws clause of the method member.</p>
+</li>
+</ul>
+<p>(대략) 메서드의 타입은 <strong>타입 파라미터</strong>, <strong>인자 타입</strong>, <strong>반환 타입</strong>, <strong>예외 타입</strong>으로 구성된다.</p>
+</blockquote>
+<p>일단 쉽게 생각해서 <strong>‘타입 파라미터, 인자 타입, 반환 타입, 예외 타입, 이렇게 4가지의 정보가 메서드의 타입을 결정한다.’</strong>라고 이해하자.</p>
+<h2 id="함수-타입"><a href="#함수-타입" class="headerlink" title="함수 타입"></a>함수 타입</h2><p>메서드의 타입을 <code>메서드 타입</code>으로 규정할 수 있다면, 함수형 인터페이스의 어떤 타입과 비교할 수 있을 것이다. 그 어떤 타입이 무엇일까? 이에 대한 답이 바로 <code>함수 타입(Function type)</code>, 구체적으로는 함수형 인터페이스의 함수 타입(Function type of a functional interface)이다.</p>
+<p><code>함수 타입</code>은 <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-9.html#jls-9.9" target="_blank" rel="noopener">JLS 9.9</a>에 기술되어 있다.</p>
+<blockquote>
+<p><a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-9.html#jls-9.9" target="_blank" rel="noopener">https://docs.oracle.com/javase/specs/jls/se8/html/jls-9.html#jls-9.9</a></p>
+<p>The function type of a functional interface I is a method type (§8.2) that can be used to override (§8.4.8) the abstract method(s) of I.</p>
+<p>(대략) 함수형 인터페이스 I의 함수 타입은 I의 추상 메서드를 override 하는데 사용되는 메서드 타입을 의미한다.</p>
+<p>The function type of I consists of the following:</p>
+<ul>
+<li><p>Type parameters, formal parameters, and return type:</p>
+<p> (중략)</p>
+</li>
+<li><p>throws clause:</p>
+<p> (중략)</p>
+</li>
+</ul>
+</blockquote>
+<p>뭔가 구구절절 설명이 더 있는데, 쉽게 요약하면 <code>함수 타입</code>의 구성 요소도 <code>메서드 타입</code>의 구성 요소와 같이 다음의 4가지다.</p>
+<ul>
+<li>타입 파라미터</li>
+<li>인자 타입</li>
+<li>반환 타입</li>
+<li>예외 타입</li>
+</ul>
+<p>함수 타입의 기준까지는 비교적 간단한데, 실제 함수 타입을 구하는 과정은 여러 케이스에 대해 구체적이고 복잡하고 방대한 내용이 펼쳐진다. 여기서 더 나아가면 추론(Inference) 및 제네릭(Generic)에 대한 전반적인 지식이 필요하므로 자세한 설명은.. 여러가지 이유로.. 생략하기로..(하아.. 이렇게 맘이 편할 수가..)</p>
+<p>함수 타입을 구하는 자세한 절차와 방법이 궁금하다면 <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-9.html#jls-9.9" target="_blank" rel="noopener">여기</a>를 참고하고, 여기에서는 스펙에 나와있는 <code>함수 타입</code> 예제 하나만 구경해보고 넘어가자.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">G1</span> </span>&#123;</span><br><span class="line">    &lt;E extends Exception&gt; <span class="function">Object <span class="title">m</span><span class="params">()</span> <span class="keyword">throws</span> E</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">G2</span> </span>&#123;</span><br><span class="line">    &lt;F extends Exception&gt; <span class="function">String <span class="title">m</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">G</span> <span class="keyword">extends</span> <span class="title">G1</span>, <span class="title">G2</span> </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+<p>일 때, <code>G</code>의 함수 타입은 다음과 같다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;F extends Exception&gt; ()-&gt;String <span class="keyword">throws</span> F</span><br></pre></td></tr></table></figure>
+<p>이처럼 함수 타입은 실제로 스펙에도 <code>&lt;F extends Exception&gt; ()-&gt;String throws F</code>와 같은 형식으로 기술하고 있는데, </p>
+<p><code>&lt;타입 파라미터&gt;</code>, <code>(인자 타입)</code>, <code>-&gt; 반환 타입</code>, <code>throws 예외 타입</code>, 이렇게 생김새만 봐도 4가지 구성 요소로 이루어져있다는 걸 알 수 있다.</p>
+<h2 id="람다식-타입"><a href="#람다식-타입" class="headerlink" title="람다식 타입"></a>람다식 타입</h2><p>람다식의 타입(Type of a lambda expression)은 <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-15.html#jls-15.27.3" target="_blank" rel="noopener">JLS 15.27.3</a>에 기술되어 있다.</p>
+<blockquote>
+<p><a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-15.html#jls-15.27.3" target="_blank" rel="noopener">https://docs.oracle.com/javase/specs/jls/se8/html/jls-15.html#jls-15.27.3</a></p>
+<p>A lambda expression is compatible in an assignment context, invocation context, or casting context with a target type T if T is a functional interface type (§9.8) and the expression is congruent with the function type of the ground target type derived from T.</p>
+<p>(대략) 어떤 람다식이, 함수형 인터페이스 T에서 유도된 ground target type의 함수 타입과 합동(congruent)이면, 그 람다식은 할당, 호출, 캐스팅에 대해 함수형 인터페이스 T와 호환된다.</p>
+</blockquote>
+<p>대략 써도 알아먹기 쉽지 않은데, 일단 욕 해주고 싶은 부분은 람다식의 타입에 대한 정의나 람다식의 타입은 어떤 요소로 구성되는 설명도 없이, 합동이면 콜~ 이라고 얘기하고는 합동 조건에 대해 설명을 이어간다는 점이다.</p>
+<p>암튼 완전히 정확하지는 않더라도 쉬운 이해를 위해 단순화하면, <strong>람다식은 언어적으로 타입 파라미터를 사용할 수 없으므로, 결국 인자 타입과 반환 타입, 예외 타입으로 함수형 인터페이스와의 호환성을 검사</strong>할 수 있다.</p>
+<h2 id="메서드-레퍼런스-타입"><a href="#메서드-레퍼런스-타입" class="headerlink" title="메서드 레퍼런스 타입"></a>메서드 레퍼런스 타입</h2><p>메서드 레퍼런스의 타입(Type of a method reference expression)은 <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-15.html#jls-15.13.2" target="_blank" rel="noopener">JLS 15.13.2</a>에 기술되어 있다.</p>
+<blockquote>
+<p><a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-15.html#jls-15.13.2" target="_blank" rel="noopener">https://docs.oracle.com/javase/specs/jls/se8/html/jls-15.html#jls-15.13.2</a></p>
+<p>A method reference expression is compatible in an assignment context, invocation context, or casting context with a target type T if T is a functional interface type (§9.8) and the expression is congruent with the function type of the ground target type derived from T.</p>
+<p>(대략) 어떤 메서드 레퍼런스식이, 함수형 인터페이스 T에 유도된 ground target type의 함수 타입과 합동이면, 그 메서드 레퍼런스식은 할당, 호출, 캐스팅에 대해 함수형 인터페이스 T와 호환된다.</p>
+</blockquote>
+<p>람다식의 타입과 거의 비슷한 설명이다. 메서드 레퍼런스의 정의나 구성 요소에 대한 내용은 역시나 없다. 메서드 레퍼런스가 결국은 메서드를 지칭하는 것이므로, 메서드 레퍼런스의 타입은 결국 <code>메서드 타입</code>과 같다고 봐도 무방할 것 같다. 따라서 <strong>메서드 레퍼런스식은 타입 파라미터, 인자 타입, 반환 타입, 예외 타입으로 구성</strong>된다고 할 수 있겠다.</p>
+<h2 id="호환성-비교"><a href="#호환성-비교" class="headerlink" title="호환성 비교"></a>호환성 비교</h2><p>자 이제 람다와 메서드 레퍼런스의 <code>메서드 타입</code>과 함수형 인터페이스의 <code>함수 타입</code>이 호환성 비교의 기준이라는 건 알게 되었다. 이제 실질적인 호환성 비교, 그러니까 합동(congruent) 여부를 검사하는 과정을 알아보자. congruent와 함께 ground target type이라는 용어도 나왔는데, 이것부터 먼저 알아보자.</p>
+<h3 id="ground-target-type-derived-from-functional-interface"><a href="#ground-target-type-derived-from-functional-interface" class="headerlink" title="ground target type derived from functional interface"></a>ground target type derived from functional interface</h3><p>람다 또는 메서드 레퍼런스와 함수형 인터페이스가 합동적(congruent)인지, 즉 람다나 메서드 레퍼런스가 어떤 함수형 인터페이스의 자리에 들어가서 사용될 수 있는지 판별하는데 기준이 되는 인터페이스의 타입을 말한다.</p>
+<p>좀 쉽게 얘기하면, </p>
+<ul>
+<li><code>interface I</code>나 <code>interface I&lt;Integer&gt;</code>와 같이 와일드카드 파라미터를 사용하지 않는 함수형 인터페이스의 ground target type은 <code>I</code>이고, </li>
+<li><code>I&lt;? extends P&gt;</code>와 같이 와일드카드를 사용하는 파라미터화 된 함수형 인터페이스의 ground target type은, 스펙에 정해진 방법으로 <code>?</code>를 예를 들어 <code>S</code>로 구체화 했을 때 <code>I&lt;S&gt;</code>가 된다.</li>
+<li>람다나 메서드 레퍼런스의 사용을 위한 실질적인 타입 비교는, 이 <code>I</code>나 <code>I&lt;S&gt;</code>의 함수 타입이 사용된다.</li>
+</ul>
+<p>간단한 설명을 위해 일단 이제부터는 함수형 인터페이스에서 유도된 ground target type은 그냥 함수형 인터페이스의 타입과 같다고 간주하고, ‘ground target type의 함수 타입’을 그냥 ‘함수 타입’이라고 칭하기로 하자(이렇게해도 틀리는 것은 아니다. 두 가지 중 간단한 것 하나만 취하고 나머지는 간단한 설명을 위해 배제했을 뿐이다).</p>
+<p>이제 람다식과 메서드 레퍼런스와 함수 타입(정확하게는 ground target type의 함수 타입이지만)의 합동(즉, 호환됨)에 대해 차례대로 살펴보자.</p>
+<h3 id="람다식-타입과-함수-타입의-합동"><a href="#람다식-타입과-함수-타입의-합동" class="headerlink" title="람다식 타입과 함수 타입의 합동"></a>람다식 타입과 함수 타입의 합동</h3><p>람다식 타입과 함수 타입의 합동은 <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-15.html#jls-15.27.3" target="_blank" rel="noopener">JLS 15.27.3</a>에 설명되어 있다. 분량 상 원문 생략하고 간단하게 합동 조건을 요약하면,</p>
+<blockquote>
+<p><a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-15.html#jls-15.27.3" target="_blank" rel="noopener">https://docs.oracle.com/javase/specs/jls/se8/html/jls-15.html#jls-15.27.3</a></p>
+<p>람다식 타입과 함수 타입이 합동이려면 다음의 모든 조건을 만족해야 한다.</p>
+<ul>
+<li><p>함수 타입에 타입 파라미터가 없어야 한다.</p>
+</li>
+<li><p>람다의 인자의 수는 함수 타입의 인자 타입의 수와 같아야 한다.</p>
+</li>
+<li><p>인자 타입이 명시된 람다식의 인자 타입은 함수 타입의 파라미터 타입과 같아야 한다.</p>
+</li>
+<li><p>람다식의 인자 타입이 함수 타입의 파라미터 타입과 같다고 간주되면,</p>
+<ul>
+<li>함수 타입의 결과값이 void 이면, 람다식의 body는 문장식이거나 void-호환 블럭이어야 한다.  </li>
+<li>함수 타입의 결과값이 void가 아닌 R이라면,<ul>
+<li>람다 body는 할당에 대해 R과 호환되는 식이거나,</li>
+<li>람다 body는 값 호환이고, 각 결과식이 할당에 대해 R과 호환되어야 한다.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<p>이 또한 크게 틀리지 않는 한에서 쉽게 풀어보면</p>
+<blockquote>
+<p>람다식 A가 함수형 인터페이스 B 대신 사용되려면, 다음 조건을 모두 만족해야 한다.</p>
+<ul>
+<li>B의 함수 타입에 타입 파라미터가 사용되고 있지 않아야 한다.</li>
+<li>A의 인자 수와 B의 함수 타입의 인자 수가 같아야 한다.</li>
+<li>A의 인자 타입과 B의 함수 타입의 인자 타입이 같아야 한다.<ul>
+<li>A가 인자 타입이 명시되지 않은 람다라면, 인자의 타입 추론 결과가 B의 함수 타입의 인자 타입과 같아야 한다.</li>
+</ul>
+</li>
+<li>A의 반환 타입은 B의 함수 타입의 반환 타입에 할당될 수 있어야 한다.</li>
+</ul>
+</blockquote>
+<p>글로만 보면 별로 와닿지 않으니 코드로 요점만 짚어보면 다음과 같다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Integer가 Object를 상속하고 있으므로</span></span><br><span class="line"><span class="comment">// Object obj = new Integer(3); 은 가능하지만,</span></span><br><span class="line"><span class="comment">// 아래와 같이 람다식의 인자 타입이 명시된 경우</span></span><br><span class="line"><span class="comment">// 함수 타입의 인자 타입과 람다식의 인자 타입은 할당 가능이 아니라 일치 해야만 한다.</span></span><br><span class="line">Consumer&lt;Object&gt; consumer1 = (Integer i) -&gt; System.out.println(i);  <span class="comment">// 컴파일 에러(Incompatible parameter type)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 람다식의 인자 타입이 명시되지 않으면 추론에 의해 아래와 같은 람다 사용이 가능하다.</span></span><br><span class="line">Consumer&lt;Object&gt; consumer2 = (i) -&gt; System.out.println(i);  <span class="comment">// 이건 가능(i가 Object로 추론됨)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 람다식의 반환 타입 Integer은 Object에 할당가능하므로 아래와 같은 람다 사용이 가능하다.</span></span><br><span class="line">Callable&lt;Object&gt; callable1 = () -&gt; <span class="keyword">new</span> Integer(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 함수 타입의 반환 타입이 void인 Runnable에 statement expression이 아닌 단순한 값 3은 사용 불가</span></span><br><span class="line">Runnable runnable1 = () -&gt; <span class="number">3</span>;  <span class="comment">// 컴파일 에러(Bad return type)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Runnable의 함수 타입의 반환 타입은 void지만, statement expression에 해당하는 인스턴스 생성식은 사용 가능</span></span><br><span class="line">Runnable runnable2 = () -&gt; <span class="keyword">new</span> Integer(<span class="number">3</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 함수 타입에 타입 파라미터가 있는 경우 람다를 쓸 수 없다.</span></span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">Lister</span> </span>&#123;</span><br><span class="line">    &lt;T&gt; <span class="function">List&lt;T&gt; <span class="title">makeList</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line">Lister lister = () -&gt; ...어쩌라고... <span class="comment">// 람다식은 언어 차원에서 타입 파라미터가 지원되지 않는다.</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 함수 타입에 throws가 있는 경우</span></span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">WithThrows</span> </span>&#123;</span><br><span class="line">    <span class="function">Integer <span class="title">makeTrouble</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 함수 타입에 throws IOException 이 있으므로</span></span><br><span class="line"><span class="comment">// 아래와 같이 body에서 IOException을 던지는 람다 사용 가능</span></span><br><span class="line">WithThrows withThrows1 = () -&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="number">1</span> == <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IOException();</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> Integer(<span class="number">3</span>);</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// 함수 타입의 throws로 지정된 IOException을 상속한 EOFException을 던지는 람다도 사용 가능</span></span><br><span class="line">WithThrows withThrows2 = () -&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="number">1</span> == <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> EOFException();</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> Integer(<span class="number">1</span>);</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// 함수 타입의 throws로 지정된 IOException을 상속하지 않은 예외를 던지는 람다는 사용 불가</span></span><br><span class="line">WithThrows withThrows3 = () -&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="number">1</span> == <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> InterruptedException();  <span class="comment">// 컴파일 에러(Unhandled exception)</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> Integer(<span class="number">1</span>);</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// body에서 Unchecked Exception을 던지는 람다는 함수 타입의 예외 타입과 관계 없이 사용 가능 </span></span><br><span class="line">WithThrows withThrows4 = () -&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="number">1</span> == <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException();</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> Integer(<span class="number">1</span>);</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// body에서 Unchecked Exception을 던지는 람다는 함수 타입에 throws 가 없더라도 사용 가능</span></span><br><span class="line">Runnable runnable3 = () -&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="number">1</span> != <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException();</span><br><span class="line">    System.out.println(<span class="string">"Unchecked Exception in a lambda body is OK"</span>);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="메서드-레퍼런스-타입과-함수-타입의-합동"><a href="#메서드-레퍼런스-타입과-함수-타입의-합동" class="headerlink" title="메서드 레퍼런스 타입과 함수 타입의 합동"></a>메서드 레퍼런스 타입과 함수 타입의 합동</h3><p>메서드 레퍼런스 타입과 함수 타입의 합동은 <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-15.html#jls-15.13.2" target="_blank" rel="noopener">JLS 15.13.2</a>에 설명되어 있다. 분량 상 원문 생략하고 간단하게 합동 조건을 요약하면,</p>
+<blockquote>
+<p><a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-15.html#jls-15.13.2" target="_blank" rel="noopener">https://docs.oracle.com/javase/specs/jls/se8/html/jls-15.html#jls-15.13.2</a></p>
+<p>메서드 레퍼런스 타입과 함수 타입이 합동이려면 다음의 모든 조건을 만족해야 한다.</p>
+<ul>
+<li><p>함수 타입이 컴파일 시점에 메서드 레퍼런스가 지칭하는 메서드의 선언부를 식별할 수 있어야 한다.</p>
+</li>
+<li><p>다음 둘 중의 하나가 참이어야 한다.</p>
+<ul>
+<li><p>함수 타입의 결과값이 void 여야 한다.</p>
+</li>
+<li><p>함수 타입의 결과값이 R이라면, 함수 타입이 컴파일 시점에 식별한 메서드 레퍼런스의 선언부에 명시된 결과값의 타입이 할당에 대해 R과 호환되어야 한다.</p>
+</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<p>역시 크게 틀리지 않는 선에서 쉽게 풀어보면</p>
+<blockquote>
+<p>메서드 레퍼런스 A가 함수형 인터페이스 B 대신 사용되려면, 다음 조건을 모두 만족해야 한다.</p>
+<ul>
+<li><p>B의 함수 타입이 컴파일 시점에 메서드 레퍼런스가 가리키는 메서드의 선언부를 식별할 수 있어야 한다.</p>
+</li>
+<li><p>함수 타입의 반환값이 void 이거나, </p>
+</li>
+<li>반환값이 void가 아니라면, 컴파일 시점에 메서드 레퍼런스가 가리키는 메서드 선언부에 명시된 반환 타입이 함수 타입의 반환 타입에 할당될 수 있어야 한다.</li>
+</ul>
+</blockquote>
+<p>글로만 보면 별로 와닿지 않으니 역시 코드로 요점만 짚어보면 다음과 같다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 함수 타입의 반환 타입이 void이고, 메서드 레퍼런스의 반환 타입도 void</span></span><br><span class="line">Runnable runnable4 = System.out::println;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 함수 타입의 반환 타입이 void이면, 반환 타입이 void가 아닌 메서드 레퍼런스도 사용 가능</span></span><br><span class="line">Integer integer2 = <span class="keyword">new</span> Integer(<span class="number">2</span>);</span><br><span class="line">Runnable runnable6 = integer2::doubleValue;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 함수 타입에 타입 파라미터가 있는 경우에도 메서드 레퍼런스 사용 가능</span></span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">Lister</span> </span>&#123;</span><br><span class="line">    &lt;T&gt; <span class="function">List&lt;T&gt; <span class="title">makeList</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line">Lister lister1 = ArrayList::<span class="keyword">new</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 함수 타입의 반환 타입이 void가 아니고, 반환 타입이 함수 타입의 반환 타입에 할당 불가능한 레퍼런스는 사용 불가</span></span><br><span class="line">Integer integer1 = <span class="keyword">new</span> Integer(<span class="number">1</span>);</span><br><span class="line">Callable&lt;Integer&gt; callable2 = integer1::doubleValue;  <span class="comment">// 컴파일 에러(Bad return type)</span></span><br><span class="line"><span class="comment">// 함수 타입의 반환 타입이 void가 아니고, 반환 타입이 함수 타입의 반환 타입에 할당 가능한 메서드 레퍼런스는 가능</span></span><br><span class="line">Callable&lt;Object&gt; callable3 = integer1::doubleValue;</span><br></pre></td></tr></table></figure>
+<h2 id="람다와-메서드-레퍼런스의-차이"><a href="#람다와-메서드-레퍼런스의-차이" class="headerlink" title="람다와 메서드 레퍼런스의 차이"></a>람다와 메서드 레퍼런스의 차이</h2><p>둘 모두 타입이 맞으면 함수형 인터페이스가 사용될 자리에 들어갈 수 있다는 점은 같다.</p>
+<p>하지만 메서드 레퍼런스는 타입 파라미터가 있는 제네릭 메서드를 대신해서 사용될 수 있는데, 람다는 타입 파라미터를 선언할 수 있는 문법이 지원되지 않으므로 제네릭 메서드를 대신해서 사용할 수 없다.</p>
+<p>좀 추상적이니 구체적인 코드로 보면 다음과 같은 차이가 있다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">ListFactory</span> </span>&#123;</span><br><span class="line">    &lt;T&gt; <span class="function">List&lt;T&gt; <span class="title">make</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 람다는 이게 안된다</span></span><br><span class="line">ListFactory lf1 = () -&gt; <span class="keyword">new</span> ArrayList();  <span class="comment">// 컴파일 에러(Target method is generic)</span></span><br><span class="line">        </span><br><span class="line"><span class="comment">// 메서드 레퍼런스는 이게 가능하다.</span></span><br><span class="line">ListFactory lf2  = ArrayList::<span class="keyword">new</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">List&lt;String&gt; ls = lf2.make();</span><br><span class="line">List&lt;Number&gt; ln = lf2.make();</span><br></pre></td></tr></table></figure>
+<h2 id="람다의-void-호환성"><a href="#람다의-void-호환성" class="headerlink" title="람다의 void 호환성"></a>람다의 void 호환성</h2><p>람다의 void 호환성은 <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-15.html#jls-15.27.3" target="_blank" rel="noopener">JLS 15.27.3</a>의 마지막 부분에 나와 있다.</p>
+<blockquote>
+<p><a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-15.html#jls-15.27.3" target="_blank" rel="noopener">https://docs.oracle.com/javase/specs/jls/se8/html/jls-15.html#jls-15.27.3</a></p>
+<p>람다의 body가 statement expression이면, 그 람다의 반환 타입이 (무엇이든 상관없이) void인 함수 타입과 호환 된다.</p>
+</blockquote>
+<p>statement expression의 예는 다음과 같다.</p>
+<blockquote>
+<p><a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-14.html#jls-StatementExpression" target="_blank" rel="noopener">https://docs.oracle.com/javase/specs/jls/se8/html/jls-14.html#jls-StatementExpression</a></p>
+<ul>
+<li><p>할당</p>
+</li>
+<li><p>전위덧셈(++a)</p>
+</li>
+<li><p>전위뺄셈(–a)</p>
+</li>
+<li><p>후위덧셈(a++)</p>
+</li>
+<li><p>후위뺄셈(a–)</p>
+</li>
+<li><p>메서드 호출</p>
+</li>
+<li><p>클래스 인스턴스 생성식(new 등..)</p>
+</li>
+</ul>
+</blockquote>
+<p>코드로 살펴보자면, 다음과 같은 일이 가능하다는 소리다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// list.add()는 boolean을 반환하지만 메서드 호출이므로,</span></span><br><span class="line"><span class="comment">// 반환 타입이 void인 accept(T t) 메서드를 가진 Consumer&lt;T&gt;에 할당 가능</span></span><br><span class="line">Consumer&lt;String&gt; b = s -&gt; list.add(s);</span><br></pre></td></tr></table></figure>
+<h1 id="정리"><a href="#정리" class="headerlink" title="정리"></a>정리</h1><blockquote>
+<ul>
+<li><p><strong>메서드의 타입</strong>은 <strong>타입 파라미터, 인자 타입, 반환 타입, 예외 타입</strong>으로 구성된다.</p>
+</li>
+<li><p><strong>함수 타입</strong>은 함수형 인터페이스 I의 함수 타입은 I의 추상 메서드를 override 하는데 사용되는 메서드 타입을 의미하며, <strong>함수 타입의 구성 요소는 메서드 타입의 구성 요소와 같다</strong>.</p>
+</li>
+<li><p>따라서 <strong>타입 파라미터, 인자 타입, 반환 타입, 예외 타입</strong>의 호환성 검사를 통해, 어떤 람다나 메서드 레퍼런스가 어떤 함수형 인터페이스 대신 사용될 수 있는지 판단할 수 있다.</p>
+</li>
+<li><p>타입 파라미터의 호환성</p>
+<ul>
+<li>함수 타입에 타입 파라미터가 있으면 람다는 호환되지 않고, 메서드 레퍼런스만 호환 가능하다.</li>
+<li>타입 파라미터의 호환성은 제네릭을 참고한다. </li>
+</ul>
+</li>
+<li><p>인자 타입의 호환성</p>
+<ul>
+<li><p>람다식의 인자 타입이 명시적이면, 함수 타입의 인자 타입과 동일해야 한다.</p>
+</li>
+<li><p>명시적이지 않은 인자 타입은 함수 타입의 인자 타입으로 추론될 수 있어야 한다.</p>
+</li>
+</ul>
+</li>
+<li><p>반환 타입의 호환성</p>
+<ul>
+<li><p>함수 타입의 반환 타입이 void가 아니면, 람다식이나 메서드 레퍼런스의 반환 타입이 함수 타입의 반환 타입에 할당 가능해야 한다.</p>
+</li>
+<li><p>함수 타입의 반환 타입이 void이면</p>
+<ul>
+<li><p>람다식의 body가 할당, 전위덧셈, 전위뺄셈, 전위덧셈, 전위뺄셈, 메서드호출, 클래스인스턴스생성, 이렇게 7개 중의 하나에 해당한다면 void 호환성이 적용된다.</p>
+</li>
+<li><p>메서드 레퍼런스는 반환 타입에 무관하게 호환된다.</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>예외 타입의 호환성</p>
+<ul>
+<li><p>람다식이나 메서드 레퍼런스에서 던져지는 예외 타입은 함수 타입의 예외 타입에 할당 가능해야 한다.</p>
+</li>
+<li><p>람다식이나 메서드 레퍼런스에서 사용되는 Unchecked 예외는 예외 타입 호환성과 무관하다.</p>
+</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+
+        
+        
+            
+        
+        <hr/>
+        <div>
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="크리에이티브 커먼즈 라이선스" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><a href='https://github.com/homoefficio' target='_blank'>HomoEfficio</a>가 작성한 이 저작물은(는) <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스</a>에 따라 이용할 수 있습니다.
+        </div>
+    </div>
+    <div class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/Function-Type입/">Function Type입</a> <a class="tag tag--primary tag--small t-link" href="/tags/Functional-Interface/">Functional Interface</a> <a class="tag tag--primary tag--small t-link" href="/tags/JLS/">JLS</a> <a class="tag tag--primary tag--small t-link" href="/tags/Java/">Java</a> <a class="tag tag--primary tag--small t-link" href="/tags/Java8/">Java8</a> <a class="tag tag--primary tag--small t-link" href="/tags/Lambda/">Lambda</a> <a class="tag tag--primary tag--small t-link" href="/tags/Method-Reference/">Method Reference</a> <a class="tag tag--primary tag--small t-link" href="/tags/Method-Type/">Method Type</a> <a class="tag tag--primary tag--small t-link" href="/tags/람다/">람다</a> <a class="tag tag--primary tag--small t-link" href="/tags/메서드-레퍼런스/">메서드 레퍼런스</a> <a class="tag tag--primary tag--small t-link" href="/tags/메서드-타입/">메서드 타입</a> <a class="tag tag--primary tag--small t-link" href="/tags/자바/">자바</a> <a class="tag tag--primary tag--small t-link" href="/tags/자바-스펙/">자바 스펙</a> <a class="tag tag--primary tag--small t-link" href="/tags/자바8/">자바8</a> <a class="tag tag--primary tag--small t-link" href="/tags/함수-타입/">함수 타입</a> <a class="tag tag--primary tag--small t-link" href="/tags/함수형-인터페이스/">함수형 인터페이스</a>
+
+            </div>
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/04/16/Git-과거의-특정-커밋-수정하기/"  data-tooltip="Git 과거의 특정 커밋 수정하기">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/02/19/Blocking-NonBlocking-Synchronous-Asynchronous/" data-tooltip="Blocking-NonBlocking-Synchronous-Asynchronous">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2017/02/19/Java8-람다-관련-스펙-정리/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2017/02/19/Java8-람다-관련-스펙-정리/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2017/02/19/Java8-람다-관련-스펙-정리/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+        
+            <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2018 HomoEfficio. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="1">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/04/16/Git-과거의-특정-커밋-수정하기/"  data-tooltip="Git 과거의 특정 커밋 수정하기">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/02/19/Blocking-NonBlocking-Synchronous-Asynchronous/" data-tooltip="Blocking-NonBlocking-Synchronous-Asynchronous">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2017/02/19/Java8-람다-관련-스펙-정리/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2017/02/19/Java8-람다-관련-스펙-정리/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2017/02/19/Java8-람다-관련-스펙-정리/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="1">
+    <ul class="share-options">
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2017/02/19/Java8-람다-관련-스펙-정리/">
+                <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2017/02/19/Java8-람다-관련-스펙-정리/">
+                <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2017/02/19/Java8-람다-관련-스펙-정리/">
+                <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+            
+        </div>
+        <div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=110"/>
+        
+            <h4 id="about-card-name">HomoEfficio</h4>
+        
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Seoul, Korea.
+            </h5>
+        
+    </div>
+</div>
+        <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/script.min.js"></script>
+<!--SCRIPTS END-->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'hanmomhanda';
+        (function() {
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+
+
+
+</html>

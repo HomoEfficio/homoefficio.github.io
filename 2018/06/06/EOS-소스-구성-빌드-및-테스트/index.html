@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="null">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="뒤태지존의 끄적거림">
+    <title>EOS 소스 구성, 빌드 및 테스트 - 뒤태지존의 끄적거림</title>
+    <meta name="author" content="HomoEfficio">
+    <meta name="description" content="뒤태지존의 끄적거림">
+    
+        <link rel="icon" href="/assets/images/favicon.ico">
+    
+    
+        <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <meta name="description" content="EOS 소스 구성, 빌드 및 테스트EOSIO 1.0.0이 출시되었다.  공식 문서인 https://github.com/EOSIO/eos/wiki/Local-Environment 를 기준으로 약간의 커스터마이징과 과도한 친절함을 가미했다.  참고로 이 글은 EOSIO 1.0.0의 바로 앞 버전인 EOSIO Dawn 4.2를 기준으로 작성되었으나 EOSIO 1">
+<meta name="keywords" content="BlockChain,EOS,블록체인,이오스,development,개발,dapp,디앱,개발 환경">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="EOS 소스 구성, 빌드 및 테스트">
+<meta property="og:url" content="http://homoefficio.github.io/2018/06/06/EOS-소스-구성-빌드-및-테스트/index.html">
+<meta property="og:site_name" content="뒤태지존의 끄적거림">
+<meta property="og:description" content="EOS 소스 구성, 빌드 및 테스트EOSIO 1.0.0이 출시되었다.  공식 문서인 https://github.com/EOSIO/eos/wiki/Local-Environment 를 기준으로 약간의 커스터마이징과 과도한 친절함을 가미했다.  참고로 이 글은 EOSIO 1.0.0의 바로 앞 버전인 EOSIO Dawn 4.2를 기준으로 작성되었으나 EOSIO 1">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://i.imgur.com/nnJYbmt.png">
+<meta property="og:image" content="https://i.imgur.com/FdCnNY9.png">
+<meta property="og:image" content="https://i.imgur.com/9EyuWR0.png">
+<meta property="og:image" content="https://i.imgur.com/uI88CPW.png">
+<meta property="og:image" content="https://i.imgur.com/QS1BX2K.png">
+<meta property="og:image" content="https://i.imgur.com/TgsjIC5.png">
+<meta property="og:image" content="https://i.imgur.com/KhhsDyP.png">
+<meta property="og:image" content="https://i.imgur.com/AvnGEG0.png">
+<meta property="og:image" content="https://i.imgur.com/HqkYJ7q.png">
+<meta property="og:image" content="https://i.imgur.com/Dy1kTfc.png">
+<meta property="og:image" content="https://i.imgur.com/tkyTrmz.png">
+<meta property="og:image" content="https://i.imgur.com/QBGDIzg.png">
+<meta property="og:image" content="https://i.imgur.com/KOsUI6Q.png">
+<meta property="og:image" content="https://i.imgur.com/zICvgid.png">
+<meta property="og:image" content="https://i.imgur.com/wcPRLJl.png">
+<meta property="og:image" content="https://i.imgur.com/G4bcK1s.png">
+<meta property="og:image" content="https://i.imgur.com/EVWbJK4.png">
+<meta property="og:image" content="https://i.imgur.com/SQh7tA0.png">
+<meta property="og:image" content="https://i.imgur.com/jgB2MUx.png">
+<meta property="og:image" content="https://i.imgur.com/lu1eUF2.png">
+<meta property="og:image" content="https://i.imgur.com/ljgjYaO.png">
+<meta property="og:image" content="https://i.imgur.com/LNdlV8e.png">
+<meta property="og:image" content="https://i.imgur.com/iKwaDpp.png">
+<meta property="og:image" content="https://i.imgur.com/HMxnI2o.png">
+<meta property="og:image" content="https://i.imgur.com/e5ML3FO.png">
+<meta property="og:image" content="https://i.imgur.com/Lz3OG75.png">
+<meta property="og:updated_time" content="2018-10-13T15:49:56.194Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="EOS 소스 구성, 빌드 및 테스트">
+<meta name="twitter:description" content="EOS 소스 구성, 빌드 및 테스트EOSIO 1.0.0이 출시되었다.  공식 문서인 https://github.com/EOSIO/eos/wiki/Local-Environment 를 기준으로 약간의 커스터마이징과 과도한 친절함을 가미했다.  참고로 이 글은 EOSIO 1.0.0의 바로 앞 버전인 EOSIO Dawn 4.2를 기준으로 작성되었으나 EOSIO 1">
+<meta name="twitter:image" content="https://i.imgur.com/nnJYbmt.png">
+    
+        <meta rel="publisher" content="https://plus.google.com/+오명운"/>
+    
+    
+    
+        <meta property="og:image" content="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=640"/>
+    
+    
+        <meta property="og:image" content="/2018/06/06/EOS-소스-구성-빌드-및-테스트/https:/streamity.org/uploads/media/coin/0001/01/62322d7972d7c0fe7831736e4f4e9baf1d44108d.svg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2018/06/06/EOS-소스-구성-빌드-및-테스트/https://streamity.org/uploads/media/coin/0001/01/62322d7972d7c0fe7831736e4f4e9baf1d44108d.svg" />
+    
+    
+        <meta property="og:image" content="/2018/06/06/EOS-소스-구성-빌드-및-테스트/cover-EOS-eosio-blockchain.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2018/06/06/EOS-소스-구성-빌드-및-테스트/cover-EOS-eosio-blockchain.jpg" />
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style.min.css">
+    <!--STYLES END-->
+    
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-79893978-1']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6494847158566766",
+    enable_page_level_ads: true
+  });
+</script>
+</head>
+
+    <body>
+        <div id="blog">
+            <header id="header" data-behavior="1">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="/ ">뒤태지존의 끄적거림</a>
+    </h1>
+    
+        <a class="header-right-picture" href="/#about">
+            <img class="header-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+        </a>
+    
+</header>
+            <nav id="sidebar" data-behavior="1">
+    
+    <div class="sidebar-profile">
+        <a href="/#about">
+            
+            <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+            
+        </a>
+        <span class="sidebar-profile-name">HomoEfficio</span>
+    </div>
+    
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/ 
+                    ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">Home</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-categories
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">Categories</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-tags
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">Tags</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-archives
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">Archives</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link st-search-show-outputs"
+                    href="#search
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                    <span class="sidebar-button-desc">Search</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="#about
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">About me</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="https://github.com/HomoEfficio" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                    <span class="sidebar-button-desc">GitHub</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="mailto:homo.efficio@gmail.com" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-envelope-o"></i>
+                    <span class="sidebar-button-desc">Mail</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/atom.xml
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+            <div id="main" data-behavior="1">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+        <div class="post-header-cover" style="background-image:url('/2018/06/06/EOS-소스-구성-빌드-및-테스트/cover-EOS-eosio-blockchain.jpg');">
+            <div class="post-header main-content-wrap">
+    
+        <h1 class="post-title" itemprop="headline">EOS 소스 구성, 빌드 및 테스트</h1>
+    
+    <div class="post-meta">
+    <time  itemprop="datePublished" content="Wed Jun 06 2018 08:28:37 GMT+0900">
+        Jun 06, 2018
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/BlockChain/">BlockChain</a>
+
+
+    
+</div>
+</div>
+        </div>
+    
+    <div class="post-content markdown main-content-wrap" itemprop="articleBody">
+        
+            <h1 id="EOS-소스-구성-빌드-및-테스트"><a href="#EOS-소스-구성-빌드-및-테스트" class="headerlink" title="EOS 소스 구성, 빌드 및 테스트"></a>EOS 소스 구성, 빌드 및 테스트</h1><p><a href="https://github.com/EOSIO/eos/releases/tag/v1.0.0" target="_blank" rel="noopener">EOSIO 1.0.0</a>이 출시되었다. </p>
+<p>공식 문서인 <a href="https://github.com/EOSIO/eos/wiki/Local-Environment" target="_blank" rel="noopener">https://github.com/EOSIO/eos/wiki/Local-Environment</a> 를 기준으로 약간의 커스터마이징과 과도한 친절함을 가미했다. </p>
+<p>참고로 이 글은 EOSIO 1.0.0의 바로 앞 버전인 <a href="https://github.com/EOSIO/eos/releases/tag/dawn-v4.2.0" target="_blank" rel="noopener">EOSIO Dawn 4.2</a>를 기준으로 작성되었으나 EOSIO 1.0.0 에서도 그대로 적용할 수 있다. <em>EOS는 버전업이 상당히 잦다. 내용 일부는 버전업에 맞춰 계속 업데이트 한다.</em></p>
+<h2 id="EOSIO-아키텍처"><a href="#EOSIO-아키텍처" class="headerlink" title="EOSIO 아키텍처"></a>EOSIO 아키텍처</h2><p>EOSIO는 여러개의 컴포넌트로 구성되어 있다. 가장 중요한 3가지는 다음과 같다.</p>
+<ul>
+<li><code>nodeos</code>: 서버 사이드 블록체인 노드</li>
+<li><code>cleos</code>: 블록체인과의 상호작용 및 지갑 관리 컴포넌트인 <code>keosd</code>에 대한 CLI(명령행 인터페이스)</li>
+<li><code>keosd</code>: EOSIO 지갑 관리 컴포넌트</li>
+</ul>
+<p>위 3가지 컴포넌트의 관계는 다음 그림과 같다.</p>
+<p><img src="https://i.imgur.com/nnJYbmt.png" alt="Imgur"></p>
+<h2 id="사전-조건"><a href="#사전-조건" class="headerlink" title="사전 조건"></a>사전 조건</h2><h3 id="OS"><a href="#OS" class="headerlink" title="OS"></a>OS</h3><p>공식 문서에 아래와 같이 안내 되어 있다. 이 글은 Linux Mint 18.3에서 빌드하고 작성했다.</p>
+<ol>
+<li>Amazon 2017.09 and higher.</li>
+<li>Centos 7.</li>
+<li>Fedora 25 and higher (Fedora 27 recommended).</li>
+<li>Mint 18.</li>
+<li>Ubuntu 16.04 (Ubuntu 16.10 recommended).</li>
+<li>MacOS Darwin 10.12 and higher (MacOS 10.13.x recommended).</li>
+</ol>
+<h3 id="용량"><a href="#용량" class="headerlink" title="용량"></a>용량</h3><ul>
+<li>RAM: 8G 이상</li>
+<li>Disk: 20G 이상</li>
+</ul>
+<h2 id="소스-가져오기"><a href="#소스-가져오기" class="headerlink" title="소스 가져오기"></a>소스 가져오기</h2><p>문서에는 EOSIO의 리포지토리를 직접 clone하도록 안내하고 있지만, Pull Request도 보내면서 개발하려면 각자 fork 뜬 리포지토리를 clone하는 것이 좋다.</p>
+<p>각자 fork 뜬 리포지토리의 URL을 <code>https://github.com/YOUR_USERNAME/eos</code>라고 하면, 다음과 같이 clone 하면 된다.</p>
+<blockquote>
+<p>$ git clone <a href="https://github.com/YOUR_USERNAME/eos" target="_blank" rel="noopener">https://github.com/YOUR_USERNAME/eos</a> --recursive</p>
+</blockquote>
+<h2 id="빌드"><a href="#빌드" class="headerlink" title="빌드"></a>빌드</h2><p>EOSIO 에서 제공하는 빌드 스크립트를 실행하면 된다.</p>
+<blockquote>
+<p>$ cd eos</p>
+<p>$ ./eosio_build.sh</p>
+</blockquote>
+<h3 id="자잘한-버그-수정"><a href="#자잘한-버그-수정" class="headerlink" title="자잘한 버그 수정"></a>자잘한 버그 수정</h3><blockquote>
+<p>아래 기술한 빌드 스크립트 에러는 이미 Pull Request가 받아들여져서 현재 릴리스 버전인 EOSIO 1.0.1 에서는 발생하지 않으나, 참고로 내용만 남겨둔다.</p>
+</blockquote>
+<p>그런데 우분투 용 빌드 스크립트에는 의존 관계 구성 관련 사소한 버그가 있어서, 빌드 스크립트를 살짝 고치고 Pull Request를 날려두었다.</p>
+<p><a href="https://github.com/EOSIO/eos/pull/2979/files" target="_blank" rel="noopener">https://github.com/EOSIO/eos/pull/2979/files</a></p>
+<p>이 글을 보는 시점에 Pull Request가 반영되어있다면 아래 내용은 무시하고 다음 단원으로 건너뛰면 된다.</p>
+<p>원본 그대로 실행하면 먼저 다음과 같이 라이브러리를 설치해야 한다는 안내가 나온다. </p>
+<p><img src="https://i.imgur.com/FdCnNY9.png" alt="Imgur"></p>
+<p>메시지가 살짝 깨져 나오지만 일단 넘어가고, 1 을 입력하고 엔터를 치면 설치가 안 되고 다음과 같은 에러가 난다.</p>
+<p><img src="https://i.imgur.com/9EyuWR0.png" alt="Imgur"></p>
+<p>위의 Pull Request 링크를 참고해서 <code>scripts/eosio_build_ubuntu.sh</code>파일을 수정하고 다시 <code>./eosio_build.sh</code>를 실행해서, 라이브러리 설치 문의 시 1을 입력하고 엔터를 치면 다음과 같이 라이브러리 설치가 정상적으로 진행된다.</p>
+<p><img src="https://i.imgur.com/uI88CPW.png" alt="Imgur"></p>
+<h2 id="기다림"><a href="#기다림" class="headerlink" title="기다림"></a>기다림</h2><p>라이브러리 설치 후 Boost, mongoDB, LLVM 등도 빌드하는데 넉넉 잡아 120분 정도 소요되었다. 느긋한 기다림이 필요하다. 생산 되는 로그량도 20,000라인을 넘는다.</p>
+<p>몇 가지 화면 캡처를 떠놨으니 미리 구경해보자.</p>
+<h3 id="Boost"><a href="#Boost" class="headerlink" title="Boost"></a>Boost</h3><p>별 문제없이 설치된다.</p>
+<p><img src="https://i.imgur.com/QS1BX2K.png" alt="Imgur"></p>
+<h3 id="mongoDB"><a href="#mongoDB" class="headerlink" title="mongoDB"></a>mongoDB</h3><p>별 문제없이 설치된다.</p>
+<p><img src="https://i.imgur.com/TgsjIC5.png" alt="Imgur"></p>
+<p><img src="https://i.imgur.com/KhhsDyP.png" alt="Imgur"></p>
+<p><img src="https://i.imgur.com/AvnGEG0.png" alt="Imgur"></p>
+<h3 id="secp256k1-zkp"><a href="#secp256k1-zkp" class="headerlink" title="secp256k1-zkp"></a>secp256k1-zkp</h3><p>mongoDB 설치까지 완료된 후 지루할만 하니 에러가 나준다(이것도 Pull Request가 받아들여져서 더는 발생하지 않을 것이다).</p>
+<p><img src="https://i.imgur.com/HqkYJ7q.png" alt="Imgur"></p>
+<p><code>aclocal</code>이 없다는 얘긴데 <code>automake</code>를 설치하면 해결된다.</p>
+<blockquote>
+<p>$ sudo apt install automake</p>
+</blockquote>
+<p><img src="https://i.imgur.com/Dy1kTfc.png" alt="Imgur"></p>
+<p><code>automake</code> 설치 완료 되면 다시 <code>./eosio_build.sh</code>를 실행한다.</p>
+<p><img src="https://i.imgur.com/tkyTrmz.png" alt="Imgur"></p>
+<p>아까 받아둔 파일이 있어서 문제라고 하니 개뿐하게 지워주고, 다시 <code>./eosio_build.sh</code>를 실행한다.</p>
+<p><img src="https://i.imgur.com/QBGDIzg.png" alt="Imgur"></p>
+<h3 id="LLVM"><a href="#LLVM" class="headerlink" title="LLVM"></a>LLVM</h3><p>이제 secp256k1-zkp도 깔끔하게 설치되고 다음 단계인 LLVM으로 넘어간다. LLVM은 별 문제없이 설치된다.</p>
+<p><img src="https://i.imgur.com/KOsUI6Q.png" alt="Imgur"></p>
+<p><img src="https://i.imgur.com/zICvgid.png" alt="Imgur"></p>
+<h3 id="EOSIO"><a href="#EOSIO" class="headerlink" title="EOSIO"></a>EOSIO</h3><p>이제 드디어 EOSIO 설치로 넘어간다. EOSIO는 별 문제없이 설치된다.</p>
+<p><img src="https://i.imgur.com/wcPRLJl.png" alt="Imgur"></p>
+<p><img src="https://i.imgur.com/G4bcK1s.png" alt="Imgur"></p>
+<p>드디어 빌드가 완성 되었다. 총 90분 정도 걸렸다고 나오는데, 중간에 오류 나기 전에 설치되는 것들까지 감안하면 CPU i5-2500 3.3GHz, RAM 8G 정도로 넉넉잡아 2시간은 걸린 것 같다.</p>
+<h2 id="테스트"><a href="#테스트" class="headerlink" title="테스트"></a>테스트</h2><p>위 빌드 결과에 안내해준 대로 테스트를 수행해보자.</p>
+<blockquote>
+<p>export PATH=${HOME}/opt/mongodb/bin:$PATH</p>
+<p>/home/hanmomhanda/opt/mongodb/bin/mongod -f /home/hanmomhanda/opt/mongodb/mongod.conf &amp;</p>
+<p>cd /home/hanmomhanda/gitRepo/crypto/eos/build</p>
+<p>make test</p>
+</blockquote>
+<p><img src="https://i.imgur.com/EVWbJK4.png" alt="Imgur"></p>
+<p><img src="https://i.imgur.com/SQh7tA0.png" alt="Imgur"></p>
+<p>테스트도 시간은 10여분 정도 걸렸지만 문제없이 모두 통과한다.</p>
+<h2 id="설치"><a href="#설치" class="headerlink" title="설치"></a>설치</h2><p><code>/eos/build</code> 디렉터리에서 <code>sudo make install</code>을 실행해서 설치하면 실행 파일이 v1.1.0 부터는 <code>/usr/local/eosio/bin</code>에 설치된다(1.0.#에서는 <code>/usr/local/bin</code>에 설치됐었다). 따라서, <code>sudo update-alternatives --install /usr/local/bin/nodeos nodeos /usr/local/eosio/bin/nodeos 1</code>와 같이 해줘야 PATH 설정 없이도 편리하게 사용할 수 있다.</p>
+<p><img src="https://i.imgur.com/jgB2MUx.png" alt="Imgur"></p>
+<p><img src="https://i.imgur.com/lu1eUF2.png" alt="Imgur"></p>
+<p><img src="https://i.imgur.com/ljgjYaO.png" alt="Imgur"></p>
+<h2 id="원본-리포지토리-upstream-와-Fork-리포지토리-Sync"><a href="#원본-리포지토리-upstream-와-Fork-리포지토리-Sync" class="headerlink" title="원본 리포지토리(upstream)와 Fork 리포지토리 Sync"></a>원본 리포지토리(upstream)와 Fork 리포지토리 Sync</h2><h3 id="upstream-remote-추가"><a href="#upstream-remote-추가" class="headerlink" title="upstream remote 추가"></a>upstream remote 추가</h3><p><a href="https://help.github.com/articles/configuring-a-remote-for-a-fork/" target="_blank" rel="noopener">https://help.github.com/articles/configuring-a-remote-for-a-fork/</a> 를 참고해서 다음을 실행한다.</p>
+<ol>
+<li><p>현재 remote 확인</p>
+<blockquote>
+<p>$ git remote -v</p>
+</blockquote>
+ <figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">origin  https:<span class="regexp">//gi</span>thub.com<span class="regexp">/YOUR_USERNAME/</span>eos.git (fetch)</span><br><span class="line">origin  https:<span class="regexp">//gi</span>thub.com<span class="regexp">/YOUR_USERNAME/</span>eos.git (push)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>원본 리포지토리를 가리키는 upstream 추가</p>
+<blockquote>
+<p>$ git remote add upstream <a href="https://github.com/EOSIO/eos.git" target="_blank" rel="noopener">https://github.com/EOSIO/eos.git</a></p>
+</blockquote>
+</li>
+<li><p>upstream 확인</p>
+<blockquote>
+<p>$ git remote -v</p>
+</blockquote>
+ <figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">origin    https:<span class="regexp">//gi</span>thub.com<span class="regexp">/YOUR_USERNAME/</span>eos.git (fetch)</span><br><span class="line">origin    https:<span class="regexp">//gi</span>thub.com<span class="regexp">/YOUR_USERNAME/</span>eos.git (push)</span><br><span class="line">upstream  https:<span class="regexp">//gi</span>thub.com<span class="regexp">/EOSIO/</span>eos.git (fetch)</span><br><span class="line">upstream  https:<span class="regexp">//gi</span>thub.com<span class="regexp">/EOSIO/</span>eos.git (push)</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="원본-리포지토리와-Sync"><a href="#원본-리포지토리와-Sync" class="headerlink" title="원본 리포지토리와 Sync"></a>원본 리포지토리와 Sync</h3><p>EOSIO 프로젝트가 진행되면서 버전이 올라가면 로컬 개발 환경의 버전도 맞춰줘야 한다.</p>
+<p>그냥 일반적인 remote 리포지토리와 Sync하는 것과 다르지 않다.</p>
+<p><a href="https://help.github.com/articles/syncing-a-fork/" target="_blank" rel="noopener">https://help.github.com/articles/syncing-a-fork/</a> 를 참고하되, <code>git merge</code> 뿐아니라 <code>git rebase</code>도 물론 쓸 수 있다.</p>
+<p>로컬의 master 브랜치에서 다음과 같이 <code>git fetch upstream</code>으로 EOSIO 의 최신 내용을 가져온다.</p>
+<blockquote>
+<p>git fetch upstream</p>
+</blockquote>
+<p><img src="https://i.imgur.com/LNdlV8e.png" alt="Imgur"></p>
+<p>rebase로 EOSIO의 최신 버전을 베이스로 설정한다(merge도 가능).</p>
+<blockquote>
+<p>git rebase upstream/master</p>
+</blockquote>
+<p><img src="https://i.imgur.com/iKwaDpp.png" alt="Imgur"></p>
+<p>다음 명령으로 submodule도 업데이트한다.</p>
+<blockquote>
+<p>git submodule update --init --recursive</p>
+</blockquote>
+<p><img src="https://i.imgur.com/HMxnI2o.png" alt="Imgur"></p>
+<p>추적하지 않는 파일이라고 표시된 파일은 IDE(Clion)과 테스트 설정 파일로 무시하거나 <code>.gitignore</code>에 추가해서 버전관리 대상에서 제외하면 된다.</p>
+<h3 id="Fork-리포지토리-Sync"><a href="#Fork-리포지토리-Sync" class="headerlink" title="Fork 리포지토리 Sync"></a>Fork 리포지토리 Sync</h3><p>원본 리포지토리와 Sync를 완료한 로컬 리포지토리에서 다음 명령으로 Fork 리포지토리로 강제 푸쉬를 날리면 된다.</p>
+<blockquote>
+<p>git push -f origin master</p>
+</blockquote>
+<h2 id="새-버전으로-다시-빌드"><a href="#새-버전으로-다시-빌드" class="headerlink" title="새 버전으로 다시 빌드"></a>새 버전으로 다시 빌드</h2><p>빌드 스크립트로 새 버전을 다시 빌드한다.</p>
+<blockquote>
+<p>./eosio_build.sh</p>
+</blockquote>
+<p>boost 등 의존 라이브러리 버전이 변경된 경우 재설치하므로 20분 가량 소요되며, boost 버전 관련 다음과 같은 에러가 발생한다(발생하지 않으면 boost 버전 변경 작업 불필요).</p>
+<p><img src="https://i.imgur.com/e5ML3FO.png" alt="Imgur"></p>
+<p><code>~/.bashrc</code>에 지정해둔 boost 관련 버전을 1.67로 변경해준다.</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="builtin-name">export</span> <span class="attribute">BOOST_ROOT</span>=~/opt/boost_1_67_0</span><br><span class="line"><span class="builtin-name">export</span> <span class="attribute">BOOST_INCLUDEDIR</span>=~/opt/boost_1_67_0/include</span><br></pre></td></tr></table></figure>
+<p>이전 버전의 빌드 캐시가 남아있는 build 디렉터리를 삭제하고 다시 빌드 스크립트를 실행하면 약 15분 후 빌드가 성공적으로 마무리 된다.</p>
+<blockquote>
+<p>rm -rf build/</p>
+<p>./eosio_build.sh</p>
+</blockquote>
+<p><img src="https://i.imgur.com/Lz3OG75.png" alt="Imgur"></p>
+<p>빌드 후 테스트 및 설치는 앞에서 서술한 테스트 과정을 그대로 반복하면 된다.</p>
+<p>이것으로 로컬 환경에서 EOSIO 소스를 빌드하는 작업을 마쳤다. 다음 <a href="https://homoefficio.github.io/2018/06/06/EOS-Single-Node-Testnet-실행/">EOS Single Node Testnet 실행</a>에서 빌드 결과물로 단일 노드 EOS 테스트넷을 실행해보자.</p>
+
+        
+        
+            
+        
+        <hr/>
+        <div>
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="크리에이티브 커먼즈 라이선스" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><a href='https://github.com/homoefficio' target='_blank'>HomoEfficio</a>가 작성한 이 저작물은(는) <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스</a>에 따라 이용할 수 있습니다.
+        </div>
+    </div>
+    <div class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/BlockChain/">BlockChain</a> <a class="tag tag--primary tag--small t-link" href="/tags/EOS/">EOS</a> <a class="tag tag--primary tag--small t-link" href="/tags/dapp/">dapp</a> <a class="tag tag--primary tag--small t-link" href="/tags/development/">development</a> <a class="tag tag--primary tag--small t-link" href="/tags/개발/">개발</a> <a class="tag tag--primary tag--small t-link" href="/tags/개발-환경/">개발 환경</a> <a class="tag tag--primary tag--small t-link" href="/tags/디앱/">디앱</a> <a class="tag tag--primary tag--small t-link" href="/tags/블록체인/">블록체인</a> <a class="tag tag--primary tag--small t-link" href="/tags/이오스/">이오스</a>
+
+            </div>
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2018/06/06/EOS-Visual-Studio-Code-개발-환경-구성/"  data-tooltip="EOS Visual Studio Code 개발 환경 구성">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/11/19/블록체인-한-번에-이해하기/" data-tooltip="블록체인 한 번에 이해하기">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2018/06/06/EOS-소스-구성-빌드-및-테스트/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2018/06/06/EOS-소스-구성-빌드-및-테스트/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2018/06/06/EOS-소스-구성-빌드-및-테스트/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+        
+            <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2018 HomoEfficio. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="1">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2018/06/06/EOS-Visual-Studio-Code-개발-환경-구성/"  data-tooltip="EOS Visual Studio Code 개발 환경 구성">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/11/19/블록체인-한-번에-이해하기/" data-tooltip="블록체인 한 번에 이해하기">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2018/06/06/EOS-소스-구성-빌드-및-테스트/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2018/06/06/EOS-소스-구성-빌드-및-테스트/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2018/06/06/EOS-소스-구성-빌드-및-테스트/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="1">
+    <ul class="share-options">
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2018/06/06/EOS-소스-구성-빌드-및-테스트/">
+                <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2018/06/06/EOS-소스-구성-빌드-및-테스트/">
+                <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2018/06/06/EOS-소스-구성-빌드-및-테스트/">
+                <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+            
+        </div>
+        <div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=110"/>
+        
+            <h4 id="about-card-name">HomoEfficio</h4>
+        
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Seoul, Korea.
+            </h5>
+        
+    </div>
+</div>
+        <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/script.min.js"></script>
+<!--SCRIPTS END-->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'hanmomhanda';
+        (function() {
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+
+
+
+</html>

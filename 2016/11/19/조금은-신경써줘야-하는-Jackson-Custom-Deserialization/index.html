@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="null">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="뒤태지존의 끄적거림">
+    <title>조금은 신경써줘야 하는 Jackson Custom Deserialization - 뒤태지존의 끄적거림</title>
+    <meta name="author" content="HomoEfficio">
+    <meta name="description" content="뒤태지존의 끄적거림">
+    
+        <link rel="icon" href="/assets/images/favicon.ico">
+    
+    
+        <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <meta name="description" content="알고보면 만만한 Jackson Custom Serialization에 이어 이번에는 Jackson Custom Deserialzation을 알아보자. Serialzation과 Deserialization은 대칭 관계니까 언뜻 생각하기엔 별로 다르지 않을 것 같은데, 당연하지만 세부적인 과정에서는 대칭이 아니기 때문에, Deserialization에서는 대수">
+<meta name="keywords" content="Jackson,Java,Jackson Custom Deserializer,ObjectMapper,자바,잭슨">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="조금은 신경써줘야 하는 Jackson Custom Deserialization">
+<meta property="og:url" content="http://homoefficio.github.io/2016/11/19/조금은-신경써줘야-하는-Jackson-Custom-Deserialization/index.html">
+<meta property="og:site_name" content="뒤태지존의 끄적거림">
+<meta property="og:description" content="알고보면 만만한 Jackson Custom Serialization에 이어 이번에는 Jackson Custom Deserialzation을 알아보자. Serialzation과 Deserialization은 대칭 관계니까 언뜻 생각하기엔 별로 다르지 않을 것 같은데, 당연하지만 세부적인 과정에서는 대칭이 아니기 때문에, Deserialization에서는 대수">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-10-13T15:49:56.308Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="조금은 신경써줘야 하는 Jackson Custom Deserialization">
+<meta name="twitter:description" content="알고보면 만만한 Jackson Custom Serialization에 이어 이번에는 Jackson Custom Deserialzation을 알아보자. Serialzation과 Deserialization은 대칭 관계니까 언뜻 생각하기엔 별로 다르지 않을 것 같은데, 당연하지만 세부적인 과정에서는 대칭이 아니기 때문에, Deserialization에서는 대수">
+    
+        <meta rel="publisher" content="https://plus.google.com/+오명운"/>
+    
+    
+    
+        <meta property="og:image" content="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=640"/>
+    
+    
+        <meta property="og:image" content="/2016/11/19/조금은-신경써줘야-하는-Jackson-Custom-Deserialization/https:/pbs.twimg.com/profile_images/218569186/fxml_logo.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2016/11/19/조금은-신경써줘야-하는-Jackson-Custom-Deserialization/https://pbs.twimg.com/profile_images/218569186/fxml_logo.png" />
+    
+    
+        <meta property="og:image" content="/2016/11/19/조금은-신경써줘야-하는-Jackson-Custom-Deserialization/coverImage-jackson-custom-Deserialization.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2016/11/19/조금은-신경써줘야-하는-Jackson-Custom-Deserialization/coverImage-jackson-custom-Deserialization.png" />
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style.min.css">
+    <!--STYLES END-->
+    
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-79893978-1']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6494847158566766",
+    enable_page_level_ads: true
+  });
+</script>
+</head>
+
+    <body>
+        <div id="blog">
+            <header id="header" data-behavior="1">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="/ ">뒤태지존의 끄적거림</a>
+    </h1>
+    
+        <a class="header-right-picture" href="/#about">
+            <img class="header-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+        </a>
+    
+</header>
+            <nav id="sidebar" data-behavior="1">
+    
+    <div class="sidebar-profile">
+        <a href="/#about">
+            
+            <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+            
+        </a>
+        <span class="sidebar-profile-name">HomoEfficio</span>
+    </div>
+    
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/ 
+                    ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">Home</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-categories
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">Categories</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-tags
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">Tags</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-archives
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">Archives</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link st-search-show-outputs"
+                    href="#search
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                    <span class="sidebar-button-desc">Search</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="#about
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">About me</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="https://github.com/HomoEfficio" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                    <span class="sidebar-button-desc">GitHub</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="mailto:homo.efficio@gmail.com" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-envelope-o"></i>
+                    <span class="sidebar-button-desc">Mail</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/atom.xml
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+            <div id="main" data-behavior="1">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+        <div class="post-header-cover" style="background-image:url('/2016/11/19/조금은-신경써줘야-하는-Jackson-Custom-Deserialization/coverImage-jackson-custom-Deserialization.png');">
+            <div class="post-header main-content-wrap">
+    
+        <h1 class="post-title" itemprop="headline">조금은 신경써줘야 하는 Jackson Custom Deserialization</h1>
+    
+    <div class="post-meta">
+    <time  itemprop="datePublished" content="Sat Nov 19 2016 00:06:13 GMT+0900">
+        Nov 19, 2016
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Technique/">Technique</a>
+
+
+    
+</div>
+</div>
+        </div>
+    
+    <div class="post-content markdown main-content-wrap" itemprop="articleBody">
+        
+            <p><a href="http://homoefficio.github.io/2016/11/18/%EC%95%8C%EA%B3%A0%EB%B3%B4%EB%A9%B4-%EB%A7%8C%EB%A7%8C%ED%95%9C-Jackson-Custom-Serialization/">알고보면 만만한 Jackson Custom Serialization</a>에 이어 이번에는 Jackson Custom Deserialzation을 알아보자.</p>
+<p>Serialzation과 Deserialization은 대칭 관계니까 언뜻 생각하기엔 별로 다르지 않을 것 같은데, 당연하지만 세부적인 과정에서는 대칭이 아니기 때문에, Deserialization에서는 대수롭지 않긴 하지만 성능 상 고려 해야할 점이 한 가지 있다.</p>
+<h2 id="Deserialization-결과로-생성되는-객체"><a href="#Deserialization-결과로-생성되는-객체" class="headerlink" title="Deserialization 결과로 생성되는 객체"></a>Deserialization 결과로 생성되는 객체</h2><p>먼저 Deserialize 후 생성되는 객체부터 살펴보자.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FamilyMember</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> CellPhone cellPhone;</span><br><span class="line">    <span class="keyword">private</span> Set&lt;FamilyMember&gt; children;</span><br><span class="line"></span><br><span class="line">    ... <span class="comment">// 이하 생성자, getter/setter, equals() 등 생략</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CellPhone</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String number;</span><br><span class="line">    <span class="keyword">private</span> MobileVendor vendor;</span><br><span class="line"></span><br><span class="line">    ... <span class="comment">// 이하 생성자, getter/setter, equals() 등 생략</span></span><br></pre></td></tr></table></figure>
+<p><code>FamilyMember</code>는 <code>id</code>, <code>name</code> 같은 단순 필드 외에 <code>CellPhone</code>이라는 타입의 객체와, 자기와 같은 타입의 Set을 포함하고 있다.</p>
+<h2 id="Serializtion과-Deserialization의-차이"><a href="#Serializtion과-Deserialization의-차이" class="headerlink" title="Serializtion과 Deserialization의 차이"></a>Serializtion과 Deserialization의 차이</h2><blockquote>
+<p><code>FamilyMember</code>가 <code>CellPhone</code>을 포함하는 관계가 이미 반영되어 있는 객체를 JSON 문자열로 변환하는 Serialization과는 달리, </p>
+<p>JSON 문자열을 <code>FamilyMember</code>가 <code>CellPhone</code>을 포함하는 관계가 존재하는 객체로 변환하는 과정에서는, </p>
+<ul>
+<li><strong>포함된 객체를 Deserialize 할 때마다 <code>ObjectMapper</code>가 하나 씩 더 필요하다.</strong> </li>
+</ul>
+</blockquote>
+<p>성능 상 고려해야할 점이라는 것이 바로 추가적으로 필요한 <code>ObjectMapper</code>다. <code>ObjectMapper</code>를 생성하는 과정에서 조금만 신경을 써주면 된다.</p>
+<h3 id="신경-쓰지-않고-Serialization와-같은-방식으로-작성한-코드"><a href="#신경-쓰지-않고-Serialization와-같은-방식으로-작성한-코드" class="headerlink" title="신경 쓰지 않고 Serialization와 같은 방식으로 작성한 코드"></a>신경 쓰지 않고 Serialization와 같은 방식으로 작성한 코드</h3><p><a href="https://gist.github.com/HomoEfficio/e3cee0071f0ce84ed6d7791d0410d8d5#file-1-familymemberserializer-java" target="_blank" rel="noopener"><code>FamilyMemberSerializer</code> 클래스</a>에서는 아무런 필드 없이 모든 것을 <code>serialze()</code> 메서드 안에서 처리했다. 마찬가지 방식으로 <code>FamilyMemberDeserializer</code>를 작성하면 아래와 같다. </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FamilyMemberDeserializer</span> <span class="keyword">extends</span> <span class="title">JsonDeserializer</span>&lt;<span class="title">FamilyMember</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> FamilyMember <span class="title">deserialize</span><span class="params">(JsonParser p, DeserializationContext ctxt)</span> <span class="keyword">throws</span> IOException, JsonProcessingException </span>&#123;</span><br><span class="line"></span><br><span class="line">        ObjectCodec objectCodec = p.getCodec();</span><br><span class="line">        JsonNode jsonNode = objectCodec.readTree(p);</span><br><span class="line"></span><br><span class="line">        ObjectMapper objectMapper = <span class="keyword">new</span> ObjectMapper();</span><br><span class="line">        SimpleModule simpleModule = <span class="keyword">new</span> SimpleModule();</span><br><span class="line">        simpleModule.addDeserializer(CellPhone.class, <span class="keyword">new</span> CellPhoneDeserializer());</span><br><span class="line">        objectMapper.registerModule(simpleModule);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">final</span> Long id = jsonNode.get(<span class="string">"id"</span>).asLong();</span><br><span class="line">        <span class="keyword">final</span> String name = jsonNode.get(<span class="string">"name"</span>).asText();</span><br><span class="line">        <span class="keyword">final</span> CellPhone cellPhone = objectMapper.convertValue(jsonNode.get(<span class="string">"cellPhone"</span>), CellPhone.class);</span><br><span class="line">        <span class="keyword">final</span> Set&lt;FamilyMember&gt; children = objectMapper.convertValue(jsonNode.get(<span class="string">"children"</span>), <span class="keyword">new</span> TypeReference&lt;LinkedHashSet&lt;FamilyMember&gt;&gt;() &#123;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> FamilyMember(id, name, cellPhone, children);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>하지만, 위 코드에는 약간의 실수가 묻어있다.</p>
+<p>실수를 바로잡은 코드는 다음과 같다.</p>
+<h3 id="신경-쓴-코드"><a href="#신경-쓴-코드" class="headerlink" title="신경 쓴 코드"></a>신경 쓴 코드</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FamilyMemberDeserializer</span> <span class="keyword">extends</span> <span class="title">JsonDeserializer</span>&lt;<span class="title">FamilyMember</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ObjectMapper objectMapper;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">FamilyMemberDeserializer</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.objectMapper = <span class="keyword">new</span> ObjectMapper();</span><br><span class="line">        SimpleModule simpleModule = <span class="keyword">new</span> SimpleModule();</span><br><span class="line">        simpleModule.addDeserializer(CellPhone.class, <span class="keyword">new</span> CellPhoneDeserializer());</span><br><span class="line">        <span class="keyword">this</span>.objectMapper.registerModule(simpleModule);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> FamilyMember <span class="title">deserialize</span><span class="params">(JsonParser p, DeserializationContext ctxt)</span> <span class="keyword">throws</span> IOException, JsonProcessingException </span>&#123;</span><br><span class="line"></span><br><span class="line">        ObjectCodec objectCodec = p.getCodec();</span><br><span class="line">        JsonNode jsonNode = objectCodec.readTree(p);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">final</span> Long id = jsonNode.get(<span class="string">"id"</span>).asLong();</span><br><span class="line">        <span class="keyword">final</span> String name = jsonNode.get(<span class="string">"name"</span>).asText();</span><br><span class="line">        <span class="keyword">final</span> CellPhone cellPhone = objectMapper.convertValue(jsonNode.get(<span class="string">"cellPhone"</span>), CellPhone.class);</span><br><span class="line">        <span class="keyword">final</span> Set&lt;FamilyMember&gt; children = objectMapper.convertValue(jsonNode.get(<span class="string">"children"</span>), <span class="keyword">new</span> TypeReference&lt;LinkedHashSet&lt;FamilyMember&gt;&gt;() &#123;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> FamilyMember(id, name, cellPhone, children);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="차이-비교"><a href="#차이-비교" class="headerlink" title="차이 비교"></a>차이 비교</h3><p>차이가 보이는가? </p>
+<p><code>ObjectMapper</code>를 <code>deserialize()</code> 안에서 반복해서 생성하면 성능에 악영향을 미치므로 <code>FamilyMember</code> 생성 시 한 번만 생성해서 재사용하는 것이 좋다. <code>customDeserializer</code>에 필요한 <code>SimpleModule</code>과 <code>CustomDeserializer</code>도 마찬가지다.</p>
+<h2 id="소스-코드"><a href="#소스-코드" class="headerlink" title="소스 코드"></a>소스 코드</h2><p><a href="https://github.com/HomoEfficio/plain-java-scratchpad/tree/master/src/main/java/homo/efficio/json/jackson/custom" target="_blank" rel="noopener">https://github.com/HomoEfficio/plain-java-scratchpad/tree/master/src/main/java/homo/efficio/json/jackson/custom</a></p>
+<h2 id="정리"><a href="#정리" class="headerlink" title="정리"></a>정리</h2><blockquote>
+<ul>
+<li>단순한 primitive 값 필드 뿐 아니라 다른 객체를 필드로 포함하고 있는 객체의 Deserialzation 과정에서는,</li>
+<li>그 다른 객체도 Deserialze 해야 하기 떄문에 <code>ObjectMapper</code>가 또 필요하다.</li>
+<li>이 <code>ObjectMapper</code>를 <code>deserialize()</code> 메서드 실행 시 마다 생성해서 성능 저하를 유발하지 않도록 주의하자.</li>
+</ul>
+</blockquote>
+
+        
+        
+            
+        
+        <hr/>
+        <div>
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="크리에이티브 커먼즈 라이선스" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><a href='https://github.com/homoefficio' target='_blank'>HomoEfficio</a>가 작성한 이 저작물은(는) <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스</a>에 따라 이용할 수 있습니다.
+        </div>
+    </div>
+    <div class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/Jackson/">Jackson</a> <a class="tag tag--primary tag--small t-link" href="/tags/Jackson-Custom-Deserializer/">Jackson Custom Deserializer</a> <a class="tag tag--primary tag--small t-link" href="/tags/Java/">Java</a> <a class="tag tag--primary tag--small t-link" href="/tags/ObjectMapper/">ObjectMapper</a> <a class="tag tag--primary tag--small t-link" href="/tags/자바/">자바</a> <a class="tag tag--primary tag--small t-link" href="/tags/잭슨/">잭슨</a>
+
+            </div>
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/11/19/Spring-Data-JPA-에서-Java8-Date-Time-JSR-310-사용하기/"  data-tooltip="Spring Data JPA 에서 Java8 Date-Time(JSR-310) 사용하기">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/11/18/알고보면-만만한-Jackson-Custom-Serialization/" data-tooltip="알고보면 만만한 Jackson Custom Serialization">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2016/11/19/조금은-신경써줘야-하는-Jackson-Custom-Deserialization/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2016/11/19/조금은-신경써줘야-하는-Jackson-Custom-Deserialization/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2016/11/19/조금은-신경써줘야-하는-Jackson-Custom-Deserialization/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+        
+            <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2018 HomoEfficio. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="1">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/11/19/Spring-Data-JPA-에서-Java8-Date-Time-JSR-310-사용하기/"  data-tooltip="Spring Data JPA 에서 Java8 Date-Time(JSR-310) 사용하기">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/11/18/알고보면-만만한-Jackson-Custom-Serialization/" data-tooltip="알고보면 만만한 Jackson Custom Serialization">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2016/11/19/조금은-신경써줘야-하는-Jackson-Custom-Deserialization/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2016/11/19/조금은-신경써줘야-하는-Jackson-Custom-Deserialization/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2016/11/19/조금은-신경써줘야-하는-Jackson-Custom-Deserialization/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="1">
+    <ul class="share-options">
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2016/11/19/조금은-신경써줘야-하는-Jackson-Custom-Deserialization/">
+                <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2016/11/19/조금은-신경써줘야-하는-Jackson-Custom-Deserialization/">
+                <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2016/11/19/조금은-신경써줘야-하는-Jackson-Custom-Deserialization/">
+                <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+            
+        </div>
+        <div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=110"/>
+        
+            <h4 id="about-card-name">HomoEfficio</h4>
+        
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Seoul, Korea.
+            </h5>
+        
+    </div>
+</div>
+        <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/script.min.js"></script>
+<!--SCRIPTS END-->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'hanmomhanda';
+        (function() {
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+
+
+
+</html>

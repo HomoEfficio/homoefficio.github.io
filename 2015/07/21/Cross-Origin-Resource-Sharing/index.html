@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="null">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="뒤태지존의 끄적거림">
+    <title>Cross Origin Resource Sharing - CORS - 뒤태지존의 끄적거림</title>
+    <meta name="author" content="HomoEfficio">
+    <meta name="description" content="뒤태지존의 끄적거림">
+    
+        <link rel="icon" href="/assets/images/favicon.ico">
+    
+    
+        <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <meta name="description" content="개요HTTP 요청은 기본적으로 Cross-Site HTTP Requests가 가능하다. 다시 말하면, &amp;lt;img&amp;gt; 태그로 다른 도메인의 이미지 파일을 가져오거나, &amp;lt;link&amp;gt; 태그로 다른 도메인의 CSS를 가져오거나, &amp;lt;script&amp;gt; 태그로 다른 도메인의 JavaScript 라이브러리를 가져오는 것이 모두 가능하다. 하지만 &amp;">
+<meta name="keywords" content="CORS,AJAX,Same Origin Policy">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Cross Origin Resource Sharing - CORS">
+<meta property="og:url" content="http://homoefficio.github.io/2015/07/21/Cross-Origin-Resource-Sharing/index.html">
+<meta property="og:site_name" content="뒤태지존의 끄적거림">
+<meta property="og:description" content="개요HTTP 요청은 기본적으로 Cross-Site HTTP Requests가 가능하다. 다시 말하면, &amp;lt;img&amp;gt; 태그로 다른 도메인의 이미지 파일을 가져오거나, &amp;lt;link&amp;gt; 태그로 다른 도메인의 CSS를 가져오거나, &amp;lt;script&amp;gt; 태그로 다른 도메인의 JavaScript 라이브러리를 가져오는 것이 모두 가능하다. 하지만 &amp;">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-10-13T15:49:56.183Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Cross Origin Resource Sharing - CORS">
+<meta name="twitter:description" content="개요HTTP 요청은 기본적으로 Cross-Site HTTP Requests가 가능하다. 다시 말하면, &amp;lt;img&amp;gt; 태그로 다른 도메인의 이미지 파일을 가져오거나, &amp;lt;link&amp;gt; 태그로 다른 도메인의 CSS를 가져오거나, &amp;lt;script&amp;gt; 태그로 다른 도메인의 JavaScript 라이브러리를 가져오는 것이 모두 가능하다. 하지만 &amp;">
+    
+        <meta rel="publisher" content="https://plus.google.com/+오명운"/>
+    
+    
+    
+        <meta property="og:image" content="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=640"/>
+    
+    
+        <meta property="og:image" content="/2015/07/21/Cross-Origin-Resource-Sharing/http:/bowdenweb.com/wp/i/cors/cors-mountain-02.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2015/07/21/Cross-Origin-Resource-Sharing/http://bowdenweb.com/wp/i/cors/cors-mountain-02.png" />
+    
+    
+        <meta property="og:image" content="/2015/07/21/Cross-Origin-Resource-Sharing/cover-cors.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2015/07/21/Cross-Origin-Resource-Sharing/cover-cors.png" />
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style.min.css">
+    <!--STYLES END-->
+    
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-79893978-1']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6494847158566766",
+    enable_page_level_ads: true
+  });
+</script>
+</head>
+
+    <body>
+        <div id="blog">
+            <header id="header" data-behavior="1">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="/ ">뒤태지존의 끄적거림</a>
+    </h1>
+    
+        <a class="header-right-picture" href="/#about">
+            <img class="header-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+        </a>
+    
+</header>
+            <nav id="sidebar" data-behavior="1">
+    
+    <div class="sidebar-profile">
+        <a href="/#about">
+            
+            <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+            
+        </a>
+        <span class="sidebar-profile-name">HomoEfficio</span>
+    </div>
+    
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/ 
+                    ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">Home</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-categories
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">Categories</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-tags
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">Tags</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-archives
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">Archives</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link st-search-show-outputs"
+                    href="#search
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                    <span class="sidebar-button-desc">Search</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="#about
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">About me</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="https://github.com/HomoEfficio" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                    <span class="sidebar-button-desc">GitHub</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="mailto:homo.efficio@gmail.com" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-envelope-o"></i>
+                    <span class="sidebar-button-desc">Mail</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/atom.xml
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+            <div id="main" data-behavior="1">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+        <div class="post-header-cover" style="background-image:url('/2015/07/21/Cross-Origin-Resource-Sharing/cover-cors.png');">
+            <div class="post-header main-content-wrap">
+    
+        <h1 class="post-title" itemprop="headline">Cross Origin Resource Sharing - CORS</h1>
+    
+    <div class="post-meta">
+    <time  itemprop="datePublished" content="Tue Jul 21 2015 00:09:44 GMT+0900">
+        Jul 21, 2015
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Network/">Network</a>
+
+
+    
+</div>
+</div>
+        </div>
+    
+    <div class="post-content markdown main-content-wrap" itemprop="articleBody">
+        
+            <h1 id="개요"><a href="#개요" class="headerlink" title="개요"></a>개요</h1><p>HTTP 요청은 기본적으로 Cross-Site HTTP Requests가 가능하다.</p>
+<p>다시 말하면, <code>&lt;img&gt;</code> 태그로 다른 도메인의 이미지 파일을 가져오거나, <code>&lt;link&gt;</code> 태그로 다른 도메인의 CSS를 가져오거나, <code>&lt;script&gt;</code> 태그로 다른 도메인의 JavaScript 라이브러리를 가져오는 것이 모두 가능하다.</p>
+<p>하지만 <code>&lt;script&gt;&lt;/script&gt;</code>로 둘러싸여 있는 <strong>스크립트</strong>에서 생성된 Cross-Site HTTP Requests는 <a href="https://developer.mozilla.org/ko/docs/Web/Security/Same-origin_policy" target="_blank" rel="noopener"><strong>Same Origin Policy</strong></a>를 적용 받기 때문에 Cross-Site HTTP Requests가 불가능하다.</p>
+<p>AJAX가 널리 사용되면서 <code>&lt;script&gt;&lt;/script&gt;</code>로 둘러싸여 있는 스크립트에서 생성되는 <code>XMLHttpRequest</code>에 대해서도 Cross-Site HTTP Requests가 가능해야 한다는 요구가 늘어나자 W3C에서 CORS라는 이름의 권고안이 나오게 되었다.</p>
+<h1 id="CORS-요청의-종류"><a href="#CORS-요청의-종류" class="headerlink" title="CORS 요청의 종류"></a>CORS 요청의 종류</h1><p>CORS 요청은 Simple/Preflight, Credential/Non-Credential의 조합으로 4가지가 존재한다.</p>
+<p>브라우저가 요청 내용을 분석하여 4가지 방식 중 해당하는 방식으로 서버에 요청을 날리므로, 프로그래머가 목적에 맞는 방식을 선택하고 그 조건에 맞게 코딩해야 한다.</p>
+<h3 id="Simple-Request"><a href="#Simple-Request" class="headerlink" title="Simple Request"></a>Simple Request</h3><p>아래의 3가지 조건을 모두 만족하면 Simple Request</p>
+<ul>
+<li>GET, HEAD, POST 중의 한 가지 방식을 사용해야 한다.</li>
+<li>POST 방식일 경우 Content-type이 아래 셋 중의 하나여야 한다.<ul>
+<li>application/x-www-form-urlencoded</li>
+<li>multipart/form-data</li>
+<li>text/plain</li>
+</ul>
+</li>
+<li>커스텀 헤더를 전송하지 말아야 한다.</li>
+</ul>
+<p>Simple Request는 서버에 1번 요청하고, 서버도 1번 회신하는 것으로 처리가 종료된다.</p>
+<figure class="highlight"><figcaption><span>Simple Request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">GET</span> <span class="string">/resources/public-data/</span> HTTP/1.1</span><br><span class="line"><span class="attribute">Host</span>: bar.other</span><br><span class="line"><span class="attribute">User-Agent</span>: Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.5; en-US; rv:1.9.1b3pre) Gecko/20081130 Minefield/3.1b3pre</span><br><span class="line"><span class="attribute">Accept</span>: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8</span><br><span class="line"><span class="attribute">Accept-Language</span>: en-us,en;q=0.5</span><br><span class="line"><span class="attribute">Accept-Encoding</span>: gzip,deflate</span><br><span class="line"><span class="attribute">Accept-Charset</span>: ISO-8859-1,utf-8;q=0.7,*;q=0.7</span><br><span class="line"><span class="attribute">Connection</span>: keep-alive</span><br><span class="line"><span class="attribute">Referer</span>: http://foo.example/examples/access-control/simpleXSInvocation.html</span><br><span class="line"><span class="attribute">Origin</span>: http://foo.example</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">HTTP/1.1 <span class="number">200</span> OK</span><br><span class="line"><span class="attribute">Date</span>: Mon, 01 Dec 2008 00:23:53 GMT</span><br><span class="line"><span class="attribute">Server</span>: Apache/2.0.61</span><br><span class="line"><span class="attribute">Access-Control-Allow-Origin</span>: *</span><br><span class="line"><span class="attribute">Keep-Alive</span>: timeout=2, max=100</span><br><span class="line"><span class="attribute">Connection</span>: Keep-Alive</span><br><span class="line"><span class="attribute">Transfer-Encoding</span>: chunked</span><br><span class="line"><span class="attribute">Content-Type</span>: application/xml</span><br><span class="line"></span><br><span class="line">[XML Data]</span><br></pre></td></tr></table></figure>
+<h3 id="Preflight-Request"><a href="#Preflight-Request" class="headerlink" title="Preflight Request"></a>Preflight Request</h3><p>Simple Request 조건에 해당하지 않으면 브라우저는 Preflight Request 방식으로 요청한다.</p>
+<p>따라서, Preflight Request는</p>
+<ul>
+<li>GET, HEAD, POST 외의 다른 방식으로도 요청을 보낼 수 있고,</li>
+<li>application/xml 처럼 다른 Content-type으로 요청을 보낼 수도 있으며,</li>
+<li>커스텀 헤더도 사용할 수 있다.</li>
+</ul>
+<p>이름에서 짐작할 수 있듯, Preflight Request는 예비 요청과 본 요청으로 나뉘어 전송된다.</p>
+<p>먼저 서버에 예비 요청(Preflight Request)를 보내고 서버는 예비 요청에 대해 응답하고,<br>그 다음에 본 요청(Actual Request)을 서버에 보내고, 서버도 본 요청에 응답한다.</p>
+<p><strong>하지만, 예비 요청과 본 요청에 대한 서버단의 응답을 프로그래머가 프로그램 내에서 구분하여 처리하는 것은 아니다.</strong><br>프로그래머가 <strong><code>Access-Control-</code></strong> 계열의 Response Header만 적절히 정해주면,<br>OPTIONS 요청으로 오는 예비 요청과 GET, POST, HEAD, PUT, DELETE 등으로 오는 본 요청의 처리는 서버가 알아서 처리한다.</p>
+<p>아래는 Preflight Requests로 오가는 HEADER를 보여준다.</p>
+<p><strong>다시 강조하지만, 아래 내용에서 프로그래머가 OPTIONS 요청의 처리 로직과 POST 요청의 처리 로직을 구분하여 구현하는 것이 아니다.</strong></p>
+<figure class="highlight"><figcaption><span>Preflight Request and Actual Request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">OPTIONS</span> <span class="string">/resources/post-here/</span> HTTP/1.1</span><br><span class="line"><span class="attribute">Host</span>: bar.other</span><br><span class="line"><span class="attribute">User-Agent</span>: Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.5; en-US; rv:1.9.1b3pre) Gecko/20081130 Minefield/3.1b3pre</span><br><span class="line"><span class="attribute">Accept</span>: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8</span><br><span class="line"><span class="attribute">Accept-Language</span>: en-us,en;q=0.5</span><br><span class="line"><span class="attribute">Accept-Encoding</span>: gzip,deflate</span><br><span class="line"><span class="attribute">Accept-Charset</span>: ISO-8859-1,utf-8;q=0.7,*;q=0.7</span><br><span class="line"><span class="attribute">Connection</span>: keep-alive</span><br><span class="line"><span class="attribute">Origin</span>: http://foo.example</span><br><span class="line"><span class="attribute">Access-Control-Request-Method</span>: POST</span><br><span class="line"><span class="attribute">Access-Control-Request-Headers</span>: X-PINGOTHER</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">HTTP/1.1 <span class="number">200</span> OK</span><br><span class="line"><span class="attribute">Date</span>: Mon, 01 Dec 2008 01:15:39 GMT</span><br><span class="line"><span class="attribute">Server</span>: Apache/2.0.61 (Unix)</span><br><span class="line"><span class="attribute">Access-Control-Allow-Origin</span>: http://foo.example</span><br><span class="line"><span class="attribute">Access-Control-Allow-Methods</span>: POST, GET, OPTIONS</span><br><span class="line"><span class="attribute">Access-Control-Allow-Headers</span>: X-PINGOTHER</span><br><span class="line"><span class="attribute">Access-Control-Max-Age</span>: 1728000</span><br><span class="line"><span class="attribute">Vary</span>: Accept-Encoding</span><br><span class="line"><span class="attribute">Content-Encoding</span>: gzip</span><br><span class="line"><span class="attribute">Content-Length</span>: 0</span><br><span class="line"><span class="attribute">Keep-Alive</span>: timeout=2, max=100</span><br><span class="line"><span class="attribute">Connection</span>: Keep-Alive</span><br><span class="line"><span class="attribute">Content-Type</span>: text/plain</span><br><span class="line"></span><br><span class="line"><span class="keyword">POST</span> <span class="string">/resources/post-here/</span> HTTP/1.1</span><br><span class="line"><span class="attribute">Host</span>: bar.other</span><br><span class="line"><span class="attribute">User-Agent</span>: Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.5; en-US; rv:1.9.1b3pre) Gecko/20081130 Minefield/3.1b3pre</span><br><span class="line"><span class="attribute">Accept</span>: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8</span><br><span class="line"><span class="attribute">Accept-Language</span>: en-us,en;q=0.5</span><br><span class="line"><span class="attribute">Accept-Encoding</span>: gzip,deflate</span><br><span class="line"><span class="attribute">Accept-Charset</span>: ISO-8859-1,utf-8;q=0.7,*;q=0.7</span><br><span class="line"><span class="attribute">Connection</span>: keep-alive</span><br><span class="line"><span class="attribute">X-PINGOTHER</span>: pingpong</span><br><span class="line"><span class="attribute">Content-Type</span>: text/xml; charset=UTF-8</span><br><span class="line"><span class="attribute">Referer</span>: http://foo.example/examples/preflightInvocation.html</span><br><span class="line"><span class="attribute">Content-Length</span>: 55</span><br><span class="line"><span class="attribute">Origin</span>: http://foo.example</span><br><span class="line"><span class="attribute">Pragma</span>: no-cache</span><br><span class="line"><span class="attribute">Cache-Control</span>: no-cache</span><br><span class="line"></span><br><span class="line">&lt;?xml version="1.0"?&gt;&lt;person&gt;&lt;name&gt;Arun&lt;/name&gt;&lt;/person&gt;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">HTTP/1.1 <span class="number">200</span> OK</span><br><span class="line"><span class="attribute">Date</span>: Mon, 01 Dec 2008 01:15:40 GMT</span><br><span class="line"><span class="attribute">Server</span>: Apache/2.0.61 (Unix)</span><br><span class="line"><span class="attribute">Access-Control-Allow-Origin</span>: http://foo.example</span><br><span class="line"><span class="attribute">Vary</span>: Accept-Encoding</span><br><span class="line"><span class="attribute">Content-Encoding</span>: gzip</span><br><span class="line"><span class="attribute">Content-Length</span>: 235</span><br><span class="line"><span class="attribute">Keep-Alive</span>: timeout=2, max=99</span><br><span class="line"><span class="attribute">Connection</span>: Keep-Alive</span><br><span class="line"><span class="attribute">Content-Type</span>: text/plain</span><br><span class="line"></span><br><span class="line">[Some GZIP'd payload]</span><br></pre></td></tr></table></figure>
+<h3 id="Request-with-Credential"><a href="#Request-with-Credential" class="headerlink" title="Request with Credential"></a>Request with Credential</h3><p>HTTP Cookie와 HTTP Authentication 정보를 인식할 수 있게 해주는 요청</p>
+<figure class="highlight javascript"><figcaption><span>Simple Credential Request</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> invocation = <span class="keyword">new</span> XMLHttpRequest();</span><br><span class="line"><span class="keyword">var</span> url = <span class="string">'http://bar.other/resources/credentialed-content/'</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">callOtherDomain</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(invocation) &#123;</span><br><span class="line">    invocation.open(<span class="string">'GET'</span>, url, <span class="literal">true</span>);</span><br><span class="line">    invocation.withCredentials = <span class="literal">true</span>;</span><br><span class="line">    invocation.onreadystatechange = handler;</span><br><span class="line">    invocation.send();</span><br><span class="line">  &#125;</span><br><span class="line">  ...</span><br></pre></td></tr></table></figure>
+<p>요청 시 <strong><code>xhr.withCredentials = true</code></strong>를 지정해서 Credential 요청을 보낼 수 있고,<br>서버는 Response Header에 반드시 <strong><code>Access-Control-Allow-Credentials: true</code></strong>를 포함해야 하고,<br><strong><code>Access-Control-Allow-Origin</code></strong> 헤더의 값에는 <strong><code>*</code></strong>가 오면 안되고 <code>http://foo.origin</code>과 같은 구체적인 도메인이 와야 한다.</p>
+<figure class="highlight"><figcaption><span>Server Response Header to Simple Request with Credential</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">HTTP/1.1 <span class="number">200</span> OK</span><br><span class="line"><span class="attribute">Date</span>: Mon, 01 Dec 2008 01:34:52 GMT</span><br><span class="line"><span class="attribute">Server</span>: Apache/2.0.61 (Unix) PHP/4.4.7 mod_ssl/2.0.61 OpenSSL/0.9.7e mod_fastcgi/2.4.2 DAV/2 SVN/1.4.2</span><br><span class="line"><span class="attribute">X-Powered-By</span>: PHP/5.2.6</span><br><span class="line"><span class="attribute">Access-Control-Allow-Origin</span>: http://foo.example</span><br><span class="line"><span class="attribute">Access-Control-Allow-Credentials</span>: true</span><br><span class="line"><span class="attribute">Cache-Control</span>: no-cache</span><br><span class="line"><span class="attribute">Pragma</span>: no-cache</span><br><span class="line"><span class="attribute">Set-Cookie</span>: pageAccess=3; expires=Wed, 31-Dec-2008 01:34:53 GMT</span><br><span class="line"><span class="attribute">Vary</span>: Accept-Encoding</span><br><span class="line"><span class="attribute">Content-Encoding</span>: gzip</span><br><span class="line"><span class="attribute">Content-Length</span>: 106</span><br><span class="line"><span class="attribute">Keep-Alive</span>: timeout=2, max=100</span><br><span class="line"><span class="attribute">Connection</span>: Keep-Alive</span><br><span class="line"><span class="attribute">Content-Type</span>: text/plain</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[text/plain payload]</span><br></pre></td></tr></table></figure>
+<h3 id="Request-without-Credential"><a href="#Request-without-Credential" class="headerlink" title="Request without Credential"></a>Request without Credential</h3><p>CORS 요청은 기본적으로 Non-Credential 요청이므로,  <strong><code>xhr.withCredentials = true</code></strong>를 지정하지 않으면 Non-Credential 요청이다.</p>
+<h1 id="CORS-관련-HTTP-Response-Headers"><a href="#CORS-관련-HTTP-Response-Headers" class="headerlink" title="CORS 관련 HTTP Response Headers"></a>CORS 관련 HTTP Response Headers</h1><p>서버에서 CORS 요청을 처리할 때 지정하는 헤더</p>
+<h3 id="Access-Control-Allow-Origin"><a href="#Access-Control-Allow-Origin" class="headerlink" title="Access-Control-Allow-Origin"></a>Access-Control-Allow-Origin</h3><p>Access-Control-Allow-Origin 헤더의 값으로 지정된 도메인으로부터의 요청만 서버의 리소스에 접근할 수 있게 한다.</p>
+<figure class="highlight http"><figcaption><span>Response Header</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Access-Control-Allow-Origin</span>: &lt;origin&gt; | *</span><br></pre></td></tr></table></figure>
+<p><code>&lt;origin&gt;</code>에는 요청 도메인의 URI를 지정한다.<br>모든 도메인으로부터의 서버 리소스 접근을 허용하려면 <code>*</code>를 지정한다. Request with Credential의 경우에는 <code>*</code>를 사용할 수 없다.</p>
+<h3 id="Access-Control-Expose-Headers"><a href="#Access-Control-Expose-Headers" class="headerlink" title="Access-Control-Expose-Headers"></a>Access-Control-Expose-Headers</h3><p>기본적으로 브라우저에게 노출이 되지 않지만, 브라우저 측에서 접근할 수 있게 허용해주는 헤더를 지정한다.</p>
+<p>기본적으로 브라우저에게 노출이 되는 HTTP Response Header는 아래의 6가지 밖에 없다.</p>
+<ul>
+<li>Cache-Control</li>
+<li>Content-Language</li>
+<li>Content-Type</li>
+<li>Expires</li>
+<li>Last-Modified</li>
+<li>Pragma</li>
+</ul>
+<p>다음과 같이 <code>Access-Control-Expose-Headers</code>를 Response Header에 지정하여 회신하면 브라우저 측에서 커스텀 헤더를 포함하여, 기본적으로는 접근할 수 없었던 Content-Length 헤더 정보도 알 수 있게 된다.<br><figure class="highlight http"><figcaption><span>Response Header</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Access-Control-Expose-Headers</span>: Content-Length, X-My-Custom-Header, X-Another-Custom-Header</span><br></pre></td></tr></table></figure></p>
+<h3 id="Access-Control-Max-Age"><a href="#Access-Control-Max-Age" class="headerlink" title="Access-Control-Max-Age"></a>Access-Control-Max-Age</h3><p>Preflight Request의 결과가 캐쉬에 얼마나 오래동안 남아있는지를 나타낸다.</p>
+<figure class="highlight http"><figcaption><span>Response Header</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Access-Control-Max-Age</span>: &lt;delta-seconds&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="Access-Control-Allow-Credentials"><a href="#Access-Control-Allow-Credentials" class="headerlink" title="Access-Control-Allow-Credentials"></a>Access-Control-Allow-Credentials</h3><p>Request with Credential 방식이 사용될 수 있는지를 지정한다.</p>
+<figure class="highlight http"><figcaption><span>Response Header</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Access-Control-Allow-Credentials</span>: true | false</span><br></pre></td></tr></table></figure>
+<p>예비 요청에 대한 응답에 <code>Access-Control-Allow-Credentials: false</code>를 포함하면, 본 요청은 Request with Credential을 보낼 수 없다.</p>
+<p>Simple Request에 <code>withCredentials = true</code>가 지정되어 있는데, Response Header에 <code>Access-Control-Allow-Credentials: true</code>가 명시되어 있지 않다면, 그 Response는 브라우저에 의해 무시된다.</p>
+<h3 id="Access-Control-Allow-Methods"><a href="#Access-Control-Allow-Methods" class="headerlink" title="Access-Control-Allow-Methods"></a>Access-Control-Allow-Methods</h3><p>예비 요청에 대한 Response Header에 사용되며, 서버의 리소스에 접근할 수 있는 HTTP Method 방식을 지정한다.</p>
+<figure class="highlight http"><figcaption><span>Response Header</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Access-Control-Allow-Methods</span>: &lt;method&gt;[, &lt;method&gt;]*</span><br></pre></td></tr></table></figure>
+<h3 id="Access-Control-Allow-Headers"><a href="#Access-Control-Allow-Headers" class="headerlink" title="Access-Control-Allow-Headers"></a>Access-Control-Allow-Headers</h3><p>예비 요청에 대한 Response Header에 사용되며, 본 요청에서 사용할 수 있는 HTTP Header를 지정한다.</p>
+<figure class="highlight http"><figcaption><span>Response Header</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Access-Control-Allow-Headers</span>: &lt;field-name&gt;[, &lt;field-name&gt;]*</span><br></pre></td></tr></table></figure>
+<h1 id="CORS-관련-HTTP-Request-Headers"><a href="#CORS-관련-HTTP-Request-Headers" class="headerlink" title="CORS 관련 HTTP Request Headers"></a>CORS 관련 HTTP Request Headers</h1><p>클라이언트가 서버에 CORS 요청을 보낼 때 사용하는 헤더로, 브라우저가 자동으로 지정하며, XMLHttpRequest를 사용하는 프로그래머가 직접 지정해 줄 필요 없다.</p>
+<h3 id="Origin"><a href="#Origin" class="headerlink" title="Origin"></a>Origin</h3><p>Cross-site 요청을 날리는 요청 도메인 URI을 나타내며, access control이 적용되는 모든 요청에 <code>Origin</code> 헤더는 반드시 포함된다.</p>
+<figure class="highlight http"><figcaption><span>Request Header</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Origin</span>: &lt;origin&gt;</span><br></pre></td></tr></table></figure>
+<p><code>&lt;origin&gt;</code>은 서버 이름(포트 포함)만 포함되며 경로 정보는 포함되지 않는다.</p>
+<p><code>&lt;origin&gt;</code>은 공백일 수도 있는데, 소스가 data URL일 경우에 유용하다.</p>
+<h3 id="Access-Control-Request-Method"><a href="#Access-Control-Request-Method" class="headerlink" title="Access-Control-Request-Method"></a>Access-Control-Request-Method</h3><p>예비 요청을 보낼 때 포함되어, 본 요청에서 어떤 HTTP Method를 사용할 지 서버에게 알려준다.</p>
+<figure class="highlight http"><figcaption><span>Request Header</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Access-Control-Request-Method</span>: &lt;method&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="Access-Control-Request-Headers"><a href="#Access-Control-Request-Headers" class="headerlink" title="Access-Control-Request-Headers"></a>Access-Control-Request-Headers</h3><p>예비 요청을 보낼 때 포함되어, 본 요청에서 어떤 HTTP Header를 사용할 지 서버에게 알려준다.</p>
+<figure class="highlight http"><figcaption><span>Request Header</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Access-Control-Request-Headers</span>: &lt;field-name&gt;[, &lt;field-name&gt;]*</span><br></pre></td></tr></table></figure>
+<h1 id="XDomainRequest"><a href="#XDomainRequest" class="headerlink" title="XDomainRequest"></a>XDomainRequest</h1><p><code>XDomainRequest</code>(XDR)는 W3C 표준이 아니며, IE 8, 9에서 비동기 CORS 통신을 위해 Microsoft에서 만든 객체다.</p>
+<ul>
+<li>XDR은 <code>setRequestHeader</code>가 없다.</li>
+<li>XDR과 XHR을 구분하려면 <code>obj.contentType</code>을 사용한다.(XHR에는 이게 없음)</li>
+<li>XDR은 http와 https 프로토콜만 가능</li>
+</ul>
+<h1 id="결론"><a href="#결론" class="headerlink" title="결론"></a>결론</h1><ul>
+<li>CORS를 쓰면 AJAX로도 Same Origin Policy의 제약을 넘어 다른 도메인의 자원을 사용할 수 있다.</li>
+<li>CORS를 사용하려면<ul>
+<li>클라이언트에서 <code>Access-Control-**</code> 류의 HTTP Header를 서버에 보내야 하고,</li>
+<li>서버도 <code>Access-Control-**</code> 류의 HTTP Header를 클라이언트에 회신하게 되어 있어야 한다.</li>
+</ul>
+</li>
+</ul>
+<h1 id="참고-자료"><a href="#참고-자료" class="headerlink" title="참고 자료"></a>참고 자료</h1><ul>
+<li><a href="http://www.w3.org/TR/cors/" target="_blank" rel="noopener">http://www.w3.org/TR/cors/</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS" target="_blank" rel="noopener">https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS</a></li>
+</ul>
+
+        
+        
+            
+        
+        <hr/>
+        <div>
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="크리에이티브 커먼즈 라이선스" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><a href='https://github.com/homoefficio' target='_blank'>HomoEfficio</a>가 작성한 이 저작물은(는) <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스</a>에 따라 이용할 수 있습니다.
+        </div>
+    </div>
+    <div class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/AJAX/">AJAX</a> <a class="tag tag--primary tag--small t-link" href="/tags/CORS/">CORS</a> <a class="tag tag--primary tag--small t-link" href="/tags/Same-Origin-Policy/">Same Origin Policy</a>
+
+            </div>
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/07/25/This-is-this/"  data-tooltip="This is this">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/07/19/정적-분석과-D3-js를-이용한-JavaScript-상속-구조-다이어그램/" data-tooltip="정적 분석과 D3.js를 이용한 JavaScript 상속 구조 다이어그램">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2015/07/21/Cross-Origin-Resource-Sharing/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2015/07/21/Cross-Origin-Resource-Sharing/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2015/07/21/Cross-Origin-Resource-Sharing/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+        
+            <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2018 HomoEfficio. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="1">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/07/25/This-is-this/"  data-tooltip="This is this">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/07/19/정적-분석과-D3-js를-이용한-JavaScript-상속-구조-다이어그램/" data-tooltip="정적 분석과 D3.js를 이용한 JavaScript 상속 구조 다이어그램">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2015/07/21/Cross-Origin-Resource-Sharing/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2015/07/21/Cross-Origin-Resource-Sharing/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2015/07/21/Cross-Origin-Resource-Sharing/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="1">
+    <ul class="share-options">
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2015/07/21/Cross-Origin-Resource-Sharing/">
+                <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2015/07/21/Cross-Origin-Resource-Sharing/">
+                <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2015/07/21/Cross-Origin-Resource-Sharing/">
+                <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+            
+        </div>
+        <div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=110"/>
+        
+            <h4 id="about-card-name">HomoEfficio</h4>
+        
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Seoul, Korea.
+            </h5>
+        
+    </div>
+</div>
+        <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/script.min.js"></script>
+<!--SCRIPTS END-->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'hanmomhanda';
+        (function() {
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+
+
+
+</html>

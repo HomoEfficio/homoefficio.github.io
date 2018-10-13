@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="null">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="뒤태지존의 끄적거림">
+    <title>Selenium 꿀팁 - 뒤태지존의 끄적거림</title>
+    <meta name="author" content="HomoEfficio">
+    <meta name="description" content="뒤태지존의 끄적거림">
+    
+        <link rel="icon" href="/assets/images/favicon.ico">
+    
+    
+        <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <meta name="description" content="Selenium개요Selenium은 테스트 코드 실행으로 브라우저에서의 액션을 테스트 할 수 있게 해주는 테스팅 도구다.Selenium IDE로 브라우저 상에서의 액션을 녹화해서 테스트 코드를 생성할 수 있으며, 그 테스트 코드를 Eclipse나 IntelliJ 같은 IDE의 런타임에서 JUnit 테스트와 같은 방식으로 실행해서 브라우저 상에서의 액션을 재">
+<meta name="keywords" content="Selenium,셀레늄,JUnit,Browser Test,Test,웹 드라이버,브라우저 테스트,테스트,Selenium IDE,Web Driver">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Selenium 꿀팁">
+<meta property="og:url" content="http://homoefficio.github.io/2015/09/23/Selenium-꿀팁/index.html">
+<meta property="og:site_name" content="뒤태지존의 끄적거림">
+<meta property="og:description" content="Selenium개요Selenium은 테스트 코드 실행으로 브라우저에서의 액션을 테스트 할 수 있게 해주는 테스팅 도구다.Selenium IDE로 브라우저 상에서의 액션을 녹화해서 테스트 코드를 생성할 수 있으며, 그 테스트 코드를 Eclipse나 IntelliJ 같은 IDE의 런타임에서 JUnit 테스트와 같은 방식으로 실행해서 브라우저 상에서의 액션을 재">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://i.imgur.com/iN69Tbp.png">
+<meta property="og:image" content="http://i.imgur.com/vpR6Zdu.png">
+<meta property="og:image" content="http://i.imgur.com/OE0zgEF.png">
+<meta property="og:image" content="http://i.imgur.com/pvHNXB4.png">
+<meta property="og:image" content="http://i.imgur.com/BQEkfTS.png">
+<meta property="og:image" content="http://i.imgur.com/JJYOt2T.png">
+<meta property="og:image" content="http://i.imgur.com/eHt8e9M.png">
+<meta property="og:image" content="http://i.imgur.com/8wn8ztA.png">
+<meta property="og:image" content="http://i.imgur.com/2n51Rkx.png">
+<meta property="og:image" content="http://i.imgur.com/QNANiEd.png">
+<meta property="og:image" content="http://i.imgur.com/OBX9TjJ.png">
+<meta property="og:image" content="http://i.imgur.com/rmS6BlT.png">
+<meta property="og:image" content="http://i.imgur.com/Lp3R5qe.png">
+<meta property="og:updated_time" content="2018-10-13T15:49:56.247Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Selenium 꿀팁">
+<meta name="twitter:description" content="Selenium개요Selenium은 테스트 코드 실행으로 브라우저에서의 액션을 테스트 할 수 있게 해주는 테스팅 도구다.Selenium IDE로 브라우저 상에서의 액션을 녹화해서 테스트 코드를 생성할 수 있으며, 그 테스트 코드를 Eclipse나 IntelliJ 같은 IDE의 런타임에서 JUnit 테스트와 같은 방식으로 실행해서 브라우저 상에서의 액션을 재">
+<meta name="twitter:image" content="http://i.imgur.com/iN69Tbp.png">
+    
+        <meta rel="publisher" content="https://plus.google.com/+오명운"/>
+    
+    
+    
+        <meta property="og:image" content="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=640"/>
+    
+    
+        <meta property="og:image" content="/2015/09/23/Selenium-꿀팁/http:/www.seleniumhq.org/images/big-logo.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2015/09/23/Selenium-꿀팁/http://www.seleniumhq.org/images/big-logo.png" />
+    
+    
+        <meta property="og:image" content="/2015/09/23/Selenium-꿀팁/coverImage-Selenium.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2015/09/23/Selenium-꿀팁/coverImage-Selenium.png" />
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style.min.css">
+    <!--STYLES END-->
+    
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-79893978-1']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6494847158566766",
+    enable_page_level_ads: true
+  });
+</script>
+</head>
+
+    <body>
+        <div id="blog">
+            <header id="header" data-behavior="1">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="/ ">뒤태지존의 끄적거림</a>
+    </h1>
+    
+        <a class="header-right-picture" href="/#about">
+            <img class="header-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+        </a>
+    
+</header>
+            <nav id="sidebar" data-behavior="1">
+    
+    <div class="sidebar-profile">
+        <a href="/#about">
+            
+            <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+            
+        </a>
+        <span class="sidebar-profile-name">HomoEfficio</span>
+    </div>
+    
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/ 
+                    ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">Home</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-categories
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">Categories</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-tags
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">Tags</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-archives
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">Archives</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link st-search-show-outputs"
+                    href="#search
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                    <span class="sidebar-button-desc">Search</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="#about
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">About me</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="https://github.com/HomoEfficio" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                    <span class="sidebar-button-desc">GitHub</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="mailto:homo.efficio@gmail.com" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-envelope-o"></i>
+                    <span class="sidebar-button-desc">Mail</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/atom.xml
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+            <div id="main" data-behavior="1">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+        <div class="post-header-cover" style="background-image:url('/2015/09/23/Selenium-꿀팁/coverImage-Selenium.png');">
+            <div class="post-header main-content-wrap">
+    
+        <h1 class="post-title" itemprop="headline">Selenium 꿀팁</h1>
+    
+    <div class="post-meta">
+    <time  itemprop="datePublished" content="Wed Sep 23 2015 17:37:13 GMT+0900">
+        Sep 23, 2015
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/개발-환경-및-도구/">개발 환경 및 도구</a>
+
+
+    
+</div>
+</div>
+        </div>
+    
+    <div class="post-content markdown main-content-wrap" itemprop="articleBody">
+        
+            <h1 id="Selenium"><a href="#Selenium" class="headerlink" title="Selenium"></a>Selenium</h1><h2 id="개요"><a href="#개요" class="headerlink" title="개요"></a>개요</h2><p><strong>Selenium은 테스트 코드 실행으로 브라우저에서의 액션을 테스트 할 수 있게 해주는 테스팅 도구</strong>다.<br><strong>Selenium IDE로 브라우저 상에서의 액션을 녹화해서 테스트 코드를 생성</strong>할 수 있으며, 그 테스트 코드를 Eclipse나 IntelliJ 같은 <strong>IDE의 런타임에서 JUnit 테스트와 같은 방식으로 실행해서 브라우저 상에서의 액션을 재생</strong>할 수 있다.</p>
+<h3 id="실제-사용-영상-40초"><a href="#실제-사용-영상-40초" class="headerlink" title="실제 사용 영상(40초)"></a>실제 사용 영상(40초)</h3><p>수동으로 실행하면 <strong>5분 정도 소요</strong>되지만,<br>자동화를 통해 <strong>40초</strong>만에 완료</p>
+<div class="video-container"><iframe src="//www.youtube.com/embed/bSixvofQ2Lk" frameborder="0" allowfullscreen></iframe></div>
+<h2 id="Selenium을-사용하기-위한-pom-xml"><a href="#Selenium을-사용하기-위한-pom-xml" class="headerlink" title="Selenium을 사용하기 위한 pom.xml"></a>Selenium을 사용하기 위한 pom.xml</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.seleniumhq.selenium<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>selenium-java<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.47.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>provided<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><strong>이 글에서는 Java를 기준</strong>으로 하지만, <strong>Selenium은 C#, Python, Ruby, PHP, Perl, JavaScript도 지원</strong>한다.</p>
+<h2 id="Selenium-IDE-설치"><a href="#Selenium-IDE-설치" class="headerlink" title="Selenium IDE 설치"></a>Selenium IDE 설치</h2><p>Selenium IDE는 파이어폭스 브라우저의 플러그인이다. <strong>Selenium은 Firefox 외에도 IE, Chrome, Safari, Opera 등 다른 브라우저에서의 테스트도 지원</strong>하지만, <strong>Selenium IDE는 다른 브라우저에서는 사용할 수 없다.</strong></p>
+<ol>
+<li>파이어폭스 브라우저 설치</li>
+<li>파이어폭스 브라우저 실행</li>
+<li><p><a href="http://docs.seleniumhq.org/download/" target="_blank" rel="noopener">http://docs.seleniumhq.org/download/</a> 방문해서 아래와 같이 Selenium IDE 다운로드 링크 클릭</p>
+<p> <img src="http://i.imgur.com/iN69Tbp.png" alt=""></p>
+</li>
+<li><p>허가 클릭</p>
+<p> <img src="http://i.imgur.com/vpR6Zdu.png" alt=""></p>
+</li>
+<li><p>설치 클릭</p>
+<p> <img src="http://i.imgur.com/OE0zgEF.png" alt=""></p>
+</li>
+<li><p>설치 후 브라우저 재실행하면 아래와 같이 우상단에 Selenium IDE 아이콘이 보인다.</p>
+<p> <img src="http://i.imgur.com/pvHNXB4.png" alt=""></p>
+</li>
+</ol>
+<h2 id="Selenium-IDE-실행-및-녹화"><a href="#Selenium-IDE-실행-및-녹화" class="headerlink" title="Selenium IDE 실행 및 녹화"></a>Selenium IDE 실행 및 녹화</h2><p>파이어폭스 우상단의 Selenium IDE 아이콘을 누르면 실행된다.</p>
+<p><img src="http://i.imgur.com/BQEkfTS.png" alt=""></p>
+<p>실행과 동시에 녹화가 시작되며, Selenium IDE를 실행한 파이어폭스 브라우저에서 액션을 취하면 Selenium IDE 화면에 녹화되는 것을 확인할 수 있다.</p>
+<p><img src="http://i.imgur.com/JJYOt2T.png" alt=""></p>
+<p>Selenium IDE 우상단의 빨간 녹화 버튼을 다시 누르면 녹화가 정지된다.</p>
+<p><img src="http://i.imgur.com/eHt8e9M.png" alt=""></p>
+<h2 id="Selenium-IDE-자바-테스트-소스-추출"><a href="#Selenium-IDE-자바-테스트-소스-추출" class="headerlink" title="Selenium IDE 자바 테스트 소스 추출"></a>Selenium IDE 자바 테스트 소스 추출</h2><p>아래와 같이 Selenium IDE의 메뉴에서 녹화 내용을 재생할 수 있는 테스트 소스를 추출할 수 있다.</p>
+<p><img src="http://i.imgur.com/8wn8ztA.png" alt=""></p>
+<p>적절한 이름으로 저장한다.</p>
+<p><img src="http://i.imgur.com/2n51Rkx.png" alt=""></p>
+<p>소스는 대략 아래와 같이 생겼다.</p>
+<p><img src="http://i.imgur.com/QNANiEd.png" alt=""></p>
+<p>기본적으로는 이 파일을 JUnit처럼 실행할 수 있지만, 실무적으로는 꽤 많이 손을 봐야한다.</p>
+<h2 id="Selenium-테스트-큰-흐름"><a href="#Selenium-테스트-큰-흐름" class="headerlink" title="Selenium 테스트 큰 흐름"></a>Selenium 테스트 큰 흐름</h2><p>Selenium으로 Daum 사이트를 테스트 해보면서 살펴봤지만 정리를 한 번 해보자.</p>
+<ol>
+<li>Selenium 사용을 위한 pom.xml 설정</li>
+<li>Selenium IDE 설치</li>
+<li>Firefox 실행</li>
+<li>Firefox에서 Selenium IDE 실행 및 녹화 시작</li>
+<li>Firefox에서 이것저것 테스트</li>
+<li>녹화 정지</li>
+<li>Selenium IDE에서 테스트 소스 코드 추출</li>
+<li>개발 환경에 테스트 코드 추가 - maven 등 Project Convention(규약)에 맞게 추가</li>
+<li><strong>테스트 코드 보완</strong></li>
+<li>Eclipse 같은 IDE에서 JUnit 실행하는 방식으로 Selenium 테스트 실행</li>
+</ol>
+<p>8번 까지는 일반적인 내용이라 그다지 어려울 것이 없는데, 9번 <strong>테스트 코드 보완</strong> 부분이 조금 신경쓸 부분이 있다. 이제 실전에서 마주치게 되는 문제를 해결해보자.</p>
+<h1 id="Selenium-테스트-코드-작성-꿀팁"><a href="#Selenium-테스트-코드-작성-꿀팁" class="headerlink" title="Selenium 테스트 코드 작성 꿀팁"></a>Selenium 테스트 코드 작성 꿀팁</h1><p>예제와 실전은 언제나 차이가 크다. Selenium 역시 실제 프로젝트에 적용해보니 몇 가지 시간 도둑들이 있었는데, 해결 방법을 하나하나 살펴보자.</p>
+<h2 id="로그인-세션-유지"><a href="#로그인-세션-유지" class="headerlink" title="로그인 세션 유지"></a>로그인 세션 유지</h2><p>Selenium IDE가 추출해주는 코드는 테스트는 기본적으로 JUnit의 애노테이션 중 <code>@Before</code>, <code>@Test</code>, <code>@After</code>만 사용해서 작성되어 있다. 각각 다음과 같은 역할을 수행한다.</p>
+<ul>
+<li><code>@Before</code>는 Selenium Web Driver, 즉 테스트 용 Firefox 브라우저 인스턴스를 띄워서 테스트 대상 사이트에 접속</li>
+<li><code>@Test</code>는 테스트 대상 페이지에 접속해서 이런저런 테스트를 브라우저 상에서 직접 실행</li>
+<li><code>@After</code>는 테스트 용 Firefox 브라우저 인스턴스를 닫고 테스트를 종료</li>
+</ul>
+<p>Selenium IDE가 추출해준 소스대로라면 <code>@Test</code> 항목 하나마다 브라우저를 띄우고, 종료하고를 반복하는데, 시간이 많이 소요되고 여러모로 낭비가 발생한다. 실무에서는 로그인 하고 로그인 세션을 유지한 채로 시스템 기능을 사용하는 테스트를 해야하므로 대책이 필요하다.</p>
+<p>인터넷을 찾아보면 몇 가지 방법이 있기는 한데, <strong>가장 간단한 방법은 <code>@Before</code>, <code>@After</code> 대신 <code>@BeforeClass</code>, <code>@AfterClass</code>를 사용</strong>하는 것이다. <strong>어차피 테스트니까 간단한게 최고다.</strong></p>
+<p><code>@BeforeClass</code>, <code>@AfterClass</code>는 <code>@Test</code> 메서드 하나마다 실행되지 않고, 테스트 클래스 하나 실행될 때 한 번씩만 실행된다. 주의할 점은 <code>@BeforeClass</code>, <code>@AfterClass</code> 메서드는 <code>static</code>이어야 한다는 점이다.</p>
+<p>결론적으로 다음과 같이 하면 된다.</p>
+<blockquote>
+<ul>
+<li><code>@BeforeClass</code> 메서드 내에서 Selenium Web Driver 실행, 대상 사이트 접속, 로그인을 포함시키고,</li>
+<li>여러 개의 <code>@Test</code> 메서드에서 로그인 세션을 유지한채로 여러 가지 테스트를 수행하고,</li>
+<li><code>@AfterClass</code> 메서드에서 Selenium Web Driver를 종료시키고 테스트를 마친다.</li>
+</ul>
+</blockquote>
+<p>물론 필요에 따라 <code>@Before</code>, <code>@After</code>를 함께 사용해도 된다.</p>
+<p><code>@BeforeClass</code>를 사용하는 테스트 코드는 다음과 같다.</p>
+<p><img src="http://i.imgur.com/OBX9TjJ.png" alt=""></p>
+<p><code>@AfterClass</code>를 사용하는 테스트 코드는 다음과 같다. <code>static</code>을 추가한 것외에는 Selenium IDE가 추출해준 그대로다.</p>
+<p><img src="http://i.imgur.com/rmS6BlT.png" alt=""></p>
+<h2 id="테스트-메서드-실행-순서-지정"><a href="#테스트-메서드-실행-순서-지정" class="headerlink" title="테스트 메서드 실행 순서 지정"></a>테스트 메서드 실행 순서 지정</h2><p>단위 테스트라면 테스트 메서드의 실행 순서를 굳이 유지할 필요가 없겠지만, Selenium은 브라우저 상에서의 테스트이므로 단위 테스트보다는 일정한 순서를 가진 시나리오에 따라 수행되는 인수 테스트(또는 사용자 테스트)의 용도에 더 적합하다.<br><strong><code>@FixMethodOrder</code>를 테스트 클래스에 지정하면 메서드의 실행 순서를 고정시켜서 시나리오를 구성할 수 있다.</strong></p>
+<p><code>@FixMethodOrder</code>로 지정할 수 있는 옵션은 세 가지가 있지만, <strong>개발자가 원하는 순서대로 지정할 수 있는 옵션은 <code>MethodSorters.NAME_ASCENDING</code> 하나 뿐</strong>이다.</p>
+<p>결론적으로 다음과 같이 하면 된다.</p>
+<blockquote>
+<ul>
+<li>테스트 클래스에 <code>@FixMethodOrder(MethodSorters.NAME_ASCENDING)</code>을 지정한다.</li>
+<li><code>@Test</code> 메서드의 이름을 테스트 시나리오 순서에 따라 알파벳 오름차순으로 명명한다.</li>
+</ul>
+</blockquote>
+<p><code>@FixMethodOrder</code>을 적용한 소스는 다음과 같다.</p>
+<p><img src="http://i.imgur.com/Lp3R5qe.png" alt=""></p>
+<p>지금까지는 Selenium에서의 꿀팁이라기보다는 JUnit의 꿀팁인데 이제부터는 Selenium에서의 꿀팁을 알아보자.</p>
+<h2 id="브라우저-테스트-수행이-멈출-때"><a href="#브라우저-테스트-수행이-멈출-때" class="headerlink" title="브라우저 테스트 수행이 멈출 때"></a>브라우저 테스트 수행이 멈출 때</h2><p>테스트를 수행하다보면 분명히 올바른 id를 지정해줬음에도 불구하고 브라우저 상에서 테스트가 더 진행되지 못하고, 결국 아래와 같은 에러를 토하면서 테스트가 비정상 종료될 때가 있다.</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Caused by: org<span class="selector-class">.openqa</span><span class="selector-class">.selenium</span><span class="selector-class">.ElementNotVisibleException</span>: Element is not currently visible and so may not be interacted with</span><br><span class="line">Build info: version: <span class="string">'2.47.1'</span>, revision: <span class="string">'unknown'</span>, <span class="selector-tag">time</span>: <span class="string">'2015-07-30 11:02:44'</span></span><br><span class="line">System info: host: <span class="string">'hanmomhanda-virtual-rebecca'</span>, ip: <span class="string">'127.0.1.1'</span>, os<span class="selector-class">.name</span>: <span class="string">'Linux'</span>, os<span class="selector-class">.arch</span>: <span class="string">'amd64'</span>, os<span class="selector-class">.version</span>: <span class="string">'3.16.0-38-generic'</span>, java<span class="selector-class">.version</span>: <span class="string">'1.7.0_80'</span></span><br><span class="line">Driver info: driver<span class="selector-class">.version</span>: unknown</span><br><span class="line">    at &lt;anonymous class&gt;<span class="selector-class">.fxdriver</span><span class="selector-class">.preconditions</span><span class="selector-class">.visible</span>(file:<span class="comment">///tmp/anonymous29080281595295739webdriver-profile/extensions/fxdriver@googlecode.com/components/command-processor.js:9982)</span></span><br><span class="line">    at &lt;anonymous class&gt;<span class="selector-class">.DelayedCommand</span><span class="selector-class">.prototype</span><span class="selector-class">.checkPreconditions_</span>(file:<span class="comment">///tmp/anonymous29080281595295739webdriver-profile/extensions/fxdriver@googlecode.com/components/command-processor.js:12626)</span></span><br><span class="line">    at &lt;anonymous class&gt;<span class="selector-class">.DelayedCommand</span><span class="selector-class">.prototype</span><span class="selector-class">.executeInternal_</span>/h(file:<span class="comment">///tmp/anonymous29080281595295739webdriver-profile/extensions/fxdriver@googlecode.com/components/command-processor.js:12643)</span></span><br><span class="line">    at &lt;anonymous class&gt;<span class="selector-class">.fxdriver</span><span class="selector-class">.Timer</span><span class="selector-class">.prototype</span><span class="selector-class">.setTimeout</span>/&lt;.notify(file:<span class="comment">///tmp/anonymous29080281595295739webdriver-profile/extensions/fxdriver@googlecode.com/components/command-processor.js:623)</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Process finished with exit <span class="selector-tag">code</span> <span class="number">255</span></span><br></pre></td></tr></table></figure>
+<p>Element가 보이지 않는다는 소리인데, 말 그대로 <strong>Element가 화면에 보이지 않아서 발생하는 에러</strong>다.<br>정확히는 viewport 내에 해당 Element가 렌더링 되어있지 않으면 <code>driver.findElement(By.id(&quot;ELEMENT_ID&quot;))</code>와 같은 방식으로는 Element를 find하지 못하기 때문에 발생하는 에러다.</p>
+<p>이를 해결하는 방법은 일단 두 가지가 떠오른다.</p>
+<ol>
+<li>해당 Element가 viewport 내에 들어오도록 테스트 수행이 멈춘 상태에서 수동으로 스크롤 해준다.</li>
+<li>테스트 자동화하자고 Selenium 쓰는데 수동이 웬말이냐, 자동으로 잘 동작하도록 소스를 고치자.</li>
+</ol>
+<p>우습지만 실제로 해보면 첫번째 방법도 유효하다!!</p>
+<p>하지만 수동이 웬말이냐.. 소스를 개선해보자. 바로 JavaScript를 사용하는 것이다.</p>
+<h2 id="JavaScript-사용"><a href="#JavaScript-사용" class="headerlink" title="JavaScript 사용"></a>JavaScript 사용</h2><p>Selenium 테스트 코드는 분명히 Java이지만, 놀랍게도 <strong>브라우저에서 실행 중인 Context를 JavaScript로 접근할 수 있다!</strong> 게다가 방법마저 쉽다!</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@FixMethodOrder</span>(MethodSorters.NAME_ASCENDING)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestBasis</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> WebDriver driver;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> String baseUrl;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> acceptNextAlert = <span class="keyword">true</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> StringBuffer verificationErrors = <span class="keyword">new</span> StringBuffer();</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> WebDriverWait wait;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> JavascriptExecutor js;  <span class="comment">// JavascriptExecutor 클래스 선언</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@BeforeClass</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">setUp</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        driver = <span class="keyword">new</span> FirefoxDriver();</span><br><span class="line">        baseUrl = <span class="string">"http://localhost:8080"</span>;</span><br><span class="line">        driver.manage().timeouts().implicitlyWait(<span class="number">15</span>, TimeUnit.SECONDS);</span><br><span class="line">        js = (JavascriptExecutor) driver;  <span class="comment">// Web Driver를 JavascriptExecutor로 캐스팅</span></span><br><span class="line">        ...</span><br></pre></td></tr></table></figure>
+<p>위와 같이 JavascriptExecutor 클래스를 선언하고, Web Driver를 JavascriptExecutor로 캐스팅하는 두 줄의 코드만 있으면 <code>js.executeScript(&quot;scroll(0, 300)&quot;);</code>와 같은 방식으로 JavaScript 구문을 실행할 수 있다.</p>
+<p>앞에서 다루었던 viewport에 렌더링 되지 않은 Element를 찾지 못해서 테스트가 멈췄다가 비정상 종료하는 문제도 <code>js.executeScript(&quot;scroll(0, 300)&quot;);</code>로 스크롤해서 <strong>viewport를 적절히 이동시켜 주면 테스트가 바르게 수행</strong>된다.</p>
+<p>단순한 스크롤 이동 뿐 아니라 DOM 객체를 찾을 때도, Selenium API인 <code>driver.findElement(By.id(&quot;collegeList0.grdaTypeCode&quot;))</code>보다 JavaScript 소스를 이용한 <code>js.executeScript(&quot;document.getElementById(&#39;collegeList0.grdaTypeCode&#39;)&quot;)</code>를 사용하는 것이 훨씬 더 안정적으로 동작한다.</p>
+<h2 id="jQuery-사용"><a href="#jQuery-사용" class="headerlink" title="jQuery 사용"></a>jQuery 사용</h2><p>테스트 대상 웹 페이지가 jQuery를 사용하도록 설정되어 있다면 jQuery 구문도 Selenium에서 실행할 수 있다.</p>
+<p>앞에서 다루었던 viewport에 렌더링 되지 않은 Element를 찾지 못해서 테스트가 멈췄다가 비정상 종료하는 문제를 해결하는 주요 코드는 다음과 같은데,</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">js.executeScript(<span class="string">"scroll(0, 300)"</span>);</span><br><span class="line">driver.findElement(By.id(<span class="string">"toMyList"</span>)).click();</span><br></pre></td></tr></table></figure>
+<p>아래와 같이 jQuery를 이용하면 일부러 scroll을 시켜 viewport를 맞춰주지 않아도 해당 Element를 찾아서 이벤트를 발생시킬 수 있다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">js.executeScript(<span class="string">"$('#toMyList').click()"</span>);</span><br></pre></td></tr></table></figure>
+<p>Selector 아이디에 <code>.</code>이 포함된 경우 일반적인 JavaScript 코드에서는 아래와 같이 역슬래쉬를 2번 써줘야 하지만,</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="string">'#collegeList0\\.schlCode'</span>).val(<span class="string">'219'</span>);</span><br></pre></td></tr></table></figure>
+<p>Selenium 코드에서는 JavaScript 코드를 <code>js.executeScript(&quot;&quot;)</code>로 한 번 더 감싸주므로 아래와 같이 역슬래쉬를 4번 써줘야 한다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">js.executeScript(<span class="string">"$('#collegeList0\\\\.schlCode').val('219')"</span>);</span><br></pre></td></tr></table></figure>
+<p>jQuery를 이용하는 방법은 특히 다음과 같은 상황에서 유용하다.</p>
+<blockquote>
+<ul>
+<li>viewport에 안 보이는 hidden 필드에 값을 쓰거나 읽을 때<ul>
+<li>hidden 필드는 HTML 기준으로는 현재의 viewport 내에 위치하더라도 <code>driver.findElement(By.id(&quot;ID&quot;))</code>의 방식으로 찾지 못한다.</li>
+<li>물론 <code>js.executeScript(&quot;document.getElementById(&#39;ID&#39;)&quot;)</code>도 <code>js.executeScript(&quot;$(&#39;#ID&#39;)&quot;)</code>와 마찬가지로 hidden 필드를 찾을 수 있다.</li>
+</ul>
+</li>
+<li>어떤 요소에 이벤트 핸들러가 있는 경우<ul>
+<li><code>js.executeScript(&quot;$(&#39;#eventDispatcher&#39;).change()&quot;)</code>와 같은 식으로 이벤트를 발생시키면 이벤트 핸들러가 실행된다.</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<p>동일한 원리로 jQuery 뿐 아니라 웹 페이지에 사용하도록 설정만 되어 있다면 jQuery 뿐 아니라 다른 라이브러리도 사용할 수 있다.</p>
+<h2 id="select-요소-테스트"><a href="#select-요소-테스트" class="headerlink" title="select 요소 테스트"></a>select 요소 테스트</h2><p>아마도 버그로 추정되는데, 테스트를 하다보면 <code>select</code>에 대한 테스트가 의도한대로 동작하지 않는 경우가 있다.<br><a href="http://www.seleniumhq.org/docs/03_webdriver.jsp#user-input-filling-in-forms" target="_blank">Selenium API</a>에 보면 <code>select</code>의 선택 항목을 변경하는 코드는 아래와 같다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Select select = <span class="keyword">new</span> Select(driver.findElement(By.tagName(<span class="string">"select"</span>)));</span><br><span class="line">select.deselectAll();</span><br><span class="line">select.selectByVisibleText(<span class="string">"Edam"</span>);</span><br></pre></td></tr></table></figure>
+<p>하지만 위 방식으로 <code>select</code>의 <code>option</code>을 설정해도 정작 “Edam”으로 표시된 <code>option</code>이 <code>selected</code>로 되지는 않아서 결국 “Edam”으로 선택되지 않는 일이 발생한다. 공식 문서의 내용에도 불구하고 내 경우엔 언제나 “Edam”으로 설정이 되지 않았다.</p>
+<p><a href="http://www.seleniumhq.org/docs/03_webdriver.jsp#user-input-filling-in-forms" target="_blank">Selenium API</a>에 있는 다른 예제 코드를 응용해서 아래와 같은 방법으로 “Edam”으로 표시된 <code>option</code>을 명시적으로 click 해줘도 <code>selected</code>가 먹지 않는다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">WebElement select = driver.findElement(By.tagName(<span class="string">"select"</span>));</span><br><span class="line">List&lt;WebElement&gt; allOptions = select.findElements(By.tagName(<span class="string">"option"</span>));</span><br><span class="line"><span class="keyword">for</span> (WebElement option : allOptions) &#123;</span><br><span class="line">    System.out.println(String.format(<span class="string">"Value is: %s"</span>, option.getAttribute(<span class="string">"value"</span>)));</span><br><span class="line">    <span class="keyword">if</span> (<span class="string">"Edam"</span>.equals(option.getAttribute(<span class="string">"value"</span>))) &#123;</span><br><span class="line">        option.click();</span><br><span class="line">        System.err.println(option.isSelected()); <span class="comment">// false 가 출력됨</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>이 문제의 해결 방법은 다음과 같다.</p>
+<blockquote>
+<p>select를 click 해주면 언제나 의도한대로 실행된다.</p>
+</blockquote>
+<p>이를 적용한 실제 소스 코드는 다음과 같다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">WebElement selectElement = driver.findElement(By.id(<span class="string">"collegeList0.grdaTypeCode"</span>));</span><br><span class="line">selectElement.click(); <span class="comment">// 바로 이 부분!!</span></span><br><span class="line">Select select = <span class="keyword">new</span> Select(selectElement);</span><br><span class="line">select.selectByVisibleText(<span class="string">"졸업예정"</span>);</span><br></pre></td></tr></table></figure>
+<h1 id="정리"><a href="#정리" class="headerlink" title="정리"></a>정리</h1><blockquote>
+<p>Selenium은 JUnit과 같은 방식으로 실행해서, 테스트 용 브라우저 인스턴스를 띄우고, 브라우저 상에서 웹 애플리케이션의 기능을 테스트 할 수 있게 해주는 도구다.</p>
+<p>Selenium IDE를 이용해서 웹 브라우저 상에서의 사용자 동작을 녹화하고 나중에 재생할 수 있는 테스트 소스 코드를 추출할 수 있다.</p>
+<p>테스트 코드 상에서 JavaScript 코드를 실행할 수 있고,<br>테스트 대상 페이지에서 jQuery 같은 외부 라이브러리를 사용하도록 설정되어 있다면 테스트 코드 상에서 jQuery 같은 외부 라이브러리 코드도 실행할 수 있다.</p>
+<p>Selenium IDE에서 추출한 테스트 코드는 적지 않은 보완 작업을 해야 실무에 적용할 수 있다.</p>
+<ul>
+<li>window.scrollBy(), window.scrollTo() 등 화면 스크롤 추가</li>
+<li>DOM 요소 selecting 로직 교체(Selenium API가 잘 안 먹을 경우 JavaScript로 교체)</li>
+<li>select 요소 테스트 시 select 요소에 click 이벤트를 실행</li>
+</ul>
+</blockquote>
+<h1 id="더-읽을거리"><a href="#더-읽을거리" class="headerlink" title="더 읽을거리"></a>더 읽을거리</h1><ul>
+<li><p>Selenium 문서 - <a href="http://www.seleniumhq.org/docs/index.jsp" target="_blank" rel="noopener">http://www.seleniumhq.org/docs/index.jsp</a></p>
+</li>
+<li><p>Selenium의 wait 기능 정리 - <a href="http://seleniumeasy.com/selenium-tutorials/how-to-work-with-ajax-controls-using-webdriver" target="_blank" rel="noopener">http://seleniumeasy.com/selenium-tutorials/how-to-work-with-ajax-controls-using-webdriver</a></p>
+</li>
+</ul>
+
+        
+        
+            
+        
+        <hr/>
+        <div>
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="크리에이티브 커먼즈 라이선스" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><a href='https://github.com/homoefficio' target='_blank'>HomoEfficio</a>가 작성한 이 저작물은(는) <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스</a>에 따라 이용할 수 있습니다.
+        </div>
+    </div>
+    <div class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/Browser-Test/">Browser Test</a> <a class="tag tag--primary tag--small t-link" href="/tags/JUnit/">JUnit</a> <a class="tag tag--primary tag--small t-link" href="/tags/Selenium/">Selenium</a> <a class="tag tag--primary tag--small t-link" href="/tags/Selenium-IDE/">Selenium IDE</a> <a class="tag tag--primary tag--small t-link" href="/tags/Test/">Test</a> <a class="tag tag--primary tag--small t-link" href="/tags/Web-Driver/">Web Driver</a> <a class="tag tag--primary tag--small t-link" href="/tags/브라우저-테스트/">브라우저 테스트</a> <a class="tag tag--primary tag--small t-link" href="/tags/셀레늄/">셀레늄</a> <a class="tag tag--primary tag--small t-link" href="/tags/웹-드라이버/">웹 드라이버</a> <a class="tag tag--primary tag--small t-link" href="/tags/테스트/">테스트</a>
+
+            </div>
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/10/16/번역할-뻔-했던-Patterns-of-Enterprise-Application-Architecture/"  data-tooltip="번역할 뻔 했던 Patterns of Enterprise Application Architecture">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/07/27/재귀-반복-Tail-Recursion/" data-tooltip="재귀, 반복, Tail Recursion">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2015/09/23/Selenium-꿀팁/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2015/09/23/Selenium-꿀팁/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2015/09/23/Selenium-꿀팁/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+        
+            <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2018 HomoEfficio. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="1">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/10/16/번역할-뻔-했던-Patterns-of-Enterprise-Application-Architecture/"  data-tooltip="번역할 뻔 했던 Patterns of Enterprise Application Architecture">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/07/27/재귀-반복-Tail-Recursion/" data-tooltip="재귀, 반복, Tail Recursion">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2015/09/23/Selenium-꿀팁/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2015/09/23/Selenium-꿀팁/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2015/09/23/Selenium-꿀팁/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="1">
+    <ul class="share-options">
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2015/09/23/Selenium-꿀팁/">
+                <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2015/09/23/Selenium-꿀팁/">
+                <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2015/09/23/Selenium-꿀팁/">
+                <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+            
+        </div>
+        <div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=110"/>
+        
+            <h4 id="about-card-name">HomoEfficio</h4>
+        
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Seoul, Korea.
+            </h5>
+        
+    </div>
+</div>
+        <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/script.min.js"></script>
+<!--SCRIPTS END-->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'hanmomhanda';
+        (function() {
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+
+
+
+</html>

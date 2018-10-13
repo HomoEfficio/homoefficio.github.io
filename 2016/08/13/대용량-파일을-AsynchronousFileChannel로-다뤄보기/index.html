@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="null">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="뒤태지존의 끄적거림">
+    <title>대용량 파일을 AsynchronousFileChannel로 다뤄보기 - 뒤태지존의 끄적거림</title>
+    <meta name="author" content="HomoEfficio">
+    <meta name="description" content="뒤태지존의 끄적거림">
+    
+        <link rel="icon" href="/assets/images/favicon.ico">
+    
+    
+        <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <meta name="description" content="Java 7 에는 비동기 방식의 File I/O를 지원하는 AsynchronousFileChannel이 추가되었다. 비동기 방식이므로 File I/O에 소요되는 시간 동안 다른 처리를 할 수 있다는 장점이 있다.  특히 용량이 큰 파일일 수록 File I/O에 소요되는 시간이 클 수 있으므로, 비동기 방식의 장점을 더 살릴 수 있다. Asynchronous">
+<meta name="keywords" content="Java,자바,Asynchronous,비동기,I&#x2F;O,NIO,Stream,Channel,performance,스트림,채널,성능,Async,AsynchronousFileChannel,비동기파일채널">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="대용량 파일을 AsynchronousFileChannel로 다뤄보기">
+<meta property="og:url" content="http://homoefficio.github.io/2016/08/13/대용량-파일을-AsynchronousFileChannel로-다뤄보기/index.html">
+<meta property="og:site_name" content="뒤태지존의 끄적거림">
+<meta property="og:description" content="Java 7 에는 비동기 방식의 File I/O를 지원하는 AsynchronousFileChannel이 추가되었다. 비동기 방식이므로 File I/O에 소요되는 시간 동안 다른 처리를 할 수 있다는 장점이 있다.  특히 용량이 큰 파일일 수록 File I/O에 소요되는 시간이 클 수 있으므로, 비동기 방식의 장점을 더 살릴 수 있다. Asynchronous">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://i.imgur.com/641EZTR.png">
+<meta property="og:image" content="http://i.imgur.com/26xMoli.png">
+<meta property="og:image" content="http://i.imgur.com/V5ub1z4.png">
+<meta property="og:image" content="http://i.imgur.com/hNq09Zb.png">
+<meta property="og:image" content="http://i.imgur.com/86OemjJ.png">
+<meta property="og:updated_time" content="2018-10-13T15:49:56.275Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="대용량 파일을 AsynchronousFileChannel로 다뤄보기">
+<meta name="twitter:description" content="Java 7 에는 비동기 방식의 File I/O를 지원하는 AsynchronousFileChannel이 추가되었다. 비동기 방식이므로 File I/O에 소요되는 시간 동안 다른 처리를 할 수 있다는 장점이 있다.  특히 용량이 큰 파일일 수록 File I/O에 소요되는 시간이 클 수 있으므로, 비동기 방식의 장점을 더 살릴 수 있다. Asynchronous">
+<meta name="twitter:image" content="http://i.imgur.com/641EZTR.png">
+    
+        <meta rel="publisher" content="https://plus.google.com/+오명운"/>
+    
+    
+    
+        <meta property="og:image" content="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=640"/>
+    
+    
+        <meta property="og:image" content="/2016/08/13/대용량-파일을-AsynchronousFileChannel로-다뤄보기/https:/www.credera.com/wp-content/uploads/2014/08/Screen-Shot-2014-08-27-at-1.32.33-PM.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2016/08/13/대용량-파일을-AsynchronousFileChannel로-다뤄보기/https://www.credera.com/wp-content/uploads/2014/08/Screen-Shot-2014-08-27-at-1.32.33-PM.png" />
+    
+    
+        <meta property="og:image" content="/2016/08/13/대용량-파일을-AsynchronousFileChannel로-다뤄보기/coverImage-sync-async.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2016/08/13/대용량-파일을-AsynchronousFileChannel로-다뤄보기/coverImage-sync-async.png" />
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style.min.css">
+    <!--STYLES END-->
+    
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-79893978-1']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6494847158566766",
+    enable_page_level_ads: true
+  });
+</script>
+</head>
+
+    <body>
+        <div id="blog">
+            <header id="header" data-behavior="1">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="/ ">뒤태지존의 끄적거림</a>
+    </h1>
+    
+        <a class="header-right-picture" href="/#about">
+            <img class="header-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+        </a>
+    
+</header>
+            <nav id="sidebar" data-behavior="1">
+    
+    <div class="sidebar-profile">
+        <a href="/#about">
+            
+            <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+            
+        </a>
+        <span class="sidebar-profile-name">HomoEfficio</span>
+    </div>
+    
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/ 
+                    ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">Home</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-categories
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">Categories</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-tags
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">Tags</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-archives
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">Archives</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link st-search-show-outputs"
+                    href="#search
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                    <span class="sidebar-button-desc">Search</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="#about
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">About me</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="https://github.com/HomoEfficio" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                    <span class="sidebar-button-desc">GitHub</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="mailto:homo.efficio@gmail.com" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-envelope-o"></i>
+                    <span class="sidebar-button-desc">Mail</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/atom.xml
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+            <div id="main" data-behavior="1">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+        <div class="post-header-cover" style="background-image:url('/2016/08/13/대용량-파일을-AsynchronousFileChannel로-다뤄보기/coverImage-sync-async.png');">
+            <div class="post-header main-content-wrap">
+    
+        <h1 class="post-title" itemprop="headline">대용량 파일을 AsynchronousFileChannel로 다뤄보기</h1>
+    
+    <div class="post-meta">
+    <time  itemprop="datePublished" content="Sat Aug 13 2016 02:18:37 GMT+0900">
+        Aug 13, 2016
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Technique/">Technique</a>
+
+
+    
+</div>
+</div>
+        </div>
+    
+    <div class="post-content markdown main-content-wrap" itemprop="articleBody">
+        
+            <p>Java 7 에는 비동기 방식의 File I/O를 지원하는 <code>AsynchronousFileChannel</code>이 추가되었다.</p>
+<p>비동기 방식이므로 File I/O에 소요되는 시간 동안 다른 처리를 할 수 있다는 장점이 있다.</p>
+<p><img src="http://i.imgur.com/641EZTR.png" alt=""></p>
+<p>특히 용량이 큰 파일일 수록 File I/O에 소요되는 시간이 클 수 있으므로, 비동기 방식의 장점을 더 살릴 수 있다.</p>
+<h1 id="AsynchronousFileChannel을-사용하는-일반적인-방법"><a href="#AsynchronousFileChannel을-사용하는-일반적인-방법" class="headerlink" title="AsynchronousFileChannel을 사용하는 일반적인 방법"></a><code>AsynchronousFileChannel</code>을 사용하는 일반적인 방법</h1><p><code>AsynchronousFileChannel</code>로 파일을 읽으려면 아래의 메서드를 사용하면 된다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> &lt;A&gt; <span class="function"><span class="keyword">void</span> <span class="title">read</span><span class="params">(ByteBuffer dst,</span></span></span><br><span class="line"><span class="function"><span class="params">           <span class="keyword">long</span> position,</span></span></span><br><span class="line"><span class="function"><span class="params">           A attachment,</span></span></span><br><span class="line"><span class="function"><span class="params">           CompletionHandler&lt;Integer,? <span class="keyword">super</span> A&gt; handler)</span></span></span><br></pre></td></tr></table></figure>
+<p><code>CompletionHandler</code>를 사용하는 대신 <code>Future</code>를 반환하는 <code>read()</code> 메서드도 있는데, <del>while (!result.isDone()) { … } 와 같은 식으로 계속 완료 여부를 polling하는 Future 방식보다는</del>(<code>Future</code>도 <code>Future.get()</code>을 사용하면 굳이 polling 하지 않아도 된다.) <code>CompletionHandler</code> 방식이 더 간지나므로 <code>Future</code> 방식은 여기서는 다루지 않는다.</p>
+<p>암튼 API를 보니 파일의 <code>position</code> 위치에서 부터 읽은 데이터를 <code>dst</code> 라는 ByteBuffer에 담고, 성공/실패 시 <code>CompletionHandler</code>에 구현된 callback 메서드를 호출하는구나.. 라고 이해되는데, <code>attachment</code>는 뭘까? API문서에서도 그냥 아래와 같이 뜬구름 잡는 소리만 있다.</p>
+<blockquote>
+<p>attachment - The object to attach to the I/O operation; can be null</p>
+</blockquote>
+<p><code>attachment</code>가 뭔지 궁금하지만, <code>null</code> 일 수도 있다고 하니 일단 그냥 <code>null</code>로 둬보자.</p>
+<h2 id="일반적인-코드"><a href="#일반적인-코드" class="headerlink" title="일반적인 코드"></a>일반적인 코드</h2><p>nio의 <code>Channel</code>은 데이터의 I/O에 <code>byte[]</code> 대신 <code>Buffer</code>를 사용한다. <code>AsynchronousFileChannel</code>도 마찬가지로 <code>ByteBuffer</code>를 사용하며, <code>AsynchronousFileChannel</code>를 이용해서 파일을 읽어들이는 코드는 다음과 같다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">asyncFileChannelTest</span><span class="params">(Path sourceFilePath, <span class="keyword">boolean</span> isWrite)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">try</span> (</span><br><span class="line">            AsynchronousFileChannel asyncFileChannel = AsynchronousFileChannel.open(</span><br><span class="line">                sourceFilePath,</span><br><span class="line">                StandardOpenOption.READ</span><br><span class="line">            );</span><br><span class="line">    ) &#123;</span><br><span class="line">        System.err.println(<span class="string">"AsynchronousFileChannel 테스트 시작"</span>);</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">long</span> startTime = System.nanoTime();</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">long</span> fileSize = asyncFileChannel.size();</span><br><span class="line"> </span><br><span class="line">        ByteBuffer byteBuffer = ByteBuffer.allocate((<span class="keyword">int</span>)fileSize);</span><br><span class="line"> </span><br><span class="line">        System.err.println(<span class="string">"AsynchronousFileChannel.read() 호출"</span>);</span><br><span class="line"> </span><br><span class="line">        asyncFileChannel.read(</span><br><span class="line">            byteBuffer, <span class="number">0</span>, <span class="keyword">null</span>,</span><br><span class="line">            <span class="keyword">new</span> CompletionHandler&lt;Integer, Object&gt;() &#123;</span><br><span class="line"> </span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">completed</span><span class="params">(Integer result, Object object)</span> </span>&#123;</span><br><span class="line">                    <span class="keyword">if</span> (result == -<span class="number">1</span>) &#123;</span><br><span class="line">                        <span class="keyword">long</span> endTime = System.nanoTime();</span><br><span class="line">                        System.err.println(<span class="string">"비정상 종료 : "</span> + (endTime - startTime) + <span class="string">" ns elapsed."</span>);</span><br><span class="line">                        <span class="keyword">return</span>;</span><br><span class="line">                    &#125;</span><br><span class="line"> </span><br><span class="line">                    byteBuffer.flip();</span><br><span class="line">                    byteBuffer.mark();</span><br><span class="line">                    <span class="keyword">if</span> (isWrite) System.out.write(byteBuffer.array(), <span class="number">0</span>, result);</span><br><span class="line">                    byteBuffer.reset();</span><br><span class="line"> </span><br><span class="line">                    <span class="keyword">long</span> endTime = System.nanoTime();</span><br><span class="line">                    System.err.println(<span class="string">"AsynchronousFileChannel.read() 완료 : "</span> + (endTime - startTime) + <span class="string">" ns elapsed."</span>);</span><br><span class="line">                &#125;</span><br><span class="line"> </span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">failed</span><span class="params">(Throwable exc, Object object)</span> </span>&#123;</span><br><span class="line">                    exc.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        );</span><br><span class="line"> </span><br><span class="line">        System.err.println(<span class="string">"AsyncFileChannel I/O 진행 중에는 다른 작업도 할 수 있지롱"</span>);</span><br><span class="line">        System.err.println(<span class="string">"그동안 그리스에도 다녀오고"</span>);</span><br><span class="line">        System.err.println(<span class="string">"크로아티아에도 갔다오자"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>실행하면 다음과 같은 결과가 나온다.</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">AsynchronousFileChannel 테스트 시작</span><br><span class="line">AsynchronousFileChannel.<span class="built_in">read</span>() 호출</span><br><span class="line">AsyncFileChannel I/O 진행 중에는 다른 작업도 할 수 있지롱</span><br><span class="line">그동안 그리스에도 다녀오고</span><br><span class="line">크로아티아에도 갔다오자</span><br><span class="line">AsynchronousFileChannel.<span class="built_in">read</span>() 완료 : <span class="number">320668276</span> ns elapsed.</span><br></pre></td></tr></table></figure>
+<p>위에서 보는 것처럼 File I/O가 처리되는 시간 동안에도 메시지를 콘솔에 출력하는 것처럼 다른 작업을 수행할 수 있다.</p>
+<p>한 가지 마음에 걸리는 것은 <code>ByteBuffer</code>의 크기를 파일 사이즈와 같게 한다는 점이다. 용량이 클수록 비동기 방식의 장점이 더 드러난다고는 하지만, 용량이 기가 단위로 정말 거대한 파일을 통으로 메모리에 모두 담아 처리하면 OutOfMemoryError를 유발할 수도 있다. </p>
+<p><img src="http://i.imgur.com/26xMoli.png" alt=""></p>
+<p>위의 그래프는 Java SDK에 번들로 제공되는 VisualVM을 사용해서 메모리 사용을 모니터링한 것인데, 160메가 정도의 파일로 테스트 해본 결과 위와 같이 메모리 사용이 쭈욱~ 올라간 것을 알 수 있다. 기가 단위의 파일이라면 역시나 OutOfMemoryError가 발생할 것 같다.</p>
+<p>참고로 일반적인 <code>main()</code>으로 실행하면 금방 종료되어 위처럼 캡쳐 등이 불편해서, 편의상 간단하게 SpringBoot로 만든 웹 애플리케이션에서 테스트를 진행했다.</p>
+<p>암튼 메모리 사용량을 적게 할 수 있도록 작은 크기의 <code>ByteBuffer</code>를 생성해서 이를 재활용하는 것이 좋겠다.</p>
+<h1 id="작은-크기의-ByteBuffer을-재사용해서-OutOfMemoryError-를-막는-방법"><a href="#작은-크기의-ByteBuffer을-재사용해서-OutOfMemoryError-를-막는-방법" class="headerlink" title="작은 크기의 ByteBuffer을 재사용해서 OutOfMemoryError 를 막는 방법"></a>작은 크기의 ByteBuffer을 재사용해서 OutOfMemoryError 를 막는 방법</h1><p>파일 크기 만큼의 <code>ByteBuffer</code>를 사용하는 대신 작은 크기의 <code>ByteBuffer</code>에 데이터를 담는 일을 반복하면 OutOfMemoryError 걱정없이도 파일 내용을 읽을 수 있다. 그런데 그냥 쉽게 되는 것은 아니고 손 봐줘야 할 곳이 몇 군데 있다. </p>
+<h2 id="반복-문제"><a href="#반복-문제" class="headerlink" title="반복 문제"></a>반복 문제</h2><p>비동기 방식이라 Handler를 통해서 구현하므로 통상적인 방법처럼 단순하게 <code>while</code> 문으로는 해결할 수 없다.</p>
+<p>그렇다고 엄청난 고도의 방법이 필요한 것은 아니다. <code>while</code>을 쓰는 대신 <code>CompletionHander</code>내에서 다시 <code>asynchronousFileChannel.read()</code>를 호출하게 하면 될 것 같다.</p>
+<h2 id="읽을-위치-지정-문제"><a href="#읽을-위치-지정-문제" class="headerlink" title="읽을 위치 지정 문제"></a>읽을 위치 지정 문제</h2><p><code>asynchronousFileChannel.read()</code>를 다시 호출할 때 주의해야할 점이 있다. 바로 <code>asynchronousFileChannel.read()</code>의 두번째 파라미터인 <code>position</code> 값의 적절한 설정이다. <code>ByteBuffer</code> 사이즈만큼 읽은 후에 다시 읽을 때는, 앞에서 읽고난 위치에서부터 다시 읽기 시작해야  중복 또는 누락 없이 정확하게 파일 내용을 읽을 수 있다. </p>
+<p>이 역시도 어려운 문제는 아니다. <code>ByteBuffer</code> 크기에 반복회수를 곱해준 값을 두번째 파라미터로 넘겨주면 되겠다. <code>long</code> 타입의 <code>iterations</code>라는 변수로 반복회수를 관리하자.</p>
+<p>그런데, 한가지 문제가 있다. 반복회수는 익명 내부 클래스인<code>CompletionHandler</code> 내의 <code>completed()</code> 메서드 내에서 증가시켜야 하는데, 내부 클래스의 메서드에서는 바깥 클래스의 변수의 값을 직접 변경할 수 없다. 그래서 단순히 primitive 타입의 <code>iterations</code>을 사용하면 내부 클래스의 메서드에서 증가시킬 수 없으므로, primitive 타입인 <code>long</code> 대신에 객체인 <code>Long</code> 타입을 쓰면 값을 변경할 수 있다. 하지만 이 <code>Long</code> 타입의 변수를 <code>CompletionHandler</code>에게 어떻게 넘겨주지?</p>
+<h2 id="아하-attachment"><a href="#아하-attachment" class="headerlink" title="아하 attachment"></a>아하 attachment</h2><p>그렇다. 우리에겐 미지의 파라미터인 <code>attachment</code>가 있었다.</p>
+<p>Java API Doc에 뜬구름 잡는 설명만 있었던 <code>attachment</code>는 이럴 때 쓰라는 넘이었구나.. <code>asynchronousFileChannel.read()</code>의 세번째 파라미터에 <code>null</code> 대신 Long 타입의 iterations라는 변수를 넘겨주자.</p>
+<p>그럼 대략 아래와 같이 코드가 바뀐다. 바뀐 부분에는 주석을 추가했다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">asyncFileChannelTest</span><span class="params">(Path sourceFilePath, <span class="keyword">boolean</span> isWrite)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">try</span> (</span><br><span class="line">            AsynchronousFileChannel asyncFileChannel = AsynchronousFileChannel.open(</span><br><span class="line">                sourceFilePath,</span><br><span class="line">                StandardOpenOption.READ</span><br><span class="line">            );</span><br><span class="line">    ) &#123;</span><br><span class="line">        System.err.println(<span class="string">"AsynchronousFileChannel 테스트 시작"</span>);</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">long</span> startTime = System.nanoTime();</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">long</span> fileSize = asyncFileChannel.size();</span><br><span class="line"> </span><br><span class="line">        <span class="comment">// ByteBuffer 크기를 8k로 축소</span></span><br><span class="line">        ByteBuffer byteBuffer = ByteBuffer.allocate(<span class="number">8</span> * <span class="number">1024</span>);</span><br><span class="line"> </span><br><span class="line">        <span class="comment">// 반복 회수 관리용 변수</span></span><br><span class="line">        Long iterations = <span class="number">0L</span>;</span><br><span class="line"> </span><br><span class="line">        System.err.println(<span class="string">"AsynchronousFileChannel.read() 호출"</span>);</span><br><span class="line"> </span><br><span class="line">        asyncFileChannel.read(</span><br><span class="line">            byteBuffer, <span class="number">0</span>, iterations,    <span class="comment">// null 대신 iterations 전달</span></span><br><span class="line">            <span class="keyword">new</span> CompletionHandler&lt;Integer, Long&gt;() &#123;    <span class="comment">// 타입 파라미터에 Object 대신 Long 전달</span></span><br><span class="line"> </span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">completed</span><span class="params">(Integer result, Long iterations)</span> </span>&#123;    <span class="comment">// 타입 파라미터에 Object 대신 Long</span></span><br><span class="line">                    <span class="keyword">if</span> (result == -<span class="number">1</span>) &#123;</span><br><span class="line">                        <span class="keyword">long</span> endTime = System.nanoTime();</span><br><span class="line">                        System.err.println(<span class="string">"비정상 종료 : "</span> + (endTime - startTime) + <span class="string">" ns elapsed."</span>);</span><br><span class="line">                        <span class="keyword">return</span>;</span><br><span class="line">                    &#125;</span><br><span class="line"> </span><br><span class="line">                    <span class="comment">// 반복 회수 확인</span></span><br><span class="line">                    System.err.println((iterations + <span class="number">1</span>) + <span class="string">"회차 반복"</span>);</span><br><span class="line"> </span><br><span class="line">                    byteBuffer.flip();</span><br><span class="line">                    byteBuffer.mark();</span><br><span class="line">                    <span class="keyword">if</span> (isWrite) System.out.write(byteBuffer.array(), <span class="number">0</span>, result);</span><br><span class="line">                    byteBuffer.reset();</span><br><span class="line"> </span><br><span class="line">                    <span class="comment">// 읽어들인 바이트수가</span></span><br><span class="line">                    <span class="comment">// 파일사이즈와 같거나(버퍼 크기와 파일 크기가 같은 경우)</span></span><br><span class="line">                    <span class="comment">// 버퍼 사이즈보다 작다면 파일의 끝까지 읽은 것이므로 종료 처리</span></span><br><span class="line">                    <span class="keyword">if</span> (result == fileSize || result &lt; byteBuffer.capacity()) &#123;</span><br><span class="line">                        <span class="keyword">long</span> endTime = System.nanoTime();</span><br><span class="line">                        System.err.println(<span class="string">"AsynchronousFileChannel.read() 완료 : "</span> + (endTime - startTime) + <span class="string">" ns elapsed."</span>);</span><br><span class="line">                        <span class="keyword">return</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="comment">// 읽을 내용이 남아있으므로 반복 회수를 증가 시키고 다시 읽는다.</span></span><br><span class="line">                    iterations++;</span><br><span class="line">                    asyncFileChannel.read(byteBuffer, result * iterations, iterations, <span class="keyword">this</span>);</span><br><span class="line">                &#125;</span><br><span class="line"> </span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">failed</span><span class="params">(Throwable exc, Long iterations)</span> </span>&#123;    <span class="comment">// 타입 파라미터에 Object 대신 Long</span></span><br><span class="line">                    exc.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        );</span><br><span class="line"> </span><br><span class="line">        System.err.println(<span class="string">"AsyncFileChannel I/O 진행 중에는 다른 작업도 할 수 있지롱"</span>);</span><br><span class="line">        System.err.println(<span class="string">"그동안 그리스에도 다녀오고"</span>);</span><br><span class="line">        System.err.println(<span class="string">"크로아티아에도 갔다오자"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>자 이제 실행해보면 메모리를 적게 쓰면서도 비동기 방식으로 파일 내용을 읽어올 것이다. 생각만해도 흐뭇하다. 얼른 실행해보자.</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">AsynchronousFileChannel 테스트 시작</span><br><span class="line">AsynchronousFileChannel.read() 호출</span><br><span class="line">AsyncFileChannel I/O 진행 중에는 다른 작업도 할 수 있지롱</span><br><span class="line">그동안 그리스에도 다녀오고</span><br><span class="line">크로아티아에도 갔다오자</span><br><span class="line"><span class="number">1</span>회차 반복</span><br><span class="line">java<span class="selector-class">.nio</span><span class="selector-class">.channels</span><span class="selector-class">.ClosedChannelException</span></span><br><span class="line">	at sun<span class="selector-class">.nio</span><span class="selector-class">.ch</span><span class="selector-class">.SimpleAsynchronousFileChannelImpl</span><span class="selector-class">.implRead</span>(SimpleAsynchronousFileChannelImpl<span class="selector-class">.java</span>:<span class="number">302</span>)</span><br><span class="line">	at sun<span class="selector-class">.nio</span><span class="selector-class">.ch</span><span class="selector-class">.AsynchronousFileChannelImpl</span><span class="selector-class">.read</span>(AsynchronousFileChannelImpl<span class="selector-class">.java</span>:<span class="number">229</span>)</span><br><span class="line">	... 이하 생략 ...</span><br></pre></td></tr></table></figure>
+<p>ㅋㅋㅋ 한 방에 될리가.. 에러 메시지를 보니 채널이 이미 닫혀있다고 한다. 응? 나 채널 닫은 적 없는데..</p>
+<h2 id="채널이-닫힌-이유"><a href="#채널이-닫힌-이유" class="headerlink" title="채널이 닫힌 이유"></a>채널이 닫힌 이유</h2><p>어디서 닫혔을까 하고 코드를 보니 <code>AsynchronousFileChannel</code>을 가져올 때, 자원 해제의 편의를 위해 Java 7에 도입된 <code>try-with-resources</code> 구문을 사용했다. 채널이 닫힌 이유를 알 것 같다. </p>
+<p>파일 내용을 <code>ByteBuffer</code>에 성공적으로 한 번 읽어들인 후에 <code>CompletionHandler</code>내에서 다시 호출하는 <code>read()</code>는 <code>System.err.println(&quot;크로아티아에도 갔다오자&quot;);</code>가 실행되고 난 시점에 호출되는데, 이 시점에는 이미 <code>try-with-resources</code>를 빠져나온 후가 된다. 따라서 <code>try-with-resources</code>에 의해 자동으로 자원이 해제되면서 <code>AsynchronousFileChannel</code>가 닫히고, 그 다음에 이미 닫혀있는 <code>AsynchronousFileChannel</code>의 <code>read()</code>를 다시 호출하니까 채널이 이미 닫혀있다는 에러가 발생한 것이다.</p>
+<p>원인은 알겠는데 해결은 또 어떻게 해야하나.</p>
+<h2 id="try-catch-적용"><a href="#try-catch-적용" class="headerlink" title="try-catch 적용"></a>try-catch 적용</h2><p>일단 <code>AsynchronousFileChannel</code>를 닫는 처리를 프로그래머가 직접 제어할 수 있도록 <code>try-with-resources</code> 부터 걷어내는 것이 순서일 것 같다. 그대신 적절한 위치에서 명시적으로 <code>AsynchronousFileChannel.close()</code>를 호출해서 자원 해제 처리를 확실히 해주면, 채널이 닫히지 않은 채로 비동기 방식의 반복을 수행하고, 적절한 위치에서 채널을 닫는 처리가 가능할 것 같다. </p>
+<p>코드는 아래와 같이 바뀐다. 이번에 바뀐 내용은 <code>//// 2차 변경</code>와 같이 슬래쉬 4개로 주석처리했다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">asyncFileChannelTest</span><span class="params">(Path sourceFilePath, <span class="keyword">boolean</span> isWrite)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">//// try-with-resource 대신 try-catch-finally 적용</span></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        System.err.println(<span class="string">"AsynchronousFileChannel 테스트 시작"</span>);</span><br><span class="line"> </span><br><span class="line">        AsynchronousFileChannel asyncFileChannel = AsynchronousFileChannel.open(</span><br><span class="line">                sourceFilePath,</span><br><span class="line">                StandardOpenOption.READ</span><br><span class="line">        );</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">long</span> startTime = System.nanoTime();</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">long</span> fileSize = asyncFileChannel.size();</span><br><span class="line"> </span><br><span class="line">        <span class="comment">// ByteBuffer 크기를 8k로 축소</span></span><br><span class="line">        ByteBuffer byteBuffer = ByteBuffer.allocate(<span class="number">8</span> * <span class="number">1024</span>);</span><br><span class="line"> </span><br><span class="line">        <span class="comment">// 반복 회수 관리용 변수</span></span><br><span class="line">        Long iterations = <span class="number">0L</span>;</span><br><span class="line"> </span><br><span class="line">        System.err.println(<span class="string">"AsynchronousFileChannel.read() 호출"</span>);</span><br><span class="line"> </span><br><span class="line">        asyncFileChannel.read(</span><br><span class="line">                byteBuffer, <span class="number">0</span>, iterations,    <span class="comment">// null 대신 iterations 전달</span></span><br><span class="line">                <span class="keyword">new</span> CompletionHandler&lt;Integer, Long&gt;() &#123;    <span class="comment">// 타입 파라미터에 Object 대신 Long 전달</span></span><br><span class="line"> </span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">completed</span><span class="params">(Integer result, Long iterations)</span> </span>&#123;    <span class="comment">// 타입 파라미터에 Object 대신 Long</span></span><br><span class="line">                        <span class="keyword">if</span> (result == -<span class="number">1</span>) &#123;</span><br><span class="line">                            <span class="keyword">long</span> endTime = System.nanoTime();</span><br><span class="line">                            System.err.println(<span class="string">"비정상 종료 : "</span> + (endTime - startTime) + <span class="string">" ns elapsed."</span>);</span><br><span class="line"> </span><br><span class="line">                            <span class="comment">//// asyncFileChannel 닫기</span></span><br><span class="line">                            closeAsyncFileChannel(asyncFileChannel);</span><br><span class="line"> </span><br><span class="line">                            <span class="keyword">return</span>;</span><br><span class="line">                        &#125;</span><br><span class="line"> </span><br><span class="line">                        <span class="comment">// 반복 회수 확인</span></span><br><span class="line">                        System.err.println((iterations + <span class="number">1</span>) + <span class="string">"회차 반복"</span>);</span><br><span class="line"> </span><br><span class="line">                        byteBuffer.flip();</span><br><span class="line">                        byteBuffer.mark();</span><br><span class="line">                        <span class="keyword">if</span> (isWrite) System.out.write(byteBuffer.array(), <span class="number">0</span>, result);</span><br><span class="line">                        byteBuffer.reset();</span><br><span class="line"> </span><br><span class="line">                        <span class="comment">// 읽어들인 바이트수가</span></span><br><span class="line">                        <span class="comment">// 파일사이즈와 같거나(버퍼 크기와 파일 크기가 같은 경우)</span></span><br><span class="line">                        <span class="comment">// 버퍼 사이즈보다 작다면 파일의 끝까지 읽은 것이므로 종료 처리</span></span><br><span class="line">                        <span class="keyword">if</span> (result == fileSize || result &lt; byteBuffer.capacity()) &#123;</span><br><span class="line">                            <span class="keyword">long</span> endTime = System.nanoTime();</span><br><span class="line">                            System.err.println(<span class="string">"AsynchronousFileChannel.read() 완료 : "</span> + (endTime - startTime) + <span class="string">" ns elapsed."</span>);</span><br><span class="line"> </span><br><span class="line">                            <span class="comment">//// asyncFileChannel 닫기</span></span><br><span class="line">                            closeAsyncFileChannel(asyncFileChannel);</span><br><span class="line"> </span><br><span class="line">                            <span class="keyword">return</span>;</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="comment">// 읽을 내용이 남아있으므로 반복 회수를 증가 시키고 다시 읽는다.</span></span><br><span class="line">                        iterations++;</span><br><span class="line">                        asyncFileChannel.read(byteBuffer, result * iterations, iterations, <span class="keyword">this</span>);</span><br><span class="line">                    &#125;</span><br><span class="line"> </span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">failed</span><span class="params">(Throwable exc, Long iterations)</span> </span>&#123;    <span class="comment">// 타입 파라미터에 Object 대신 Long</span></span><br><span class="line">                        exc.printStackTrace();</span><br><span class="line"> </span><br><span class="line">                        <span class="comment">//// asyncFileChannel 닫기</span></span><br><span class="line">                        closeAsyncFileChannel(asyncFileChannel);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">        );</span><br><span class="line"> </span><br><span class="line">        System.err.println(<span class="string">"AsyncFileChannel I/O 진행 중에는 다른 작업도 할 수 있지롱"</span>);</span><br><span class="line">        System.err.println(<span class="string">"그동안 그리스에도 다녀오고"</span>);</span><br><span class="line">        System.err.println(<span class="string">"크로아티아에도 갔다오자"</span>);</span><br><span class="line"> </span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);    <span class="comment">//// 상황에 맞는 예외 처리 필요</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="comment">//// asyncFileChannel 닫기</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">closeAsyncFileChannel</span><span class="params">(AsynchronousFileChannel asyncFileChannel)</span> </span>&#123;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">if</span> (asyncFileChannel != <span class="keyword">null</span> &amp;&amp; asyncFileChannel.isOpen()) &#123;</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            asyncFileChannel.close();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);    <span class="comment">//// 상황에 맞는 예외 처리 필요</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>실행하면 드디어!! 다음과 같이 정상적으로 표시된다.</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">AsynchronousFileChannel 테스트 시작</span><br><span class="line">AsynchronousFileChannel.<span class="built_in">read</span>() 호출</span><br><span class="line">AsyncFileChannel I/O 진행 중에는 다른 작업도 할 수 있지롱</span><br><span class="line">그동안 그리스에도 다녀오고</span><br><span class="line">크로아티아에도 갔다오자</span><br><span class="line"><span class="number">1</span>회차 반복</span><br><span class="line"><span class="number">2</span>회차 반복</span><br><span class="line"><span class="number">3</span>회차 반복</span><br><span class="line">...</span><br><span class="line"><span class="number">19496</span>회차 반복</span><br><span class="line"><span class="number">19497</span>회차 반복</span><br><span class="line">AsynchronousFileChannel.<span class="built_in">read</span>() 완료 : <span class="number">844209043</span> ns elapsed.</span><br></pre></td></tr></table></figure>
+<p>메모리 사용량을 확인해보면 아래와 같이 거의 미미한 수준의 변화만 있을 뿐이다.</p>
+<p><img src="http://i.imgur.com/V5ub1z4.png" alt=""></p>
+<h2 id="attachment의-활용"><a href="#attachment의-활용" class="headerlink" title="attachment의 활용"></a>attachment의 활용</h2><p>앞에서 단순히 <code>Long</code> 타입의 변수를 <code>attachment</code>로 활용해서 반복 회수를 관리했는데, <code>attachment</code>에 다른 객체를 사용하면 더 많은 정보를 관리할 수 있다. 예를 들어, 읽어들인 바이트수를 <code>attachment</code>에 사용된 객체에 계속 누적하면, 파일 읽기 완료 후 읽어들인 바이트수와 실제 파일 크기를 비교할 수도 있다.</p>
+<p>코드는 다시 아래와 같이 바뀐다. 이번에 바뀌는 부분은 슬래쉬 6개로 주석 처리했다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">asyncFileChannelTest</span><span class="params">(Path sourceFilePath, <span class="keyword">boolean</span> isWrite)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line"> </span><br><span class="line">        <span class="comment">//// try-with-resource 대신 try-catch-finally 적용</span></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            System.err.println(<span class="string">"AsynchronousFileChannel 테스트 시작"</span>);</span><br><span class="line"> </span><br><span class="line">            AsynchronousFileChannel asyncFileChannel = AsynchronousFileChannel.open(</span><br><span class="line">                    sourceFilePath,</span><br><span class="line">                    StandardOpenOption.READ</span><br><span class="line">            );</span><br><span class="line"> </span><br><span class="line">            <span class="keyword">long</span> startTime = System.nanoTime();</span><br><span class="line"> </span><br><span class="line">            <span class="keyword">long</span> fileSize = asyncFileChannel.size();</span><br><span class="line"> </span><br><span class="line">            <span class="comment">// ByteBuffer 크기를 8k로 축소</span></span><br><span class="line">            ByteBuffer byteBuffer = ByteBuffer.allocate(<span class="number">8</span> * <span class="number">1024</span>);</span><br><span class="line"> </span><br><span class="line">            <span class="comment">////// attachment 용 객체</span></span><br><span class="line">            <span class="class"><span class="keyword">class</span> <span class="title">AsyncIOResultInfo</span> </span>&#123;</span><br><span class="line">                <span class="keyword">long</span> iterations = <span class="number">0L</span>;</span><br><span class="line">                <span class="keyword">long</span> totalBytesRead = <span class="number">0L</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            AsyncIOResultInfo asyncIOResultInfo = <span class="keyword">new</span> AsyncIOResultInfo();</span><br><span class="line"> </span><br><span class="line">            System.err.println(<span class="string">"AsynchronousFileChannel.read() 호출"</span>);</span><br><span class="line"> </span><br><span class="line">            asyncFileChannel.read(</span><br><span class="line">                    byteBuffer, <span class="number">0</span>, asyncIOResultInfo,    <span class="comment">////// iterations 대신 asyncIOResultInfo 전달</span></span><br><span class="line">                    <span class="keyword">new</span> CompletionHandler&lt;Integer, AsyncIOResultInfo&gt;() &#123;    <span class="comment">////// 타입 파라미터에 Long 대신 AsyncIOResultInfo 전달</span></span><br><span class="line"> </span><br><span class="line">                        <span class="meta">@Override</span></span><br><span class="line">                        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">completed</span><span class="params">(Integer result, AsyncIOResultInfo asyncIOResultInfo)</span> </span>&#123;    <span class="comment">////// Long 대신 AsyncIOResultInfo 전달</span></span><br><span class="line">                            <span class="keyword">if</span> (result == -<span class="number">1</span>) &#123;</span><br><span class="line">                                <span class="keyword">long</span> endTime = System.nanoTime();</span><br><span class="line">                                System.err.println(<span class="string">"비정상 종료 : "</span> + (endTime - startTime) + <span class="string">" ns elapsed."</span>);</span><br><span class="line"> </span><br><span class="line">                                <span class="comment">//// asyncFileChannel 닫기</span></span><br><span class="line">                                closeAsyncFileChannel(asyncFileChannel);</span><br><span class="line"> </span><br><span class="line">                                <span class="keyword">return</span>;</span><br><span class="line">                            &#125;</span><br><span class="line"> </span><br><span class="line">                            <span class="comment">// 반복 회수 확인</span></span><br><span class="line">                            System.err.println((asyncIOResultInfo.iterations + <span class="number">1</span>) + <span class="string">"회차 반복"</span>);    <span class="comment">////// iterations 대신 asyncIOResultInfo.iterations</span></span><br><span class="line"> </span><br><span class="line">                            <span class="comment">////// 읽어들인 바이트수 누적</span></span><br><span class="line">                            asyncIOResultInfo.totalBytesRead += result;</span><br><span class="line"> </span><br><span class="line">                            byteBuffer.flip();</span><br><span class="line">                            byteBuffer.mark();</span><br><span class="line">                            <span class="keyword">if</span> (isWrite) System.out.write(byteBuffer.array(), <span class="number">0</span>, result);</span><br><span class="line">                            byteBuffer.reset();</span><br><span class="line"> </span><br><span class="line">                            <span class="comment">// 읽어들인 바이트수가</span></span><br><span class="line">                            <span class="comment">// 파일사이즈와 같거나(버퍼 크기와 파일 크기가 같은 경우)</span></span><br><span class="line">                            <span class="comment">// 버퍼 사이즈보다 작다면 파일의 끝까지 읽은 것이므로 종료 처리</span></span><br><span class="line">                            <span class="keyword">if</span> (result == fileSize || result &lt; byteBuffer.capacity()) &#123;</span><br><span class="line">                                <span class="keyword">long</span> endTime = System.nanoTime();</span><br><span class="line">                                System.err.println(<span class="string">"AsynchronousFileChannel.read() 완료 : "</span> + (endTime - startTime) + <span class="string">" ns elapsed."</span>);</span><br><span class="line"> </span><br><span class="line">                                <span class="comment">////// 총 읽어들인 바이트수 비교</span></span><br><span class="line">                                System.err.println(<span class="string">"fileSize       : "</span> + fileSize);</span><br><span class="line">                                System.err.println(<span class="string">"totalBytesRead : "</span> + asyncIOResultInfo.totalBytesRead);</span><br><span class="line"> </span><br><span class="line">                                <span class="comment">//// asyncFileChannel 닫기</span></span><br><span class="line">                                closeAsyncFileChannel(asyncFileChannel);</span><br><span class="line"> </span><br><span class="line">                                <span class="keyword">return</span>;</span><br><span class="line">                            &#125;</span><br><span class="line">                            <span class="comment">// 읽을 내용이 남아있으므로 반복 회수를 증가 시키고 다시 읽는다.</span></span><br><span class="line">                            <span class="comment">////// iterations 대신 asyncIOResultInfo.iterations</span></span><br><span class="line">                            asyncIOResultInfo.iterations++;</span><br><span class="line">                            asyncFileChannel.read(byteBuffer, result * asyncIOResultInfo.iterations, asyncIOResultInfo, <span class="keyword">this</span>);</span><br><span class="line">                        &#125;</span><br><span class="line"> </span><br><span class="line">                        <span class="meta">@Override</span></span><br><span class="line">                        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">failed</span><span class="params">(Throwable exc, AsyncIOResultInfo iterations)</span> </span>&#123;    <span class="comment">////// Long 대신 AsyncIOResultInfo 전달</span></span><br><span class="line">                            exc.printStackTrace();</span><br><span class="line"> </span><br><span class="line">                            <span class="comment">//// asyncFileChannel 닫기</span></span><br><span class="line">                            closeAsyncFileChannel(asyncFileChannel);</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">            );</span><br><span class="line"> </span><br><span class="line">            System.err.println(<span class="string">"AsyncFileChannel I/O 진행 중에는 다른 작업도 할 수 있지롱"</span>);</span><br><span class="line">            System.err.println(<span class="string">"그동안 그리스에도 다녀오고"</span>);</span><br><span class="line">            System.err.println(<span class="string">"크로아티아에도 갔다오자"</span>);</span><br><span class="line"> </span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);    <span class="comment">//// 상황에 맞는 예외 처리 필요</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">//// asyncFileChannel 닫기</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">closeAsyncFileChannel</span><span class="params">(AsynchronousFileChannel asyncFileChannel)</span> </span>&#123;</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">if</span> (asyncFileChannel != <span class="keyword">null</span> &amp;&amp; asyncFileChannel.isOpen()) &#123;</span><br><span class="line"> </span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                asyncFileChannel.close();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);    <span class="comment">//// 상황에 맞는 예외 처리 필요</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>실행해보면 아래와 같이 전체 읽어들인 바이트수와 파일 크기도 함께 표시할 수 있다.</p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">AsynchronousFileChannel 테스트 시작</span><br><span class="line">AsynchronousFileChannel.read() 호출</span><br><span class="line">AsyncFileChannel I/O 진행 중에는 다른 작업도 할 수 있지롱</span><br><span class="line">그동안 그리스에도 다녀오고</span><br><span class="line">크로아티아에도 갔다오자</span><br><span class="line"><span class="number">1</span>회차 반복</span><br><span class="line"><span class="number">2</span>회차 반복</span><br><span class="line"><span class="number">3</span>회차 반복</span><br><span class="line">...</span><br><span class="line"><span class="number">19496</span>회차 반복</span><br><span class="line"><span class="number">19497</span>회차 반복</span><br><span class="line">AsynchronousFileChannel.read() 완료 : 683431718 <span class="type">ns</span> elapsed.</span><br><span class="line">fileSize       : 159718093</span><br><span class="line">totalBytesRead : 159718093</span><br></pre></td></tr></table></figure>
+<h1 id="기존-방식과의-비교"><a href="#기존-방식과의-비교" class="headerlink" title="기존 방식과의 비교"></a>기존 방식과의 비교</h1><h2 id="속도"><a href="#속도" class="headerlink" title="속도"></a>속도</h2><p>동기와 비동기는 그 작업 자체의 속도 비교보다는 대기 시간 동안 다른 작업 처리가 가능하냐 마냐가 중요하므로, 처리 속도가 중요한 것은 아니지만 그래도 궁금하니까 기존 방식이랑 한 번 비교해보자.</p>
+<p>980메가 정도의 파일로 비교해봤다. 버퍼를 사용할 수 있는 부분에서는 8k 를 적용했다. 참고로 테스트용 대용량 텍스트 파일은 <a href="https://dumps.wikimedia.org/mediawikiwiki/20160720/" target="_blank" rel="noopener">여기</a>에서 내려받을 수 있다.</p>
+<p><img src="http://i.imgur.com/hNq09Zb.png" alt=""></p>
+<p><code>AsynchronousFileChannel</code>은 약 2.75초 정도 소요되었고, 가장 빠른 <code>FileChannel</code>과 <code>BufferedInputStream</code>은 0.5초 이내, <code>BufferedReader</code>와 <code>InputStreamReader</code>는 4~5초 정도 소요되었다.</p>
+<p>텍스트을 읽을 때 간편해서 가장 많이 사용하는 <code>BufferedReader.readLine()</code>이 아무래도 8k 보다는 현저히 바이트수가 작을 행 단위로 반복을 하므로 반복 회수가 가장 많을테고, 따라서 가장 느릴 거라고 예상은 했지만 이 정도 차이라면 상당히 놀랍다. 작은 파일은 관계없겠지만 대용량 파일에서는 <code>BufferedReader.readLine()</code>는 피하는 것이 좋을 것 같다.</p>
+<h2 id="자원-사용"><a href="#자원-사용" class="headerlink" title="자원 사용"></a>자원 사용</h2><p>아래 그림은 다음과 같이 6번의 테스트 수행 시  CPU와 메모리 변화 추이를 나타내고 있다.</p>
+<ol>
+<li>AsynchronousFileChannel.read()</li>
+<li>FileChannel.read()</li>
+<li>BufferedInputStream.read()</li>
+<li>BufferedReader.read()</li>
+<li>InputStreamReader.read()</li>
+<li>BufferedReader.readLine()</li>
+</ol>
+<p><code>BufferedReader.readLine()</code>를 실행할 때만 메모리 사용량이 급격히 증가한다. 처리 속도 뿐아니라 메모리 사용 측면에서도 <code>BufferedReader.readLine()</code>는 대용량 파일에서는 사용하지 않는 것이 좋을 것 같다.</p>
+<p><img src="http://i.imgur.com/86OemjJ.png" alt=""></p>
+<h1 id="정리"><a href="#정리" class="headerlink" title="정리"></a>정리</h1><blockquote>
+<ul>
+<li><p><strong>대용량 파일도 <code>AsynchronousFileChannel</code>을 활용해서 비동기 방식으로 I/O를 처리할 수 있다.</strong></p>
+</li>
+<li><p>하지만 OutOfMemoryError가 발생하지 않도록 <strong>적당한 크기의 <code>ByteBuffer</code>로 쪼개서 반복 처리</strong>하는 것이 좋다.</p>
+</li>
+<li><p><strong>반복 처리 방식, 파일 읽을 위치 지정, 채널 자원의 해제, attachment의 사용</strong> 등 신경써야 할 부분이 있다.</p>
+</li>
+<li><p><strong>대용량 파일에서는 <code>BufferedReader.readLine()</code>는 사용하지 않는 것이 좋다.</strong></p>
+</li>
+</ul>
+</blockquote>
+<h1 id="더-읽을-거리"><a href="#더-읽을-거리" class="headerlink" title="더 읽을 거리"></a>더 읽을 거리</h1><ul>
+<li>jenkov tutorials : <a href="http://tutorials.jenkov.com/java-nio/asynchronousfilechannel.html" target="_blank" rel="noopener">http://tutorials.jenkov.com/java-nio/asynchronousfilechannel.html</a></li>
+<li>java NIO : <a href="http://www.slideshare.net/allnewangel/java-nio-23150417" target="_blank" rel="noopener">http://www.slideshare.net/allnewangel/java-nio-23150417</a></li>
+<li>java nio intro : <a href="https://tutorials.techmytalk.com/2014/11/03/java-nio-introduction-2/" target="_blank" rel="noopener">https://tutorials.techmytalk.com/2014/11/03/java-nio-introduction-2/</a></li>
+<li>java file I/O tutorials : <a href="https://docs.oracle.com/javase/tutorial/essential/io/fileio.html" target="_blank" rel="noopener">https://docs.oracle.com/javase/tutorial/essential/io/fileio.html</a></li>
+<li>API docs<ul>
+<li><a href="https://docs.oracle.com/javase/7/docs/api/java/nio/channels/AsynchronousFileChannel.html" target="_blank" rel="noopener">https://docs.oracle.com/javase/7/docs/api/java/nio/channels/AsynchronousFileChannel.html</a></li>
+<li><a href="https://docs.oracle.com/javase/7/docs/api/java/nio/channels/CompletionHandler.html" target="_blank" rel="noopener">https://docs.oracle.com/javase/7/docs/api/java/nio/channels/CompletionHandler.html</a></li>
+<li><a href="https://docs.oracle.com/javase/7/docs/api/java/nio/ByteBuffer.html" target="_blank" rel="noopener">https://docs.oracle.com/javase/7/docs/api/java/nio/ByteBuffer.html</a></li>
+</ul>
+</li>
+<li>Async IO 개념 정리 : <a href="http://djkeh.github.io/articles/Boost-application-performance-using-asynchronous-IO-kor/" target="_blank" rel="noopener">http://djkeh.github.io/articles/Boost-application-performance-using-asynchronous-IO-kor/</a></li>
+</ul>
+<h1 id="더-해볼-거리"><a href="#더-해볼-거리" class="headerlink" title="더 해볼 거리"></a>더 해볼 거리</h1><ul>
+<li><code>ByteBuffer</code>를 사용할 때마다 생성하지 말고 Pooling 하면 속도가 더 나아질 것 같다.</li>
+<li><code>ByteBuffer</code>의 크기를 바꿔가면서 <code>FileChannel</code>, <code>BufferedInputStream</code>와 속도 비교를 해보는 것도 좋을 것 같다.</li>
+<li><code>attachment</code>를 잘 활용하면 예외 발생 처리 시 처음부터 모두 다시 읽지 않고 성공적으로 읽기를 마친 위치부터 다시 읽도록 효율화도 할 수 있을 것 같다.</li>
+<li><code>ByteBuffer</code> 대신 <code>Direct ByteBuffer</code>로 테스트 해보는 것도 재미있을 것 같다.</li>
+</ul>
+
+        
+        
+            
+        
+        <hr/>
+        <div>
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="크리에이티브 커먼즈 라이선스" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><a href='https://github.com/homoefficio' target='_blank'>HomoEfficio</a>가 작성한 이 저작물은(는) <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스</a>에 따라 이용할 수 있습니다.
+        </div>
+    </div>
+    <div class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/Async/">Async</a> <a class="tag tag--primary tag--small t-link" href="/tags/Asynchronous/">Asynchronous</a> <a class="tag tag--primary tag--small t-link" href="/tags/AsynchronousFileChannel/">AsynchronousFileChannel</a> <a class="tag tag--primary tag--small t-link" href="/tags/Channel/">Channel</a> <a class="tag tag--primary tag--small t-link" href="/tags/I-O/">I/O</a> <a class="tag tag--primary tag--small t-link" href="/tags/Java/">Java</a> <a class="tag tag--primary tag--small t-link" href="/tags/NIO/">NIO</a> <a class="tag tag--primary tag--small t-link" href="/tags/Stream/">Stream</a> <a class="tag tag--primary tag--small t-link" href="/tags/performance/">performance</a> <a class="tag tag--primary tag--small t-link" href="/tags/비동기/">비동기</a> <a class="tag tag--primary tag--small t-link" href="/tags/비동기파일채널/">비동기파일채널</a> <a class="tag tag--primary tag--small t-link" href="/tags/성능/">성능</a> <a class="tag tag--primary tag--small t-link" href="/tags/스트림/">스트림</a> <a class="tag tag--primary tag--small t-link" href="/tags/자바/">자바</a> <a class="tag tag--primary tag--small t-link" href="/tags/채널/">채널</a>
+
+            </div>
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/11/18/알고보면-만만한-Jackson-Custom-Serialization/"  data-tooltip="알고보면 만만한 Jackson Custom Serialization">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/08/06/Java-NIO는-생각만큼-non-blocking-하지-않다/" data-tooltip="Java NIO는 생각만큼 non-blocking 하지 않다">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2016/08/13/대용량-파일을-AsynchronousFileChannel로-다뤄보기/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2016/08/13/대용량-파일을-AsynchronousFileChannel로-다뤄보기/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2016/08/13/대용량-파일을-AsynchronousFileChannel로-다뤄보기/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+        
+            <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2018 HomoEfficio. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="1">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/11/18/알고보면-만만한-Jackson-Custom-Serialization/"  data-tooltip="알고보면 만만한 Jackson Custom Serialization">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/08/06/Java-NIO는-생각만큼-non-blocking-하지-않다/" data-tooltip="Java NIO는 생각만큼 non-blocking 하지 않다">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2016/08/13/대용량-파일을-AsynchronousFileChannel로-다뤄보기/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2016/08/13/대용량-파일을-AsynchronousFileChannel로-다뤄보기/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2016/08/13/대용량-파일을-AsynchronousFileChannel로-다뤄보기/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="1">
+    <ul class="share-options">
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2016/08/13/대용량-파일을-AsynchronousFileChannel로-다뤄보기/">
+                <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2016/08/13/대용량-파일을-AsynchronousFileChannel로-다뤄보기/">
+                <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2016/08/13/대용량-파일을-AsynchronousFileChannel로-다뤄보기/">
+                <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+            
+        </div>
+        <div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=110"/>
+        
+            <h4 id="about-card-name">HomoEfficio</h4>
+        
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Seoul, Korea.
+            </h5>
+        
+    </div>
+</div>
+        <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/script.min.js"></script>
+<!--SCRIPTS END-->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'hanmomhanda';
+        (function() {
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+
+
+
+</html>

@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="null">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="뒤태지존의 끄적거림">
+    <title>Blocking-NonBlocking-Synchronous-Asynchronous - 뒤태지존의 끄적거림</title>
+    <meta name="author" content="HomoEfficio">
+    <meta name="description" content="뒤태지존의 끄적거림">
+    
+        <link rel="icon" href="/assets/images/favicon.ico">
+    
+    
+        <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <meta name="description" content="꽤 자주 접하는 용어다. 특히나 요즘들어 더 자주 접하게 되는데, 얼추 알고는 있고 알고 있는게 틀린 것도 아니지만, 막상 명확하게 구분해서 설명하라면 또 만만치가 않은.. 그래서 찾아보면 또 대충 뭔소린지 알아들을 것 같다가도, 구분해서 설명하라면 머뭇거리게 되긴 마찬가지다. 자료마다 미세하나마 조금씩 차이가 있는 것들도 많아서, 정확하고 유일한 구분법은">
+<meta name="keywords" content="IO,Computer Science,Blocking,NonBlocking,Synchronous,Asynchronous,입출력,넌블러킹,블러킹,동기,비동기">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Blocking-NonBlocking-Synchronous-Asynchronous">
+<meta property="og:url" content="http://homoefficio.github.io/2017/02/19/Blocking-NonBlocking-Synchronous-Asynchronous/index.html">
+<meta property="og:site_name" content="뒤태지존의 끄적거림">
+<meta property="og:description" content="꽤 자주 접하는 용어다. 특히나 요즘들어 더 자주 접하게 되는데, 얼추 알고는 있고 알고 있는게 틀린 것도 아니지만, 막상 명확하게 구분해서 설명하라면 또 만만치가 않은.. 그래서 찾아보면 또 대충 뭔소린지 알아들을 것 같다가도, 구분해서 설명하라면 머뭇거리게 되긴 마찬가지다. 자료마다 미세하나마 조금씩 차이가 있는 것들도 많아서, 정확하고 유일한 구분법은">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://www.ibm.com/developerworks/library/l-async/figure1.gif">
+<meta property="og:image" content="http://i.imgur.com/iSafBIF.png">
+<meta property="og:image" content="http://i.imgur.com/06P0Q6m.png">
+<meta property="og:image" content="http://i.imgur.com/a8xZ9No.png">
+<meta property="og:image" content="http://i.imgur.com/zKF0CgK.png">
+<meta property="og:image" content="http://i.imgur.com/gKDoKbs.png">
+<meta property="og:updated_time" content="2018-10-13T15:49:56.182Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Blocking-NonBlocking-Synchronous-Asynchronous">
+<meta name="twitter:description" content="꽤 자주 접하는 용어다. 특히나 요즘들어 더 자주 접하게 되는데, 얼추 알고는 있고 알고 있는게 틀린 것도 아니지만, 막상 명확하게 구분해서 설명하라면 또 만만치가 않은.. 그래서 찾아보면 또 대충 뭔소린지 알아들을 것 같다가도, 구분해서 설명하라면 머뭇거리게 되긴 마찬가지다. 자료마다 미세하나마 조금씩 차이가 있는 것들도 많아서, 정확하고 유일한 구분법은">
+<meta name="twitter:image" content="https://www.ibm.com/developerworks/library/l-async/figure1.gif">
+    
+        <meta rel="publisher" content="https://plus.google.com/+오명운"/>
+    
+    
+    
+        <meta property="og:image" content="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=640"/>
+    
+    
+        <meta property="og:image" content="/2017/02/19/Blocking-NonBlocking-Synchronous-Asynchronous/http:/i.imgur.com/oPYfrZl.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2017/02/19/Blocking-NonBlocking-Synchronous-Asynchronous/http://i.imgur.com/oPYfrZl.png" />
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style.min.css">
+    <!--STYLES END-->
+    
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-79893978-1']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6494847158566766",
+    enable_page_level_ads: true
+  });
+</script>
+</head>
+
+    <body>
+        <div id="blog">
+            <header id="header" data-behavior="1">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="/ ">뒤태지존의 끄적거림</a>
+    </h1>
+    
+        <a class="header-right-picture" href="/#about">
+            <img class="header-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+        </a>
+    
+</header>
+            <nav id="sidebar" data-behavior="1">
+    
+    <div class="sidebar-profile">
+        <a href="/#about">
+            
+            <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+            
+        </a>
+        <span class="sidebar-profile-name">HomoEfficio</span>
+    </div>
+    
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/ 
+                    ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">Home</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-categories
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">Categories</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-tags
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">Tags</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-archives
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">Archives</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link st-search-show-outputs"
+                    href="#search
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                    <span class="sidebar-button-desc">Search</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="#about
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">About me</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="https://github.com/HomoEfficio" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                    <span class="sidebar-button-desc">GitHub</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="mailto:homo.efficio@gmail.com" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-envelope-o"></i>
+                    <span class="sidebar-button-desc">Mail</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/atom.xml
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+            <div id="main" data-behavior="1">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+        <div class="post-header main-content-wrap">
+    
+        <h1 class="post-title" itemprop="headline">Blocking-NonBlocking-Synchronous-Asynchronous</h1>
+    
+    <div class="post-meta">
+    <time  itemprop="datePublished" content="Sun Feb 19 2017 13:16:32 GMT+0900">
+        Feb 19, 2017
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Concepts/">Concepts</a>
+
+
+    
+</div>
+</div>
+    
+    <div class="post-content markdown main-content-wrap" itemprop="articleBody">
+        
+            <p>꽤 자주 접하는 용어다. 특히나 요즘들어 더 자주 접하게 되는데, 얼추 알고는 있고 알고 있는게 틀린 것도 아니지만, 막상 명확하게 구분해서 설명하라면 또 만만치가 않은..</p>
+<p>그래서 찾아보면 또 대충 뭔소린지 알아들을 것 같다가도, 구분해서 설명하라면 머뭇거리게 되긴 마찬가지다.</p>
+<p>자료마다 미세하나마 조금씩 차이가 있는 것들도 많아서, 정확하고 유일한 구분법은 사실 없는 것 같다. 그리고 이렇게라도 꼭 구분해야만 하는 것인가 하는 생각도 들지만, 그래도 ‘나의 언어로 구분하고 설명해보는 것’을 목표로 한 번 정리해보자.</p>
+<h1 id="IBM-developerWorks의-2-2-매트릭스"><a href="#IBM-developerWorks의-2-2-매트릭스" class="headerlink" title="IBM developerWorks의 2:2 매트릭스"></a>IBM developerWorks의 2:2 매트릭스</h1><p>이 주제로 자료를 찾아본 사람들은 아마 아래의 그림을 한 번쯤은 봤을 것이다.</p>
+<p><img src="https://www.ibm.com/developerworks/library/l-async/figure1.gif" alt="IBM developerWorks의 단순화된 리눅스 I/O 모델 매트릭스"></p>
+<p>위 그림만으로도 딱 와닿는다면 이미 Blocking-NonBlocking-Synchronous-Asynchronous의 구분에 대한 감이 있다고 볼 수 있으므로, 이 글은 더 이상 읽을 필요가 없다. ^^</p>
+<p>와닿지 않는다면 조금 더 읽어보자. 하지만 앞으로 전개될 내용을 보면서, 이젠 너무 오래되어 버린 위의 IBM 그림(특히 I/O Multiplexing이 Blocking-Async로 구분되어 있는 점)에 구애 받을 필요는 없다. </p>
+<h1 id="익숙한-것"><a href="#익숙한-것" class="headerlink" title="익숙한 것"></a>익숙한 것</h1><p>일단 대충 알기로 Blocking과 Synchronous 둘이 비슷하고, Non-blocking과 Asynchronous 둘이 비슷하다. 그래서 대부분 아래 그림이 표시하는 개념을 알고 있다.</p>
+<p><img src="http://i.imgur.com/iSafBIF.png" alt="Imgur"></p>
+<p>익숙해서 그런지 구체적인 예도 비교적 쉽게 떠올릴 수 있다.</p>
+<p><img src="http://i.imgur.com/06P0Q6m.png" alt="Imgur"></p>
+<h1 id="낯선-것"><a href="#낯선-것" class="headerlink" title="낯선 것"></a>낯선 것</h1><p>비슷해 보이는 것 둘씩 묶어보는 건 앞에서 살펴본 것처럼 꽤나 익숙하다. 문제는 비슷해 보이지 않는 걸 둘씩 묶어보는 건데, 이건 사례는 둘째치고 그림조차 잘 그려지지 않는다. </p>
+<p>먼저 Sync-NonBlocking을 생각해보자. 사실 Sync는 Blocking과 비슷한데, Blocking의 반대인 NonBlocking이랑 공존한다는 것 자체가 성립이 안되는 거 아닌가?</p>
+<p>Async-Blocking도 마찬가지다. Async는 NonBlocking과 비슷한데, NonBlocking의 반대인 Blocking이랑 공존한다는 것 자체가 성립이 안되는 거 아닌가?</p>
+<h1 id="다른-관심사"><a href="#다른-관심사" class="headerlink" title="다른 관심사"></a>다른 관심사</h1><p>Blocking-Sync가 비슷하고, NonBlocking-Async가 비슷하지만, Blocking/NonBlocking과 Sync/Async이 2:2 매트릭스 그림에서 각각 다른 축에 자리잡는 데는 이유가 있다. 두 그룹은 관심사가 다르다. </p>
+<h2 id="Blocking-NonBlocking"><a href="#Blocking-NonBlocking" class="headerlink" title="Blocking/NonBlocking"></a>Blocking/NonBlocking</h2><blockquote>
+<p><strong>Blocking/NonBlocking은 호출되는 함수가 바로 리턴하느냐 마느냐가 관심사</strong>다. </p>
+</blockquote>
+<p>호출된 함수가 바로 리턴해서 호출한 함수에게 제어권을 넘겨주고, 호출한 함수가 다른 일을 할 수 있는 기회를 줄 수 있으면 NonBlocking이다.</p>
+<p>그렇지 않고 호출된 함수가 자신의 작업을 모두 마칠 때까지 호출한 함수에게 제어권을 넘겨주지 않고 대기하게 만든다면 Blocking이다.</p>
+<h2 id="Synchronous-Asynchronous"><a href="#Synchronous-Asynchronous" class="headerlink" title="Synchronous/Asynchronous"></a>Synchronous/Asynchronous</h2><blockquote>
+<p><strong>Synchronous/Asynchronous는 호출되는 함수의 작업 완료 여부를 누가 신경쓰냐가 관심사</strong>다.</p>
+</blockquote>
+<p>호출되는 함수에게 callback을 전달해서, 호출되는 함수의 작업이 완료되면 호출되는 함수가 전달받은 callback을 실행하고, 호출하는 함수는 작업 완료 여부를 신경쓰지 않으면 Asynchronous다.</p>
+<p>호출하는 함수가 호출되는 함수의 작업 완료 후 리턴을 기다리거나, 또는 호출되는 함수로부터 바로 리턴 받더라도 작업 완료 여부를 호출하는 함수 스스로 계속 확인하며 신경쓰면 Synchronous다.</p>
+<h1 id="비슷한-동작-다른-관심사"><a href="#비슷한-동작-다른-관심사" class="headerlink" title="비슷한 동작, 다른 관심사"></a>비슷한 동작, 다른 관심사</h1><p>앞에서 막연하게 비슷하다고 했던 것은 조금 구체적으로 말하면 동작이 비슷한 것이었다. Blocking이나 Sync는 막거나 기다리거나 하는 등 둘 모두 뭔가 비효율적으로 동작하는 느낌인 반면에, NonBlocking이나 Async는 막지도 않고 완료되면 알아서 처리하는 등 둘 모두 뭔가 효율적으로 동작하는 느낌이다.</p>
+<p>이제 동작은 비슷하지만 관심사가 다르다는 점을 염두에 두고 낯선 조합을 살펴보자.</p>
+<h2 id="NonBlocking-Sync"><a href="#NonBlocking-Sync" class="headerlink" title="NonBlocking-Sync"></a>NonBlocking-Sync</h2><p>앞에서 살펴본대로 조합해보면 NonBlocking-Sync는 호출되는 함수는 바로 리턴하고, 호출하는 함수는 작업 완료 여부를 신경쓰는 것이다. 신경쓰는 방법이 기다리거나 물어보거나 두 가지가 있었는데, NonBlocking 함수를 호출했다면 사실 기다릴 필요는 없고 물어보는 일이 남는다. </p>
+<p>즉, NonBlocking 메서드 호출 후 바로 반환 받아서 다른 작업을 할 수 있게 되지만, 메서드 호출에 의해 수행되는 작업이 완료된 것은 아니며, 호출하는 메서드가 호출되는 메서드 쪽에 작업 완료 여부를 계속 문의한다. </p>
+<p>그림을 그려보면 다음과 같다.</p>
+<p><img src="http://i.imgur.com/a8xZ9No.png" alt="Imgur"></p>
+<p>이런 케이스가 뭐가 있을까 생각해보니 <code>future.isDone()</code>이 이것과 비슷한 것 같다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Future ft = asyncFileChannel.read(~~~);</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span>(!ft.isDone()) &#123;</span><br><span class="line">    <span class="comment">// isDone()은 asyncChannle.read() 작업이 완료되지 않았다면 false를 바로 리턴해준다.</span></span><br><span class="line">    <span class="comment">// isDone()은 물어보면 대답을 해줄 뿐 작업 완료를 스스로 신경쓰지 않고,</span></span><br><span class="line">    <span class="comment">//     isDone()을 호출하는 쪽에서 계속 isDone()을 호출하면서 작업 완료를 신경쓴다.</span></span><br><span class="line">    <span class="comment">// asyncChannle.read()이 완료되지 않아도 여기에서 다른 작업 수행 가능 </span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 작업이 완료되면 작업 결과에 따른 다른 작업 처리</span></span><br></pre></td></tr></table></figure>
+<p>참고로 위 코드는 NonBlocking-Sync라는 특성 이해에 집중할 수 있도록 간략화한 예제고, 실무적으로는 <code>Future</code>보다는 <code>CompletableFuture</code>를 쓰거나, <code>Future</code>를 쓴다면 위의 while 블록은 별도의 쓰레드로 빼서 실행하는 것이 좋다.</p>
+<h2 id="Blocking-Async"><a href="#Blocking-Async" class="headerlink" title="Blocking-Async"></a>Blocking-Async</h2><p>이제 마지막 조각인 Blocking-Async다.</p>
+<p>앞에서 살펴본대로 조합해보면 Blocking-Async는 호출되는 함수가 바로 리턴하지 않고, 호출하는 함수는 작업 완료 여부를 신경쓰지 않는 것이다.</p>
+<p>그림을 그려보면 다음과 같다.</p>
+<p><img src="http://i.imgur.com/zKF0CgK.png" alt="Imgur"></p>
+<p>이런 사례는 사실 생각해봐도 금방 떠오르는 게 없다. 어차피 Blocking되어 대기하는 것 외에는 다른 일도 못 하게된 마당에, 그냥 작업 끝날 때까지 기다렸다가 결과를 반환 받아서 처리하는 Blocking-Sync 방식과 성능적으로 거의 차이가 나지 않을 것 같은 방식이라서가 아닐까..</p>
+<p>글을 올리고 보니 다른 분께서 좋은 의견을 주셨다. Blocking-Async는 별로 이점이 없어서 일부러 이 방식을 사용할 필요가 없기는 한데, 의도하지 않게 Blocking-Async로 동작하는 경우가 있다고 한다. 원래는 NonBlocking-Async를 추구하다가 의도와는 다르게 실제로는 Blocking-Async가 되어버리는 경우라고 하는데 그것은 바로..</p>
+<p><strong>Blocking-Async의 대표적인 케이스가 Node.js와 MySQL의 조합</strong>이라고 한다.</p>
+<p>Node.js 쪽에서 callback 지옥을 헤치면서 Async로 전진해와도, 결국 DB 작업 호출 시에는 MySQL에서 제공하는 드라이버를 호출하게 되는데, 이 드라이버가 Blocking 방식이라고 한다. </p>
+<p>이건 사실 Node.js 뿐아니라 Java의 JDBC도 마찬가지다. 다만 Node.js가 싱글 쓰레드 루프 기반이라 멀티 쓰레드 기반인 Java의 Servlet 컨테이너보다 문제가 더 두드러져 보일 뿐, Blocking-Async라는 근본 원인은 같다.</p>
+<p>그래서 Blocking-Async는 이렇게 정리해도 좋을 것 같다.</p>
+<blockquote>
+<p>Blocking-Async는 별다른 장점이 없어서 일부러 사용할 필요는 없지만, </p>
+<p><strong>NonBlocking-Async 방식을 쓰는데 그 과정 중에 하나라도 Blocking으로 동작하는 놈이 포함되어 있다면 의도하지 않게 Blocking-Async로 동작</strong>할 수 있다.</p>
+</blockquote>
+<h1 id="정리"><a href="#정리" class="headerlink" title="정리"></a>정리</h1><blockquote>
+<ul>
+<li><p><strong>Blocking/NonBlocking은 호출되는 함수가 바로 리턴하느냐 마느냐가 관심사</strong></p>
+<ul>
+<li>바로 리턴하지 않으면 Blocking</li>
+<li>바로 리턴하면 NonBlocking</li>
+</ul>
+</li>
+<li><p><strong>Synchronous/Asynchronous는 호출되는 함수의 작업 완료 여부를 누가 신경쓰냐가 관심사</strong></p>
+<ul>
+<li>함수의 작업 완료를 호출한 함수가 신경쓰면 Synchronous</li>
+<li>함수의 작업 완료를 호출된 함수가 신경쓰면 Asynchronous</li>
+</ul>
+</li>
+<li><p>성능 상으로 가장 유리한 모델은 Async-NonBlocking 모델이다.</p>
+</li>
+</ul>
+</blockquote>
+<p><img src="http://i.imgur.com/gKDoKbs.png" alt="Imgur"></p>
+<h1 id="기타"><a href="#기타" class="headerlink" title="기타"></a>기타</h1><p>공유하면 좋은 건 피드백을 받을 수 있다는 것이다.</p>
+<p>Nonblocking과 Async를 관심사 관점이 아니라 다음과 같이 동작 관점에서도 구분할 수 있다는 좋은 의견도 있었다.</p>
+<blockquote>
+<ul>
+<li><p>NonBlocking은 제어문 수준에서 지체없이 반환하는 것</p>
+</li>
+<li><p>Asynchronous는 별도의 쓰레드로 빼서 실행하고, 완료되면 호출하는 측에 알려주는 것</p>
+</li>
+</ul>
+</blockquote>
+<p>다음과 같이 입장(?)을 통해 구분한다는 의견도 좋아 보인다.</p>
+<blockquote>
+<ul>
+<li>Blocking/NonBlocking은 호출한 입장에서의 특징</li>
+<li>Sync/Async는 처리되는 방식의 특징</li>
+</ul>
+</blockquote>
+<h2 id="I-O-Multiplexing"><a href="#I-O-Multiplexing" class="headerlink" title="I/O Multiplexing"></a>I/O Multiplexing</h2><p>아래 댓글에도 있지만, 페북 등 다른 채널을 통해서도 역시나 I/O Multiplexing에 대한 피드백이 많았다. 사실 어느 정도 예상을 하고 의도적으로 I/O Multiplexing에 대한 언급을 하지 않았는데, 그로 인해 오히려 의도하지 않은 부작용이 있는 것 같아서 지금이라도 언급을 하고 넘어가는 것이 좋을 것 같다.</p>
+<p>결론부터 말하면, I/O Multiplexing이 IBM의 그림에서 Blocking-Async로 분류되어 있는 것에 동의하지 않는다.</p>
+<p>일단 범위를 작게 해서 I/O Multiplexing 중에서 <code>select()</code> 호출 부분에만 국한해서 살펴보자.<br><a href="http://man7.org/linux/man-pages/man2/select.2.html" target="_blank" rel="noopener">리눅스 man페이지의 select</a>의 description에는 아래와 같이 기술되어 있다.</p>
+<blockquote>
+<p>select() and pselect() allow a program to monitor multiple file<br>descriptors, <strong>waiting</strong> until one or more of the file descriptors become<br>“ready” for some class of I/O operation (e.g., input possible).  A<br>file descriptor is considered ready if it is possible to perform a<br>corresponding I/O operation (e.g., read(2) without blocking, or a<br>sufficiently small write(2))</p>
+<p>(대략) 하나 이상의 fd가 ready 상태가 될 때까지 wating, 즉, 기다린다. </p>
+</blockquote>
+<p>이렇게 보면 <strong>OS 수준에서 <code>select()</code> 자체는 기다리는 Sync 방식</strong>이라고 할 수 있다.</p>
+<p>그럼 Blocking/NonBlocking은 어느쪽이냐 하는 문제가 남는데, 이는 구현에 따라 달라진다. Java를 예로 들면 API 문서에 <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/channels/Selector.html#select--" target="_blank" rel="noopener">select()</a>는 Blocking 방식이라고 기술되어 있으며, <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/channels/Selector.html#selectNow--" target="_blank" rel="noopener">selectNow()</a>는 NonBlocking 방식이라고 기술되어 있다.</p>
+<p>따라서 <strong>I/O Multiplexing 중에서 select의 호출만을 떼어서 말하면 일단 OS 수준에서 Sync 방식인 것은 자명하지만, Sync-Blocking인지 Sync-NonBlocking 인지는 구현 방식에 따라 달라지므로 어느 한 쪽이 맞다고 하기 어렵다</strong>.</p>
+<p>하지만, 보통 I/O Multiplexing이라고 하면 미시적으로 select의 호출 부분만을 말하는 것이 아니라, select의 대상이 되는 channel과의 연계까지도 포함하여 언급하려는 의도가 있다고 볼 수 있다. 그리고 이 과정에서의 channel은 NonBlocking 채널을 말한다. </p>
+<p>그 근거는 앞에서 인용한 리눅스 man 페이지의 내용 중에 ‘읽기에 대해 blocking이 없는 I/O 연산과, 충분히 작은 쓰기 I/O 연산을 수행할 수 있을 때, 해당 fd를 select 될 수 있는 ready 상태로 간주한다’는 내용이 있고, 실무적으로도 Java를 예로 들면 <code>channel.configureBlocking(false);</code>와 같이 채널을 NonBlocking으로 설정한다는 점이다.   </p>
+<p>따라서 <strong>일반적으로 I/O Multiplexing은 Sync방식의 select와 NonBlocking 방식의 channel이 연계되는 Sync-NonBlocking 방식이라고 해도 틀리지 않게 된다</strong>.</p>
+<h1 id="더-읽을-거리"><a href="#더-읽을-거리" class="headerlink" title="더 읽을 거리"></a>더 읽을 거리</h1><ul>
+<li><a href="https://www.lightbend.com/blog/7-ways-washing-dishes-and-message-driven-reactive-systems" target="_blank" rel="noopener">https://www.lightbend.com/blog/7-ways-washing-dishes-and-message-driven-reactive-systems</a></li>
+<li><a href="https://slipp.net/questions/367" target="_blank" rel="noopener">https://slipp.net/questions/367</a></li>
+<li><a href="http://www.slideshare.net/unitimes/sync-asyncblockingnonblockingio" target="_blank" rel="noopener">http://www.slideshare.net/unitimes/sync-asyncblockingnonblockingio</a></li>
+<li><a href="http://djkeh.github.io/articles/Boost-application-performance-using-asynchronous-IO-kor/" target="_blank" rel="noopener">http://djkeh.github.io/articles/Boost-application-performance-using-asynchronous-IO-kor/</a></li>
+<li><a href="https://www.ibm.com/developerworks/library/l-async/" target="_blank" rel="noopener">https://www.ibm.com/developerworks/library/l-async/</a></li>
+</ul>
+
+        
+        
+            
+        
+        <hr/>
+        <div>
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="크리에이티브 커먼즈 라이선스" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><a href='https://github.com/homoefficio' target='_blank'>HomoEfficio</a>가 작성한 이 저작물은(는) <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스</a>에 따라 이용할 수 있습니다.
+        </div>
+    </div>
+    <div class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/Asynchronous/">Asynchronous</a> <a class="tag tag--primary tag--small t-link" href="/tags/Blocking/">Blocking</a> <a class="tag tag--primary tag--small t-link" href="/tags/Computer-Science/">Computer Science</a> <a class="tag tag--primary tag--small t-link" href="/tags/IO/">IO</a> <a class="tag tag--primary tag--small t-link" href="/tags/NonBlocking/">NonBlocking</a> <a class="tag tag--primary tag--small t-link" href="/tags/Synchronous/">Synchronous</a> <a class="tag tag--primary tag--small t-link" href="/tags/넌블러킹/">넌블러킹</a> <a class="tag tag--primary tag--small t-link" href="/tags/동기/">동기</a> <a class="tag tag--primary tag--small t-link" href="/tags/블러킹/">블러킹</a> <a class="tag tag--primary tag--small t-link" href="/tags/비동기/">비동기</a> <a class="tag tag--primary tag--small t-link" href="/tags/입출력/">입출력</a>
+
+            </div>
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/02/19/Java8-람다-관련-스펙-정리/"  data-tooltip="Java8 람다 관련 스펙 정리">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/01/28/토비의-스프링-3장-템플릿/" data-tooltip="토비의-스프링-3장-템플릿">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2017/02/19/Blocking-NonBlocking-Synchronous-Asynchronous/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2017/02/19/Blocking-NonBlocking-Synchronous-Asynchronous/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2017/02/19/Blocking-NonBlocking-Synchronous-Asynchronous/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+        
+            <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2018 HomoEfficio. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="1">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/02/19/Java8-람다-관련-스펙-정리/"  data-tooltip="Java8 람다 관련 스펙 정리">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/01/28/토비의-스프링-3장-템플릿/" data-tooltip="토비의-스프링-3장-템플릿">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2017/02/19/Blocking-NonBlocking-Synchronous-Asynchronous/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2017/02/19/Blocking-NonBlocking-Synchronous-Asynchronous/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2017/02/19/Blocking-NonBlocking-Synchronous-Asynchronous/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="1">
+    <ul class="share-options">
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2017/02/19/Blocking-NonBlocking-Synchronous-Asynchronous/">
+                <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2017/02/19/Blocking-NonBlocking-Synchronous-Asynchronous/">
+                <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2017/02/19/Blocking-NonBlocking-Synchronous-Asynchronous/">
+                <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+            
+        </div>
+        <div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=110"/>
+        
+            <h4 id="about-card-name">HomoEfficio</h4>
+        
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Seoul, Korea.
+            </h5>
+        
+    </div>
+</div>
+        <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/script.min.js"></script>
+<!--SCRIPTS END-->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'hanmomhanda';
+        (function() {
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+
+
+
+</html>

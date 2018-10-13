@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="null">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="뒤태지존의 끄적거림">
+    <title>Java NIO는 생각만큼 non-blocking 하지 않다 - 뒤태지존의 끄적거림</title>
+    <meta name="author" content="HomoEfficio">
+    <meta name="description" content="뒤태지존의 끄적거림">
+    
+        <link rel="icon" href="/assets/images/favicon.ico">
+    
+    
+        <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <meta name="description" content="일부러 낚시 냄새가 독하게 풍기는 제목을 지어봤다. Java NIO는 New IO의 줄임말인데, Non-blocking IO 의 줄임말이라고 알고 있는 개발자도 많은 것 같다.(나도 그랬다..)  그만큼 NIO는 Non-blocking이라는 마케팅이 꽤나 열심이었고, 또 그게 잘 먹혔기 때문인지, File I/O를 사용할 때마저 기존의 IO 방식 대신 NI">
+<meta name="keywords" content="Java,자바,I&#x2F;O,NIO,Stream,Channel,performance,스트림,채널,성능">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Java NIO는 생각만큼 non-blocking 하지 않다">
+<meta property="og:url" content="http://homoefficio.github.io/2016/08/06/Java-NIO는-생각만큼-non-blocking-하지-않다/index.html">
+<meta property="og:site_name" content="뒤태지존의 끄적거림">
+<meta property="og:description" content="일부러 낚시 냄새가 독하게 풍기는 제목을 지어봤다. Java NIO는 New IO의 줄임말인데, Non-blocking IO 의 줄임말이라고 알고 있는 개발자도 많은 것 같다.(나도 그랬다..)  그만큼 NIO는 Non-blocking이라는 마케팅이 꽤나 열심이었고, 또 그게 잘 먹혔기 때문인지, File I/O를 사용할 때마저 기존의 IO 방식 대신 NI">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-10-13T15:49:56.220Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java NIO는 생각만큼 non-blocking 하지 않다">
+<meta name="twitter:description" content="일부러 낚시 냄새가 독하게 풍기는 제목을 지어봤다. Java NIO는 New IO의 줄임말인데, Non-blocking IO 의 줄임말이라고 알고 있는 개발자도 많은 것 같다.(나도 그랬다..)  그만큼 NIO는 Non-blocking이라는 마케팅이 꽤나 열심이었고, 또 그게 잘 먹혔기 때문인지, File I/O를 사용할 때마저 기존의 IO 방식 대신 NI">
+    
+        <meta rel="publisher" content="https://plus.google.com/+오명운"/>
+    
+    
+    
+        <meta property="og:image" content="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=640"/>
+    
+    
+        <meta property="og:image" content="/2016/08/06/Java-NIO는-생각만큼-non-blocking-하지-않다/http:/www.allitebooks.com/wp-content/uploads/2016/03/Java-IO-NIO-and-NIO.2.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2016/08/06/Java-NIO는-생각만큼-non-blocking-하지-않다/http://www.allitebooks.com/wp-content/uploads/2016/03/Java-IO-NIO-and-NIO.2.jpg" />
+    
+    
+        <meta property="og:image" content="/2016/08/06/Java-NIO는-생각만큼-non-blocking-하지-않다/coverImage-blocking.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2016/08/06/Java-NIO는-생각만큼-non-blocking-하지-않다/coverImage-blocking.jpg" />
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style.min.css">
+    <!--STYLES END-->
+    
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-79893978-1']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6494847158566766",
+    enable_page_level_ads: true
+  });
+</script>
+</head>
+
+    <body>
+        <div id="blog">
+            <header id="header" data-behavior="1">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="/ ">뒤태지존의 끄적거림</a>
+    </h1>
+    
+        <a class="header-right-picture" href="/#about">
+            <img class="header-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+        </a>
+    
+</header>
+            <nav id="sidebar" data-behavior="1">
+    
+    <div class="sidebar-profile">
+        <a href="/#about">
+            
+            <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+            
+        </a>
+        <span class="sidebar-profile-name">HomoEfficio</span>
+    </div>
+    
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/ 
+                    ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">Home</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-categories
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">Categories</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-tags
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">Tags</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-archives
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">Archives</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link st-search-show-outputs"
+                    href="#search
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                    <span class="sidebar-button-desc">Search</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="#about
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">About me</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="https://github.com/HomoEfficio" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                    <span class="sidebar-button-desc">GitHub</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="mailto:homo.efficio@gmail.com" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-envelope-o"></i>
+                    <span class="sidebar-button-desc">Mail</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/atom.xml
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+            <div id="main" data-behavior="1">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+        <div class="post-header-cover" style="background-image:url('/2016/08/06/Java-NIO는-생각만큼-non-blocking-하지-않다/coverImage-blocking.jpg');">
+            <div class="post-header main-content-wrap">
+    
+        <h1 class="post-title" itemprop="headline">Java NIO는 생각만큼 non-blocking 하지 않다</h1>
+    
+    <div class="post-meta">
+    <time  itemprop="datePublished" content="Sat Aug 06 2016 15:49:16 GMT+0900">
+        Aug 06, 2016
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Technique/">Technique</a>
+
+
+    
+</div>
+</div>
+        </div>
+    
+    <div class="post-content markdown main-content-wrap" itemprop="articleBody">
+        
+            <p>일부러 낚시 냄새가 독하게 풍기는 제목을 지어봤다.</p>
+<p><strong>Java NIO는 New IO의 줄임말</strong>인데, <strong>Non-blocking IO 의 줄임말이라고 알고 있는 개발자도 많은 것 같다.</strong>(나도 그랬다..) </p>
+<p>그만큼 NIO는 Non-blocking이라는 마케팅이 꽤나 열심이었고, 또 그게 잘 먹혔기 때문인지, File I/O를 사용할 때마저 기존의 IO 방식 대신 NIO를 쓰면 Non-blocking이라서 좋다는 글도 많다. 그냥 그런가보다.. 했는데 알고보니 그렇지 않더라는..</p>
+<h1 id="IO-NIO-Stream-Channel"><a href="#IO-NIO-Stream-Channel" class="headerlink" title="IO : NIO = Stream : Channel"></a>IO : NIO = Stream : Channel</h1><p>옛날에 적성검사나 카투사 시험에서 다음과 같은 유형의 문제와 자주 맞닥뜨렸던 기억이 있다.</p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">고모 : 이모 = 아빠 : ?</span><br></pre></td></tr></table></figure>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">아빠 : 형 = ? : 누나</span><br></pre></td></tr></table></figure>
+<p>뭐랄까.. 가족계보를 선형대수로 알싸하게 풀어낸, 실로 참신하고 현란하기 그지 없는 문제들이다.</p>
+<p>IO와 NIO의 관계도 위와 같은 현란한 비례식으로 생각해보면 머리에 조금이라도 더 남을 수 있을 것만 같다. 특히나 <code>IO : NIO = Blocking : Non-blocking</code> 이라는, 조금 섣부른 넘겨집기에서 나온 비례식은 아래와 같이 바꾸는 것이 좋을 것 같다.</p>
+<blockquote>
+<p><strong>IO : NIO = Stream : Channel</strong></p>
+</blockquote>
+<p>잔말이 많았는데, IO와 NIO가 뭐가 다른지 알려면 <code>Stream</code>과 <code>Channel</code>의 차이점을 먼저 알아야 한다.</p>
+<h1 id="Stream-vs-Channel"><a href="#Stream-vs-Channel" class="headerlink" title="Stream vs Channel"></a>Stream vs Channel</h1><p>기존의 Stream은 읽을 때와 쓸 때 <code>InputStream</code>과 <code>OutputStream</code>으로 구분해서 사용했다. Stream을 통해 흘러다니는 데이터는 기본적으로는 <code>byte</code> 또는 <code>byte[]</code>이고, 읽고 쓰는 작업을 지시한 후에는 그 작업이 끝나야 return 되는 bloking 방식이다.</p>
+<p>Channel은 데이터가 흘러다니는 통로라는 점에서 Stream과 역할은 비슷하지만 동작 방식이 다르다. </p>
+<p>단방향인 Stream과는 달리 Channel은 양방향이라서 intput/output을 구분하지 않고 그냥 <code>ByteChannel</code>, <code>FileChannel</code>를 만들어서 읽을 수도 있고, 쓸 수도 있다.</p>
+<p>Channel은 언제나 <code>Buffer</code>를 통해서만 데이터를 읽거나 쓸 수 있다. Channel에서 데이터를 읽으면 Buffer에 담아야만 어떤 처리를 할 수 있고, Channel에 데이터를 쓰려면 먼저 Buffer에 담고, Buffer에 담긴 데이터를 Channel에 써야 한다.</p>
+<p>Channel은 Non-blocking 방식도 가능하다. 다시 말하지만, <strong>Channel을 사용하는 I/O는 언제나 Non-blocking 방식으로 동작하는 것이 아니라, Non-blocking 방식도 가능하다</strong>는 것이다.</p>
+<p>정리하면 아래와 같다.</p>
+<table>
+<thead>
+<tr>
+<th>Stream</th>
+<th>Channel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>one-way(InputStream or OutputStream)</td>
+<td>two-way(Channel)</td>
+</tr>
+<tr>
+<td>구현체에 따라 primitive부터 object까지 가능하나, 기본적으로는 byte 또는 byte[]</td>
+<td>Buffer</td>
+</tr>
+<tr>
+<td>Blocking</td>
+<td>Non-bloking<strong>도 가능</strong> (언제나 Non-blocking인 것이 아니라)</td>
+</tr>
+</tbody>
+</table>
+<h1 id="Files-new-는-모두-blocking이다"><a href="#Files-new-는-모두-blocking이다" class="headerlink" title="Files.new~~()는 모두 blocking이다."></a>Files.new~~()는 모두 blocking이다.</h1><p><code>java.nio.Files</code>는 NIO 중에서 File I/O를 담당하는데, 결론부터 말하면,</p>
+<blockquote>
+<p>파일을 읽는데 사용되는 <code>Files.newBufferedReader()</code>, <code>Files.newInputStream()</code> 등은 모두 blocking이다.</p>
+<p>파일을 쓰는데 사용되는 <code>Files.newBufferedWriter()</code>, <code>Files.newOutputStream()</code> 등도 모두 blocking이다.</p>
+</blockquote>
+<p>진짜?</p>
+<p>위 메서드들은 결국 <code>Files.newByteChannel()</code>을 통해 생성되는 <code>SeekableByteChannel</code>을 바탕으로 데이터를 읽거나 쓰게 되는데, 이 <code>SeekableByteChannel</code>은 <code>ReadableByteChannel</code>과 <code>WritableByteChannel</code>을 구현하고 있다.</p>
+<p>그런데 <code>ReadableByteChannel</code>과 <code>WritableByteChannel</code>은 모두 <strong>blocking 모드로만 동작하는 Channel</strong>이다.</p>
+<p>근거는? Java API에 다음과 같이 적혀 있다.</p>
+<p><a href="https://docs.oracle.com/javase/8/docs/api/java/nio/channels/ReadableByteChannel.html" target="_blank" rel="noopener">https://docs.oracle.com/javase/8/docs/api/java/nio/channels/ReadableByteChannel.html</a></p>
+<blockquote>
+<p>Interface ReadableByteChannel</p>
+<p>Only one read operation upon a readable channel may be in progress at any given time. <strong>If one thread initiates a read operation upon a channel then any other thread that attempts to initiate another read operation will block until the first operation is complete.</strong> Whether or not other kinds of I/O operations may proceed concurrently with a read operation depends upon the type of the channel.</p>
+</blockquote>
+<p><a href="https://docs.oracle.com/javase/8/docs/api/java/nio/channels/WritableByteChannel.html" target="_blank" rel="noopener">https://docs.oracle.com/javase/8/docs/api/java/nio/channels/WritableByteChannel.html</a></p>
+<blockquote>
+<p>Interface WritableByteChannel</p>
+<p>A channel that can write bytes.<br>Only one write operation upon a writable channel may be in progress at any given time. <strong>If one thread initiates a write operation upon a channel then any other thread that attempts to initiate another write operation will block until the first operation is complete.</strong> Whether or not other kinds of I/O operations may proceed concurrently with a write operation depends upon the type of the channel.</p>
+</blockquote>
+<p>결국 NIO 중에서 File I/O에 관련된 것들은 아쉽지만 모두 blocking인 것이다.</p>
+<p><code>Files.new~~()</code> 외에 <code>Files.lines()</code>, <code>Files.readAllLines()</code>, <code>Files.readAllBytes()</code>, <code>Files.write()</code>도 위에 설명한 것과 마찬가지 이유로 모두 blocking이다.</p>
+<h1 id="어차피-blocking인데-File-I-O에-뭐하러-NIO를-써"><a href="#어차피-blocking인데-File-I-O에-뭐하러-NIO를-써" class="headerlink" title="어차피 blocking인데 File I/O에 뭐하러 NIO를 써?"></a>어차피 blocking인데 File I/O에 뭐하러 NIO를 써?</h1><h2 id="성능"><a href="#성능" class="headerlink" title="성능"></a>성능</h2><p>File I/O에 사용되는 Channel이 blocking 모드로 동작하기는 하지만, 데이터를 <code>Buffer</code>를 통해 이동시키므로써 <strong>기존의 Stream I/O에서 병목을 유발하는 몇가지 레이어를 건너뛸 수 있다</strong>고 한다.(<a href="https://docs.oracle.com/javase/tutorial/essential/io/file.html" target="_blank" rel="noopener">https://docs.oracle.com/javase/tutorial/essential/io/file.html</a>)</p>
+<p>더 구체적으로는 <code>Buffer</code>를 사용하면 DMA를 활용할 수 있다는 건데, <a href="http://eincs.com/2009/08/java-nio-bytebuffer-channel-file/" target="_blank" rel="noopener">여기에 한글로</a> 아주 설명이 잘 되어있다.</p>
+<p>그리고 NIO를 쓰는 게 낫다는 자료는 인터넷에서 쉽게 찾을 수 있다. </p>
+<p>하지만 성능 관련 내용이 이렇게 명백하게 갈릴리가..<br>참고로 다음과 같은 반론도 있다.</p>
+<ul>
+<li><a href="http://mailinator.blogspot.kr/2008/02/kill-myth-please-nio-is-not-faster-than.html" target="_blank" rel="noopener">http://mailinator.blogspot.kr/2008/02/kill-myth-please-nio-is-not-faster-than.html</a></li>
+<li><a href="http://paultyma.blogspot.kr/2008/03/writing-java-multithreaded-servers.html" target="_blank" rel="noopener">http://paultyma.blogspot.kr/2008/03/writing-java-multithreaded-servers.html</a></li>
+</ul>
+<h2 id="기능"><a href="#기능" class="headerlink" title="기능"></a>기능</h2><p>기존의 java.io.File에는 기능적으로 다음과 같은 단점이 있다고 하니, 당연하지만 NIO를 쓸 수 있다면 쓰는 것이 좋다.(<a href="https://docs.oracle.com/javase/tutorial/essential/io/legacy.html#mapping" target="_blank" rel="noopener">https://docs.oracle.com/javase/tutorial/essential/io/legacy.html#mapping</a>)</p>
+<ul>
+<li>Many methods didn’t throw exceptions when they failed, so it was impossible to obtain a useful error message. For example, if a file deletion failed, the program would receive a “delete fail” but wouldn’t know if it was because the file didn’t exist, the user didn’t have permissions, or there was some other problem.</li>
+<li>The rename method didn’t work consistently across platforms.</li>
+<li>There was no real support for symbolic links.</li>
+<li>More support for metadata was desired, such as file permissions, file owner, and other security attributes.</li>
+<li>Accessing file metadata was inefficient.</li>
+<li>Many of the File methods didn’t scale. Requesting a large directory listing over a server could result in a hang. Large directories could also cause memory resource problems, resulting in a denial of service.</li>
+<li>It was not possible to write reliable code that could recursively walk a file tree and respond appropriately if there were circular symbolic links.</li>
+</ul>
+<h1 id="Non-blocking은-그럼-구라"><a href="#Non-blocking은-그럼-구라" class="headerlink" title="Non-blocking은 그럼 구라?"></a>Non-blocking은 그럼 구라?</h1><p>아니다. NIO가 생각만큼 Non-blocking하지 않다는 것이지, Non-blocking이 구라라는 소리는 아니다.</p>
+<h2 id="Non-File-I-O"><a href="#Non-File-I-O" class="headerlink" title="Non File I/O"></a>Non File I/O</h2><p>File I/O가 아닌 것들은 Non-blocking 모드로 동작하는 것들도 많다.<br><code>SelectableChannel</code>을 상속받거나 구현한 Channel은 Non-blocking 모드로 동작할 수 있다. 예를 들어, <code>DatagramChannel</code>, <code>Pipe.SourceChannel</code>, <code>SocketChannel</code>은 <code>ReadableByteChannel</code>과 <code>SelectableChannel</code>을 함께 구현하고 있어서 Non-blocking 모드로 읽는 것이 가능하다.</p>
+<h1 id="File-I-O에서는-정녕-Non-blocking은-없나"><a href="#File-I-O에서는-정녕-Non-blocking은-없나" class="headerlink" title="File I/O에서는 정녕 Non-blocking은 없나?"></a>File I/O에서는 정녕 Non-blocking은 없나?</h1><p>있다. java 7 부터 도입되어 NIO2라고 불리는 NIO에는 <code>AsynchronousFileChannel</code>이 Non-blocking 모드로 동작한다. <code>AsynchronousFileChannel</code>은 별도의 글에서 다뤄본다.</p>
+<h1 id="정리"><a href="#정리" class="headerlink" title="정리"></a>정리</h1><blockquote>
+<ul>
+<li>NIO는 Non-blocking IO의 줄임말이 아니다.</li>
+<li>특히, File I/O는 NIO에 포함된 <code>java.nio.Files</code> 클래스를 사용해도 여전히 blocking모드로 동작한다.</li>
+<li>NIO에서의 File I/O가 기대와는 달리 blocking 모드로 동작한다고 해도, 기능/성능 상으로 유리한 점이 있으니 가능하다면 NIO를 쓰자(성능은 반론도 있기는 하다).</li>
+</ul>
+</blockquote>
+<h1 id="더-읽을거리"><a href="#더-읽을거리" class="headerlink" title="더 읽을거리"></a>더 읽을거리</h1><ul>
+<li>Java NIO : <a href="http://www.slideshare.net/allnewangel/java-nio-23150417" target="_blank" rel="noopener">http://www.slideshare.net/allnewangel/java-nio-23150417</a></li>
+<li>jenkov tutorials : <a href="http://tutorials.jenkov.com/java-nio/index.html" target="_blank" rel="noopener">http://tutorials.jenkov.com/java-nio/index.html</a></li>
+<li>java io tutorials : <a href="https://docs.oracle.com/javase/tutorial/essential/io/index.html" target="_blank" rel="noopener">https://docs.oracle.com/javase/tutorial/essential/io/index.html</a></li>
+<li>open jdk nio : <a href="http://openjdk.java.net/projects/nio/" target="_blank" rel="noopener">http://openjdk.java.net/projects/nio/</a></li>
+<li>[NIO] JAVA NIO의 ByteBuffer와 Channel로 File Handling에서 더 좋은 Perfermance 내기! : <a href="http://eincs.com/2009/08/java-nio-bytebuffer-channel-file/" target="_blank" rel="noopener">http://eincs.com/2009/08/java-nio-bytebuffer-channel-file/</a></li>
+</ul>
+
+        
+        
+            
+        
+        <hr/>
+        <div>
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="크리에이티브 커먼즈 라이선스" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><a href='https://github.com/homoefficio' target='_blank'>HomoEfficio</a>가 작성한 이 저작물은(는) <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스</a>에 따라 이용할 수 있습니다.
+        </div>
+    </div>
+    <div class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/Channel/">Channel</a> <a class="tag tag--primary tag--small t-link" href="/tags/I-O/">I/O</a> <a class="tag tag--primary tag--small t-link" href="/tags/Java/">Java</a> <a class="tag tag--primary tag--small t-link" href="/tags/NIO/">NIO</a> <a class="tag tag--primary tag--small t-link" href="/tags/Stream/">Stream</a> <a class="tag tag--primary tag--small t-link" href="/tags/performance/">performance</a> <a class="tag tag--primary tag--small t-link" href="/tags/성능/">성능</a> <a class="tag tag--primary tag--small t-link" href="/tags/스트림/">스트림</a> <a class="tag tag--primary tag--small t-link" href="/tags/자바/">자바</a> <a class="tag tag--primary tag--small t-link" href="/tags/채널/">채널</a>
+
+            </div>
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/08/13/대용량-파일을-AsynchronousFileChannel로-다뤄보기/"  data-tooltip="대용량 파일을 AsynchronousFileChannel로 다뤄보기">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/06/26/for-loop-를-Stream-forEach-로-바꾸지-말아야-할-3가지-이유/" data-tooltip="for-loop 를 Stream.forEach() 로 바꾸지 말아야 할 3가지 이유">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2016/08/06/Java-NIO는-생각만큼-non-blocking-하지-않다/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2016/08/06/Java-NIO는-생각만큼-non-blocking-하지-않다/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2016/08/06/Java-NIO는-생각만큼-non-blocking-하지-않다/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+        
+            <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2018 HomoEfficio. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="1">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/08/13/대용량-파일을-AsynchronousFileChannel로-다뤄보기/"  data-tooltip="대용량 파일을 AsynchronousFileChannel로 다뤄보기">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/06/26/for-loop-를-Stream-forEach-로-바꾸지-말아야-할-3가지-이유/" data-tooltip="for-loop 를 Stream.forEach() 로 바꾸지 말아야 할 3가지 이유">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2016/08/06/Java-NIO는-생각만큼-non-blocking-하지-않다/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2016/08/06/Java-NIO는-생각만큼-non-blocking-하지-않다/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2016/08/06/Java-NIO는-생각만큼-non-blocking-하지-않다/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="1">
+    <ul class="share-options">
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2016/08/06/Java-NIO는-생각만큼-non-blocking-하지-않다/">
+                <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2016/08/06/Java-NIO는-생각만큼-non-blocking-하지-않다/">
+                <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2016/08/06/Java-NIO는-생각만큼-non-blocking-하지-않다/">
+                <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+            
+        </div>
+        <div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=110"/>
+        
+            <h4 id="about-card-name">HomoEfficio</h4>
+        
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Seoul, Korea.
+            </h5>
+        
+    </div>
+</div>
+        <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/script.min.js"></script>
+<!--SCRIPTS END-->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'hanmomhanda';
+        (function() {
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+
+
+
+</html>

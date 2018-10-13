@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="null">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="뒤태지존의 끄적거림">
+    <title>번역할 뻔 했던 Patterns of Enterprise Application Architecture - 뒤태지존의 끄적거림</title>
+    <meta name="author" content="HomoEfficio">
+    <meta name="description" content="뒤태지존의 끄적거림">
+    
+        <link rel="icon" href="/assets/images/favicon.ico">
+    
+    
+        <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <meta name="description" content="작년에 마틴 파울러의 명저 Patterns of Enterprise Application Architecture를 번역…할 뻔 했다.1장의 샘플 번역을 출판사에 전달하고 실제로 진행하게 되었으나 본업이 너무 바쁘게 되어 어쩔 수 없이 고사해야 했던.. 그 책이 10월말에 나온다고 한다. 맛배기는 여기에서..(뭐하러 홍보까지.. ㅋ) 여러모로 아쉬우니 그 때">
+<meta name="keywords" content="Application Architecture,애플리케이션 아키텍쳐">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="번역할 뻔 했던 Patterns of Enterprise Application Architecture">
+<meta property="og:url" content="http://homoefficio.github.io/2015/10/16/번역할-뻔-했던-Patterns-of-Enterprise-Application-Architecture/index.html">
+<meta property="og:site_name" content="뒤태지존의 끄적거림">
+<meta property="og:description" content="작년에 마틴 파울러의 명저 Patterns of Enterprise Application Architecture를 번역…할 뻔 했다.1장의 샘플 번역을 출판사에 전달하고 실제로 진행하게 되었으나 본업이 너무 바쁘게 되어 어쩔 수 없이 고사해야 했던.. 그 책이 10월말에 나온다고 한다. 맛배기는 여기에서..(뭐하러 홍보까지.. ㅋ) 여러모로 아쉬우니 그 때">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-10-13T15:49:56.278Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="번역할 뻔 했던 Patterns of Enterprise Application Architecture">
+<meta name="twitter:description" content="작년에 마틴 파울러의 명저 Patterns of Enterprise Application Architecture를 번역…할 뻔 했다.1장의 샘플 번역을 출판사에 전달하고 실제로 진행하게 되었으나 본업이 너무 바쁘게 되어 어쩔 수 없이 고사해야 했던.. 그 책이 10월말에 나온다고 한다. 맛배기는 여기에서..(뭐하러 홍보까지.. ㅋ) 여러모로 아쉬우니 그 때">
+    
+        <meta rel="publisher" content="https://plus.google.com/+오명운"/>
+    
+    
+    
+        <meta property="og:image" content="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=640"/>
+    
+    
+        <meta property="og:image" content="/2015/10/16/번역할-뻔-했던-Patterns-of-Enterprise-Application-Architecture/http:/ecx.images-amazon.com/images/I/51X%2Br%2BOdV3L._SX397_BO1,204,203,200_.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2015/10/16/번역할-뻔-했던-Patterns-of-Enterprise-Application-Architecture/http://ecx.images-amazon.com/images/I/51X%2Br%2BOdV3L._SX397_BO1,204,203,200_.jpg" />
+    
+    
+        <meta property="og:image" content="/2015/10/16/번역할-뻔-했던-Patterns-of-Enterprise-Application-Architecture/cover-poeaa.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2015/10/16/번역할-뻔-했던-Patterns-of-Enterprise-Application-Architecture/cover-poeaa.png" />
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style.min.css">
+    <!--STYLES END-->
+    
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-79893978-1']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6494847158566766",
+    enable_page_level_ads: true
+  });
+</script>
+</head>
+
+    <body>
+        <div id="blog">
+            <header id="header" data-behavior="1">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="/ ">뒤태지존의 끄적거림</a>
+    </h1>
+    
+        <a class="header-right-picture" href="/#about">
+            <img class="header-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+        </a>
+    
+</header>
+            <nav id="sidebar" data-behavior="1">
+    
+    <div class="sidebar-profile">
+        <a href="/#about">
+            
+            <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+            
+        </a>
+        <span class="sidebar-profile-name">HomoEfficio</span>
+    </div>
+    
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/ 
+                    ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">Home</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-categories
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">Categories</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-tags
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">Tags</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-archives
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">Archives</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link st-search-show-outputs"
+                    href="#search
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                    <span class="sidebar-button-desc">Search</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="#about
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">About me</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="https://github.com/HomoEfficio" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                    <span class="sidebar-button-desc">GitHub</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="mailto:homo.efficio@gmail.com" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-envelope-o"></i>
+                    <span class="sidebar-button-desc">Mail</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/atom.xml
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+            <div id="main" data-behavior="1">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+        <div class="post-header-cover" style="background-image:url('/2015/10/16/번역할-뻔-했던-Patterns-of-Enterprise-Application-Architecture/cover-poeaa.png');">
+            <div class="post-header main-content-wrap">
+    
+        <h1 class="post-title" itemprop="headline">번역할 뻔 했던 Patterns of Enterprise Application Architecture</h1>
+    
+    <div class="post-meta">
+    <time  itemprop="datePublished" content="Fri Oct 16 2015 15:51:44 GMT+0900">
+        Oct 16, 2015
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/번역/">번역</a>
+
+
+    
+</div>
+</div>
+        </div>
+    
+    <div class="post-content markdown main-content-wrap" itemprop="articleBody">
+        
+            <p>작년에 마틴 파울러의 명저 <strong>Patterns of Enterprise Application Architecture</strong>를 번역…할 뻔 했다.<br>1장의 샘플 번역을 출판사에 전달하고 실제로 진행하게 되었으나 본업이 너무 바쁘게 되어 어쩔 수 없이 고사해야 했던..</p>
+<p>그 책이 10월말에 나온다고 한다. 맛배기는 <a href="http://issuu.com/kr.wikibook/docs/peaa" target="_blank" rel="noopener">여기</a>에서..(뭐하러 홍보까지.. ㅋ)</p>
+<p>여러모로 아쉬우니 그 때 했던 번역본을 남겨보자 ㅋㅋ</p>
+<hr>
+<h1 id="1장-계층화-Layering"><a href="#1장-계층화-Layering" class="headerlink" title="1장. 계층화(Layering)"></a>1장. 계층화(Layering)</h1><p>계층화는 소프트웨어 설계자들이 복잡한 소프트웨어 시스템을 분석하는 데 쓰는 가장 일반적인 기법입니다. 컴퓨터 아키텍처에도 프로그래밍 언어가 운영체제의 시스템 오퍼레이션으로, 장치 드라이버로, CPU 명령으로, 마지막으로 칩에 있는 논리 게이트까지 차례로 내려가는 계층화가 적용되어 있습니다. 네트워크에서도 FTP(File Transfer Protocol)가 TCP(Transmission Control Protocol) 계층 위에, TCP 계층은 IP(Internet Protocol) 계층 위에, IP 계층은 이더넷(Ethernet) 계층 위에 위치합니다.</p>
+<p>시스템을 계층화라는 관점에서 이해하려면, 그 시스템을 구성하는 하위 시스템들이 층층이 겹쳐 만든 케이크의 각 층이라고 생각하면 쉽습니다. 위층은 아래층에서 정의된 다양한 서비스를 이용하지만, 아래층은 위층의 존재 자체를 모릅니다. 그리고 각 층은 위층이 아래층을 볼 수 없게 숨기기 때문에, 계층 4가 계층 3의 서비스를 이용하고 계층 3이 계층 2의 서비스를 이용하지만, 계층 4는 계층 2의 존재를 알지 못합니다(모든 계층화 아키텍처가 이렇게 완벽하게 숨기지는 않지만, 대부분은 서로 볼 수 없게 만듭니다).</p>
+<p>시스템을 계층으로 분리해서 얻을 수 있는 장점은 아래와 같습니다.</p>
+<ul>
+<li>다른 계층을 잘 모르더라도 하나의 계층을 논리적인 전체 단위처럼 이해하고 활용할 수 있다. 예를 들면, 이더넷이 어떻게 동작하는지 자세히 몰라도 TCP 계층을 알면 그 위에 FTP 서비스를 구현할 수 있다.</li>
+<li>계층은 제공하는 서비스가 같다면 다른 방식으로 구현한 계층으로 교체할 수 있다. FTP 서비스는 이더넷이나 PPP(Point-to-Point Protocol) 등 네트워크 케이블 회사가 사용하는 그 어떤 종류의 연결 방식으로 바꾸더라도 똑같이 동작할 수 있다.</li>
+<li>계층 사이의 의존성을 줄일 수 있다. 케이블 회사가 물리적인 전송 체계를 변경하더라도, 그 체계가 IP 계층 서비스를 지원하기만 한다면 FTP 서비스는 아무런 수정도 할 필요가 없다.</li>
+<li>계층으로 나누면 표준화를 유도할 수 있다. 다른 계층으로 분리된 TCP와 IP는 각 동작 원리가 잘 정의되어 있어 표준이 될 수 있었다.</li>
+<li>계층이 하나 만들어지면 그 위에 여러 상위 수준 서비스들을 만들 수 있다. TCP/IP가 만들어지자 그 위에 FTP와 텔넷, SSH(Secure SHell), HTTP(Hyper Text Transfer Protocol) 같은 상위 수준 서비스가 만들어졌다. 계층화가 없었다면 이런 상위 수준 서비스는 하부 프로토콜을 모두 따로따로 만들어야 했을 것이다.</li>
+</ul>
+<p>계층화가 중요한 기법이긴 하지만 아래와 같은 단점도 있습니다.</p>
+<ul>
+<li>각 계층이 캡슐화를 완벽하게 구현하지 못하면 한 계층에서의 변경이 다른 계층의 연쇄적인 변경으로 이어진다. 계층화된 엔터프라이즈 애플리케이션에서 UI(User Interface)에 표시해야할 요소를 추가할 때 데이타베이스도 변경해야 하고, UI와 데이타베이스 사이에 있는 모든 계층도 변경해야할 때도 있다.</li>
+<li>과도한 계층화는 성능에 악영향을 미칠 수 있다. 일반적으로 데이타는 한 계층을 지날 때마다 조금씩 그 모양새가 변하며, 그런 변환 처리가 성능에 부담이 될 수 있다. 하지만 내부의 함수를 캡슐화하는 것으로 성능 부담을 보상하고도 남을 만큼 효율성이 개선될 수도 있다. 트랜잭션 제어를 한 계층으로 최적화하면 모든 처리가 빨라질 수 있다.</li>
+</ul>
+<p>계층화에서 가장 어려운 점은 어떤 계층을 포함할 것인지, 또 각 계층이 어떤 책임을 가져야하는지 결정하는 것입니다.</p>
+<h2 id="엔터프라이즈-애플리케이션-계층의-진화"><a href="#엔터프라이즈-애플리케이션-계층의-진화" class="headerlink" title="엔터프라이즈 애플리케이션 계층의 진화"></a>엔터프라이즈 애플리케이션 계층의 진화</h2><p>예전 배치(batch)시스템을 이모저모 모두 다뤄봤다고 말하기는 어렵지만, 그 당시 사람들이 계층에 대해 깊이 고민했을거라고 생각하지는 않습니다. 배치 시스템처럼 색인 순서 접근 방식(ISAM, Indexed Sequential Access Method), 가상 기억 액세스 방식(VSAM, Virtual Storage Access Method)과 같은 형식의 파일을 처리하는 애플리케이션을 만들었다고 가정해보면, 사실 그 애플리케이션에 계층화를 적용할 필요는 없어보이기 때문입니다.</p>
+<p>계층이라는 개념은 90년대 클라이언트-서버 시스템의 등장과 함께 세상에 나타나기 시작했습니다. 클라이언트-서버 시스템은 두 개의 계층으로 이루어져 있었습니다. 클라이언트에는 사용자 인터페이스와 애플리케이션 코드가 있었고, 서버에는 보통 관계형 데이타베이스가 있었습니다.많이 쓰이는 클라이언트 도구로는 비주얼베이직(Visual Basic), 파워빌더(Powerbuilder), 델파이(Delphi)가 있었는데, SQL(Structured Query Language)을 처리할 수 있는 UI 요소들을 화면에 드래그 앤 드랍 방식으로 배치하고, 속성 창을 통해 데이타베이스에 직접 연결할 수 있어서, 데이타 중심의 애플리케이션을 아주 쉽게 만들 수 있었습니다.</p>
+<p>관계형 데이타베이스를 갱신하고 화면에 표시하는 것이 전부인 애플리케이션에는 클라이언트-서버 시스템이 딱 들어맞습니다. 문제는 비즈니스 규칙, 검증, 계산과 같은 도메인 로직입니다. 개발자들은 보통 이런 로직을 UI 화면에 직접 심는 방식으로 클라이언트 쪽에 작성하는데, 그다지 세련되지 못한 방식이기도 하고 도메인 로직이 복잡해질수록 이런 코드들은 유지보수하기가 힘들어집니다. 게다가 화면에 심어진 로직은 복사하기가 쉬워서, 그 로직에 변경이 발생하면 복사한 모든 곳에 그 변경을 적용하는 반복작업을 해야 합니다.</p>
+<p>대안으로 도메인 로직을 화면이 아닌 데이타베이스에 저장 프로시저(stored procedure)로 담아두기도 했는데, 구조적인 메커니즘의 한계 때문에 역시 편치 않은 코드가 만들어지기는 마찬가지였습니다. 많은 사람들이 관계형 데이타베이스를 좋아하는 이유는 SQL이라는 표준이 있어서 데이타베이스 제품을 교체할 선택권을 가질 수 있기 때문이었습니다. 실제로 데이타베이스를 교체하는 일이 많지는 않지만, 큰 전환 비용 없이 다른 데이타베이스로 교체할 수 있는 선택권을 가질 수 있다는 것은 장점임에 틀림 없습니다. 하지만 표준 없이 각 벤더별로 고유한 방식으로 구현되어 있는 저장 프로시저를 쓰면 그 선택권을 잃어버릴 수밖에 없었습니다.</p>
+<p>클라이언트-서버 시스템이 인기를 끌어갈 무렵, 객체 지향의 세상도 떠오르고 있었습니다. 객체 커뮤니티는 도메인 로직에 대한 답을 알고 있었습니다. 바로 UI를 위한 프리젠테이션 계층, 도메인 로직을 위한 도메인 계층과 데이타 소스로 이루어진 3-계층 시스템입니다. 이 방식으로 도메인 로직을 UI 계층에서 들어내어 다른 계층으로 옮기고 객체를 써서 구조화 할 수 있었습니다.</p>
+<p>객체 지향은 그 유행만큼 많이 발전하지는 못했습니다. 사실 많은 시스템들이 단순한 편이었거나, 적어도 단순하게 시작했었고, 3-계층 방식이 장점이 많기는 했지만, 단순한 시스템을 만드는 데는 클라이언트-서버 도구가 워낙 막강했기 때문입니다. 3-계층 시스템에서는 클라이언트-서버 도구를 쓰는 게 어렵거나 불가능했습니다.</p>
+<p>하지만 웹이 새롭게 나타나자 지각변동이 일어났습니다. 클라이언트-서버 애플리케이션을 웹 브라우저용으로 전환하려면, 이미 리치 클라이언트(rich client)에 담겨져 있는 모든 비즈니스 로직을 웹 인터페이스에 맞도록 다시 만들어야 했습니다. 그에 반해 3-계층으로 잘 설계된 시스템은 프리젠테이션 계층 하나만 새로 추가하면 끝이었습니다. 그리고 이 시기에 자바라는 객체 지향 언어가 당당하게 주류로 올라섰습니다. 웹 페이지를 만드는 도구는 SQL에 그다지 단단하게 묶여있지 않아 새로운 세 번째 계층인 프리젠테이션 계층을 쉽게 받아들일 수 있었습니다.</p>
+<p>계층을 이야기 할 때 간혹 계층(layer)과 티어(tier)를 혼동할 때가 있습니다. 동의어로 사용되기도 하지만, 티어는 보통 물리적인 분리라는 의미를 내포하고 있습니다. 클라이언트-서버 시스템은 2-티어 시스템이라고도 하는데, 클라이언트는 사용자의 데스크탑으로, 서버는 중앙의 서버로 물리적으로 분리되어 있기 때문입니다. 반면에 계층은 물리적으로 다른 기계 위에서 동작할 필요가 없다는 점을 강조합니다. 도메인 로직 계층은 데스크탑에 있을 수도, 데이타베이스 서버에 있을 수도 있습니다. 이럴 때 3-계층은 두 개의 기계 위에서 동작합니다. 데이타베이스가 로컬에 있다면 3-계층 모두를 단 하나의 노트북에서 구동할 수도 있습니다. 하나의 기계 위에서 동작하지만 여전히 3-계층입니다.</p>
+
+        
+        
+            
+        
+        <hr/>
+        <div>
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="크리에이티브 커먼즈 라이선스" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><a href='https://github.com/homoefficio' target='_blank'>HomoEfficio</a>가 작성한 이 저작물은(는) <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스</a>에 따라 이용할 수 있습니다.
+        </div>
+    </div>
+    <div class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/Application-Architecture/">Application Architecture</a> <a class="tag tag--primary tag--small t-link" href="/tags/애플리케이션-아키텍쳐/">애플리케이션 아키텍쳐</a>
+
+            </div>
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/10/17/Hello-Triangle-in-WebGL/"  data-tooltip="Hello Triangle in WebGL">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/09/23/Selenium-꿀팁/" data-tooltip="Selenium 꿀팁">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2015/10/16/번역할-뻔-했던-Patterns-of-Enterprise-Application-Architecture/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2015/10/16/번역할-뻔-했던-Patterns-of-Enterprise-Application-Architecture/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2015/10/16/번역할-뻔-했던-Patterns-of-Enterprise-Application-Architecture/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+        
+            <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2018 HomoEfficio. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="1">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/10/17/Hello-Triangle-in-WebGL/"  data-tooltip="Hello Triangle in WebGL">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/09/23/Selenium-꿀팁/" data-tooltip="Selenium 꿀팁">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2015/10/16/번역할-뻔-했던-Patterns-of-Enterprise-Application-Architecture/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2015/10/16/번역할-뻔-했던-Patterns-of-Enterprise-Application-Architecture/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2015/10/16/번역할-뻔-했던-Patterns-of-Enterprise-Application-Architecture/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="1">
+    <ul class="share-options">
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2015/10/16/번역할-뻔-했던-Patterns-of-Enterprise-Application-Architecture/">
+                <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2015/10/16/번역할-뻔-했던-Patterns-of-Enterprise-Application-Architecture/">
+                <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2015/10/16/번역할-뻔-했던-Patterns-of-Enterprise-Application-Architecture/">
+                <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+            
+        </div>
+        <div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=110"/>
+        
+            <h4 id="about-card-name">HomoEfficio</h4>
+        
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Seoul, Korea.
+            </h5>
+        
+    </div>
+</div>
+        <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/script.min.js"></script>
+<!--SCRIPTS END-->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'hanmomhanda';
+        (function() {
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+
+
+
+</html>

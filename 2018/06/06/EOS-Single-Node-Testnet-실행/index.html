@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="null">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="뒤태지존의 끄적거림">
+    <title>EOS Single Node Testnet 실행 - 뒤태지존의 끄적거림</title>
+    <meta name="author" content="HomoEfficio">
+    <meta name="description" content="뒤태지존의 끄적거림">
+    
+        <link rel="icon" href="/assets/images/favicon.ico">
+    
+    
+        <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <meta name="description" content="EOS Single Node Testnet 실행공식 문서인 https://developers.eos.io/eosio-nodeos/docs/local-single-node-testnet 를 기준으로 약간의 커스터마이징과 과도한 친절함을 가미했다. 사전 조건https://homoefficio.github.io/2018/06/06/EOS-소스-구성-빌드-및-테스">
+<meta name="keywords" content="BlockChain,EOS,블록체인,이오스,development,개발,dapp,디앱,Testnet,테스트넷">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="EOS Single Node Testnet 실행">
+<meta property="og:url" content="http://homoefficio.github.io/2018/06/06/EOS-Single-Node-Testnet-실행/index.html">
+<meta property="og:site_name" content="뒤태지존의 끄적거림">
+<meta property="og:description" content="EOS Single Node Testnet 실행공식 문서인 https://developers.eos.io/eosio-nodeos/docs/local-single-node-testnet 를 기준으로 약간의 커스터마이징과 과도한 친절함을 가미했다. 사전 조건https://homoefficio.github.io/2018/06/06/EOS-소스-구성-빌드-및-테스">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://i.imgur.com/3JFK47Y.png">
+<meta property="og:image" content="https://i.imgur.com/nnJYbmt.png">
+<meta property="og:image" content="https://i.imgur.com/BJNM5Et.png">
+<meta property="og:image" content="https://i.imgur.com/ehc7Jpa.png">
+<meta property="og:image" content="https://i.imgur.com/dOsfBVI.png">
+<meta property="og:image" content="https://i.imgur.com/pgbzFRE.png">
+<meta property="og:image" content="https://i.imgur.com/pbCVcz1.png">
+<meta property="og:image" content="https://i.imgur.com/99DPIh2.png">
+<meta property="og:updated_time" content="2018-10-13T15:49:56.186Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="EOS Single Node Testnet 실행">
+<meta name="twitter:description" content="EOS Single Node Testnet 실행공식 문서인 https://developers.eos.io/eosio-nodeos/docs/local-single-node-testnet 를 기준으로 약간의 커스터마이징과 과도한 친절함을 가미했다. 사전 조건https://homoefficio.github.io/2018/06/06/EOS-소스-구성-빌드-및-테스">
+<meta name="twitter:image" content="https://i.imgur.com/3JFK47Y.png">
+    
+        <meta rel="publisher" content="https://plus.google.com/+오명운"/>
+    
+    
+    
+        <meta property="og:image" content="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=640"/>
+    
+    
+        <meta property="og:image" content="/2018/06/06/EOS-Single-Node-Testnet-실행/https:/streamity.org/uploads/media/coin/0001/01/62322d7972d7c0fe7831736e4f4e9baf1d44108d.svg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2018/06/06/EOS-Single-Node-Testnet-실행/https://streamity.org/uploads/media/coin/0001/01/62322d7972d7c0fe7831736e4f4e9baf1d44108d.svg" />
+    
+    
+        <meta property="og:image" content="/2018/06/06/EOS-Single-Node-Testnet-실행/cover-EOS-eosio-blockchain.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2018/06/06/EOS-Single-Node-Testnet-실행/cover-EOS-eosio-blockchain.jpg" />
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style.min.css">
+    <!--STYLES END-->
+    
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-79893978-1']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6494847158566766",
+    enable_page_level_ads: true
+  });
+</script>
+</head>
+
+    <body>
+        <div id="blog">
+            <header id="header" data-behavior="1">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="/ ">뒤태지존의 끄적거림</a>
+    </h1>
+    
+        <a class="header-right-picture" href="/#about">
+            <img class="header-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+        </a>
+    
+</header>
+            <nav id="sidebar" data-behavior="1">
+    
+    <div class="sidebar-profile">
+        <a href="/#about">
+            
+            <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+            
+        </a>
+        <span class="sidebar-profile-name">HomoEfficio</span>
+    </div>
+    
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/ 
+                    ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">Home</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-categories
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">Categories</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-tags
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">Tags</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-archives
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">Archives</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link st-search-show-outputs"
+                    href="#search
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                    <span class="sidebar-button-desc">Search</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="#about
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">About me</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="https://github.com/HomoEfficio" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                    <span class="sidebar-button-desc">GitHub</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="mailto:homo.efficio@gmail.com" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-envelope-o"></i>
+                    <span class="sidebar-button-desc">Mail</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/atom.xml
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+            <div id="main" data-behavior="1">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+        <div class="post-header-cover" style="background-image:url('/2018/06/06/EOS-Single-Node-Testnet-실행/cover-EOS-eosio-blockchain.jpg');">
+            <div class="post-header main-content-wrap">
+    
+        <h1 class="post-title" itemprop="headline">EOS Single Node Testnet 실행</h1>
+    
+    <div class="post-meta">
+    <time  itemprop="datePublished" content="Wed Jun 06 2018 08:45:33 GMT+0900">
+        Jun 06, 2018
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/BlockChain/">BlockChain</a>
+
+
+    
+</div>
+</div>
+        </div>
+    
+    <div class="post-content markdown main-content-wrap" itemprop="articleBody">
+        
+            <h1 id="EOS-Single-Node-Testnet-실행"><a href="#EOS-Single-Node-Testnet-실행" class="headerlink" title="EOS Single Node Testnet 실행"></a>EOS Single Node Testnet 실행</h1><p>공식 문서인 <a href="https://developers.eos.io/eosio-nodeos/docs/local-single-node-testnet" target="_blank" rel="noopener">https://developers.eos.io/eosio-nodeos/docs/local-single-node-testnet</a> 를 기준으로 약간의 커스터마이징과 과도한 친절함을 가미했다.</p>
+<h2 id="사전-조건"><a href="#사전-조건" class="headerlink" title="사전 조건"></a>사전 조건</h2><p><a href="https://homoefficio.github.io/2018/06/06/EOS-소스-구성-빌드-및-테스트/">https://homoefficio.github.io/2018/06/06/EOS-소스-구성-빌드-및-테스트/</a> 에서와 같이 빌드를 성공적으로 마치면 아래와 같이 build 디렉토리에 빌드 결과물이 생성된다.</p>
+<p><img src="https://i.imgur.com/3JFK47Y.png" alt="Imgur"></p>
+<h2 id="EOSIO-아키텍처-다시-보기"><a href="#EOSIO-아키텍처-다시-보기" class="headerlink" title="EOSIO 아키텍처 다시 보기"></a>EOSIO 아키텍처 다시 보기</h2><p><img src="https://i.imgur.com/nnJYbmt.png" alt="Imgur"></p>
+<p>이 글에서는 위 3가지 컴포넌트 중 <code>nodeos</code> 실행에 대해 알아본다.</p>
+<h2 id="nodeos-실행"><a href="#nodeos-실행" class="headerlink" title="nodeos 실행"></a>nodeos 실행</h2><blockquote>
+<p>cd build/programs/nodeos</p>
+<p>./nodeos -e -p eosio --plugin eosio::chain_api_plugin --plugin eosio::history_api_plugin</p>
+<p>1.0.9 부터는<br>./nodeos -e -p eosio --plugin eosio::chain_api_plugin --plugin eosio::history_api_plugin --http-validate-host=false</p>
+</blockquote>
+<ul>
+<li><code>-e</code>: 체인이 stale 상태이더라도 블록을 생성할 수 있도록 한다.</li>
+<li><code>-p</code>: 실행될 노드에 의해 제어되는 블록 생산자의 계정 이름을 지정한다.<ul>
+<li>예제에서는 <code>eosio</code>가 블록 생산자 계정이며, <code>eosio</code> 계정의 Key는 <code>nodeos</code>의 설정 파일인 <code>~/.local/share/eosio/config/config.ini</code>(Mac OS: <code>~/Library/Application Support/eosio/nodeos/config/config.ini</code>)에서 확인할 수 있다.</li>
+</ul>
+</li>
+<li><code>--plugin</code>: <code>nodeos</code>에서 사용할 플러그인을 지정한다. 여러번 지정할 수 있다.<ul>
+<li>예제에서는 <code>eosio::chain_api_plugin</code>, <code>eosio::history_api_plugin</code> 플러그인을 사용한다.</li>
+</ul>
+</li>
+</ul>
+<p>위와 같이 실행하면 아래와 같이 싱글 노드로 구성된 테스트넷이 실행되고, 블록도 매우 빠른 속도(0.5초)로 계속 생성된다.</p>
+<p><img src="https://i.imgur.com/BJNM5Et.png" alt="Imgur"></p>
+<p>싱글 노드로 구성된 테스트넷에는 아래 그림과 같이 <code>keosd</code>, <code>cleos</code>, <code>nodeos</code> 모두 하나의 호스트 안에서 실행된다.</p>
+<p><img src="https://i.imgur.com/ehc7Jpa.png" alt="Imgur"></p>
+<p><code>nodeos</code>가 실행되면 아래와 같이 <code>~/.local/share/eosio</code>(Mac OS: <code>~/Library/Application Support/eosio</code>) 디렉터리에 테스트넷 관련 데이터 및 설정 파일이 생성된다.</p>
+<p><img src="https://i.imgur.com/dOsfBVI.png" alt="Imgur"></p>
+<p><code>~/.local/share/eosio/nodeos/config/config.ini</code>(Mac OS: <code>~/Library/Application Support/eosio/nodeos/config/config.ini</code>) 파일에 여러가지 네트워크 설정 사항이 담겨 있다.</p>
+<p><code>~/.local/share/eosio/nodeos/data</code>(Mac OS: <code>~/Library/Application Support/eosio/nodeos/data</code>) 디렉터리에는 공유 메모리, 로그 등 EOS 블록체인 관련 여러 런타임 데이터가 저장된다. 데이터 디렉터리의 위치는 <code>nodeos</code> 실행 시 <code>--data-dir</code> 옵션으로 다른 위치를 지정할 수도 있다.</p>
+<p><code>nodeos</code>는 CTRL+C로 종료할 수 있으며 화면은 다음과 같다. #184번 블록까지 생성한 후 종료되었다.</p>
+<p><img src="https://i.imgur.com/pgbzFRE.png" alt="Imgur"></p>
+<p>다시 <code>./nodeos -e -p eosio --plugin eosio::chain_api_plugin --plugin eosio::history_api_plugin</code> 명령으로 실행하면 다음과 같이 #185번 블록부터 다시 블록 생성이 이어진다.</p>
+<p><img src="https://i.imgur.com/pbCVcz1.png" alt="Imgur"></p>
+<h2 id="cleos-에서-nodeos-정보-확인"><a href="#cleos-에서-nodeos-정보-확인" class="headerlink" title="cleos 에서 nodeos 정보 확인"></a>cleos 에서 nodeos 정보 확인</h2><p><code>nodeos</code>를 실행한 터미널 말고 다른 새 터미널의 eos 디렉터리에서 아래 명령 실행</p>
+<blockquote>
+<p>./build/programs/cleos/cleos --url <a href="http://localhost:8888" target="_blank" rel="noopener">http://localhost:8888</a> get info</p>
+</blockquote>
+<p><img src="https://i.imgur.com/99DPIh2.png" alt="Imgur"></p>
+<h2 id="nodeos-종료"><a href="#nodeos-종료" class="headerlink" title="nodeos 종료"></a>nodeos 종료</h2><p><code>CTRL+C</code>로 종료한다. 더 우아한 방법이 있을거라 생각했지만 <code>nodeos --help</code>로 확인해본 결과 종료 옵션은 없는 것 같다. </p>
+<p>계속 켜두어도 되지만 다음 과정인 지갑 만들기 및 Key 연동에서는 <code>nodeos</code>를 사용하지 않으므로 종료해도 무방하다.</p>
+<p>이것으로 <code>nodeos</code> 실행을 마쳤다. 다음에는 <a href="https://homoefficio.github.io/2018/06/06/EOS-지갑-만들기-및-Key-연동/">EOS 지갑 만들기 및 Key 연동</a>에서 지갑을 만들고 Key를 생성해서 연동하는 방법을 알아본다.</p>
+
+        
+        
+            
+        
+        <hr/>
+        <div>
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="크리에이티브 커먼즈 라이선스" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><a href='https://github.com/homoefficio' target='_blank'>HomoEfficio</a>가 작성한 이 저작물은(는) <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스</a>에 따라 이용할 수 있습니다.
+        </div>
+    </div>
+    <div class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/BlockChain/">BlockChain</a> <a class="tag tag--primary tag--small t-link" href="/tags/EOS/">EOS</a> <a class="tag tag--primary tag--small t-link" href="/tags/Testnet/">Testnet</a> <a class="tag tag--primary tag--small t-link" href="/tags/dapp/">dapp</a> <a class="tag tag--primary tag--small t-link" href="/tags/development/">development</a> <a class="tag tag--primary tag--small t-link" href="/tags/개발/">개발</a> <a class="tag tag--primary tag--small t-link" href="/tags/디앱/">디앱</a> <a class="tag tag--primary tag--small t-link" href="/tags/블록체인/">블록체인</a> <a class="tag tag--primary tag--small t-link" href="/tags/이오스/">이오스</a> <a class="tag tag--primary tag--small t-link" href="/tags/테스트넷/">테스트넷</a>
+
+            </div>
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2018/06/06/EOS-지갑-만들기-및-Key-연동/"  data-tooltip="EOS 지갑 만들기 및 Key 연동">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2018/06/06/EOS-Visual-Studio-Code-개발-환경-구성/" data-tooltip="EOS Visual Studio Code 개발 환경 구성">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2018/06/06/EOS-Single-Node-Testnet-실행/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2018/06/06/EOS-Single-Node-Testnet-실행/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2018/06/06/EOS-Single-Node-Testnet-실행/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+        
+            <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2018 HomoEfficio. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="1">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2018/06/06/EOS-지갑-만들기-및-Key-연동/"  data-tooltip="EOS 지갑 만들기 및 Key 연동">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2018/06/06/EOS-Visual-Studio-Code-개발-환경-구성/" data-tooltip="EOS Visual Studio Code 개발 환경 구성">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2018/06/06/EOS-Single-Node-Testnet-실행/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2018/06/06/EOS-Single-Node-Testnet-실행/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2018/06/06/EOS-Single-Node-Testnet-실행/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="1">
+    <ul class="share-options">
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2018/06/06/EOS-Single-Node-Testnet-실행/">
+                <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2018/06/06/EOS-Single-Node-Testnet-실행/">
+                <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2018/06/06/EOS-Single-Node-Testnet-실행/">
+                <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+            
+        </div>
+        <div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=110"/>
+        
+            <h4 id="about-card-name">HomoEfficio</h4>
+        
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Seoul, Korea.
+            </h5>
+        
+    </div>
+</div>
+        <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/script.min.js"></script>
+<!--SCRIPTS END-->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'hanmomhanda';
+        (function() {
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+
+
+
+</html>

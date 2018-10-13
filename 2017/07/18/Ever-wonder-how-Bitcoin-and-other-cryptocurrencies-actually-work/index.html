@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="null">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="뒤태지존의 끄적거림">
+    <title>(번역) Ever wonder how Bitcoin (and other cryptocurrencies) actually work? - 뒤태지존의 끄적거림</title>
+    <meta name="author" content="HomoEfficio">
+    <meta name="description" content="뒤태지존의 끄적거림">
+    
+        <link rel="icon" href="/assets/images/favicon.ico">
+    
+    
+        <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <meta name="description" content="(번역) Ever wonder how Bitcoin (and other cryptocurrencies) actually work?무쟈게 좋아라 하는 3Blue1Brown의 비디오 하나 번역했다. 화면 전개에 보조를 맞춰야 되고, 아무리 어순이 다른 영어라지만 내레이션과 너무 동떨어지면 귀에 거슬리고, 화면 내용을 가리지 않도록 양도 조절해야 되는 등, 그냥">
+<meta name="keywords" content="BlockChain,블록체인,BitCoin,비트코인,FinTech,핀테크,Proof of Work,작업증명,3Blue1Brown,Digital Signature,디지털 서명,Cryptocurrency,암호화 화폐,SHA256,Hash Function,해쉬 함수">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="(번역) Ever wonder how Bitcoin (and other cryptocurrencies) actually work?">
+<meta property="og:url" content="http://homoefficio.github.io/2017/07/18/Ever-wonder-how-Bitcoin-and-other-cryptocurrencies-actually-work/index.html">
+<meta property="og:site_name" content="뒤태지존의 끄적거림">
+<meta property="og:description" content="(번역) Ever wonder how Bitcoin (and other cryptocurrencies) actually work?무쟈게 좋아라 하는 3Blue1Brown의 비디오 하나 번역했다. 화면 전개에 보조를 맞춰야 되고, 아무리 어순이 다른 영어라지만 내레이션과 너무 동떨어지면 귀에 거슬리고, 화면 내용을 가리지 않도록 양도 조절해야 되는 등, 그냥">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-10-13T15:49:56.200Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="(번역) Ever wonder how Bitcoin (and other cryptocurrencies) actually work?">
+<meta name="twitter:description" content="(번역) Ever wonder how Bitcoin (and other cryptocurrencies) actually work?무쟈게 좋아라 하는 3Blue1Brown의 비디오 하나 번역했다. 화면 전개에 보조를 맞춰야 되고, 아무리 어순이 다른 영어라지만 내레이션과 너무 동떨어지면 귀에 거슬리고, 화면 내용을 가리지 않도록 양도 조절해야 되는 등, 그냥">
+    
+        <meta rel="publisher" content="https://plus.google.com/+오명운"/>
+    
+    
+    
+        <meta property="og:image" content="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=640"/>
+    
+    
+        <meta property="og:image" content="/2017/07/18/Ever-wonder-how-Bitcoin-and-other-cryptocurrencies-actually-work/http:/static1.squarespace.com/static/54f63048e4b0a47e92eb5234/t/596532ea29687f4edda56d7c/1500080828817/?format=1000w"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2017/07/18/Ever-wonder-how-Bitcoin-and-other-cryptocurrencies-actually-work/http://static1.squarespace.com/static/54f63048e4b0a47e92eb5234/t/596532ea29687f4edda56d7c/1500080828817/?format=1000w" />
+    
+    
+        <meta property="og:image" content="/2017/07/18/Ever-wonder-how-Bitcoin-and-other-cryptocurrencies-actually-work/cover-blockchain-01.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2017/07/18/Ever-wonder-how-Bitcoin-and-other-cryptocurrencies-actually-work/cover-blockchain-01.jpg" />
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style.min.css">
+    <!--STYLES END-->
+    
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-79893978-1']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6494847158566766",
+    enable_page_level_ads: true
+  });
+</script>
+</head>
+
+    <body>
+        <div id="blog">
+            <header id="header" data-behavior="1">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="/ ">뒤태지존의 끄적거림</a>
+    </h1>
+    
+        <a class="header-right-picture" href="/#about">
+            <img class="header-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+        </a>
+    
+</header>
+            <nav id="sidebar" data-behavior="1">
+    
+    <div class="sidebar-profile">
+        <a href="/#about">
+            
+            <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+            
+        </a>
+        <span class="sidebar-profile-name">HomoEfficio</span>
+    </div>
+    
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/ 
+                    ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">Home</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-categories
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">Categories</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-tags
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">Tags</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-archives
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">Archives</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link st-search-show-outputs"
+                    href="#search
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                    <span class="sidebar-button-desc">Search</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="#about
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">About me</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="https://github.com/HomoEfficio" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                    <span class="sidebar-button-desc">GitHub</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="mailto:homo.efficio@gmail.com" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-envelope-o"></i>
+                    <span class="sidebar-button-desc">Mail</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/atom.xml
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+            <div id="main" data-behavior="1">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+        <div class="post-header-cover" style="background-image:url('/2017/07/18/Ever-wonder-how-Bitcoin-and-other-cryptocurrencies-actually-work/cover-blockchain-01.jpg');">
+            <div class="post-header main-content-wrap">
+    
+        <h1 class="post-title" itemprop="headline">(번역) Ever wonder how Bitcoin (and other cryptocurrencies) actually work?</h1>
+    
+    <div class="post-meta">
+    <time  itemprop="datePublished" content="Tue Jul 18 2017 21:32:22 GMT+0900">
+        Jul 18, 2017
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/BlockChain/">BlockChain</a>
+
+
+    
+</div>
+</div>
+        </div>
+    
+    <div class="post-content markdown main-content-wrap" itemprop="articleBody">
+        
+            <h1 id="번역-Ever-wonder-how-Bitcoin-and-other-cryptocurrencies-actually-work"><a href="#번역-Ever-wonder-how-Bitcoin-and-other-cryptocurrencies-actually-work" class="headerlink" title="(번역) Ever wonder how Bitcoin (and other cryptocurrencies) actually work?"></a>(번역) Ever wonder how Bitcoin (and other cryptocurrencies) actually work?</h1><p>무쟈게 좋아라 하는 <a href="http://www.3blue1brown.com/" target="_blank" rel="noopener">3Blue1Brown</a>의 비디오 하나 번역했다.</p>
+<p>화면 전개에 보조를 맞춰야 되고, 아무리 어순이 다른 영어라지만 내레이션과 너무 동떨어지면 귀에 거슬리고, 화면 내용을 가리지 않도록 양도 조절해야 되는 등, 그냥 책 번역에 비해 공들일 일이 더 많다.</p>
+<p><a href="http://www.3blue1brown.com/" target="_blank" rel="noopener">3Blue1Brown</a> 정도의 초울트라 고퀄 컨텐츠를 받쳐주는 자막이라면 줄바꿈 하나하나까지 심혈을 기울여야.. ㅋ</p>
+<p>처음 보면 쉽지 않게 느껴질 수도 있지만, 사실 비대칭 키, 디지털 서명, 해쉬 함수 정도만 알면 <strong>3Blue1Brown</strong> 특유의 깔끔한 시각화와 함께 어렵지 않게 이해할 수 있을 것이다.</p>
+<p>한 번 보고, 두 번 보자! 원한다면 한국어 자막을 켜시고!</p>
+<div class="video-container"><iframe src="//www.youtube.com/embed/bBC-nXj3Ng4" frameborder="0" allowfullscreen></iframe></div>
+<p>자매품: <a href="http://homoefficio.github.io/2016/01/23/BlockChain-%EA%B8%B0%EC%B4%88-%EA%B0%9C%EB%85%90/">BlockChain 기초 개념</a></p>
+
+        
+        
+            
+        
+        <hr/>
+        <div>
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="크리에이티브 커먼즈 라이선스" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><a href='https://github.com/homoefficio' target='_blank'>HomoEfficio</a>가 작성한 이 저작물은(는) <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스</a>에 따라 이용할 수 있습니다.
+        </div>
+    </div>
+    <div class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/3Blue1Brown/">3Blue1Brown</a> <a class="tag tag--primary tag--small t-link" href="/tags/BitCoin/">BitCoin</a> <a class="tag tag--primary tag--small t-link" href="/tags/BlockChain/">BlockChain</a> <a class="tag tag--primary tag--small t-link" href="/tags/Cryptocurrency/">Cryptocurrency</a> <a class="tag tag--primary tag--small t-link" href="/tags/Digital-Signature/">Digital Signature</a> <a class="tag tag--primary tag--small t-link" href="/tags/FinTech/">FinTech</a> <a class="tag tag--primary tag--small t-link" href="/tags/Hash-Function/">Hash Function</a> <a class="tag tag--primary tag--small t-link" href="/tags/Proof-of-Work/">Proof of Work</a> <a class="tag tag--primary tag--small t-link" href="/tags/SHA256/">SHA256</a> <a class="tag tag--primary tag--small t-link" href="/tags/디지털-서명/">디지털 서명</a> <a class="tag tag--primary tag--small t-link" href="/tags/블록체인/">블록체인</a> <a class="tag tag--primary tag--small t-link" href="/tags/비트코인/">비트코인</a> <a class="tag tag--primary tag--small t-link" href="/tags/암호화-화폐/">암호화 화폐</a> <a class="tag tag--primary tag--small t-link" href="/tags/작업증명/">작업증명</a> <a class="tag tag--primary tag--small t-link" href="/tags/핀테크/">핀테크</a> <a class="tag tag--primary tag--small t-link" href="/tags/해쉬-함수/">해쉬 함수</a>
+
+            </div>
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/11/19/IOTA-Transaction-Confirmation-Consensus/"  data-tooltip="(번역) IOTA-Transaction-Confirmation-Consensus">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/04/25/Spring-가-포함된-URL-파라미터-바인딩-하기/" data-tooltip="Spring - [ ]가 포함된 URL 파라미터 바인딩 하기">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2017/07/18/Ever-wonder-how-Bitcoin-and-other-cryptocurrencies-actually-work/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2017/07/18/Ever-wonder-how-Bitcoin-and-other-cryptocurrencies-actually-work/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2017/07/18/Ever-wonder-how-Bitcoin-and-other-cryptocurrencies-actually-work/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+        
+            <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2018 HomoEfficio. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="1">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/11/19/IOTA-Transaction-Confirmation-Consensus/"  data-tooltip="(번역) IOTA-Transaction-Confirmation-Consensus">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/04/25/Spring-가-포함된-URL-파라미터-바인딩-하기/" data-tooltip="Spring - [ ]가 포함된 URL 파라미터 바인딩 하기">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2017/07/18/Ever-wonder-how-Bitcoin-and-other-cryptocurrencies-actually-work/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2017/07/18/Ever-wonder-how-Bitcoin-and-other-cryptocurrencies-actually-work/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2017/07/18/Ever-wonder-how-Bitcoin-and-other-cryptocurrencies-actually-work/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="1">
+    <ul class="share-options">
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2017/07/18/Ever-wonder-how-Bitcoin-and-other-cryptocurrencies-actually-work/">
+                <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2017/07/18/Ever-wonder-how-Bitcoin-and-other-cryptocurrencies-actually-work/">
+                <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2017/07/18/Ever-wonder-how-Bitcoin-and-other-cryptocurrencies-actually-work/">
+                <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+            
+        </div>
+        <div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=110"/>
+        
+            <h4 id="about-card-name">HomoEfficio</h4>
+        
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Seoul, Korea.
+            </h5>
+        
+    </div>
+</div>
+        <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/script.min.js"></script>
+<!--SCRIPTS END-->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'hanmomhanda';
+        (function() {
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+
+
+
+</html>
