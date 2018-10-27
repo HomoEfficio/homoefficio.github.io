@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="null">
+<html lang="ko">
     
 <head>
     <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
@@ -21,9 +21,9 @@
 <meta property="og:url" content="http://homoefficio.github.io/2015/07/25/This-is-this/index.html">
 <meta property="og:site_name" content="뒤태지존의 끄적거림">
 <meta property="og:description" content="this is thisgusting물론 thisgusting이라는 단어는 없다. 그냥 역겨운이라는 뜻의 disgusting이라는 단어에서 따왔다. Java에 익숙한 사람들에게 JavaScript에서의 this는.. 좀 그렇다..이유는 Java에서의 this는 언제나 this가 사용된 함수를 멤버 메서드로 가지는 객체 자신을 의미하는데 비해,JavaScrip">
-<meta property="og:locale" content="default">
+<meta property="og:locale" content="ko">
 <meta property="og:image" content="https://i.imgur.com/9zgXtoc.png">
-<meta property="og:updated_time" content="2018-10-13T15:49:56.258Z">
+<meta property="og:updated_time" content="2018-10-27T12:05:35.431Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="This is this">
 <meta name="twitter:description" content="this is thisgusting물론 thisgusting이라는 단어는 없다. 그냥 역겨운이라는 뜻의 disgusting이라는 단어에서 따왔다. Java에 익숙한 사람들에게 JavaScript에서의 this는.. 좀 그렇다..이유는 Java에서의 this는 언제나 this가 사용된 함수를 멤버 메서드로 가지는 객체 자신을 의미하는데 비해,JavaScrip">
@@ -313,10 +313,11 @@
 <blockquote>
 <p>어떤 함수 A가 다른 함수 B의 인자로 전달되는 경우,<br>A가 어떤 방식으로 호출될 지는 (까보지 않는 이상) 알 수 없다.</p>
 </blockquote>
-<p>까보지 않는 이상 알 수 없는 이유는 바로 <code>call()</code>과 <code>apply()</code> 때문이다.<br>함수 B 내에서는 인자로 받은 함수 A를 <code>A.call(뭐든지, args, ...)</code>와 같은 방식으로 원하는 대로 바인딩할 수 있기 때문이다. 함수 B의 구현부를 볼 수 있는 상황이라면 A의 this에 무엇을 바인딩하는지 알아낼 수 있다. 하지만, 함수 B의 구현부를 볼 수 없는 상황이라면, this에 뭐가 바인딩 되는지 알아내는 방법은 문서를 보거나, 직접 테스트 해 보는 수 밖에 없다.</p>
+<p>함수 B 내에서는 인자로 받은 함수 A의 this에 <code>A.call(뭐든지, args, ...)</code>와 같이 원하는 대로 바인딩할 수 있기 때문에 까보지 않는 이상 알 수 없다. <code>call()</code>, <code>apply()</code>를 사용하지 않는다면 함수 A는 전역 함수처럼 호출될 것이므로 앞의 2.4에서 설명한 것처럼 this에 전역 객체가 바인딩 된다.</p>
+<p>결국 함수 B의 구현부를 볼 수 있는 상황이라면 A의 this에 무엇을 바인딩하는지 알아낼 수 있다. 하지만, 함수 B의 구현부를 볼 수 없는 상황이라면, this에 뭐가 바인딩 되는지 알아내는 방법은 문서를 보거나, 직접 테스트 해 보는 수 밖에 없다.</p>
 <p>다른 함수의 인자로 넘겨지는 가장 흔한 예는 바로 <code>setTimeout()</code>과 <code>setInterval()</code>이다.</p>
 <figure class="highlight javascript"><figcaption><span>setInterval(), setTimeout()의 인자로 전달되는 경우</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setTimeout(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123; <span class="built_in">console</span>.dir(<span class="keyword">this</span>); &#125;, <span class="number">10</span>); <span class="comment">// this는 전역객체(브라우저에서는 window)</span></span><br></pre></td></tr></table></figure>
-<p><code>setTimeout()</code>과 <code>setInterval()</code>의 인자로 전달되는 함수의 this에는 전역객체가 바인딩 된다.</p>
+<p><code>setTimeout()</code>과 <code>setInterval()</code>의 인자로 전달되는 함수의 this에는 전역 객체가 바인딩 된다.</p>
 <p>그렇다면, <code>Array.prototype.forEach()</code>, <code>Array.prototype.map()</code>, <code>Array.prototype.reduce()</code> 같은 메서드는 어떨까?</p>
 <figure class="highlight javascript"><figcaption><span>Array.prototype.forEach()의 인자로 전달되는 경우</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Array</span>.prototype.forEach.call([<span class="number">1</span>], <span class="function"><span class="keyword">function</span>(<span class="params">d</span>)</span>&#123; <span class="built_in">console</span>.log(<span class="keyword">this</span>); &#125;);</span><br><span class="line"><span class="comment">// 브라우저에서는 Window 객체가 표시된다.</span></span><br></pre></td></tr></table></figure>
 <p>이처럼 내장 함수의 인자로 넘겨질 때는, 넘겨지는 함수가 어떤 방식으로 호출되는 지 볼 수 있는 방법이 없으므로, this에 뭐가 바인딩 되는지는 문서를 보거나 실제 테스트를 해보기 전에는 알 수 없다.</p>
@@ -335,7 +336,7 @@
 <p>method1은 일반 함수로 정의되어 있으므로 앞에서 <code>뉴쩜콜라바</code>에 해당한다. 즉, <code>obj.method1()</code>으로 호출될 때 <code>this</code>가 가리키는 값이 obj로 정해진다.</p>
 <p>method2는 화살표 함수로 정의되어 있으므로, 함수 정의 코드가 평가(evaluate)될 때 정적으로 <code>this</code>가 결정된다. <strong>즉, 화살표 함수 안에 있는 <code>this</code>는 화살표 함수가 호출되는 방식에 따라 동적으로 정해지는 것이 아니라, 화살표 함수 코드가 평가되는 시점에 이미 정해져 있는 <code>this</code>의 값으로 정적으로 결정된다.</strong></p>
 <p>위 코드에서 화살표 함수는 객체 리터럴 안에 있으므로, 화살표 함수 정의 코드는 obj 객체 정의 코드가 평가되면서 즉, obj의 해석이 완료되지도 않은 시점에 평가된다. 그래서 <code>this</code>는 obj를 가리킬 수 없으며, 실제로 전역 객체를 가리킨다. 전역 객체에는 prop1 속성이 없으므로 <code>obj.method2()</code>를 실행하면 <code>undefined</code>가 출력된다. 바로 다음 행에서 <code>obj.prop2</code>를 찍어보면 꼭 화살표 함수가 아니더라도 객체 리터럴 안에 있는 <code>this</code>는 전역 객체인 <code>Window</code>를 가리키는 것을 확인할 수 있다.</p>
-<p>method3은 일반 함수의 내부에 화살표 함수가 정의되어 있다. 함수 내부의 코드는 함수가 호출될 때 평가된다. 따라서 일반 함수 안에 있는 화살표 함수의 코드는 감싸고 있는 일반 함수가 호출될 때 평가된다. 결국 일반 함수가 호출될 때 정해져 있는 <code>this</code> 값이 일반 함수 내에 있는 화살표 함수의 <code>this</code> 값이 된다. 최종적인 결과만 놓고 보면 일반 함수가 호출되는 시점의 상황에 따라 <code>this</code>가 동적으로 결정되지만, 화살표 함수 입장에서 보면 <strong>화살표 함수 안에 있는 <code>this</code>는 화살표 함수 정의 코드가 평가될 때 정해져 있던 <code>this</code> 값으로 정적으로 결정되는 것은 마찬가지다.</strong></p>
+<p>method3은 일반 함수로 정의되어 있고 내부에 화살표 함수가 정의되어 있다. 함수 내부의 코드는 함수가 호출될 때 평가된다. 따라서 일반 함수 안에 있는 화살표 함수의 코드는 감싸고 있는 일반 함수가 호출될 때 평가된다. 결국 일반 함수가 호출될 때 정해져 있는 <code>this</code> 값이 일반 함수 내에 있는 화살표 함수의 <code>this</code> 값이 된다. 최종적인 결과만 놓고 보면 일반 함수가 호출되는 시점의 상황에 따라 <code>this</code>가 동적으로 결정되지만, 화살표 함수 입장에서 보면 <strong>화살표 함수 안에 있는 <code>this</code>는 화살표 함수 정의 코드가 평가될 때 정해져 있던 <code>this</code> 값으로 정적으로 결정되는 것은 마찬가지다.</strong></p>
 <p>위 말을 좀 다르게 표현하면, <strong>‘화살표 함수 안에 있는 <code>this</code>는 화살표 함수가 정의되어 있는 스코프(scope)에서 어휘적(lexical)으로 이미 정해져 있는 <code>this</code> 값으로 정해진다.’</strong>라고 할 수 있다. 이처럼 lexical하게  정해지는 <code>this</code>를 <strong><code>lexical this</code></strong>라고 부르기도 한다.</p>
 <p>위 예에서 알 수 있듯이 화살표 함수를 객체의 메서드로 사용하는 것은 대체로 적절하지 않으며, 다른 함수의 인자로 넘겨지는 익명 콜백 함수 용도로 사용하는 것이 적절하다.</p>
 <hr>
