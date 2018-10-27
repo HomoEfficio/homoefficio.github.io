@@ -144,10 +144,10 @@ Node.js 쪽에서 callback 지옥을 헤치면서 Async로 전진해와도, 결�
 >    - 바로 리턴하면 NonBlocking
 >    
 >- **Synchronous/Asynchronous는 호출되는 함수의 작업 완료 여부를 누가 신경쓰냐가 관심사**
->    - 함수의 작업 완료를 호출한 함수가 신경쓰면 Synchronous
->    - 함수의 작업 완료를 호출된 함수가 신경쓰면 Asynchronous
+>    - 호출되는 함수의 작업 완료를 호출한 함수가 신경쓰면 Synchronous
+>    - 호출되는 함수의 작업 완료를 호출된 함수가 신경쓰면 Asynchronous
 >    
->- 성능 상으로 가장 유리한 모델은 Async-NonBlocking 모델이다.
+>- 성능과 자원의 효율적 사용 관점에서 가장 유리한 모델은 Async-NonBlocking 모델이다.
 
 ![Imgur](http://i.imgur.com/gKDoKbs.png)
 
@@ -164,6 +164,7 @@ Nonblocking과 Async를 관심사 관점이 아니라 다음과 같이 동작 �
 다음과 같이 입장(?)을 통해 구분한다는 의견도 좋아 보인다.
 
 >- Blocking/NonBlocking은 호출한 입장에서의 특징
+>
 >- Sync/Async는 처리되는 방식의 특징
 
 ## I/O Multiplexing
