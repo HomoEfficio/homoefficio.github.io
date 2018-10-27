@@ -14,13 +14,13 @@
     
         <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <meta name="description" content="꽤 자주 접하는 용어다. 특히나 요즘들어 더 자주 접하게 되는데, 얼추 알고는 있고 알고 있는게 틀린 것도 아니지만, 막상 명확하게 구분해서 설명하라면 또 만만치가 않은.. 그래서 찾아보면 또 대충 뭔소린지 알아들을 것 같다가도, 구분해서 설명하라면 머뭇거리게 되긴 마찬가지다. 자료마다 미세하나마 조금씩 차이가 있는 것들도 많아서, 정확하고 유일한 구분법은">
-<meta name="keywords" content="IO,Computer Science,Blocking,NonBlocking,Synchronous,Asynchronous,입출력,넌블러킹,블러킹,동기,비동기">
+    <meta name="description" content="꽤 자주 접하는 용어다. 특히나 요즘들어 더 자주 접하게 되는데, 얼추 알고는 있고 알고 있는게 틀린 것도 아니지만, 막상 명확하게 구분해서 설명하라면 또 만만치가 않은.. 그래서 찾아보면 또 대충 뭔 소린지 알아들을 것 같다가도, 구분해서 설명하라면 머뭇거리게 되긴 마찬가지다. 자료마다 미세하나마 조금씩 차이가 있는 것들도 많아서, 정확하고 유일한 구분법">
+<meta name="keywords" content="IO,Computer Science,Blocking,NonBlocking,Synchronous,Asynchronous,입출력,넌블러킹,블러킹,동기,비동기,I&#x2F;O,블로킹,넌블로킹,논블로킹,논블러킹">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Blocking-NonBlocking-Synchronous-Asynchronous">
 <meta property="og:url" content="http://homoefficio.github.io/2017/02/19/Blocking-NonBlocking-Synchronous-Asynchronous/index.html">
 <meta property="og:site_name" content="뒤태지존의 끄적거림">
-<meta property="og:description" content="꽤 자주 접하는 용어다. 특히나 요즘들어 더 자주 접하게 되는데, 얼추 알고는 있고 알고 있는게 틀린 것도 아니지만, 막상 명확하게 구분해서 설명하라면 또 만만치가 않은.. 그래서 찾아보면 또 대충 뭔소린지 알아들을 것 같다가도, 구분해서 설명하라면 머뭇거리게 되긴 마찬가지다. 자료마다 미세하나마 조금씩 차이가 있는 것들도 많아서, 정확하고 유일한 구분법은">
+<meta property="og:description" content="꽤 자주 접하는 용어다. 특히나 요즘들어 더 자주 접하게 되는데, 얼추 알고는 있고 알고 있는게 틀린 것도 아니지만, 막상 명확하게 구분해서 설명하라면 또 만만치가 않은.. 그래서 찾아보면 또 대충 뭔 소린지 알아들을 것 같다가도, 구분해서 설명하라면 머뭇거리게 되긴 마찬가지다. 자료마다 미세하나마 조금씩 차이가 있는 것들도 많아서, 정확하고 유일한 구분법">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="https://www.ibm.com/developerworks/library/l-async/figure1.gif">
 <meta property="og:image" content="http://i.imgur.com/iSafBIF.png">
@@ -28,10 +28,10 @@
 <meta property="og:image" content="http://i.imgur.com/a8xZ9No.png">
 <meta property="og:image" content="http://i.imgur.com/zKF0CgK.png">
 <meta property="og:image" content="http://i.imgur.com/gKDoKbs.png">
-<meta property="og:updated_time" content="2018-10-13T15:49:56.182Z">
+<meta property="og:updated_time" content="2018-10-27T07:46:25.596Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Blocking-NonBlocking-Synchronous-Asynchronous">
-<meta name="twitter:description" content="꽤 자주 접하는 용어다. 특히나 요즘들어 더 자주 접하게 되는데, 얼추 알고는 있고 알고 있는게 틀린 것도 아니지만, 막상 명확하게 구분해서 설명하라면 또 만만치가 않은.. 그래서 찾아보면 또 대충 뭔소린지 알아들을 것 같다가도, 구분해서 설명하라면 머뭇거리게 되긴 마찬가지다. 자료마다 미세하나마 조금씩 차이가 있는 것들도 많아서, 정확하고 유일한 구분법은">
+<meta name="twitter:description" content="꽤 자주 접하는 용어다. 특히나 요즘들어 더 자주 접하게 되는데, 얼추 알고는 있고 알고 있는게 틀린 것도 아니지만, 막상 명확하게 구분해서 설명하라면 또 만만치가 않은.. 그래서 찾아보면 또 대충 뭔 소린지 알아들을 것 같다가도, 구분해서 설명하라면 머뭇거리게 되긴 마찬가지다. 자료마다 미세하나마 조금씩 차이가 있는 것들도 많아서, 정확하고 유일한 구분법">
 <meta name="twitter:image" content="https://www.ibm.com/developerworks/library/l-async/figure1.gif">
     
         <meta rel="publisher" content="https://plus.google.com/+오명운"/>
@@ -228,7 +228,7 @@
     <div class="post-content markdown main-content-wrap" itemprop="articleBody">
         
             <p>꽤 자주 접하는 용어다. 특히나 요즘들어 더 자주 접하게 되는데, 얼추 알고는 있고 알고 있는게 틀린 것도 아니지만, 막상 명확하게 구분해서 설명하라면 또 만만치가 않은..</p>
-<p>그래서 찾아보면 또 대충 뭔소린지 알아들을 것 같다가도, 구분해서 설명하라면 머뭇거리게 되긴 마찬가지다.</p>
+<p>그래서 찾아보면 또 대충 뭔 소린지 알아들을 것 같다가도, 구분해서 설명하라면 머뭇거리게 되긴 마찬가지다.</p>
 <p>자료마다 미세하나마 조금씩 차이가 있는 것들도 많아서, 정확하고 유일한 구분법은 사실 없는 것 같다. 그리고 이렇게라도 꼭 구분해야만 하는 것인가 하는 생각도 들지만, 그래도 ‘나의 언어로 구분하고 설명해보는 것’을 목표로 한 번 정리해보자.</p>
 <h1 id="IBM-developerWorks의-2-2-매트릭스"><a href="#IBM-developerWorks의-2-2-매트릭스" class="headerlink" title="IBM developerWorks의 2:2 매트릭스"></a>IBM developerWorks의 2:2 매트릭스</h1><p>이 주제로 자료를 찾아본 사람들은 아마 아래의 그림을 한 번쯤은 봤을 것이다.</p>
 <p><img src="https://www.ibm.com/developerworks/library/l-async/figure1.gif" alt="IBM developerWorks의 단순화된 리눅스 I/O 모델 매트릭스"></p>
@@ -346,7 +346,7 @@
             <div class="post-footer-tags">
                 <span class="text-color-light text-small">TAGGED IN</span><br/>
                 
-    <a class="tag tag--primary tag--small t-link" href="/tags/Asynchronous/">Asynchronous</a> <a class="tag tag--primary tag--small t-link" href="/tags/Blocking/">Blocking</a> <a class="tag tag--primary tag--small t-link" href="/tags/Computer-Science/">Computer Science</a> <a class="tag tag--primary tag--small t-link" href="/tags/IO/">IO</a> <a class="tag tag--primary tag--small t-link" href="/tags/NonBlocking/">NonBlocking</a> <a class="tag tag--primary tag--small t-link" href="/tags/Synchronous/">Synchronous</a> <a class="tag tag--primary tag--small t-link" href="/tags/넌블러킹/">넌블러킹</a> <a class="tag tag--primary tag--small t-link" href="/tags/동기/">동기</a> <a class="tag tag--primary tag--small t-link" href="/tags/블러킹/">블러킹</a> <a class="tag tag--primary tag--small t-link" href="/tags/비동기/">비동기</a> <a class="tag tag--primary tag--small t-link" href="/tags/입출력/">입출력</a>
+    <a class="tag tag--primary tag--small t-link" href="/tags/Asynchronous/">Asynchronous</a> <a class="tag tag--primary tag--small t-link" href="/tags/Blocking/">Blocking</a> <a class="tag tag--primary tag--small t-link" href="/tags/Computer-Science/">Computer Science</a> <a class="tag tag--primary tag--small t-link" href="/tags/I-O/">I/O</a> <a class="tag tag--primary tag--small t-link" href="/tags/IO/">IO</a> <a class="tag tag--primary tag--small t-link" href="/tags/NonBlocking/">NonBlocking</a> <a class="tag tag--primary tag--small t-link" href="/tags/Synchronous/">Synchronous</a> <a class="tag tag--primary tag--small t-link" href="/tags/넌블러킹/">넌블러킹</a> <a class="tag tag--primary tag--small t-link" href="/tags/넌블로킹/">넌블로킹</a> <a class="tag tag--primary tag--small t-link" href="/tags/논블러킹/">논블러킹</a> <a class="tag tag--primary tag--small t-link" href="/tags/논블로킹/">논블로킹</a> <a class="tag tag--primary tag--small t-link" href="/tags/동기/">동기</a> <a class="tag tag--primary tag--small t-link" href="/tags/블러킹/">블러킹</a> <a class="tag tag--primary tag--small t-link" href="/tags/블로킹/">블로킹</a> <a class="tag tag--primary tag--small t-link" href="/tags/비동기/">비동기</a> <a class="tag tag--primary tag--small t-link" href="/tags/입출력/">입출력</a>
 
             </div>
         
