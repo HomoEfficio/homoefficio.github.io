@@ -147,6 +147,14 @@ blockquote {
     }
 }
 
+blockquote > :first-child {
+    margin-top: 0;
+}
+
+blockquote > :last-child {
+    margin-bottom: 0;
+}
+
 // Reduce global font-size base and headings font size on small screen and down
 @media #{$small-and-down} {
     body {
