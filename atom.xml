@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://homoefficio.github.io/"/>
-  <updated>2018-10-13T16:02:24.956Z</updated>
+  <updated>2018-12-11T13:38:50.578Z</updated>
   <id>http://homoefficio.github.io/</id>
   
   <author>
@@ -15,6 +15,50 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>탈중앙화된 암호화폐는 죽었다</title>
+    <link href="http://homoefficio.github.io/2018/12/11/%ED%83%88%EC%A4%91%EC%95%99%ED%99%94%EB%90%9C-%EC%95%94%ED%98%B8%ED%99%94%ED%8F%90%EB%8A%94-%EC%A3%BD%EC%97%88%EB%8B%A4/"/>
+    <id>http://homoefficio.github.io/2018/12/11/탈중앙화된-암호화폐는-죽었다/</id>
+    <published>2018-12-11T12:59:50.000Z</published>
+    <updated>2018-12-11T13:38:50.578Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="탈중앙화된-암호화폐는-죽었다"><a href="#탈중앙화된-암호화폐는-죽었다" class="headerlink" title="탈중앙화된 암호화폐는 죽었다."></a>탈중앙화된 암호화폐는 죽었다.</h1><blockquote><p>원저자인 SemkoDev의 허락을 받고 우리말로 옮긴 글입니다.<br>SemkoDev는 IOTA 재단과는 관련이 없는 3rd party 개발사입니다.</p><p>원문: <a href="https://semkodev.com/decentralised-cryptocurrency-is-dead/?lang=en" target="_blank" rel="noopener">https://semkodev.com/decentralised-cryptocurrency-is-dead/?lang=en</a></p><p>IOTA 기부</p><h5 id="원저자-IYUIUCFNGOEEQHT9CQU9VYJVOJMQI9VYTQGQLTBAKTFIPWWRBFEV9TJWUZU9EYEFPM9VB9QYXTSMCDKMDABASVXPPX"><a href="#원저자-IYUIUCFNGOEEQHT9CQU9VYJVOJMQI9VYTQGQLTBAKTFIPWWRBFEV9TJWUZU9EYEFPM9VB9QYXTSMCDKMDABASVXPPX" class="headerlink" title="원저자: IYUIUCFNGOEEQHT9CQU9VYJVOJMQI9VYTQGQLTBAKTFIPWWRBFEV9TJWUZU9EYEFPM9VB9QYXTSMCDKMDABASVXPPX"></a>원저자: IYUIUCFNGOEEQHT9CQU9VYJVOJMQI9VYTQGQLTBAKTFIPWWRBFEV9TJWUZU9EYEFPM9VB9QYXTSMCDKMDABASVXPPX</h5><h5 id="옮긴이-ALGUYPTFQAWONZEZNMFRBHFX9KXIFNHUTUCHQQHJJCHWVQOAWSRNAWKSLPMLUBCYLBTALRMNCHIULGJEYSFAISLOSB"><a href="#옮긴이-ALGUYPTFQAWONZEZNMFRBHFX9KXIFNHUTUCHQQHJJCHWVQOAWSRNAWKSLPMLUBCYLBTALRMNCHIULGJEYSFAISLOSB" class="headerlink" title="옮긴이: ALGUYPTFQAWONZEZNMFRBHFX9KXIFNHUTUCHQQHJJCHWVQOAWSRNAWKSLPMLUBCYLBTALRMNCHIULGJEYSFAISLOSB"></a>옮긴이: ALGUYPTFQAWONZEZNMFRBHFX9KXIFNHUTUCHQQHJJCHWVQOAWSRNAWKSLPMLUBCYLBTALRMNCHIULGJEYSFAISLOSB</h5></blockquote><p><img src="https://i.imgur.com/jHVJGUf.png" alt="Imgur"></p><p>블록체인은 혁신의 대명사였지만 이제는 녹이 슬어버린 예전 시스템처럼 되어가고 있습니다. 비트코인이 민주화 된 금융 질서를 세우고 불필요한 중간자를 축출할 수 있다고 생각했다면, 이제는 다시 생각해보는 게 좋을 것 같습니다.</p><p>블록체인, 탱글(tangle), 대용량 블록(2x blocks), 스마트 컨트랙트, 세그윗(segwit), 라이트닝 네트워크(lightning network), Schnorr 알고리듬과 앞으로 똑똑한 괴짜들이 고안해 낼 새로운 기술 등 암호화폐에 사용하고 있는 기술에 대한 얘기를 하려는 것이 아닙니다. 문제는 여러 다른 방법으로 해결될 수도 있으니까요.</p><p>좀 더 심오한 고민을 필요로 하는 이야기를 꺼내보려 합니다. 사토시가 제시한 최초의 비전에는 결함이 있습니다.</p><h2 id="금전적-보상은-언제나-불평등으로-이어진다"><a href="#금전적-보상은-언제나-불평등으로-이어진다" class="headerlink" title="금전적 보상은 언제나 불평등으로 이어진다."></a>금전적 보상은 언제나 불평등으로 이어진다.</h2><p>전에 썼던 <a href="https://semkodev.com/iota-why-free-transactions-matter-most/?lang=en" target="_blank" rel="noopener">IOTA: why free transactions matter most</a>에서 주장한 것처럼 문제의 핵심은 보상(rewards)입니다. 누군가에게 네트워크를 운영하라고 보상을 지불하는 것은 여러분이 가지고 있던 권력(power)을 지불하는 것입니다. 권력을 지불하면 시스템에 불균형이 발생하고, 소수의 권력 집단이 생겨나며 시스템의 바탕이 되는 다수는 힘을 잃게 됩니다. 힘 없는 다수는 힘 있는 채굴자들 없이는 존재할 수 없게 되고, 힘 있는 채굴자는 시간이 갈 수록 더 큰 권력을 얻게 됩니다.</p><p><img src="https://i.imgur.com/HcsWxIq.png" alt="Imgur"></p><p>가장 유서 깊은 탈중앙화 장부(ledger)인 비트코인은 이 문제로부터 자유로운 적이 없었습니다. 비트코인에서는 소수의 채굴 풀이 전체 해시레이트(hashrate)의 절반 이상을 점유하고 있습니다. 이는 아주 좋지 않은 소식이고 시스템을 유지관리하는 사람들에게 금전적인 보상을 지급하는 어떤 코인도 이 문제로부터 자유로울 수 없습니다.</p><p>누구든 가장 높은 해시레이트를 보유한 자가 왕입니다. 지분 증명(Proof of Stake, PoS)이 모든 문제를 해결해줄 거라고 주장하는 사람들도 있겠지만, 지분 증명은 문제를 해결하는 것이 아니라 옮겨놓을 뿐입니다. <strong>지분 증명에서는 가장 높은 해시레이트가 아니라 가장 많은 코인을 보유한 자가 왕입니다. 해시레이트가 부(wealth)로 바뀔 뿐 작업 증명에 내재되어 있던 문제와 다를 것이 없습니다. 물론 지분 증명은 작업 증명처럼 많은 자원을 필요로하지 않으므로 환경 관점에서는 더 나은 해법이겠지만 중앙화의 문제를 해결하지는 못 합니다.</strong></p><h2 id="불평등은-언제나-중앙화로-이어진다"><a href="#불평등은-언제나-중앙화로-이어진다" class="headerlink" title="불평등은 언제나 중앙화로 이어진다."></a>불평등은 언제나 중앙화로 이어진다.</h2><p>겉으로 보기에 탈중앙화된 것 같은 코인은 부유한 소수가 원하는 대로 시스템을 조작할 수 있는 현재의 금융 질서와 살짝 다를 뿐 비슷해지고 있습니다. 다시 말하지만 코인이나 그 코인이 사용하는 기술은 하나도 중요하지 않습니다. 작업 증명이든 지분 증명이든 채굴자에게 보상을 지불하는 한, 채굴자는 시스템 위에 군림하게 됩니다. 채굴자들이 모든 것을 운영하는 단 하나의 이유는 돈입니다. 채굴자들은 사실상 코인 자체에는 관심이 없습니다. 내일 비트코인이 없어진다면 채굴자들은 그저 이더리움이든 라이트코인이든 다른 코인을 채굴하면 됩니다.</p><p>그래서 블록체인의 업그레이드가 필요할 때 채굴자들은 자신들의 이기적인 이익을 최우선으로 생각합니다. 사용자들은 그런 방향을 원치 않을거라고요? 글쎄요, 체인을 포크(fork)해서 누가 더 많은 권력을 가지고 있는지 보면 알 수 있을 겁니다. 기존 체인이 죽더라도 누가 상관할까요?</p><h2 id="중앙화는-암호화폐를-퇴물로-만든다"><a href="#중앙화는-암호화폐를-퇴물로-만든다" class="headerlink" title="중앙화는 암호화폐를 퇴물로 만든다."></a>중앙화는 암호화폐를 퇴물로 만든다.</h2><p>만약 어떤 코인의 운명을 극소수의 개인이 좌우할 수 있다면 현재의 통화 시스템과 다를 게 무엇일까요? 그저 중앙 은행이 중앙 채굴자로 바뀌는 것 뿐입니다. 달라질 게 없는데 뭐하러 귀찮게 바꾸나요?</p><blockquote><p>꿈은 죽었습니다.</p></blockquote><p>채굴자 손아귀로 넘어간 권력은 탈중앙화된 암호화폐가 내세웠던 이상을 파괴합니다. 꿈은 죽었습니다. 가까스로 주류에 편입한 어떤 암호화폐라도 채굴자를 없애지 않으면 결국 똑같은 문제에 직면하게 됩니다.</p><h2 id="희망은-있다"><a href="#희망은-있다" class="headerlink" title="희망은 있다."></a>희망은 있다.</h2><p>아무도 시스템 위에 군림해서는 안 되며, 시스템의 일부가 되는 것 외에 다른 동기(motivation)가 있으면 안 됩니다. 채굴자와 사용자 사이에 아무런 차이가 없어야만 위에서 말한 문제가 생기지 않습니다. 전체를 이루는 모든 구성원은 평등(equal)해야 합니다. 문제의 핵심을 파고 들어서, 네트워크 운영에 대한 보상을 없앤다면 모두가 평등해질 수 있습니다. 보상이 없어지면 불평등이 없어지고(No rewards = no inequality), 평등해지면 중앙화는 사라집니다(No inequality = no centralization).</p><p>하지만 금전적인 보상이 없다면 도대체 누가 노드를 운영하려 할까요? 대답은 매우 단순하고, 아이오타(IOTA)는 이 문제를 처음부터 바로잡고 시작하는 유망한 프로젝트 입니다. 네트워크를 이용하려면 사용자 스스로 네트워크를 유지해야 합니다. 거래를 하고 싶으면 다른 두 개의 거래를 검사해줘야 합니다. 아주 단순하죠.</p><p>이 방식에서는 모든 사용자가 평등합니다. 네트워크의 일부가 되고 싶으면 네트워크의 일부가 되기 위해 노력을 해야 합니다. 각 사용자는 자신의 필요에 따라 주고 받습니다. 농담 섞어 말하자면 공산주의의 꿈이 디지털 암호 장부(cryptoledger)를 통해 마침내 이루어지게 되는 겁니다.</p><p>진심으로 말하자면, 이 방식은 지금까지 진정한 탈중앙화 달성을 위해 나온 여러 방식 중에서 가장 나은 접근 방식입니다. 아이오타 네트워크의 규모가 현실적으로 작고 그래서 코디네이터(coordinator)가 있어야만 안정성을 보장받을 수 있는 현 시점에서는, 진정한 탈중앙화를 이뤄낸 프로젝트는 없습니다. 하지만 규모가 충분해지고 그래서 코디네이터를 필요로 하지 않게 되는 순간, 아이오타는 현재의 암호화폐 세상의 질서를 바꿔놓을 수도 있습니다.</p><p>진정한 탈중앙화에 대한 약속이야말로 업계에서 아이오타가 사랑받는 이유입니다. 아이오타가 다른 어떤 프로젝트보다 많은 파트너십을 가질 수 있었던 이유이기도 합니다. 산업계에서 이미 큰 힘을 가지고 있는 회사가 수상한 소수의 개인에 의해 좌우될 수 있는 암호화폐 프로젝트와 뭐하러 손을 잡겠습니까? 암호화폐가 현실 세상에 제대로 도입되려면 진정한 탈중앙화와 평등은 필수 조건입니다. 99%의 암호화폐는 이 조건을 충족시키지 못합니다.</p><p>우리는 흥미진진한 세상을 살고 있습니다. 암호화폐에 대해 이렇게 비관적으로 얘기해서 유감이지만 누군가는 마음에 담았던 이야기를 해야만 하고 모든 문제의 근본 원인에 대해 이야기 해야 합니다. 경고일 수도 있고 미래의 암호화폐 프로젝트를 선택하는 팁일 수도 있는 이야기로 글을 마무리하려 합니다. 채굴자 없는 진정한 평등을 추구하지 않는 프로젝트의 운명은 이미 결정되어 있습니다.</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;탈중앙화된-암호화폐는-죽었다&quot;&gt;&lt;a href=&quot;#탈중앙화된-암호화폐는-죽었다&quot; class=&quot;headerlink&quot; title=&quot;탈중앙화된 암호화폐는 죽었다.&quot;&gt;&lt;/a&gt;탈중앙화된 암호화폐는 죽었다.&lt;/h1&gt;&lt;blockquote&gt;
+&lt;p&gt;원저자
+      
+    
+    </summary>
+    
+      <category term="Distributed Ledger Technology" scheme="http://homoefficio.github.io/categories/Distributed-Ledger-Technology/"/>
+    
+    
+      <category term="블록체인" scheme="http://homoefficio.github.io/tags/%EB%B8%94%EB%A1%9D%EC%B2%B4%EC%9D%B8/"/>
+    
+      <category term="Cryptocurrency" scheme="http://homoefficio.github.io/tags/Cryptocurrency/"/>
+    
+      <category term="IOTA" scheme="http://homoefficio.github.io/tags/IOTA/"/>
+    
+      <category term="아이오타" scheme="http://homoefficio.github.io/tags/%EC%95%84%EC%9D%B4%EC%98%A4%ED%83%80/"/>
+    
+      <category term="암호화폐" scheme="http://homoefficio.github.io/tags/%EC%95%94%ED%98%B8%ED%99%94%ED%8F%90/"/>
+    
+      <category term="Distributed Ledger Technology" scheme="http://homoefficio.github.io/tags/Distributed-Ledger-Technology/"/>
+    
+      <category term="분산 원장 기술" scheme="http://homoefficio.github.io/tags/%EB%B6%84%EC%82%B0-%EC%9B%90%EC%9E%A5-%EA%B8%B0%EC%88%A0/"/>
+    
+      <category term="Blockchain" scheme="http://homoefficio.github.io/tags/Blockchain/"/>
+    
+      <category term="Translation" scheme="http://homoefficio.github.io/tags/Translation/"/>
+    
+      <category term="번역" scheme="http://homoefficio.github.io/tags/%EB%B2%88%EC%97%AD/"/>
+    
+  </entry>
   
   <entry>
     <title>Java URLClassLoader로 알아보는 클래스로딩</title>
@@ -416,6 +460,12 @@
     
       <category term="EOS" scheme="http://homoefficio.github.io/tags/EOS/"/>
     
+      <category term="Visual Studio Code" scheme="http://homoefficio.github.io/tags/Visual-Studio-Code/"/>
+    
+      <category term="vscode" scheme="http://homoefficio.github.io/tags/vscode/"/>
+    
+      <category term="IDE" scheme="http://homoefficio.github.io/tags/IDE/"/>
+    
       <category term="블록체인" scheme="http://homoefficio.github.io/tags/%EB%B8%94%EB%A1%9D%EC%B2%B4%EC%9D%B8/"/>
     
       <category term="이오스" scheme="http://homoefficio.github.io/tags/%EC%9D%B4%EC%98%A4%EC%8A%A4/"/>
@@ -427,12 +477,6 @@
       <category term="dapp" scheme="http://homoefficio.github.io/tags/dapp/"/>
     
       <category term="디앱" scheme="http://homoefficio.github.io/tags/%EB%94%94%EC%95%B1/"/>
-    
-      <category term="Visual Studio Code" scheme="http://homoefficio.github.io/tags/Visual-Studio-Code/"/>
-    
-      <category term="vscode" scheme="http://homoefficio.github.io/tags/vscode/"/>
-    
-      <category term="IDE" scheme="http://homoefficio.github.io/tags/IDE/"/>
     
       <category term="개발 환경" scheme="http://homoefficio.github.io/tags/%EA%B0%9C%EB%B0%9C-%ED%99%98%EA%B2%BD/"/>
     
@@ -653,11 +697,11 @@
     
       <category term="Spring" scheme="http://homoefficio.github.io/tags/Spring/"/>
     
+      <category term="스프링" scheme="http://homoefficio.github.io/tags/%EC%8A%A4%ED%94%84%EB%A7%81/"/>
+    
       <category term="Data Binding" scheme="http://homoefficio.github.io/tags/Data-Binding/"/>
     
       <category term="URL" scheme="http://homoefficio.github.io/tags/URL/"/>
-    
-      <category term="스프링" scheme="http://homoefficio.github.io/tags/%EC%8A%A4%ED%94%84%EB%A7%81/"/>
     
       <category term="데이터 바인딩" scheme="http://homoefficio.github.io/tags/%EB%8D%B0%EC%9D%B4%ED%84%B0-%EB%B0%94%EC%9D%B8%EB%94%A9/"/>
     
@@ -771,6 +815,8 @@
     
       <category term="IO" scheme="http://homoefficio.github.io/tags/IO/"/>
     
+      <category term="I/O" scheme="http://homoefficio.github.io/tags/I-O/"/>
+    
       <category term="Computer Science" scheme="http://homoefficio.github.io/tags/Computer-Science/"/>
     
       <category term="Blocking" scheme="http://homoefficio.github.io/tags/Blocking/"/>
@@ -783,16 +829,6 @@
     
       <category term="입출력" scheme="http://homoefficio.github.io/tags/%EC%9E%85%EC%B6%9C%EB%A0%A5/"/>
     
-      <category term="넌블러킹" scheme="http://homoefficio.github.io/tags/%EB%84%8C%EB%B8%94%EB%9F%AC%ED%82%B9/"/>
-    
-      <category term="블러킹" scheme="http://homoefficio.github.io/tags/%EB%B8%94%EB%9F%AC%ED%82%B9/"/>
-    
-      <category term="동기" scheme="http://homoefficio.github.io/tags/%EB%8F%99%EA%B8%B0/"/>
-    
-      <category term="비동기" scheme="http://homoefficio.github.io/tags/%EB%B9%84%EB%8F%99%EA%B8%B0/"/>
-    
-      <category term="I/O" scheme="http://homoefficio.github.io/tags/I-O/"/>
-    
       <category term="블로킹" scheme="http://homoefficio.github.io/tags/%EB%B8%94%EB%A1%9C%ED%82%B9/"/>
     
       <category term="넌블로킹" scheme="http://homoefficio.github.io/tags/%EB%84%8C%EB%B8%94%EB%A1%9C%ED%82%B9/"/>
@@ -800,6 +836,14 @@
       <category term="논블로킹" scheme="http://homoefficio.github.io/tags/%EB%85%BC%EB%B8%94%EB%A1%9C%ED%82%B9/"/>
     
       <category term="논블러킹" scheme="http://homoefficio.github.io/tags/%EB%85%BC%EB%B8%94%EB%9F%AC%ED%82%B9/"/>
+    
+      <category term="넌블러킹" scheme="http://homoefficio.github.io/tags/%EB%84%8C%EB%B8%94%EB%9F%AC%ED%82%B9/"/>
+    
+      <category term="블러킹" scheme="http://homoefficio.github.io/tags/%EB%B8%94%EB%9F%AC%ED%82%B9/"/>
+    
+      <category term="동기" scheme="http://homoefficio.github.io/tags/%EB%8F%99%EA%B8%B0/"/>
+    
+      <category term="비동기" scheme="http://homoefficio.github.io/tags/%EB%B9%84%EB%8F%99%EA%B8%B0/"/>
     
   </entry>
   
@@ -937,47 +981,6 @@
       <category term="수퍼 타입 토큰" scheme="http://homoefficio.github.io/tags/%EC%88%98%ED%8D%BC-%ED%83%80%EC%9E%85-%ED%86%A0%ED%81%B0/"/>
     
       <category term="타입 안전성" scheme="http://homoefficio.github.io/tags/%ED%83%80%EC%9E%85-%EC%95%88%EC%A0%84%EC%84%B1/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Spring에서 JSON에 XSS 방지 처리 하기</title>
-    <link href="http://homoefficio.github.io/2016/11/21/Spring%EC%97%90%EC%84%9C-JSON%EC%97%90-XSS-%EB%B0%A9%EC%A7%80-%EC%B2%98%EB%A6%AC-%ED%95%98%EA%B8%B0/"/>
-    <id>http://homoefficio.github.io/2016/11/21/Spring에서-JSON에-XSS-방지-처리-하기/</id>
-    <published>2016-11-21T14:32:08.000Z</published>
-    <updated>2018-10-13T15:49:56.256Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="Spring에서-JSON에-XSS-방지-처리-하기"><a href="#Spring에서-JSON에-XSS-방지-처리-하기" class="headerlink" title="Spring에서 JSON에 XSS 방지 처리 하기"></a>Spring에서 JSON에 XSS 방지 처리 하기</h1><h2 id="고마운-lucy-xss-servlet-filter의-한계"><a href="#고마운-lucy-xss-servlet-filter의-한계" class="headerlink" title="고마운 lucy-xss-servlet-filter의 한계"></a>고마운 lucy-xss-servlet-filter의 한계</h2><p>XSS(Cross Site Scripting) 방지를 위해 널리 쓰이는 훌륭한 <a href="https://github.com/naver/lucy-xss-servlet-filter" target="_blank" rel="noopener">lucy-xss-servlet-filter</a>는 Servlet Filter 단에서 <code>&lt;</code> 등의 특수 문자를 <code>&amp;lt;</code> 등으로 변환해주며, 여러 가지 관련 설정을 편리하게 지정할 수 있어 정말 좋다.</p><p>그런데 그 처리가 <strong>form-data에 대해서만 적용되고 Request Raw Body로 넘어가는 JSON에 대해서는 처리해주지 않는다</strong>는 단점이 있다. 그래서 JSON을 주고 받는 API 서버의 경우에는 직접 처리를 해줘야 한다.</p><p><code>lucy-xss-servlet-filter</code>를 수정해서 JSON도 처리하도록 만드는 방법도 있겠지만, 여기에서는 Response를 클라이언트로 내보내는 단계에서 처리하는 방법을 알아본다.</p><h2 id="HandlerInterceptor"><a href="#HandlerInterceptor" class="headerlink" title="HandlerInterceptor"></a>HandlerInterceptor</h2><p>Response 쪽에서 공통적으로 처리해줘야할 일이 있다면 금방 떠오르는 것이 <code>HanderInterceptor</code>의 <code>postHandle()</code>이다. 이 메서드의 파라미터는 <code>HttpServletRequest request</code>, <code>HttpServletResponse response</code>, <code>Object handler</code>, <code>ModelAndView modelAndView</code>이고, <code>response</code>에서 Response Body를 꺼내서, <code>&lt;</code> =&gt; <code>&amp;lt;</code> 등의 변환 처리를 하고 다시 <code>response</code>에 넣어주면 될 것 같다.</p><p>하지만 <code>response</code>에서 Response Body를 끄집어 내는 것도 쉽지 않고, 그 내용을 바꿔서 다시 집어넣는 것도 여의치 않다. 다른 방법이 필요하다.</p><h2 id="MessageConverter"><a href="#MessageConverter" class="headerlink" title="MessageConverter"></a>MessageConverter</h2><p>다음으로 생각나는 것은 <code>MessageConverter</code>다. 어차피 결국에는 Jackson 같은 Mapper를 통해 JSON 문자열로 Response에 담겨지므로, <strong>Mapper가 JSON 문자열을 생성할 때 XSS 방지 처리</strong>를 해주면 될 것 같다.</p><p>찾아보니 역시나 <a href="http://stackoverflow.com/questions/25403676/initbinder-with-requestbody-escaping-xss-in-spring-3-2-4" target="_blank" rel="noopener">http://stackoverflow.com/questions/25403676/initbinder-with-requestbody-escaping-xss-in-spring-3-2-4</a> 이런 자료가 있다. 좀 오래된 버전이고 군더더기도 있어서 Jackson 2.#, SpringBoot 1.# 버전 기준으로 깔끔하게, 그리고 <strong>커스터마이징 할 수 있는 부분을 추가</strong>해서 정리해봤다.</p><p>큰 흐름은 다음과 같다.</p><blockquote><ol><li>처리할 특수 문자 지정</li><li>특수 문자 인코딩 값 지정</li><li>ObjectMapper에 특수 문자 처리 기능 적용</li><li>MessageConverter에 ObjectMapper 설정</li><li>WebMvcConfigurerAdapter에 MessageConverter 추가</li></ol></blockquote><h3 id="처리할-특수-문자-지정"><a href="#처리할-특수-문자-지정" class="headerlink" title="처리할 특수 문자 지정"></a>처리할 특수 문자 지정</h3><p>XSS 방지 처리할 특수 문자를 다음과 같이 <code>CharacterEscapes</code>를 상속한 클래스를 직접 만들어서 지정해준다.</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.core.SerializableString;</span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.core.io.CharacterEscapes;</span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.core.io.SerializedString;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.lang3.text.translate.AggregateTranslator;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.lang3.text.translate.CharSequenceTranslator;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.lang3.text.translate.EntityArrays;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.lang3.text.translate.LookupTranslator;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HTMLCharacterEscapes</span> <span class="keyword">extends</span> <span class="title">CharacterEscapes</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span>[] asciiEscapes;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> CharSequenceTranslator translator;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">HTMLCharacterEscapes</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 1. XSS 방지 처리할 특수 문자 지정</span></span><br><span class="line">        asciiEscapes = CharacterEscapes.standardAsciiEscapesForJSON();</span><br><span class="line">        asciiEscapes[<span class="string">'&lt;'</span>] = CharacterEscapes.ESCAPE_CUSTOM;</span><br><span class="line">        asciiEscapes[<span class="string">'&gt;'</span>] = CharacterEscapes.ESCAPE_CUSTOM;</span><br><span class="line">        asciiEscapes[<span class="string">'&amp;'</span>] = CharacterEscapes.ESCAPE_CUSTOM;</span><br><span class="line">        asciiEscapes[<span class="string">'\"'</span>] = CharacterEscapes.ESCAPE_CUSTOM;</span><br><span class="line">        asciiEscapes[<span class="string">'('</span>] = CharacterEscapes.ESCAPE_CUSTOM;</span><br><span class="line">        asciiEscapes[<span class="string">')'</span>] = CharacterEscapes.ESCAPE_CUSTOM;</span><br><span class="line">        asciiEscapes[<span class="string">'#'</span>] = CharacterEscapes.ESCAPE_CUSTOM;</span><br><span class="line">        asciiEscapes[<span class="string">'\''</span>] = CharacterEscapes.ESCAPE_CUSTOM;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 2. XSS 방지 처리 특수 문자 인코딩 값 지정</span></span><br><span class="line">        translator = <span class="keyword">new</span> AggregateTranslator(</span><br><span class="line">            <span class="keyword">new</span> LookupTranslator(EntityArrays.BASIC_ESCAPE()),  <span class="comment">// &lt;, &gt;, &amp;, " 는 여기에 포함됨</span></span><br><span class="line">            <span class="keyword">new</span> LookupTranslator(EntityArrays.ISO8859_1_ESCAPE()),</span><br><span class="line">            <span class="keyword">new</span> LookupTranslator(EntityArrays.HTML40_EXTENDED_ESCAPE()),</span><br><span class="line">            <span class="comment">// 여기에서 커스터마이징 가능</span></span><br><span class="line">            <span class="keyword">new</span> LookupTranslator(</span><br><span class="line">                <span class="keyword">new</span> String[][]&#123;</span><br><span class="line">                    &#123;<span class="string">"("</span>,  <span class="string">"&amp;#40;"</span>&#125;,</span><br><span class="line">                    &#123;<span class="string">")"</span>,  <span class="string">"&amp;#41;"</span>&#125;,</span><br><span class="line">                    &#123;<span class="string">"#"</span>,  <span class="string">"&amp;#35;"</span>&#125;,</span><br><span class="line">                    &#123;<span class="string">"\'"</span>, <span class="string">"&amp;#39;"</span>&#125;</span><br><span class="line">                &#125;</span><br><span class="line">            )</span><br><span class="line">        );</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span>[] getEscapeCodesForAscii() &#123;</span><br><span class="line">        <span class="keyword">return</span> asciiEscapes;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> SerializableString <span class="title">getEscapeSequence</span><span class="params">(<span class="keyword">int</span> ch)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> SerializedString(translator.translate(Character.toString((<span class="keyword">char</span>) ch)));</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 참고 - 커스터마이징이 필요없다면 아래와 같이 Apache Commons Lang3에서 제공하는 메서드를 써도 된다.</span></span><br><span class="line">        <span class="comment">// return new SerializedString(StringEscapeUtils.escapeHtml4(Character.toString((char) ch)));</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h3 id="ObjectMapper에-특수-문자-처리-기능-적용-후-MessageConverter-등록"><a href="#ObjectMapper에-특수-문자-처리-기능-적용-후-MessageConverter-등록" class="headerlink" title="ObjectMapper에 특수 문자 처리 기능 적용 후 MessageConverter 등록"></a>ObjectMapper에 특수 문자 처리 기능 적용 후 MessageConverter 등록</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> WebMvcConfigurerAdapter <span class="title">controlTowerWebConfigurerAdapter</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> WebMvcConfigurerAdapter() &#123;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">configureMessageConverters</span><span class="params">(List&lt;HttpMessageConverter&lt;?&gt;&gt; converters)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">super</span>.configureMessageConverters(converters);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 5. WebMvcConfigurerAdapter에 MessageConverter 추가</span></span><br><span class="line">            converters.add(htmlEscapingConveter());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> HttpMessageConverter&lt;?&gt; htmlEscapingConveter() &#123;</span><br><span class="line">            ObjectMapper objectMapper = <span class="keyword">new</span> ObjectMapper();</span><br><span class="line">            <span class="comment">// 3. ObjectMapper에 특수 문자 처리 기능 적용</span></span><br><span class="line">            objectMapper.getFactory().setCharacterEscapes(<span class="keyword">new</span> HTMLCharacterEscapes());</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 4. MessageConverter에 ObjectMapper 설정</span></span><br><span class="line">            MappingJackson2HttpMessageConverter htmlEscapingConverter =</span><br><span class="line">                    <span class="keyword">new</span> MappingJackson2HttpMessageConverter();</span><br><span class="line">            htmlEscapingConverter.setObjectMapper(objectMapper);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> htmlEscapingConverter;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="정리"><a href="#정리" class="headerlink" title="정리"></a>정리</h2><blockquote><p><code>lucy-xss-servlet-filter</code>는 JSON에 대한 XSS는 처리해주지 않는다.</p><ul><li>따라서, JSON에 대한 XSS가 필요하다면</li><li>Jackson의 <code>com.fasterxml.jackson.core.io.CharacterEscapes</code>를 상속하는 클래스 A를 직접 만들어서 처리해야 할 특수문자를 지정하고,</li><li><code>ObjectMapper</code>에 <code>A</code>를 설정하고,</li><li><code>ObjectMapper</code>를 MessageConverter에 등록해서 Response가 클라이언트에 나가기 전에 XSS 방지 처리 해준다.</li></ul></blockquote>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;h1 id=&quot;Spring에서-JSON에-XSS-방지-처리-하기&quot;&gt;&lt;a href=&quot;#Spring에서-JSON에-XSS-방지-처리-하기&quot; class=&quot;headerlink&quot; title=&quot;Spring에서 JSON에 XSS 방지 처리 하기&quot;&gt;&lt;/a&gt;Sprin
-      
-    
-    </summary>
-    
-      <category term="Technique" scheme="http://homoefficio.github.io/categories/Technique/"/>
-    
-    
-      <category term="Spring" scheme="http://homoefficio.github.io/tags/Spring/"/>
-    
-      <category term="스프링" scheme="http://homoefficio.github.io/tags/%EC%8A%A4%ED%94%84%EB%A7%81/"/>
-    
-      <category term="XSS" scheme="http://homoefficio.github.io/tags/XSS/"/>
-    
-      <category term="JSON" scheme="http://homoefficio.github.io/tags/JSON/"/>
-    
-      <category term="lucy-xss-servlet-filter" scheme="http://homoefficio.github.io/tags/lucy-xss-servlet-filter/"/>
-    
-      <category term="Cross Site Scripting" scheme="http://homoefficio.github.io/tags/Cross-Site-Scripting/"/>
-    
-      <category term="MessageConverter" scheme="http://homoefficio.github.io/tags/MessageConverter/"/>
-    
-      <category term="보안" scheme="http://homoefficio.github.io/tags/%EB%B3%B4%EC%95%88/"/>
-    
-      <category term="크로스 사이트 스크립팅" scheme="http://homoefficio.github.io/tags/%ED%81%AC%EB%A1%9C%EC%8A%A4-%EC%82%AC%EC%9D%B4%ED%8A%B8-%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8C%85/"/>
     
   </entry>
   
