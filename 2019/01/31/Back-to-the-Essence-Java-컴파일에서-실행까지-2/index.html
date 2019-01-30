@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="뒤태지존의 끄적거림">
+    <title>Back to the Essence - Java 컴파일에서 실행까지 - (2) - 뒤태지존의 끄적거림</title>
+    <meta name="author" content="HomoEfficio">
+    <meta name="description" content="뒤태지존의 끄적거림">
+    
+        <link rel="icon" href="/assets/images/favicon.ico">
+    
+    
+        <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <meta name="description" content="Back to the Essence - Java 컴파일에서 실행까지 - (2)Java 11 JVM 스펙을 기준으로 Java 소스 코드가 어떻게 컴파일되고 실행되는지 살짝 깊게 알아보자. 이번엔 2탄 실행 편이다. 1탄 컴파일편은 여기에.. 실행자바 애플리케이션은 java 명령어로 실행할 수 있다. 오라클의 Tools Reference 문서에 나오는 java">
+<meta name="keywords" content="Java,자바,JVM,Bytecode,Compile,JVM Spec,invokeinterface,invokevirtual,javap,컴파일,바이트코드,JVM 명세,JVM 스펙,JRE,JVM Instruction,Run-Time Data Area,Heap,Method Area,PC Register,JVM Stack,Native Method Stack,Frame,Local Variables,Operand Stack,Reference to Run-Time Constant Pool,Run-Time Constant Pool,Link,Verification,Preparation,Initialization,Resolution,invokespecial,JVM 명령어,런타임 데이터 영역,자바 메모리 모델,JVM 메모리 모델,힙,메서드 영역,PC 레지스터,JVM 스택,네이티브 메서드 스택,프레임,로컬 변수 배열,오퍼랜드 스택,런타임 상수 풀,링크,확인,준비,초기화,해석">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Back to the Essence - Java 컴파일에서 실행까지 - (2)">
+<meta property="og:url" content="http://homoefficio.github.io/2019/01/31/Back-to-the-Essence-Java-컴파일에서-실행까지-2/index.html">
+<meta property="og:site_name" content="뒤태지존의 끄적거림">
+<meta property="og:description" content="Back to the Essence - Java 컴파일에서 실행까지 - (2)Java 11 JVM 스펙을 기준으로 Java 소스 코드가 어떻게 컴파일되고 실행되는지 살짝 깊게 알아보자. 이번엔 2탄 실행 편이다. 1탄 컴파일편은 여기에.. 실행자바 애플리케이션은 java 명령어로 실행할 수 있다. 오라클의 Tools Reference 문서에 나오는 java">
+<meta property="og:locale" content="ko">
+<meta property="og:image" content="https://i.imgur.com/wChPQEV.png">
+<meta property="og:image" content="https://i.imgur.com/Mh4DuRB.png">
+<meta property="og:image" content="https://i.imgur.com/KXJsPgs.png">
+<meta property="og:image" content="https://i.imgur.com/QBQyTab.png">
+<meta property="og:image" content="https://i.imgur.com/ZtsNYAv.png">
+<meta property="og:image" content="https://i.imgur.com/8f6zqKP.png">
+<meta property="og:image" content="https://i.imgur.com/MAiWMYz.png">
+<meta property="og:image" content="https://i.imgur.com/y0qP8vW.png">
+<meta property="og:image" content="https://i.imgur.com/XBMPitk.png">
+<meta property="og:image" content="https://i.imgur.com/RJ3ZLvX.png">
+<meta property="og:image" content="https://i.imgur.com/izWNxMs.png">
+<meta property="og:image" content="https://i.imgur.com/uV7vHx5.png">
+<meta property="og:image" content="https://i.imgur.com/O7LRpA6.png">
+<meta property="og:image" content="https://i.imgur.com/e6u8VRO.png">
+<meta property="og:image" content="https://i.imgur.com/Ve6moKN.png">
+<meta property="og:image" content="https://i.imgur.com/jQIe28m.png">
+<meta property="og:image" content="https://i.imgur.com/YJBfT4H.png">
+<meta property="og:image" content="https://i.imgur.com/jvvanVL.png">
+<meta property="og:image" content="https://i.imgur.com/zP0BaqB.png">
+<meta property="og:image" content="https://i.imgur.com/Dw4W7or.png">
+<meta property="og:image" content="https://i.imgur.com/1XJNvOY.png">
+<meta property="og:image" content="https://i.imgur.com/lEsyaU9.png">
+<meta property="og:image" content="https://i.imgur.com/ZOUyk7M.png">
+<meta property="og:image" content="https://i.imgur.com/guTnj4t.png">
+<meta property="og:image" content="https://i.imgur.com/fU90B7m.png">
+<meta property="og:image" content="https://i.imgur.com/ZbJ4ISa.png">
+<meta property="og:image" content="https://i.imgur.com/NCga0nz.png">
+<meta property="og:image" content="https://i.imgur.com/vz0uuaf.png">
+<meta property="og:image" content="https://i.imgur.com/BWa4gBm.png">
+<meta property="og:image" content="https://i.imgur.com/So2s54L.png">
+<meta property="og:image" content="https://i.imgur.com/S0cm4E8.png">
+<meta property="og:updated_time" content="2019-01-30T15:29:26.635Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Back to the Essence - Java 컴파일에서 실행까지 - (2)">
+<meta name="twitter:description" content="Back to the Essence - Java 컴파일에서 실행까지 - (2)Java 11 JVM 스펙을 기준으로 Java 소스 코드가 어떻게 컴파일되고 실행되는지 살짝 깊게 알아보자. 이번엔 2탄 실행 편이다. 1탄 컴파일편은 여기에.. 실행자바 애플리케이션은 java 명령어로 실행할 수 있다. 오라클의 Tools Reference 문서에 나오는 java">
+<meta name="twitter:image" content="https://i.imgur.com/wChPQEV.png">
+    
+        <meta rel="publisher" content="https://plus.google.com/+오명운"/>
+    
+    
+    
+        <meta property="og:image" content="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=640"/>
+    
+    
+        <meta property="og:image" content="/2019/01/31/Back-to-the-Essence-Java-컴파일에서-실행까지-2/https:/i.imgur.com/Dw4W7or.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2019/01/31/Back-to-the-Essence-Java-컴파일에서-실행까지-2/https://i.imgur.com/Dw4W7or.png" />
+    
+    
+        <meta property="og:image" content="/2019/01/31/Back-to-the-Essence-Java-컴파일에서-실행까지-2/cover-jvm-02.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2019/01/31/Back-to-the-Essence-Java-컴파일에서-실행까지-2/cover-jvm-02.jpg" />
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style.min.css">
+    <!--STYLES END-->
+    
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-79893978-1']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6494847158566766",
+    enable_page_level_ads: true
+  });
+</script>
+</head>
+
+    <body>
+        <div id="blog">
+            <header id="header" data-behavior="1">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="/ ">뒤태지존의 끄적거림</a>
+    </h1>
+    
+        <a class="header-right-picture" href="/#about">
+            <img class="header-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+        </a>
+    
+</header>
+            <nav id="sidebar" data-behavior="1">
+    
+    <div class="sidebar-profile">
+        <a href="/#about">
+            
+            <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+            
+        </a>
+        <span class="sidebar-profile-name">HomoEfficio</span>
+    </div>
+    
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/ 
+                    ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">Home</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-categories
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">Categories</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-tags
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">Tags</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-archives
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">Archives</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link st-search-show-outputs"
+                    href="#search
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                    <span class="sidebar-button-desc">Search</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="#about
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">About me</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="https://github.com/HomoEfficio" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                    <span class="sidebar-button-desc">GitHub</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="mailto:homo.efficio@gmail.com" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-envelope-o"></i>
+                    <span class="sidebar-button-desc">Mail</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/atom.xml
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+            <div id="main" data-behavior="1">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+        <div class="post-header-cover" style="background-image:url('/2019/01/31/Back-to-the-Essence-Java-컴파일에서-실행까지-2/cover-jvm-02.jpg');">
+            <div class="post-header main-content-wrap">
+    
+        <h1 class="post-title" itemprop="headline">Back to the Essence - Java 컴파일에서 실행까지 - (2)</h1>
+    
+    <div class="post-meta">
+    <time  itemprop="datePublished" content="Thu Jan 31 2019 00:20:05 GMT+0900">
+        Jan 31, 2019
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Specification/">Specification</a>
+
+
+    
+</div>
+</div>
+        </div>
+    
+    <div class="post-content markdown main-content-wrap" itemprop="articleBody">
+        
+            <h1 id="Back-to-the-Essence-Java-컴파일에서-실행까지-2"><a href="#Back-to-the-Essence-Java-컴파일에서-실행까지-2" class="headerlink" title="Back to the Essence - Java 컴파일에서 실행까지 - (2)"></a>Back to the Essence - Java 컴파일에서 실행까지 - (2)</h1><p>Java 11 JVM 스펙을 기준으로 Java 소스 코드가 어떻게 컴파일되고 실행되는지 살짝 깊게 알아보자.</p>
+<p>이번엔 2탄 실행 편이다. 1탄 컴파일편은 <a href="https://homoefficio.github.io/2019/01/31/Back-to-the-Essence-Java-컴파일에서-실행까지-1/">여기</a>에..</p>
+<h1 id="실행"><a href="#실행" class="headerlink" title="실행"></a>실행</h1><p>자바 애플리케이션은 <code>java</code> 명령어로 실행할 수 있다. <a href="https://docs.oracle.com/en/java/javase/11/tools/java.html#GUID-3B1CE181-CD30-4178-9602-230B800D4FAE" target="_blank" rel="noopener">오라클의 Tools Reference 문서</a>에 나오는 <code>java</code>에 대한 설명은 다음과 같다.</p>
+<blockquote>
+<p><code>java</code> 명령어는 자바 애플리케이션을 시작한다.<br><code>java</code> 명령어는 먼저 JRE(Java Runtime Environment)를 시작하고,<br>인자로 지정된 클래스(<code>public static void main(String[] args)</code>를 포함하고 있는 클래스)를 로딩하고,<br><code>main()</code> 메서드를 호출한다.</p>
+</blockquote>
+<h2 id="JDK-JRE-JVM"><a href="#JDK-JRE-JVM" class="headerlink" title="JDK, JRE, JVM"></a>JDK, JRE, JVM</h2><p><code>java</code>는 JRE를 시작한다고 하니, JDK, JRE, JVM의 관계를 그림 한 장으로 가볍게 훑고 지나가자.</p>
+<p><img src="https://i.imgur.com/wChPQEV.png" alt="Imgur"></p>
+<ul>
+<li>JDK: 자바 개발 환경 - 컴파일러, 역어셈블러, 디버거, 의존관계분석 등 개발에 필요한 도구 제공</li>
+<li>JRE: 자바 실행 환경 - 자바 실행 명령, 클래스로더와 바이트코드의 실행에 필요한 기본 라이브러리 제공</li>
+<li>JVM: 자바 가상 머신 - 바이트코드 인터프리터, JIT 컴파일러, 링커, 명령어 세트, 가비지 컬렉터, 런타임 데이터 영역(메모리) 등 OS에 독립적으로 실행될 수 있는 추상층 제공</li>
+</ul>
+<p>대략 다음과 같이 정리할 수 있다.</p>
+<blockquote>
+<p>JDK를 사용해서 바이트코드(class 파일)를 만들고, </p>
+<p>JRE를 사용해서 바이트코드를 실행하면,</p>
+<p>JVM이 기동되면서 바이트코드의 실질적인 실행(실제 OS에 메모리 할당/회수, 시스템 명령 호출 등 요청)을 담당한다.</p>
+</blockquote>
+<h2 id="JRE-시작"><a href="#JRE-시작" class="headerlink" title="JRE 시작"></a>JRE 시작</h2><p><code>java</code> 명령 실행에 의해 JRE가 시작된다는 것은 결국 <code>java</code> 명령어의 인자로 지정된 클래스를 실행하기 위한 자바 실행 환경이 조성됨을 의미한다. </p>
+<p><code>java</code> 명령어의 인자로 지정한 설정 옵션에 맞게 JVM이 실행되고, JVM이 클래스로더를 이용해서 <code>initial class</code>를 <code>create</code>하고, <code>initial class</code>를 <code>link</code>하고, <code>initialize</code>하고, main 메서드를 호출한다.(<a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-5.html#jvms-5.2" target="_blank" rel="noopener">JVM 스펙</a> 참고)</p>
+<h3 id="용어-정리"><a href="#용어-정리" class="headerlink" title="용어 정리"></a>용어 정리</h3><p>몇 가지 용어를 일부러 스펙에 나온 원어 그대로 썼는데 스펙상의 의미는 다음과 같다.</p>
+<ul>
+<li>initial class: JVM 구현에 따라 다를 수 있지만 일반적으로 main 메서드를 포함하는 클래스로서 java 명령어의 인자로 지정되는 클래스 (<a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-5.html#jvms-5.2" target="_blank" rel="noopener">JVM 스펙</a> 참고)</li>
+<li>create (a class or interface): 해당 클래스나 인터페이스의 바이트코드를 로딩해서 JVM이 할당한 메모리(Method Area, 메서드 영역)에 construction하는 것 (<a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-5.html#jvms-5.3" target="_blank" rel="noopener">JVM 스펙</a> 참고)</li>
+<li>link (a class or interface): 해당 클래스나 인터페이스의 바로 위 수퍼클래스나 수퍼인터페이스, 또는 배열일 경우 배열의 원소인 클래스나 인터페이스를 확인(verify)/준비(prepare)하고, 심볼릭 참조를 해석(resolve)해서 JVM에서 실행될 수 있는 상태로 만드는 것 (<a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-5.html#jvms-5.4" target="_blank" rel="noopener">JVM 스펙</a> 참고)</li>
+<li>initialize (a class or interface): 해당 클래스나 인터페이스의 class or interface initialization method를 실행하는 것 (<a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-5.html#jvms-5.5" target="_blank" rel="noopener">JVM 스펙</a> 참고)</li>
+</ul>
+<p>위 설명에는 없지만 중요한 용어인 로딩의 스펙상의 의미는 다음과 같다.</p>
+<ul>
+<li>load (a class or interface): 해당 클래스나 인터페이스의 바이너리 표현을 찾아서 그 바이너리 표현으로부터 클래스나 인터페이스를 생성(create)하는 것 (<a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-5.html" target="_blank" rel="noopener">JVM 스펙</a> 참고)</li>
+</ul>
+<p>앞으로 <strong>initial class는 시작 클래스</strong>, <strong>create은 생성</strong>, <strong>link는 링크</strong>, <strong>initialize는 초기화</strong>, <strong>load는 로딩</strong>이라고 쓴다. 한 가지 유의할 것은 여기서 말하는 <strong>생성(create)은 JVM의 힙(heap)에 객체를 생성하는 것만을 지칭하는 것이 아니라 JVM의 메모리 어딘가에 자료구조를 생성하는 것을 모두 지칭</strong>한다.</p>
+<h2 id="런타임-데이터-영역"><a href="#런타임-데이터-영역" class="headerlink" title="런타임 데이터 영역"></a>런타임 데이터 영역</h2><p><code>java</code> 명령어로 자바 애플리케이션을 실행하면 JVM이 실행되면서 시작 클래스를 생성, 링크, 초기화하고 main 메서드를 호출한다고 했다. 시작 클래스를 생성한다는 것은 시작 클래스의 바이트코드를 읽어서 JVM의 메모리 어딘가에 쓰는 것을 의미한다. JVM의 메모리는 어떻게 생겼을까?</p>
+<p>JVM은 프로그램의 실행에 사용되는 메모리를 런타임 데이터 영역(Runtime Data Area)이라고 부르는 몇 가지 영역으로 나눠서 관리한다. 스펙의 목차로 보면 밋밋하게 다음과 같이 나열되어 있다.</p>
+<ol>
+<li>PC 레지스터</li>
+<li>JVM 스택</li>
+<li>힙(Heap)</li>
+<li>메서드 영역(Method Area)</li>
+<li>런타임 상수 풀(Run-Time Constnat Pool)</li>
+<li>네이티브 메서드 스택</li>
+</ol>
+<p>이렇게 보면 위 6가지가 동등한 최상위 수준에서 분류되는 것처럼 보인다. 하지만, 실제 스펙의 설명을 보면 다음과 같이 약간 입체적으로 구분하는 것이 더 적합하다.</p>
+<p><img src="https://i.imgur.com/Mh4DuRB.png" alt="Imgur"></p>
+<p>여기서 ‘단위’라는 구분 단계를 추가한 이유는 스펙에도 <code>per-class</code>, <code>per-thread</code> 라는 표현이 나오기 때문인데, 여기에서의 ‘단위’는 생명 주기와 생성 단위를 의미한다.</p>
+<p>JVM 단위에 속하는 <strong>힙과 메서드 영역은 JVM이 시작될 때 생성되고, JVM이 종료될 때 소멸되며, JVM 하나에 힙 하나, 메서드 영역도 하나가 생성</strong> 된다.</p>
+<p>마찬가지로 클래스 단위에 속하는 <strong>런타임 상수 풀은 클래스가 생성/소멸될 때 함께 생성/소멸되며, 클래스 하나에 런타임 상수 풀도 하나가 생성</strong> 된다.</p>
+<p>스레드 단위에 속하는 <strong>PC 레지스터, JVM 스택, 네이티브 메서드 스택도 스레드가 생성/소멸될 때 함께 생성/소멸되며, 스레드 하나에 PC 레지스터, JVM 스택, 네이티브 메서드 스택도 각 하나씩 생성</strong> 된다.</p>
+<p>자. 이제 6가지 영역을 좀 더 자세히 알아보자.</p>
+<p>라고 진행하면 너무 뻔한 나열식이라 머리에 잘 안 남는다. 그러니 다음과 같이 간단한 예제 코드 실행 과정과 함께 살펴보자.</p>
+<h2 id="예제-코드"><a href="#예제-코드" class="headerlink" title="예제 코드"></a>예제 코드</h2><h3 id="자바-소스-코드"><a href="#자바-소스-코드" class="headerlink" title="자바 소스 코드"></a>자바 소스 코드</h3><p>헬로 월드 수준의 단순한 소스 코드다. 힙에서 객체가 생성되는 것을 확인하기 위해 Hello 인스턴스를 만들고 무한루프로 프로그램의 종료를 일부러 막아둔 코드다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> homo.efficio.jvm.sample;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Hello</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> Hello hello = <span class="keyword">new</span> Hello();</span><br><span class="line">        System.out.println(hello.helloMessage());</span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">helloMessage</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"Hello, JVM"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="컴파일된-바이트코드"><a href="#컴파일된-바이트코드" class="headerlink" title="컴파일된 바이트코드"></a>컴파일된 바이트코드</h3><p>컴파일된 바이트코드는 다음과 같다.</p>
+<blockquote>
+<p>javap -v -p -s homo/efficio/jvm/sample/Hello.class</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br></pre></td><td class="code"><pre><span class="line">$ /c/Program\ Files/Java/jdk-<span class="number">11.0</span>.2/bin/javap -v -p -s homo/efficio/jvm/sample/Hello</span><br><span class="line">Classfile /C:/gitrepo/scratchpad/java-jvm-scratchpad/out/production/java-jvm-scratchpad/homo/efficio/jvm/sample/Hello.class</span><br><span class="line">  Last modified <span class="number">2019</span>. <span class="number">1</span>. <span class="number">30</span>.; size <span class="number">741</span> bytes</span><br><span class="line">  MD5 checksum <span class="number">675e63</span>b96993dc5e661d6566467d92d3</span><br><span class="line">  Compiled from <span class="string">"Hello.java"</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">homo</span>.<span class="title">efficio</span>.<span class="title">jvm</span>.<span class="title">sample</span>.<span class="title">Hello</span></span></span><br><span class="line">  minor version: 0</span><br><span class="line">  major version: <span class="number">55</span></span><br><span class="line">  flags: (<span class="number">0x0021</span>) ACC_PUBLIC, ACC_SUPER</span><br><span class="line">  this_class: #2                          // homo/efficio/jvm/sample/Hello</span><br><span class="line">  super_class: #8                         // java/lang/Object</span><br><span class="line">  interfaces: <span class="number">0</span>, fields: <span class="number">0</span>, methods: <span class="number">3</span>, attributes: <span class="number">1</span></span><br><span class="line">Constant pool:</span><br><span class="line">   #1 = Methodref          #8.#26         // java/lang/Object."&lt;init&gt;":()V</span><br><span class="line">   #2 = Class              #27            // homo/efficio/jvm/sample/Hello</span><br><span class="line">   #3 = Methodref          #2.#26         // homo/efficio/jvm/sample/Hello."&lt;init&gt;":()V</span><br><span class="line">   #4 = Fieldref           #28.#29        // java/lang/System.out:Ljava/io/PrintStream;</span><br><span class="line">   #5 = Methodref          #2.#30         // homo/efficio/jvm/sample/Hello.helloMessage:()Ljava/lang/String;</span><br><span class="line">   #6 = Methodref          #31.#32        // java/io/PrintStream.println:(Ljava/lang/String;)V</span><br><span class="line">   #7 = String             #33            // Hello, JVM</span><br><span class="line">   #8 = Class              #34            // java/lang/Object</span><br><span class="line">   #9 = Utf8               &lt;init&gt;</span><br><span class="line">  #10 = Utf8               ()V</span><br><span class="line">  #11 = Utf8               Code</span><br><span class="line">  #12 = Utf8               LineNumberTable</span><br><span class="line">  #13 = Utf8               LocalVariableTable</span><br><span class="line">  #14 = Utf8               this</span><br><span class="line">  #15 = Utf8               Lhomo/efficio/jvm/sample/Hello;</span><br><span class="line">  #16 = Utf8               main</span><br><span class="line">  #17 = Utf8               ([Ljava/lang/String;)V</span><br><span class="line">  #18 = Utf8               args</span><br><span class="line">  #19 = Utf8               [Ljava/lang/String;</span><br><span class="line">  #20 = Utf8               hello</span><br><span class="line">  #21 = Utf8               StackMapTable</span><br><span class="line">  #22 = Utf8               helloMessage</span><br><span class="line">  #23 = Utf8               ()Ljava/lang/String;</span><br><span class="line">  #24 = Utf8               SourceFile</span><br><span class="line">  #25 = Utf8               Hello.java</span><br><span class="line">  #26 = NameAndType        #9:#10         // "&lt;init&gt;":()V</span><br><span class="line">  #27 = Utf8               homo/efficio/jvm/sample/Hello</span><br><span class="line">  #28 = Class              #35            // java/lang/System</span><br><span class="line">  #29 = NameAndType        #36:#37        // out:Ljava/io/PrintStream;</span><br><span class="line">  #30 = NameAndType        #22:#23        // helloMessage:()Ljava/lang/String;</span><br><span class="line">  #31 = Class              #38            // java/io/PrintStream</span><br><span class="line">  #32 = NameAndType        #39:#40        // println:(Ljava/lang/String;)V</span><br><span class="line">  #33 = Utf8               Hello, JVM</span><br><span class="line">  #34 = Utf8               java/lang/Object</span><br><span class="line">  #35 = Utf8               java/lang/System</span><br><span class="line">  #36 = Utf8               out</span><br><span class="line">  #37 = Utf8               Ljava/io/PrintStream;</span><br><span class="line">  #38 = Utf8               java/io/PrintStream</span><br><span class="line">  #39 = Utf8               println</span><br><span class="line">  #40 = Utf8               (Ljava/lang/String;)V</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">public</span> homo.efficio.jvm.sample.Hello();</span><br><span class="line">    descriptor: ()V</span><br><span class="line">    flags: (<span class="number">0x0001</span>) ACC_PUBLIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">1</span>, locals=<span class="number">1</span>, args_size=<span class="number">1</span></span><br><span class="line">         <span class="number">0</span>: aload_0</span><br><span class="line">         1: invokespecial #1                  // Method java/lang/Object."&lt;init&gt;":()V</span><br><span class="line">         <span class="number">4</span>: <span class="keyword">return</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">3</span>: <span class="number">0</span></span><br><span class="line">      LocalVariableTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">            <span class="number">0</span>       <span class="number">5</span>     <span class="number">0</span>  <span class="keyword">this</span>   Lhomo/efficio/jvm/sample/Hello;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(java.lang.String[])</span></span>;</span><br><span class="line">    descriptor: ([Ljava/lang/String;)V</span><br><span class="line">    flags: (<span class="number">0x0009</span>) ACC_PUBLIC, ACC_STATIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">2</span>, locals=<span class="number">2</span>, args_size=<span class="number">1</span></span><br><span class="line">         0: new           #2                  // class homo/efficio/jvm/sample/Hello</span><br><span class="line">         <span class="number">3</span>: dup</span><br><span class="line">         4: invokespecial #3                  // Method "&lt;init&gt;":()V</span><br><span class="line">         <span class="number">7</span>: astore_1</span><br><span class="line">         8: getstatic     #4                  // Field java/lang/System.out:Ljava/io/PrintStream;</span><br><span class="line">        <span class="number">11</span>: aload_1</span><br><span class="line">        12: invokevirtual #5                  // Method helloMessage:()Ljava/lang/String;</span><br><span class="line">        15: invokevirtual #6                  // Method java/io/PrintStream.println:(Ljava/lang/String;)V</span><br><span class="line">        <span class="number">18</span>: goto          <span class="number">18</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">6</span>: <span class="number">0</span></span><br><span class="line">        line <span class="number">7</span>: <span class="number">8</span></span><br><span class="line">        line <span class="number">8</span>: <span class="number">18</span></span><br><span class="line">      LocalVariableTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">            <span class="number">0</span>      <span class="number">21</span>     <span class="number">0</span>  args   [Ljava/lang/String;</span><br><span class="line">            <span class="number">8</span>      <span class="number">13</span>     <span class="number">1</span> hello   Lhomo/efficio/jvm/sample/Hello;</span><br><span class="line">      StackMapTable: number_of_entries = <span class="number">1</span></span><br><span class="line">        frame_type = <span class="number">252</span> <span class="comment">/* append */</span></span><br><span class="line">          offset_delta = <span class="number">18</span></span><br><span class="line">          locals = [ class homo/efficio/jvm/sample/Hello ]</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> java.lang.<span class="function">String <span class="title">helloMessage</span><span class="params">()</span></span>;</span><br><span class="line">    descriptor: ()Ljava/lang/String;</span><br><span class="line">    flags: (<span class="number">0x0001</span>) ACC_PUBLIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">1</span>, locals=<span class="number">1</span>, args_size=<span class="number">1</span></span><br><span class="line">         0: ldc           #7                  // String Hello, JVM</span><br><span class="line">         <span class="number">2</span>: areturn</span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">12</span>: <span class="number">0</span></span><br><span class="line">      LocalVariableTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">            <span class="number">0</span>       <span class="number">3</span>     <span class="number">0</span>  <span class="keyword">this</span>   Lhomo/efficio/jvm/sample/Hello;</span><br><span class="line">&#125;</span><br><span class="line">SourceFile: <span class="string">"Hello.java"</span></span><br></pre></td></tr></table></figure>
+<p>앞에서 JDK, JRE, JVM 관계로 설명했지만 위와 같은 바이트코드를 만드는 과정까지는 JDK에서 담당한다.</p>
+<p>앞에서 자바 프로그램이 실행되면 다음과 같이 전개된다고 설명했다. </p>
+<blockquote>
+<p><strong>JVM이 실행</strong>되고, JVM이 클래스로더를 이용해서 <strong>시작 클래스를 생성</strong>하고, <strong>링크</strong>하고, <strong>초기화</strong>하고, <strong>main 메서드를 호출</strong>한다.</p>
+</blockquote>
+<p>이제 <code>java homo.efficio.jvm.sample.Hello</code> 명령을 실행하면 어떻게 진행되는지 차근차근 살펴보자.</p>
+<h2 id="JVM-실행"><a href="#JVM-실행" class="headerlink" title="JVM 실행"></a>JVM 실행</h2><p><code>java</code> 명령이 실행되면 JRE가 조성되면서 JVM이 실행된다. JVM이 실행되면 JVM 단위로 생성되는 힙과 메서드 영역이 함께 생성된다.</p>
+<h3 id="힙"><a href="#힙" class="headerlink" title="힙"></a>힙</h3><p><strong><a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-2.html#jvms-2.5.3" target="_blank" rel="noopener">힙(Heap)</a>은 인스턴스화 된 모든 클래스 인스턴스와 배열을 저장하는 공간</strong>이며, <strong>모든 JVM 스레드에 공유</strong>된다.</p>
+<p>힙에 저장된 객체에 할당된 메모리는 명시적인 방법으로는 절대 회수되지 못하며, 오직 가비지 컬렉터(garbage collector)에 의해서만 회수될 수 있다.</p>
+<p>Hello는 이 시점에서는 아직 인스턴스화 되지 않았으므로 힙은 비어있다.</p>
+<h3 id="메서드-영역"><a href="#메서드-영역" class="headerlink" title="메서드 영역"></a>메서드 영역</h3><p><strong><a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-2.html#jvms-2.5.4" target="_blank" rel="noopener">메서드 영역(Method Area)</a>은 런타임 상수 풀, 필드와 메서드 데이터, 생성자 및 메서드의 코드 내용을 저장</strong>한다. 저장되는 내용은 위에서 살펴봤던 바이트코드의 내용과 거의 일치한다. 거의라고 얘기하는 이유는 바이트코드에는 런타임 상수 풀이 아니라 그냥 상수 풀(constanta pool)이 포함되어 있기 때문이다. 런타임 상수 풀은 이 상수 풀을 바탕으로 런타임에, 더 구체적으로는 메서드 영역에 저장될 때 만들어진다.</p>
+<p>그래서 엄밀히 말하면 정확하지 않지만, <strong>바이트코드 내용이 메서드 영역에 저장된다</strong>라고 이해해도 크게 틀리지는 않다.</p>
+<p>Hello는 이 시점에서는 아직 생성되지 않았으므로 메서드 영역도 비어있다.</p>
+<p><img src="https://i.imgur.com/KXJsPgs.png" alt="Imgur"></p>
+<h2 id="시작-클래스-생성"><a href="#시작-클래스-생성" class="headerlink" title="시작 클래스 생성"></a>시작 클래스 생성</h2><p>시작 클래스는 Hello를 지칭하며 시작 클래스를 생성하는 것은 파일시스템에 있는 Hello.class 파일을 JVM의 메서드 영역으로 읽어들이는 것을 의미한다고 했다. 따라서 <strong>이 시점에서 Hello의 바이트코드 내용이 메서드 영역에 저장</strong>된다.</p>
+<p><img src="https://i.imgur.com/QBQyTab.png" alt="Imgur"></p>
+<h3 id="런타임-상수-풀"><a href="#런타임-상수-풀" class="headerlink" title="런타임 상수 풀"></a>런타임 상수 풀</h3><p>클래스가 생성되면 <a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-2.html#jvms-2.5.5" target="_blank" rel="noopener">런타임 상수 풀(Run-Time Constant Pool)</a>도 함께 생성된다고 했다. <strong>런타임 상수 풀에는 컴파일 타임에 이미 알 수 있는 숫자 리터럴 값부터 런타임에 해석되는 메서드와 필드의 참조까지를 포괄하는 여러 종류의 상수가 포함</strong>된다. 런타임 상수 풀은 다른 전통적인 언어에서 말하는 심볼 테이블과 비슷한 기능을 한다고 보면 된다.</p>
+<p><img src="https://i.imgur.com/ZtsNYAv.png" alt="Imgur"></p>
+<h2 id="링크"><a href="#링크" class="headerlink" title="링크"></a>링크</h2><p><strong>링크는 클래스나 인터페이스의 바로 위 수퍼클래스나 수퍼인터페이스, 또는 배열일 경우 배열의 원소인 클래스나 인터페이스를 확인(verify)/준비(prepare)하고, 심볼릭 참조를 해석(resolve)하는 과정</strong>을 말한다.</p>
+<p>그럼 확인, 준비, 해석은 뭘 의미하는 걸까?</p>
+<h3 id="확인"><a href="#확인" class="headerlink" title="확인"></a>확인</h3><p><strong><a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-5.html#jvms-5.4.1" target="_blank" rel="noopener">확인(verification)</a>은 클래스나 인터페이스의 바이너리 표현이 구조적으로 올바른지를 보장해주는 과정</strong>이다. 확인 과정은 다른 클래스나 인터페이스의 로딩을 유발할 수도 있지만, 로딩된 다른 클래스나 인터페이스의 확인이나 준비를 필수적으로 유발하지는 않는다.</p>
+<p>Hello.class 파일은 JDK에 포함된 공식 컴파일러인 <code>javac</code>에 의해 정상적으로 컴파일되었으므로 구조적으로 올바르다고 가정하면, <strong>확인 과정에서 Hello의 부모 클래스인 Object가 로딩</strong>된다.</p>
+<p><img src="https://i.imgur.com/8f6zqKP.png" alt="Imgur"></p>
+<h3 id="준비"><a href="#준비" class="headerlink" title="준비"></a>준비</h3><p><strong><a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-5.html#jvms-5.4.2" target="_blank" rel="noopener">준비(preperation)</a>는 클래스나 인터페이스의 정적(static) 필드를 생성하고 기본값으로 초기화하는 과정</strong>이다. 준비 과정에서는 JVM 코드의 실행을 필요로 하지 않으며, <strong>기본값이 아닌 특정값으로 정적 필드를 초기화하는 과정은 준비 과정이 아니라 초기화 과정에서 수행</strong>된다.</p>
+<p>스펙에 정의된 <a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-2.html#jvms-2.3" target="_blank" rel="noopener">기본형 타입의 기본값</a>과 <a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-2.html#jvms-2.4" target="_blank" rel="noopener">참조형 타입의 기본값</a>은 다음과 같다.</p>
+<table>
+<thead>
+<tr>
+<th>타입</th>
+<th>기본값</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>byte, short, int, long</td>
+<td>0</td>
+</tr>
+<tr>
+<td>char</td>
+<td>null(<code>&#39;\u0000&#39;</code>)</td>
+</tr>
+<tr>
+<td>float, double</td>
+<td>0(positive zero)</td>
+</tr>
+<tr>
+<td>boolean</td>
+<td>false</td>
+</tr>
+<tr>
+<td>참조형</td>
+<td>null</td>
+</tr>
+</tbody>
+</table>
+<p>Hello에는 정적 필드가 없으므로 이 과정에서 특별히 수행되는 것은 없다.</p>
+<h3 id="해석"><a href="#해석" class="headerlink" title="해석"></a>해석</h3><p><strong><a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-5.html#jvms-5.4.3" target="_blank" rel="noopener">해석(resolution)</a>은 런타임 상수 풀에 있는 심볼릭 참조가 구체적인 값을 가리키도록 동적으로 결정하는 과정</strong>이다. 초기 상태의 런타임 상수 풀에 있는 심볼릭 참조는 해석되어져 있지 않다.</p>
+<h3 id="링크의-조건"><a href="#링크의-조건" class="headerlink" title="링크의 조건"></a>링크의 조건</h3><p>JVM 스펙에서는 <strong>링크가 언제 수행되어야 하는지는 규정하지 않고 유연하게 구현될 수 있는 여지</strong>를 주고 있다. 단 다음과 같은 조건을 만족해야 한다.</p>
+<ul>
+<li>클래스나 인터페이스는 링크되기 전에 먼저 완전히 로딩되어야 한다.</li>
+<li>클래스나 인스턴스는 초기화되기 전에 먼저 완전히 확인되고 준비되어야 한다.</li>
+<li>링크 관련 에러는 해당 클래스나 인터페이스에 대한 링크를 필요로 하는 행위가 수행되는 시점에 throw 되어야 한다.</li>
+<li>동적으로 계산되는(dynamically-computed) 상수 A에 대한 심볼릭 참조는, A를 참조하는 <code>ldc</code>, <code>ldc_w</code>, <code>ldc2_w</code> 명령어가 실행되거나 A를 정적 인자로 참조하는 부트스트랩 메서드가 호출되기 전까지는 해석되지 않는다.</li>
+<li>동적으로 계산되는(dynamically-computed) call site B에 대한 심볼릭 참조는, B를 정적 인자로 참조하는 부트스트랩 메서드가 호출되기 전까지는 해석되지 않는다.</li>
+</ul>
+<p>일반적으로 만족되어야 하는 것은 1, 2, 3번째 조건이고 4, 5번째는 특수한 경우에 대한 조건이다.</p>
+<p>해석 시점은 JVM 구현체에 따라 다를 수 있다. <strong>지연(lazy) 링크 전략을 사용하면 클래스나 인터페이스에 포함된 심볼릭 참조는 해당 참조가 실제 사용될 때 개별적으로 해석</strong>된다. 반면에 <strong>즉시(eager) 링크 전략을 사용하면 클래스나 인터페이스가 확인될 때 모든 심볼릭 참조가 한꺼번에 해석</strong>된다. 지연 링크를 사용하면 해석 과정은 클래스나 인터페이스가 초기화 된 후에 실행될 수도 있다.</p>
+<p>링크 과정을 정리하면 다음과 같다.</p>
+<blockquote>
+<p>링크는 <strong>확인, 준비, 해석 단계로 구성된다.</strong></p>
+<p><strong>클래스나 인터페이스는 완전히 로딩된 후에 확인과 준비가 수행돼야 하고, 완전히 확인되고 준비된 뒤에 초기화되어야 한다.</strong></p>
+<p><strong>해석은 초기화 이후에 실행될 수도 있다.</strong></p>
+</blockquote>
+<p>스펙을 보면 해석은 다시 <a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-5.html#jvms-5.4.3.1" target="_blank" rel="noopener">클래스/인터페이스 해석</a>, <a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-5.html#jvms-5.4.3.2" target="_blank" rel="noopener">필드 해석</a>, <a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-5.html#jvms-5.4.3.3" target="_blank" rel="noopener">메서드 해석</a>, <a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-5.html#jvms-5.4.3.4" target="_blank" rel="noopener">인터페이스 메서드 해석</a>, <a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-5.html#jvms-5.4.3.5" target="_blank" rel="noopener">메서드 타입/핸들 해석</a>, <a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-5.html#jvms-5.4.3.6" target="_blank" rel="noopener">동적 계산 상수/콜사이트 해석</a>, 이렇게 6가지로 나눠서 자세한 설명이 나와 있으니 관심있다면 찾아보기로 하고 다시 예제로 돌아와 보자. </p>
+<p>Hello의 상수 풀은 다음과 같았다.</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">Constant pool:</span><br><span class="line">   #1 = Methodref          #8.#26         // java/lang/Object."&lt;init&gt;":()V</span><br><span class="line">   #2 = Class              #27            // homo/efficio/jvm/sample/Hello</span><br><span class="line">   #3 = Methodref          #2.#26         // homo/efficio/jvm/sample/Hello."&lt;init&gt;":()V</span><br><span class="line">   #4 = Fieldref           #28.#29        // java/lang/System.out:Ljava/io/PrintStream;</span><br><span class="line">   #5 = Methodref          #2.#30         // homo/efficio/jvm/sample/Hello.helloMessage:()Ljava/lang/String;</span><br><span class="line">   #6 = Methodref          #31.#32        // java/io/PrintStream.println:(Ljava/lang/String;)V</span><br><span class="line">   #7 = String             #33            // Hello, JVM</span><br><span class="line">   #8 = Class              #34            // java/lang/Object</span><br><span class="line">   #9 = Utf8               &lt;init&gt;</span><br><span class="line">  #10 = Utf8               ()V</span><br><span class="line">  #11 = Utf8               Code</span><br><span class="line">  #12 = Utf8               LineNumberTable</span><br><span class="line">  #13 = Utf8               LocalVariableTable</span><br><span class="line">  #14 = Utf8               this</span><br><span class="line">  #15 = Utf8               Lhomo/efficio/jvm/sample/Hello;</span><br><span class="line">  #16 = Utf8               main</span><br><span class="line">  #17 = Utf8               ([Ljava/lang/String;)V</span><br><span class="line">  #18 = Utf8               args</span><br><span class="line">  #19 = Utf8               [Ljava/lang/String;</span><br><span class="line">  #20 = Utf8               hello</span><br><span class="line">  #21 = Utf8               StackMapTable</span><br><span class="line">  #22 = Utf8               helloMessage</span><br><span class="line">  #23 = Utf8               ()Ljava/lang/String;</span><br><span class="line">  #24 = Utf8               SourceFile</span><br><span class="line">  #25 = Utf8               Hello.java</span><br><span class="line">  #26 = NameAndType        #9:#10         // "&lt;init&gt;":()V</span><br><span class="line">  #27 = Utf8               homo/efficio/jvm/sample/Hello</span><br><span class="line">  #28 = Class              #35            // java/lang/System</span><br><span class="line">  #29 = NameAndType        #36:#37        // out:Ljava/io/PrintStream;</span><br><span class="line">  #30 = NameAndType        #22:#23        // helloMessage:()Ljava/lang/String;</span><br><span class="line">  #31 = Class              #38            // java/io/PrintStream</span><br><span class="line">  #32 = NameAndType        #39:#40        // println:(Ljava/lang/String;)V</span><br><span class="line">  #33 = Utf8               Hello, JVM</span><br><span class="line">  #34 = Utf8               java/lang/Object</span><br><span class="line">  #35 = Utf8               java/lang/System</span><br><span class="line">  #36 = Utf8               out</span><br><span class="line">  #37 = Utf8               Ljava/io/PrintStream;</span><br><span class="line">  #38 = Utf8               java/io/PrintStream</span><br><span class="line">  #39 = Utf8               println</span><br><span class="line">  #40 = Utf8               (Ljava/lang/String;)V</span><br></pre></td></tr></table></figure>
+<p>설명의 편의를 위해 즉시 링크 방식으로 해석이 진행된다고 가정하고, 위 상수 풀에서 유도되는 런타임 상수 풀에 있는 심볼릭 참조의 해석 과정을 몇 개만 예로 살펴보자.</p>
+<p><code>#1 = Methodref          #8.#26         // java/lang/Object.&quot;&lt;init&gt;&quot;:()V</code></p>
+<p>Object 클래스가 확인 과정에서 메서드 영역에 로딩되어 있으므로, 메서드 영역에 저장된 Object 클래스의 바이트코드 내용에서 생성자(<code>&lt;init&gt;</code>)의 위치를 알아낼 수 있고, 그 위치를 <code>Methodref java/lang/Object.&quot;&lt;init&gt;&quot;</code>의 값으로 해석할 수 있다.</p>
+<p><img src="https://i.imgur.com/MAiWMYz.png" alt="Imgur"></p>
+<p><code>#2 = Class              #27            // homo/efficio/jvm/sample/Hello</code></p>
+<p>Hello 인스턴스를 만들 때 필요한 Hello 클래스 정보는 이미 메서드 영역에 로딩되어 있으므로, 메서드 영역 내에서 Hello 클래스의 위치를 <code>Class homo/efficio/jvm/sample/Hello</code>의 값으로 해석할 수 있다.</p>
+<p><img src="https://i.imgur.com/y0qP8vW.png" alt="Imgur"></p>
+<p><code>#3</code>은 Hello 생성자를 가리키는 Methodref 항목인데, Methodref의 해석 과정은 앞의 <code>#1</code>에서 이미 다뤘으므로 설명은 생략하고 그림만 보자.</p>
+<p><img src="https://i.imgur.com/XBMPitk.png" alt="Imgur"></p>
+<p><code>#4 = Fieldref           #28.#29        // java/lang/System.out:Ljava/io/PrintStream;</code></p>
+<p>System 클래스는 아직 로딩되어 있지 않으므로 먼저 로딩하고, 확인 후 준비 과정을 거치면서 System 클래스의 정적 필드인 <code>out</code>의 타입인 PrintStream 클래스도 로딩되고 참조형 변수인 <code>out</code>은 기본값인 null 로 초기화 된다.</p>
+<p><img src="https://i.imgur.com/RJ3ZLvX.png" alt="Imgur"></p>
+<p>대략 이런 식으로 로딩-링크 과정이 연쇄적으로 수행되면서 메서드 영역이 채워지고, 메서드 영역 내에서 클래스 단위로 생성되는 런타임 상수 풀 안에 있는 심볼릭 참조가 가리키는 값들이 결정된다.</p>
+<p>하지만 이것도 위에 썼듯이 즉시 링크 방식일 때의 얘기고, <strong>지연 링크를 사용한다면 각 클래스의 초기화가 수행된 이후에 해석 과정이 수행</strong>될 수도 있다.</p>
+<p>그럼 이제 초기화를 알아볼 차례다.</p>
+<h2 id="초기화"><a href="#초기화" class="headerlink" title="초기화"></a>초기화</h2><p>초기화(initialization)는 <code>클래스 또는 인터페이스 초기화 메서드(class or interface initialization method)</code>를 실행할 때 수행되는 과정이다. 쉽게 말하면 <strong>여기에서 말하는 초기화는 정적 초기화(static initialization)를 말한다</strong>고 볼 수 있다.</p>
+<p>그럼 초기화 메서드는 무엇일까?</p>
+<h3 id="초기화-메서드"><a href="#초기화-메서드" class="headerlink" title="초기화 메서드"></a>초기화 메서드</h3><p>초기화 메서드(initialization method)는 두 가지가 있다.</p>
+<h4 id="인스턴스-초기화-메서드"><a href="#인스턴스-초기화-메서드" class="headerlink" title="인스턴스 초기화 메서드"></a>인스턴스 초기화 메서드</h4><p><a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-2.html#jvms-2.9.1" target="_blank" rel="noopener">인스턴스 초기화 메서드</a>는 자바 언어로 작성되는 생성자에 해당하며, 클래스는 0개 이상의 인스턴스 초기화 메서드를 가진다. <code>인스턴스 초기화 메서드</code>는 다음의 조건을 모두 충족해야 한다.</p>
+<ul>
+<li>(인터페이스가 아니고) 클래스 안에 정의된다.</li>
+<li>(바이트코드 상에서) <code>&lt;init&gt;</code>라는 특수한 이름으로 표현된다.</li>
+<li>반환 타입은 void</li>
+</ul>
+<p><code>인스턴스 초기화 메서드</code>는 생성자로서 힙에 인스턴스를 생성하는 역할을 담당하며, 이름에 초기화라는 용어가 들어가지만 여기에서 말하는 초기화와는 좀 다른 개념이고, 실제 스펙에서도 초기화는 (인스턴스 초기화 메서드를 배제하고) <code>class or interface initialization method(클래스 또는 인터페이스 초기화 메서드)</code>를 호출한다고 명시되어 있다. (<a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-5.html#jvms-5.5" target="_blank" rel="noopener">JVM 스펙</a>에 <a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-2.html#jvms-2.9.2" target="_blank" rel="noopener">2.9.2</a> 라고 따로 명기)</p>
+<h4 id="클래스-초기화-메서드-클래스-또는-인터페이스-초기화-메서드"><a href="#클래스-초기화-메서드-클래스-또는-인터페이스-초기화-메서드" class="headerlink" title="클래스 초기화 메서드(클래스 또는 인터페이스 초기화 메서드)"></a>클래스 초기화 메서드(클래스 또는 인터페이스 초기화 메서드)</h4><p>앞에서 링크 과정의 준비 단계 설명에 초기화가 잠시 언급된 적이 있다.<br><strong>정적 필드를 기본값으로 초기화 하는 것은 링크의 준비 단계에서 수행</strong>되고, <strong>정적 필드를 특정값으로 초기화 하는 것은 초기화 단계에서 수행</strong>된다고 했는데, 지금 설명하고 있는 이 <code>클래스 또는 인터페이스 초기화 메서드</code>가 실행되는 것이 초기화 단계다.</p>
+<p><a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-2.html#jvms-2.9.2" target="_blank" rel="noopener">클래스 또는 인터페이스 초기화 메서드</a>는 클래스나 인터페이스에(클래스나 인터페이스의 바이트코드에) 1개만 존재할 수 있으며, 다음의 조건을 모두 충족해야 한다.</p>
+<ul>
+<li>(바이트코드 상에서) <code>&lt;clinit&gt;</code>라는 특수한 이름으로 표현된다.</li>
+<li>반환 타입은 void</li>
+<li>class 파일 버전 51 이상에서는 <code>ACC_STATIC</code> 플래그가 붙는다.</li>
+</ul>
+<p>인스턴스 초기화 메서드는 생성자에 해당한다는 명확하고 직관적인 설명이 스펙에 있는데, <code>클래스 또는 인터페이스 초기화 메서드</code>는 아쉽게도 뭐에 해당하는지 스펙에는 구체적인 설명이 없다.</p>
+<p>그래서 몇 가지 테스트를 해 본 결과 <strong>클래스 초기화 메서드는 쉽게 말해 static 블록(들)의 내용을 하나로 합친 것</strong>이라고 볼 수 있다. 이건 말보다 코드가 훨씬 쉬우니 코드로 살펴보자.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> homo.efficio.jvm.sample;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StaticInitSample</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">static</span> <span class="keyword">int</span> i;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        i = <span class="number">11</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> <span class="keyword">int</span> j;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        j = <span class="number">22</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>컴파일한 후 <code>javap -v -p -s homo.efficio.jvm.sample.StaticInitSample</code> 명령으로 바이트코드를 살펴보면 다음과 같다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">homo</span>.<span class="title">efficio</span>.<span class="title">jvm</span>.<span class="title">sample</span>.<span class="title">StaticInitSample</span></span></span><br><span class="line">  minor version: 0</span><br><span class="line">  major version: <span class="number">52</span></span><br><span class="line">  flags: ACC_PUBLIC, ACC_SUPER</span><br><span class="line">Constant pool:</span><br><span class="line">   #1 = Methodref          #5.#19         // java/lang/Object."&lt;init&gt;":()V</span><br><span class="line">   #2 = Fieldref           #4.#20         // homo/efficio/jvm/sample/StaticInitSample.i:I</span><br><span class="line">   #3 = Fieldref           #4.#21         // homo/efficio/jvm/sample/StaticInitSample.j:I</span><br><span class="line">   #4 = Class              #22            // homo/efficio/jvm/sample/StaticInitSample</span><br><span class="line">   #5 = Class              #23            // java/lang/Object</span><br><span class="line">   #6 = Utf8               i</span><br><span class="line">   #7 = Utf8               I</span><br><span class="line">   #8 = Utf8               j</span><br><span class="line">   #9 = Utf8               &lt;init&gt;</span><br><span class="line">  #10 = Utf8               ()V</span><br><span class="line">  #11 = Utf8               Code</span><br><span class="line">  #12 = Utf8               LineNumberTable</span><br><span class="line">  #13 = Utf8               LocalVariableTable</span><br><span class="line">  #14 = Utf8               this</span><br><span class="line">  #15 = Utf8               Lhomo/efficio/jvm/sample/StaticInitSample;</span><br><span class="line">  #16 = Utf8               &lt;clinit&gt;</span><br><span class="line">  #17 = Utf8               SourceFile</span><br><span class="line">  #18 = Utf8               StaticInitSample.java</span><br><span class="line">  #19 = NameAndType        #9:#10         // "&lt;init&gt;":()V</span><br><span class="line">  #20 = NameAndType        #6:#7          // i:I</span><br><span class="line">  #21 = NameAndType        #8:#7          // j:I</span><br><span class="line">  #22 = Utf8               homo/efficio/jvm/sample/StaticInitSample</span><br><span class="line">  #23 = Utf8               java/lang/Object</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> i;</span><br><span class="line">    descriptor: I</span><br><span class="line">    flags: ACC_PUBLIC, ACC_STATIC, ACC_FINAL</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> homo.efficio.jvm.sample.StaticInitSample();</span><br><span class="line">    descriptor: ()V</span><br><span class="line">    flags: ACC_PUBLIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">1</span>, locals=<span class="number">1</span>, args_size=<span class="number">1</span></span><br><span class="line">         <span class="number">0</span>: aload_0</span><br><span class="line">         1: invokespecial #1                  // Method java/lang/Object."&lt;init&gt;":()V</span><br><span class="line">         <span class="number">4</span>: <span class="keyword">return</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">3</span>: <span class="number">0</span></span><br><span class="line">      LocalVariableTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">            <span class="number">0</span>       <span class="number">5</span>     <span class="number">0</span>  <span class="keyword">this</span>   Lhomo/efficio/jvm/sample/StaticInitSample;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">static</span> &#123;&#125;;</span><br><span class="line">    descriptor: ()V</span><br><span class="line">    flags: ACC_STATIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">1</span>, locals=<span class="number">0</span>, args_size=<span class="number">0</span></span><br><span class="line">         <span class="number">0</span>: bipush        <span class="number">11</span></span><br><span class="line">         2: putstatic     #2                  // Field i:I</span><br><span class="line">         <span class="number">5</span>: bipush        <span class="number">22</span></span><br><span class="line">         7: putstatic     #3                  // Field j:I</span><br><span class="line">        <span class="number">10</span>: <span class="keyword">return</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">8</span>: <span class="number">0</span></span><br><span class="line">        line <span class="number">14</span>: <span class="number">5</span></span><br><span class="line">        line <span class="number">15</span>: <span class="number">10</span></span><br><span class="line">&#125;</span><br><span class="line">SourceFile: <span class="string">"StaticInitSample.java"</span></span><br></pre></td></tr></table></figure>
+<p>상수 풀의 16번째 항목에 <code>#16 = Utf8               &lt;clinit&gt;</code>가 1개 있고, 아래 코드 내용의 <code>static {};</code> 아래 부분에 i를 1로, j를 2로 초기화 하는 부분이 소스코드에는 별개의 static 블록에 있었는데 바이트코드에서는 하나로 합쳐저 있음을 확인할 수 있다.</p>
+<h3 id="초기화-정리"><a href="#초기화-정리" class="headerlink" title="초기화 정리"></a>초기화 정리</h3><p>링크 단계 다음에 수행되는 초기화 단계를 정리해보면 다음과 같다.</p>
+<blockquote>
+<p><strong>초기화는 바이트코드에서 <code>&lt;clinit&gt;</code>으로 표시되는 <code>클래스 또는 인터페이스 초기화 메서드</code>(자바 소스 코드의 static 블록을 하나로 합친 것)를 실행하는 것</strong>을 의미한다.</p>
+<p><strong>링크 단계 이후에 수행되는 초기화란 결국 정적 초기화를 의미</strong>한다.</p>
+</blockquote>
+<p>다시 원래의 예제 코드인 Hello로 돌아와보자. Hello에는 정적 필드가 없으므로 초기화 과정에서 따로 수행되는 것은 없다. 초기화 과정까지 마쳤으면 이제 드디어 JVM에 의해 main 메서드가 호출될 차례다.</p>
+<h1 id="main-메서드-호출"><a href="#main-메서드-호출" class="headerlink" title="main 메서드 호출"></a>main 메서드 호출</h1><p>앞서 설명한 로딩, 링크, 초기화 과정은 바이트코드 내용 기준, 즉 클래스 단위의 정적인 준비를 다뤘는데, main 메서드 호출부터는 실제 프로그램의 동적인 실행이 일어난다. 프로그램이 실행되려면 프로그램 흐름의 최소 단위인 스레드가 있어야 한다. <strong>JVM이 main 메서드 호출을 위한 main 스레드를 생성</strong>한다. </p>
+<h2 id="main-스레드-생성"><a href="#main-스레드-생성" class="headerlink" title="main 스레드 생성"></a>main 스레드 생성</h2><p><strong>스레드가 생성되면 PC 레지스터, JVM 스택, 네이티브 메서드 스택이 함께 생성</strong>되고, 런타임 데이터 영역은 대략 다음과 같아진다.</p>
+<p><img src="https://i.imgur.com/izWNxMs.png" alt="Imgur"></p>
+<h2 id="PC-Register"><a href="#PC-Register" class="headerlink" title="PC Register"></a>PC Register</h2><p><a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-2.html#jvms-2.5.1" target="_blank" rel="noopener">PC 레지스터</a>에는 현재 실행 중인 메서드가 </p>
+<ul>
+<li>네이티브 메서드가 아니면 <strong>현재 실행 중인 JVM 명령어의 위치가 저장</strong>되고, </li>
+<li>네이티브 메서드이면 PC 레지스터에 저장되는 값은 정의되지 않는다(undefined).</li>
+</ul>
+<h2 id="JVM-Stack"><a href="#JVM-Stack" class="headerlink" title="JVM Stack"></a>JVM Stack</h2><p><a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-2.html#jvms-2.5.2" target="_blank" rel="noopener">JVM 스택</a>은 LIFO(Last In First Out) 방식으로 동작하는 자료구조서 <strong>JVM 스택에는 프레임이 저장</strong>된다.</p>
+<h3 id="Frame"><a href="#Frame" class="headerlink" title="Frame"></a>Frame</h3><p>JVM 스택에 쌓이는 정보의 단위가 <a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-2.html#jvms-2.6" target="_blank" rel="noopener">프레임(Frame)</a>이다. 프레임은 데이터나 중간 결과의 저장, 동적 링크, 값 반환, 예외 디스패치에 사용된다.</p>
+<p><strong>메서드 하나가 호출될 때마다 새 프레임이 생성되어 스택에 쌓이고, 메서드 호출이 정상 완료되거나 예외가 던져지면 프레임은 스택에서 빠지면서 소멸된다.</strong></p>
+<p><strong>프레임은 로컬 변수 배열, 오퍼랜드 스택, 프레임에 해당하는 메서드가 속한 클래스의 런타임 상수 풀에 대한 참조 이렇게 3개의 자료구조로 구성</strong>된다.</p>
+<p><img src="https://i.imgur.com/uV7vHx5.png" alt="Imgur"></p>
+<h4 id="Local-Variables"><a href="#Local-Variables" class="headerlink" title="Local Variables"></a>Local Variables</h4><p>프레임은 <a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-2.html#jvms-2.6.1" target="_blank" rel="noopener">로컬 변수 배열(Local Variables</a>을 하나 가지고 있다. 로컬 변수 배열의 크기는 컴파일 타임에 결정되며 바이트코드의 <code>Code</code> 속성에 <code>locals</code>으로 표시된다.</p>
+<p><code>boolean</code>, <code>byte</code>, <code>char</code>, <code>short</code>, <code>int</code>, <code>float</code>, <code>reference</code>, <code>returnAddress</code>는 배열의 1개의 슬롯에 저장되고, <code>long</code>과 <code>double</code>은 2개의 슬롯에 걸쳐 저장된다.</p>
+<p>메서드가 호출될 때 그 <strong>메서드의 파라미터 값은 로컬 변수 배열을 통해 넘겨진다.</strong></p>
+<ul>
+<li>메서드가 <strong>클래스 메서드이면 첫 번째 파라미터는 0번 슬롯에 두 번째 파라미터는 1번 슬롯에 차례대로 저장</strong>되고, </li>
+<li>메서드가 <strong>인스턴스 메서드이면 <code>this</code>가 0번 슬롯에 먼저 저장되고, 첫 번째 파라미터는 1번 슬롯에, 두 번째 파라미터는 2번 슬롯에 차례대로 저장</strong>된다.</li>
+</ul>
+<p>파이썬은 인스턴스 메서드 호출 시 첫 인자로 <code>self</code>를 항상 넘겨주는데, 자바에서는 소스 코드에 직접 명시하지 않아도 컴파일러가 바이트코드를 생성할 때 <code>this</code>에 대한 심볼릭 참조를 로컬 변수 배열의 0번 슬롯에 넣어준다. 바이트코드의 <code>Code</code> 속성으로 표시되는 메서드의 바이트코드를 보면 다음과 같이 <code>LocalVariableTable</code>에 <code>this</code>에 대한 정보가 표시되는 것을 볼 수 있다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> homo.efficio.jvm.sample.Hello();</span><br><span class="line">  descriptor: ()V</span><br><span class="line">  flags: (<span class="number">0x0001</span>) ACC_PUBLIC</span><br><span class="line">  Code:</span><br><span class="line">    stack=<span class="number">1</span>, locals=<span class="number">1</span>, args_size=<span class="number">1</span></span><br><span class="line">       <span class="number">0</span>: aload_0</span><br><span class="line">       1: invokespecial #1                  // Method java/lang/Object."&lt;init&gt;":()V</span><br><span class="line">       <span class="number">4</span>: <span class="keyword">return</span></span><br><span class="line">    LineNumberTable:</span><br><span class="line">      line <span class="number">3</span>: <span class="number">0</span></span><br><span class="line">    LocalVariableTable:</span><br><span class="line">      Start  Length  Slot  Name   Signature</span><br><span class="line">          <span class="number">0</span>       <span class="number">5</span>     <span class="number">0</span>  <span class="keyword">this</span>   Lhomo/efficio/jvm/sample/Hello;  <span class="comment">// &lt;== 여기!!</span></span><br></pre></td></tr></table></figure>
+<h4 id="Operand-Stack"><a href="#Operand-Stack" class="headerlink" title="Operand Stack"></a>Operand Stack</h4><p><strong>프레임은 <a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-2.html#jvms-2.6.2" target="_blank" rel="noopener">오퍼랜드 스택(Operand Stack)</a>을 하나 가지고 있다.</strong> 오퍼랜드 스택의 최대 깊이는 컴파일 타임에 결정되며 바이트코드의 <code>Code</code> 속성에 <code>stack</code>으로 표시된다.</p>
+<p>오퍼랜드 스택은 프레임이 생성될 때는 비어있다. 오퍼랜드 스택에 상수, 로컬 변수, 필드를 쌓는 명령어와 오퍼랜드 스택에서 값을 꺼내서 연산을 하고 다시 스택에 넣는 명령어는 JVM 명령어로 제공되며 그 중에서 Hello 예제 코드에 사용된 JVM 명령어에 대한 설명은 앞으로 차차 알아보기로 하자. </p>
+<p>메서드에 전달되는 파라미터를 준비하거나 메서드가 반환해주는 결과값을 받을 때도 오퍼랜드 스택이 사용되며 <strong>단순하게 표현하면 값을 가져오고 넘겨주는 거의 모든 과정에 오퍼랜드 스택이 사용된다고 볼 수 있다.</strong></p>
+<h4 id="Reference-to-Run-Time-Constant-Pool"><a href="#Reference-to-Run-Time-Constant-Pool" class="headerlink" title="Reference to Run-Time Constant Pool"></a>Reference to Run-Time Constant Pool</h4><p>런타임 상수 풀에 대한 참조는 말 그대로 <strong>해당 프레임에 대응되는 메서드가 속한 클래스의 런타임 상수 풀에 대한 참조</strong>를 의미한다.<br>스펙에서 별도의 항목으로 기술되어 있지는 않고, <a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-2.html#jvms-2.6" target="_blank" rel="noopener">프레임의 설명 부분에서 언급</a>되고 있다.</p>
+<p>하나의 스레드에서 여러 인스턴스의 메서드를 실행할 수 있고, 그때마다 프레임이 생성되어 JVM 스택에 쌓이고, <strong>프레임에서 해당 클래스의 런타임 상수 풀에 있는 정보를 사용하려면 이 참조가 있어야 한다.</strong></p>
+<p>위 그림에서는 하나의 예로 Hello 클래스의 런타임 상수 풀을 가리키도록 표현했을 뿐이고, 프레임에 따라 각각 다른 클래스의 런타임 상수 풀을 가리키게 된다.</p>
+<h2 id="Native-Method-Stack"><a href="#Native-Method-Stack" class="headerlink" title="Native Method Stack"></a>Native Method Stack</h2><p><a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-2.html#jvms-2.5.6" target="_blank" rel="noopener">네이티브 메서드 스택(Native Method Stack)</a>은 JVM 스택이 아닌 보통 C 스택이라고 부르는 전통적인 스택이며, 자바가 아닌 다른 언어로 작성된 네이티브 메서드를 지원하기 위해 사용되는 스택이다. 네이티브 메서드 스택은 JVM 스택과 마찬가지로 스레드 단위의 자료구조다.</p>
+<p>JVM이 반드시 네이티브 메서드를 지원해야 하는 것은 아니므로 네이티브 메서드 스택 역시 필수는 아니다. </p>
+<h2 id="main-메서드-호출-1"><a href="#main-메서드-호출-1" class="headerlink" title="main 메서드 호출"></a>main 메서드 호출</h2><p>이제 JVM의 런타임 데이터 영역을 구성하는 요소들에 대한 정적인 설명을 모두 알아봤으므로 실제 main 메서드 호출과 함께 변화 과정을 동적으로 알아보자.</p>
+<p>main 메서드의 바이트코드는 다음과 같다.</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(java.lang.String[])</span></span>;</span><br><span class="line">  descriptor: ([Ljava/lang/String;)V</span><br><span class="line">  flags: (<span class="number">0x0009</span>) ACC_PUBLIC, ACC_STATIC</span><br><span class="line">  Code:</span><br><span class="line">    stack=<span class="number">2</span>, locals=<span class="number">2</span>, args_size=<span class="number">1</span></span><br><span class="line">       0: new           #2                  // class homo/efficio/jvm/sample/Hello</span><br><span class="line">       <span class="number">3</span>: dup</span><br><span class="line">       4: invokespecial #3                  // Method "&lt;init&gt;":()V</span><br><span class="line">       <span class="number">7</span>: astore_1</span><br><span class="line">       8: getstatic     #4                  // Field java/lang/System.out:Ljava/io/PrintStream;</span><br><span class="line">      <span class="number">11</span>: aload_1</span><br><span class="line">      12: invokevirtual #5                  // Method helloMessage:()Ljava/lang/String;</span><br><span class="line">      15: invokevirtual #6                  // Method java/io/PrintStream.println:(Ljava/lang/String;)V</span><br><span class="line">      <span class="number">18</span>: goto          <span class="number">18</span></span><br><span class="line">    LineNumberTable:</span><br><span class="line">      line <span class="number">6</span>: <span class="number">0</span></span><br><span class="line">      line <span class="number">7</span>: <span class="number">8</span></span><br><span class="line">      line <span class="number">8</span>: <span class="number">18</span></span><br><span class="line">    LocalVariableTable:</span><br><span class="line">      Start  Length  Slot  Name   Signature</span><br><span class="line">          <span class="number">0</span>      <span class="number">21</span>     <span class="number">0</span>  args   [Ljava/lang/String;</span><br><span class="line">          <span class="number">8</span>      <span class="number">13</span>     <span class="number">1</span> hello   Lhomo/efficio/jvm/sample/Hello;</span><br><span class="line">    StackMapTable: number_of_entries = <span class="number">1</span></span><br><span class="line">      frame_type = <span class="number">252</span> <span class="comment">/* append */</span></span><br><span class="line">        offset_delta = <span class="number">18</span></span><br><span class="line">        locals = [ class homo/efficio/jvm/sample/Hello ]</span><br></pre></td></tr></table></figure>
+<p>오퍼랜드 스택의 최대 크기는 2, 로컬 변수 배열 크기는 2, 인자 갯수는 1이다.</p>
+<p>main 메서드가 호출되면 다음과 같이 <code>main 메서드 프레임</code>이 생성된다. 오퍼랜드 스택과 로컬 변수 배열은 비어있는 상태이고, 런타임 상수 풀에 대한 참조는 Hello 클래스의 런타임 상수 풀을 가리킨다. </p>
+<p>오퍼랜드 스택은 최대 크기가 2이고 아직 아무 것도 쌓여있지 않은 상태이므로 점선으로 표시했고, 로컬 변수 배열은 안에 값은 없지만 2개의 슬롯이 확정적으로 만들어져있으므로 실선으로 표시했다.</p>
+<p><img src="https://i.imgur.com/O7LRpA6.png" alt="Imgur"></p>
+<h3 id="0-new-2-class-homo-efficio-jvm-sample-Hello"><a href="#0-new-2-class-homo-efficio-jvm-sample-Hello" class="headerlink" title="0: new #2  // class homo/efficio/jvm/sample/Hello"></a><code>0: new #2  // class homo/efficio/jvm/sample/Hello</code></h3><p><a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-6.html#jvms-6.5.new" target="_blank" rel="noopener"><code>new</code></a>는 인자로 지정된 클래스의 새 인스턴스에 필요한 메모리를 힙 안에 할당하고, 할당된 위치를 가리키는 참조를 오퍼랜드 스택에 쌓는다. 이 때 인스턴스 변수들이 기본값으로 초기화 된다. 참고로 인스턴스 변수가 아닌 정적 변수는 앞서 초기화 과정에서 이미 특정값으로 초기화 되어 있는 상태다.</p>
+<p>Hello 클래스의 새 인스턴스에 필요한 메모리를 할당하고 그 위치에 대한 참조를 오퍼랜드 스택에 쌓는다. (파란색 동그라미)</p>
+<p><img src="https://i.imgur.com/e6u8VRO.png" alt="Imgur"></p>
+<h3 id="3-dup"><a href="#3-dup" class="headerlink" title="3: dup"></a><code>3: dup</code></h3><p><a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-6.html#jvms-6.5.dup" target="_blank" rel="noopener"><code>dup</code></a>은 오퍼랜드 스택 맨 위에 있는 값을 복사해서 오퍼랜드 스택 맨 위에 쌓는다.(초록색 동그라미)</p>
+<p><img src="https://i.imgur.com/Ve6moKN.png" alt="Imgur"></p>
+<h3 id="4-invokespecial-3-Method-quot-lt-init-gt-quot-V"><a href="#4-invokespecial-3-Method-quot-lt-init-gt-quot-V" class="headerlink" title="4: invokespecial #3  // Method &quot;&lt;init&gt;&quot;:()V"></a><code>4: invokespecial #3  // Method &quot;&lt;init&gt;&quot;:()V</code></h3><p><a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-6.html#jvms-6.5.invokespecial" target="_blank" rel="noopener"><code>invokespecial</code></a>은 다음과 같이 생성자, 현재 클래스, 수퍼클래스의 메서드를 호출한다고 나와 있다. </p>
+<blockquote>
+<p>invokespecial</p>
+<p>Operation<br> Invoke instance method; direct invocation of instance initialization methods and methods of the current class and its supertypes</p>
+</blockquote>
+<p>그래서 private 메서드를 호출할 때 <code>invokespecial</code>이 사용된다고 써있는 자료도 흔히 볼 수 있는데, 막상 <code>javac</code>, <code>javap</code>로 확인해보면 현실은 좀 다르다. 대부분 생성자와 수퍼클래스의 생성자를 호출할 때 <code>invokespecial</code>이 사용되고, 상속받은 클래스에서 수퍼클래스의 메서드를 호출할 때와, 같은 클래스 내의 다른 private 인스턴스 메서드를 호출할 때는 <code>invokevirtual</code>이 사용된다. </p>
+<p><code>invokespecial</code>로 특정 메서드가 호출되면 프레임과 로컬 변수 배열, 오퍼랜드 스택, 런타임 상수 풀에 대한 참조가 생겨난다. 호출하는 쪽의 오퍼랜드 스택에서 호출되는 메서드의 파라미터 갯수 + 1개 만큼 호출하는 쪽의 오퍼랜드 스택에서 값을 꺼내서 호출되는 쪽에 새로 생성된 로컬 변수 배열의 0번 슬롯까지 채워지도록 뒤에서부터 차례로 채운다.</p>
+<p>글로는 복잡하니 그림으로 보자. 새로 호출하는 메서드의 파라미터가 2개라면 다음과 같이 진행된다. 먼저 호출하기 전 상태는 다음과 같다.</p>
+<p><img src="https://i.imgur.com/jQIe28m.png" alt="Imgur"></p>
+<p>파라미터 2개 있는 메서드를 호출하면 다음과 같이 새로 프레임이 생성되고, 호출하는 쪽의 오퍼랜드 스택에서 2 + 1인 3개의 값이 차례로 꺼내져서, 호출되는 쪽의 로컬 변수 배열의 2, 1, 0번 슬롯에 차례로 저장된다.</p>
+<p><img src="https://i.imgur.com/YJBfT4H.png" alt="Imgur"></p>
+<p>파라미터 갯수인 2개 외에 마지막에 추가로 하나 더 꺼내져서 호출되는 프레임의 로컬 변수 배열 0번 슬롯에 저장되는 값(초록색 동그라미)은 스펙에 <code>objectref</code>라고 표현되어 있으며 반드시 참조값이어야 한다.</p>
+<p>지금 설명한 호출하는 쪽의 프레임의 오퍼랜드 스택에서 값을 꺼내서 호출되는 쪽의 프레임의 로컬 변수 배열에 저장하는 방식은 <code>invokespecial</code> 뿐 아니라 <a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-6.html#jvms-6.7.invokevirtual" target="_blank" rel="noopener"><code>invokevirtual</code></a>에도 공히 적용되는 방식이다.</p>
+<p>스택 맨 위에 있는 Hello 인스턴스에 대한 참조(초록색 동그라미)를 꺼내서 Hello 클래스의 디폴트 생성자의 첫 번째 인자로 넘기면서 디폴트 생성자를 호출한다. Hello 클래스의 디폴트 생성자에 대한 프레임(<code>Hello 생성자 프레임</code>)이 새로 생성되고 JVM 스택의 맨 위(<code>main 메서드 프레임</code> 위)에 쌓인다. <code>Hello 생성자 프레임</code> 안에 있는 로컬 변수 배열의 0번 슬롯에 새 Hello 인스턴스에 대한 참조가 저장된다. </p>
+<p><img src="https://i.imgur.com/jvvanVL.png" alt="Imgur"></p>
+<p>Hello 생성자의 바이트코드는 다음과 같다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> homo.efficio.jvm.sample.Hello();</span><br><span class="line">  descriptor: ()V</span><br><span class="line">  flags: (<span class="number">0x0001</span>) ACC_PUBLIC</span><br><span class="line">  Code:</span><br><span class="line">    stack=<span class="number">1</span>, locals=<span class="number">1</span>, args_size=<span class="number">1</span></span><br><span class="line">       <span class="number">0</span>: aload_0</span><br><span class="line">       1: invokespecial #1                  // Method java/lang/Object."&lt;init&gt;":()V</span><br><span class="line">       <span class="number">4</span>: <span class="keyword">return</span></span><br><span class="line">    LineNumberTable:</span><br><span class="line">      line <span class="number">3</span>: <span class="number">0</span></span><br><span class="line">    LocalVariableTable:</span><br><span class="line">      Start  Length  Slot  Name   Signature</span><br><span class="line">          <span class="number">0</span>       <span class="number">5</span>     <span class="number">0</span>  <span class="keyword">this</span>   Lhomo/efficio/jvm/sample/Hello;</span><br></pre></td></tr></table></figure>
+<p><code>Code</code> 속성 바로 아래줄에 <code>stack=1, locals=1, args_size=1</code>라고 되어 있는데, <code>Hello 생성자 프레임</code>의 오퍼랜드 스택 최대 깊이는 1, 로컬 변수 배열의 크기는 1, 인자의 갯수는 1개로 되어 있다. 오퍼랜드 스택 최대 깊이와 로컬 변수 배열의 크기는 위 그림에 적용되어 있다.</p>
+<p>Hello 생성자 프레임이 생성되면 가장 위에 있는 명령어인 <code>aload_0</code>이 먼저 실행된다.</p>
+<h4 id="0-aload-0"><a href="#0-aload-0" class="headerlink" title="0: aload_0"></a><code>0: aload_0</code></h4><p><a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-6.html#jvms-6.5.aload_n" target="_blank" rel="noopener"><code>aload_n</code></a>은 로컬 변수 배열의 <code>n</code>번 슬롯에 저장된 참조값(load 앞에 붙은 <code>a</code>가 참조값을 의미)을 오퍼랜드 스택 맨 위에 쌓는다.</p>
+<p><code>Hello 생성자 프레임</code>의 로컬 변수 배열의 0번 슬롯에 저장되어 있던 새 Hello 인스턴스에 대한 참조(초록색 동그라미)가 <code>Hello 생성자 프레임</code>의 오퍼랜드 스택에 쌓인다.</p>
+<p><img src="https://i.imgur.com/zP0BaqB.png" alt="Imgur"></p>
+<h4 id="1-invokespecial-1-Method-java-lang-Object-quot-lt-init-gt-quot-V"><a href="#1-invokespecial-1-Method-java-lang-Object-quot-lt-init-gt-quot-V" class="headerlink" title="1: invokespecial #1  // Method java/lang/Object.&quot;&lt;init&gt;&quot;:()V"></a><code>1: invokespecial #1  // Method java/lang/Object.&quot;&lt;init&gt;&quot;:()V</code></h4><p><code>invokespecial</code> 명령어에 대한 설명은 앞에서 알아봤으므로 생략한다. </p>
+<p>Object의 생성자를 호출하면 힙에 Object의 새 인스턴스를 위한 메모리가 할당되고, <code>Object 생성자 프레임</code>이 생성된다.</p>
+<p><code>Hello 생성자 프레임</code>의 오퍼랜드 스택 맨 위에 있던 <code>this</code>(초록색 동그라미)가 꺼내지고 새로 생성된 <code>Object 생성자 프레임</code>의 로컬 변수 배열의 0번 슬롯에 저장(초록색 동그라미)된다.</p>
+<p><img src="https://i.imgur.com/Dw4W7or.png" alt="Imgur"></p>
+<p>Object의 생성자의 바이트코드는 다음과 같다.</p>
+<blockquote>
+<p>javap -v -p -s java.lang.Object</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> java.lang.Object();</span><br><span class="line">  descriptor: ()V</span><br><span class="line">  flags: (<span class="number">0x0001</span>) ACC_PUBLIC</span><br><span class="line">  Code:</span><br><span class="line">    stack=<span class="number">0</span>, locals=<span class="number">1</span>, args_size=<span class="number">1</span></span><br><span class="line">       <span class="number">0</span>: <span class="keyword">return</span></span><br><span class="line">    LineNumberTable:</span><br><span class="line">      line <span class="number">50</span>: <span class="number">0</span></span><br><span class="line">    LocalVariableTable:</span><br><span class="line">      Start  Length  Slot  Name   Signature</span><br><span class="line">          <span class="number">0</span>       <span class="number">1</span>     <span class="number">0</span>  <span class="keyword">this</span>   Ljava/lang/Object;</span><br><span class="line">  RuntimeVisibleAnnotations:</span><br><span class="line">    0: #27()</span><br><span class="line">      jdk.internal.HotSpotIntrinsicCandidate</span><br></pre></td></tr></table></figure>
+<p>설명하는 입장에서 매우 다행스럽게도 그냥 <code>4: return</code> 하는 것이 전부다. <a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-6.html#jvms-6.5.return" target="_blank" rel="noopener"><code>return</code></a>은 void를 반환하며, 오퍼랜드 스택에 있던 모든 값이 전부 폐기되고 <code>Object 생성자 프레임</code>도 폐기되고, 호출한 메서드의 프레임인 <code>Hello 생성자 프레임</code>으로 제어가 넘어간다.</p>
+<p><img src="https://i.imgur.com/1XJNvOY.png" alt="Imgur"></p>
+<p>Hello의 디폴트 생성자의 바이트코드에서 남은 것은 <code>return</code>뿐이다. 따라서 Hello의 디폴트 생성자 실행이 완료되면 <code>Hello 생성자 프레임도 폐기</code>되고 다음과 같이 <code>main 메서드 프레임</code>의 오퍼랜드 스택에는 아래와 같이 새로 생성 및 초기화된 Hello 인스턴스에 대한 참조만 남게 된다.</p>
+<p><img src="https://i.imgur.com/lEsyaU9.png" alt="Imgur"></p>
+<h3 id="7-astore-1"><a href="#7-astore-1" class="headerlink" title="7: astore_1"></a><code>7: astore_1</code></h3><p><a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-6.html#jvms-6.5.astore_n" target="_blank" rel="noopener"><code>astore_n</code></a>은 오퍼랜드 스택의 맨 위에 있는 값을 꺼내서 로컬 변수 배열의 <code>n</code> 위치에 저장한다. </p>
+<p>현재 <code>main 메서드 프레임</code>의 오퍼랜드 스택 맨 위에 있는 값인 새 Hello 인스턴스에 대한 참조(<code>this</code>)를 꺼내서 <code>main 메서드 프레임</code>의 로컬 변수 배열의 1번 슬롯에 넣는다.</p>
+<p>결국 로컬 변수에 뭔가 저장하는 것인데 자바 소스 코드의 <code>final Hello hello = new Hello();</code>에 해당한다.</p>
+<p><img src="https://i.imgur.com/ZOUyk7M.png" alt="Imgur"></p>
+<h3 id="8-getstatic-4-Field-java-lang-System-out-Ljava-io-PrintStream"><a href="#8-getstatic-4-Field-java-lang-System-out-Ljava-io-PrintStream" class="headerlink" title="8: getstatic #4  // Field java/lang/System.out:Ljava/io/PrintStream;"></a><code>8: getstatic #4  // Field java/lang/System.out:Ljava/io/PrintStream;</code></h3><p><a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-6.html#jvms-6.5.getstatic" target="_blank" rel="noopener"><code>getstatic</code></a>은 클래스의 정적(static) 필드 값을 가져와서 오퍼랜드 스택에 쌓는다.</p>
+<p>여기에서는 System 클래스의 정적 변수인 out의 값을 System의 런타임 상수 풀에서 읽어서 <code>main 메서드 프레임</code>의 오퍼랜드 스택에 쌓는다. (초록색 동그라미)</p>
+<p><img src="https://i.imgur.com/guTnj4t.png" alt="Imgur"></p>
+<h3 id="11-aload-1"><a href="#11-aload-1" class="headerlink" title="11: aload_1"></a><code>11: aload_1</code></h3><p><code>aload_1</code>은 <code>main 메서드 프레임</code>의 로컬 변수 배열 1번 슬롯에 있던 값을 <code>main 메서드 프레임</code>의 오퍼랜드 스택에 쌓는다. (파란색 동그라미)</p>
+<p><img src="https://i.imgur.com/fU90B7m.png" alt="Imgur"></p>
+<h3 id="12-invokevirtual-5-Method-helloMessage-Ljava-lang-String"><a href="#12-invokevirtual-5-Method-helloMessage-Ljava-lang-String" class="headerlink" title="12: invokevirtual #5  // Method helloMessage:()Ljava/lang/String;"></a><code>12: invokevirtual #5  // Method helloMessage:()Ljava/lang/String;</code></h3><p><a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-6.html#jvms-6.5.invokevirtual" target="_blank" rel="noopener"><code>invokevirtual</code></a>은 자바 메서드 호출의 기본 방식이며, 객체 참조(obj.)를 붙여서 호출되는 일반적인 메서드를 호출한다. 해당 메서드가 속한 인스턴스를 가리키는 참조가 첫 번째 파라미터로 넘겨진다. 호출에 의해 새 프레임이 생성되고 로컬 변수 배열의 0번 슬롯에 첫 번째 인자로 넘어온 값인 해당 메서드가 속한 인스턴스를 가리키는 참조가 저장되고 그 이후의 인자도 로컬 변수 배열에 순서대로 저장된다. 앞에서 <code>invokespecial</code>에 나왔던 그림 설명을 참고한다.</p>
+<p><code>helloMessage()</code>의 바이트코드는 다음과 같다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> java.lang.<span class="function">String <span class="title">helloMessage</span><span class="params">()</span></span>;</span><br><span class="line">  descriptor: ()Ljava/lang/String;</span><br><span class="line">  flags: (<span class="number">0x0001</span>) ACC_PUBLIC</span><br><span class="line">  Code:</span><br><span class="line">    stack=<span class="number">1</span>, locals=<span class="number">1</span>, args_size=<span class="number">1</span></span><br><span class="line">       0: ldc           #7                  // String Hello, JVM</span><br><span class="line">       <span class="number">2</span>: areturn</span><br><span class="line">    LineNumberTable:</span><br><span class="line">      line <span class="number">12</span>: <span class="number">0</span></span><br><span class="line">    LocalVariableTable:</span><br><span class="line">      Start  Length  Slot  Name   Signature</span><br><span class="line">          <span class="number">0</span>       <span class="number">3</span>     <span class="number">0</span>  <span class="keyword">this</span>   Lhomo/efficio/jvm/sample/Hello;</span><br></pre></td></tr></table></figure>
+<p><code>helloMessage()</code>가 호출되면 <code>helloMessage 메서드 프레임</code>이 새로 생성되고, <code>main 메서드 프레임</code>의 오퍼랜드 스택 맨 위에 있던 값(파란 동그라미)이 꺼내져서 <code>helloMessage 메서드 프레임</code>의 로컬 변수 배열 0번 슬롯에 저장된다.</p>
+<p><img src="https://i.imgur.com/ZbJ4ISa.png" alt="Imgur"></p>
+<h4 id="0-ldc-7-String-Hello-JVM"><a href="#0-ldc-7-String-Hello-JVM" class="headerlink" title="0: ldc #7  // String Hello, JVM"></a><code>0: ldc #7  // String Hello, JVM</code></h4><p><a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-6.html#jvms-6.5.ldc" target="_blank" rel="noopener"><code>ldc</code></a>는 런타임 상수 풀의 항목 하나를 오퍼랜드 스택의 맨 위에 쌓는다.</p>
+<p>Hello 클래스의 런타임 상수 풀의 7번 항목인 문자열 리터럴 <code>&quot;Hello, JVM&quot;</code>에 대한 참조를 <code>helloMessage 메서드 프레임</code>의 오퍼랜드 스택 맨 위에 쌓는다.</p>
+<p>문자열 리터럴이 저장되는 문자열 풀(String pool)은 JVM 스펙을 뒤져봤으나 찾을 수 없었다. <a href="http://java-performance.info/string-intern-in-java-6-7-8/" target="_blank" rel="noopener">http://java-performance.info/string-intern-in-java-6-7-8/</a> 에 따르면 문자열 풀은 Java 6까지는 힙이 아닌 PermGen 영역에 있었지만, Java 7부터 힙에 존재한다고 한다.</p>
+<p>따라서 스펙에서 확인한 내용은 아니지만 Java 11에서도 문자열 풀은 힙에 존재한다고 보면 다음과 같이 표현할 수 있다.</p>
+<p><img src="https://i.imgur.com/NCga0nz.png" alt="Imgur"></p>
+<h4 id="2-areturn"><a href="#2-areturn" class="headerlink" title="2: areturn"></a><code>2: areturn</code></h4><p><a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-6.html#jvms-6.5.areturn" target="_blank" rel="noopener"><code>areturn</code></a>은 오퍼랜드 스택 맨 위에 있는 참조값(return 앞에 있는 <code>a</code>가 참조값을 의미)을 꺼내서 호출한 메서드 프레임의 오퍼랜드 스택 맨 위에 저장하고, <code>areturn</code>이 속한 프레임을 폐기하고 제어를 호출한 메서드 프레임으로 넘겨준다.</p>
+<p><code>helloMessage 메서드 프레임</code>의 오퍼랜드 스택 맨 위에 있던 값은 <code>&quot;Hello, JVM&quot;</code>에 대한 참조이며 이 값을 <code>main 메서드 프레임</code>의 오퍼랜드 스택 맨 위에 쌓는다. 결국 <strong>메서드가 값을 반환한다는 것은 호출된 프레임의 오퍼랜드 스택 맨 위의 값을 꺼내서 호출한 프레임의 오퍼랜드 스택 맨 위에 저장하는 것</strong>을 의미한다.</p>
+<p><img src="https://i.imgur.com/vz0uuaf.png" alt="Imgur"></p>
+<h3 id="15-invokevirtual-6-Method-java-io-PrintStream-println-Ljava-lang-String-V"><a href="#15-invokevirtual-6-Method-java-io-PrintStream-println-Ljava-lang-String-V" class="headerlink" title="15: invokevirtual #6  // Method java/io/PrintStream.println:(Ljava/lang/String;)V"></a><code>15: invokevirtual #6  // Method java/io/PrintStream.println:(Ljava/lang/String;)V</code></h3><p>PrintStream 클래스의 println(String)의 바이트코드는.. 매우 길다.. 어차피 <code>invokevirtual</code>은 앞에서 살펴봤고 그 외에 오퍼랜드 스택이나 로컬 지역 변수의 변화 과정을 앞에서 계속 봐왔으므로, println(String)은 결과만 보자.</p>
+<p><code>main 메서드 프레임</code>의 오퍼랜드 스택에 있던 System.out에 대한 참조와 <code>&quot;Hello, JVM&quot;</code>에 대한 참조는<code>invokevirtual</code>로 System.out.println(String)을 호출하면서 모두 꺼내지고<code>main 메서드 프레임</code>의 오퍼랜드 스택은 비워진다. <code>println 메서드 프레임</code>이 새로 생성되고 인자로 전달받은 참조를 활용해서 “Hello, JVM”을 화면에 출력하고, <code>println 메서드 프레임</code>은 폐기된 후의 모습은 다음과 같다.</p>
+<p><img src="https://i.imgur.com/BWa4gBm.png" alt="Imgur"></p>
+<h3 id="18-goto-18"><a href="#18-goto-18" class="headerlink" title="18: goto 18"></a><code>18: goto 18</code></h3><p><a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-6.html#jvms-6.5.goto" target="_blank" rel="noopener"><code>goto</code></a>는 오퍼랜드 스택의 변화 없이 특정 행으로 실행 흐름을 이동시킨다.</p>
+<p>18행에서 18행으로 계속 이동하면 결국 무한루프다. 자바 소스 코드의 <code>while(true) {}</code>가 여기에 해당된다.</p>
+<h1 id="마무리"><a href="#마무리" class="headerlink" title="마무리"></a>마무리</h1><p>여기까지 바이트코드 흐름에 따라 JVM의 런타임 데이터 영역 내의 자료구조들이 어떻게 변화하는지 살펴봤다. 사실 몰라도 일반적인 개발을 하는데 거의 지장이 없다시피한 내용이라서 그림 한땀한땀 그리고 고치고를 반복할 때마다 내가 이 짓을 왜하고 있나.. 이쯤에서 그만두자.. 하는 생각이 든 게 한 두번이 아니었.. ㅠㅜ </p>
+<p>그래도 인터넷 어디를 뒤져봐도 자바 프로그램의 실행 과정에 대해 이보다 친절한 설명은 없으리라..</p>
+<blockquote>
+<p>JVM에서 실행되는 프로그램(class파일)을 실행하면 JVM이 기동된다.</p>
+<p>JVM이 기동되면 힙(Heap)과 메서드 영역(Method Area)가 생성된다.</p>
+<p>프로그램 실행에 필요한 시작 클래스의 바이트코드가 클래스로더를 통해 로딩되어 메서드 영역에 저장된다.<br>이 때 바이트코드에 있던 상수 풀의 내용을 바탕으로 런타임 상수 풀이 클래스 단위로 만들어져 메서드 영역에 함께 저장된다.</p>
+<p>링크(확인, 준비, 해석)를 통해 Object 등 프로그램 실행에 필요한 다른 클래스들이 로딩되고 필요하다면 정적으로 초기화 된다.</p>
+<p>시작 클래스의 main 메서드 실행을 위한 main 스레드가 생성된다.</p>
+<p>main 스레드가 생성되면 PC 레지스터, JVM 스택, 네이티브 메서드 스택이 한 개씩 main 스레드에 생성된다.<br>JVM 스택이 생성되면 main 메서드를 위한 main 메서드 프레임이 생성된다.<br>main 메서드 프레임이 생성되면 로컬 변수 배열, 오퍼랜드 스택, 런타임 상수 풀에 대한 참조가 한 개씩 main 메서드 프레임에 생성된다.</p>
+<p>main 메서드의 내용에 따라 로컬 변수 배열, 오퍼랜드 스택, 런타임 상수 풀에 대한 참조를 이용해서 필요한 값이나 참조를 연산하고,<br>메서드 호출이 발생하면 해당 메서드를 위한 새 로컬 변수 배열, 오퍼랜드 스택, 런타임 상수 풀에 대한 참조가 포함된 새 프레임이 생성되어 JVM 스택 위에 쌓이고,<br>메서드 호출이 종료되면 해당 프레임이 JVM 스택에서 빠져나가고 제어는 다시 호출한 메서드의 프레임으로 돌아온다.<br>이 때 반환값이 있다면 호출한 메서드의 프레임의 오퍼랜드 스택의 맨 위에 쌓인다.</p>
+<p>한 장의 그림으로 보면 다음과 같다.</p>
+<p><img src="https://i.imgur.com/So2s54L.png" alt="Imgur"></p>
+</blockquote>
+<h2 id="마지막-쉬운-퀴즈"><a href="#마지막-쉬운-퀴즈" class="headerlink" title="마지막 쉬운 퀴즈"></a>마지막 쉬운 퀴즈</h2><p>다음과 같은 코드를 실행하면 HelloNoInstance 인스턴스가 힙에 만들어질까 안 만들어질까?</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> homo.efficio.jvm.sample;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloNoInstance</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"Hello, JVM"</span>);</span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>클래스 이름에 답이 있지만 HelloNoInstance 인스턴스는 힙에 만들어지지 않는다. 아래는 VisualVM으로 힙 덤프를 떠서 확인한 그림이다.</p>
+<p><img src="https://i.imgur.com/S0cm4E8.png" alt="Imgur"></p>
+<p>참고로 Java 11 기준으로 간단한 헬로월드 프로그램이 수행되는데 로딩되는 클래스의 수는 몇 개일까? 이건 직접 알아보기로 하자. ^^</p>
+
+        
+        
+            
+        
+        <hr/>
+        <div>
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="크리에이티브 커먼즈 라이선스" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><a href='https://github.com/homoefficio' target='_blank'>HomoEfficio</a>가 작성한 이 저작물은(는) <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스</a>에 따라 이용할 수 있습니다.
+        </div>
+    </div>
+    <div class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/Bytecode/">Bytecode</a> <a class="tag tag--primary tag--small t-link" href="/tags/Compile/">Compile</a> <a class="tag tag--primary tag--small t-link" href="/tags/Frame/">Frame</a> <a class="tag tag--primary tag--small t-link" href="/tags/Heap/">Heap</a> <a class="tag tag--primary tag--small t-link" href="/tags/Initialization/">Initialization</a> <a class="tag tag--primary tag--small t-link" href="/tags/JRE/">JRE</a> <a class="tag tag--primary tag--small t-link" href="/tags/JVM/">JVM</a> <a class="tag tag--primary tag--small t-link" href="/tags/JVM-Instruction/">JVM Instruction</a> <a class="tag tag--primary tag--small t-link" href="/tags/JVM-Spec/">JVM Spec</a> <a class="tag tag--primary tag--small t-link" href="/tags/JVM-Stack/">JVM Stack</a> <a class="tag tag--primary tag--small t-link" href="/tags/JVM-메모리-모델/">JVM 메모리 모델</a> <a class="tag tag--primary tag--small t-link" href="/tags/JVM-명령어/">JVM 명령어</a> <a class="tag tag--primary tag--small t-link" href="/tags/JVM-명세/">JVM 명세</a> <a class="tag tag--primary tag--small t-link" href="/tags/JVM-스택/">JVM 스택</a> <a class="tag tag--primary tag--small t-link" href="/tags/JVM-스펙/">JVM 스펙</a> <a class="tag tag--primary tag--small t-link" href="/tags/Java/">Java</a> <a class="tag tag--primary tag--small t-link" href="/tags/Link/">Link</a> <a class="tag tag--primary tag--small t-link" href="/tags/Local-Variables/">Local Variables</a> <a class="tag tag--primary tag--small t-link" href="/tags/Method-Area/">Method Area</a> <a class="tag tag--primary tag--small t-link" href="/tags/Native-Method-Stack/">Native Method Stack</a> <a class="tag tag--primary tag--small t-link" href="/tags/Operand-Stack/">Operand Stack</a> <a class="tag tag--primary tag--small t-link" href="/tags/PC-Register/">PC Register</a> <a class="tag tag--primary tag--small t-link" href="/tags/PC-레지스터/">PC 레지스터</a> <a class="tag tag--primary tag--small t-link" href="/tags/Preparation/">Preparation</a> <a class="tag tag--primary tag--small t-link" href="/tags/Reference-to-Run-Time-Constant-Pool/">Reference to Run-Time Constant Pool</a> <a class="tag tag--primary tag--small t-link" href="/tags/Resolution/">Resolution</a> <a class="tag tag--primary tag--small t-link" href="/tags/Run-Time-Constant-Pool/">Run-Time Constant Pool</a> <a class="tag tag--primary tag--small t-link" href="/tags/Run-Time-Data-Area/">Run-Time Data Area</a> <a class="tag tag--primary tag--small t-link" href="/tags/Verification/">Verification</a> <a class="tag tag--primary tag--small t-link" href="/tags/invokeinterface/">invokeinterface</a> <a class="tag tag--primary tag--small t-link" href="/tags/invokespecial/">invokespecial</a> <a class="tag tag--primary tag--small t-link" href="/tags/invokevirtual/">invokevirtual</a> <a class="tag tag--primary tag--small t-link" href="/tags/javap/">javap</a> <a class="tag tag--primary tag--small t-link" href="/tags/네이티브-메서드-스택/">네이티브 메서드 스택</a> <a class="tag tag--primary tag--small t-link" href="/tags/런타임-데이터-영역/">런타임 데이터 영역</a> <a class="tag tag--primary tag--small t-link" href="/tags/런타임-상수-풀/">런타임 상수 풀</a> <a class="tag tag--primary tag--small t-link" href="/tags/로컬-변수-배열/">로컬 변수 배열</a> <a class="tag tag--primary tag--small t-link" href="/tags/링크/">링크</a> <a class="tag tag--primary tag--small t-link" href="/tags/메서드-영역/">메서드 영역</a> <a class="tag tag--primary tag--small t-link" href="/tags/바이트코드/">바이트코드</a> <a class="tag tag--primary tag--small t-link" href="/tags/오퍼랜드-스택/">오퍼랜드 스택</a> <a class="tag tag--primary tag--small t-link" href="/tags/자바/">자바</a> <a class="tag tag--primary tag--small t-link" href="/tags/자바-메모리-모델/">자바 메모리 모델</a> <a class="tag tag--primary tag--small t-link" href="/tags/준비/">준비</a> <a class="tag tag--primary tag--small t-link" href="/tags/초기화/">초기화</a> <a class="tag tag--primary tag--small t-link" href="/tags/컴파일/">컴파일</a> <a class="tag tag--primary tag--small t-link" href="/tags/프레임/">프레임</a> <a class="tag tag--primary tag--small t-link" href="/tags/해석/">해석</a> <a class="tag tag--primary tag--small t-link" href="/tags/확인/">확인</a> <a class="tag tag--primary tag--small t-link" href="/tags/힙/">힙</a>
+
+            </div>
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/01/31/Back-to-the-Essence-Java-컴파일에서-실행까지-1/" data-tooltip="Back to the Essence - Java 컴파일에서 실행까지 - (1)">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2019/01/31/Back-to-the-Essence-Java-컴파일에서-실행까지-2/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2019/01/31/Back-to-the-Essence-Java-컴파일에서-실행까지-2/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2019/01/31/Back-to-the-Essence-Java-컴파일에서-실행까지-2/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+        
+            <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2019 HomoEfficio. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="1">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/01/31/Back-to-the-Essence-Java-컴파일에서-실행까지-1/" data-tooltip="Back to the Essence - Java 컴파일에서 실행까지 - (1)">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2019/01/31/Back-to-the-Essence-Java-컴파일에서-실행까지-2/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2019/01/31/Back-to-the-Essence-Java-컴파일에서-실행까지-2/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2019/01/31/Back-to-the-Essence-Java-컴파일에서-실행까지-2/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="1">
+    <ul class="share-options">
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2019/01/31/Back-to-the-Essence-Java-컴파일에서-실행까지-2/">
+                <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2019/01/31/Back-to-the-Essence-Java-컴파일에서-실행까지-2/">
+                <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2019/01/31/Back-to-the-Essence-Java-컴파일에서-실행까지-2/">
+                <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+            
+        </div>
+        <div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=110"/>
+        
+            <h4 id="about-card-name">HomoEfficio</h4>
+        
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Seoul, Korea.
+            </h5>
+        
+    </div>
+</div>
+        <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/script.min.js"></script>
+<!--SCRIPTS END-->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'hanmomhanda';
+        (function() {
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+
+
+
+</html>

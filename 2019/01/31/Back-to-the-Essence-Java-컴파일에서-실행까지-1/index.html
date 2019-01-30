@@ -14,23 +14,23 @@
     
         <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <meta name="description" content="Back to the Essence - Java 컴파일에서 실행까지 - (1)Java 11 JVM 스펙을 기준으로 Java 소스 코드가 어떻게 컴파일되고 실행되는지 살짝 깊게 알아보자. 이번엔 1탄 컴파일 편이다. 2탄은 여기에.. 컴파일전통적으로 컴파일이라고 하면 어떤 언어로 된 소스 코드를 기계가 인식할 수 있는 네이티브 코드로 변환하는 과정을 의미하지">
-<meta name="keywords" content="Java,자바,JVM,Bytecode,Compile,JVM Spec,Lexical Analysis,Syntax Analysis,Symantic Analysis,Intermediate Code Generation,Code Optimization,Constant Pool,invokeinterface,invokevirtual,컴파일,바이트코드,JVM 명세,JVM 스펙,어휘 분석,구문 분석,의미 분석,중간 코드 생성,코드 최적화,상수 풀">
+    <meta name="description" content="Back to the Essence - Java 컴파일에서 실행까지 - (1)Java 11 JVM 스펙을 기준으로 Java 소스 코드가 어떻게 컴파일되고 실행되는지 살짝 깊게 알아보자. 이번엔 1탄 컴파일 편이다. 2탄 실행 편은 여기에.. 컴파일전통적으로 컴파일이라고 하면 어떤 언어로 된 소스 코드를 기계가 인식할 수 있는 네이티브 코드로 변환하는 과정을">
+<meta name="keywords" content="Java,자바,JVM,Bytecode,Compile,JVM Spec,Lexical Analysis,Syntax Analysis,Symantic Analysis,Intermediate Code Generation,Code Optimization,Constant Pool,invokeinterface,invokevirtual,javap,컴파일,바이트코드,JVM 명세,JVM 스펙,어휘 분석,구문 분석,의미 분석,중간 코드 생성,코드 최적화,상수 풀">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Back to the Essence - Java 컴파일에서 실행까지 - (1)">
 <meta property="og:url" content="http://homoefficio.github.io/2019/01/31/Back-to-the-Essence-Java-컴파일에서-실행까지-1/index.html">
 <meta property="og:site_name" content="뒤태지존의 끄적거림">
-<meta property="og:description" content="Back to the Essence - Java 컴파일에서 실행까지 - (1)Java 11 JVM 스펙을 기준으로 Java 소스 코드가 어떻게 컴파일되고 실행되는지 살짝 깊게 알아보자. 이번엔 1탄 컴파일 편이다. 2탄은 여기에.. 컴파일전통적으로 컴파일이라고 하면 어떤 언어로 된 소스 코드를 기계가 인식할 수 있는 네이티브 코드로 변환하는 과정을 의미하지">
+<meta property="og:description" content="Back to the Essence - Java 컴파일에서 실행까지 - (1)Java 11 JVM 스펙을 기준으로 Java 소스 코드가 어떻게 컴파일되고 실행되는지 살짝 깊게 알아보자. 이번엔 1탄 컴파일 편이다. 2탄 실행 편은 여기에.. 컴파일전통적으로 컴파일이라고 하면 어떤 언어로 된 소스 코드를 기계가 인식할 수 있는 네이티브 코드로 변환하는 과정을">
 <meta property="og:locale" content="ko">
 <meta property="og:image" content="https://i.imgur.com/6Gixn4m.png">
 <meta property="og:image" content="https://i.imgur.com/XgKJv8x.png">
 <meta property="og:image" content="https://i.imgur.com/bjruQVw.png">
 <meta property="og:image" content="https://i.imgur.com/ynDWnl2.gif">
 <meta property="og:image" content="https://i.imgur.com/wROkyp1.jpg">
-<meta property="og:updated_time" content="2019-01-30T15:15:11.417Z">
+<meta property="og:updated_time" content="2019-01-30T15:29:24.602Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Back to the Essence - Java 컴파일에서 실행까지 - (1)">
-<meta name="twitter:description" content="Back to the Essence - Java 컴파일에서 실행까지 - (1)Java 11 JVM 스펙을 기준으로 Java 소스 코드가 어떻게 컴파일되고 실행되는지 살짝 깊게 알아보자. 이번엔 1탄 컴파일 편이다. 2탄은 여기에.. 컴파일전통적으로 컴파일이라고 하면 어떤 언어로 된 소스 코드를 기계가 인식할 수 있는 네이티브 코드로 변환하는 과정을 의미하지">
+<meta name="twitter:description" content="Back to the Essence - Java 컴파일에서 실행까지 - (1)Java 11 JVM 스펙을 기준으로 Java 소스 코드가 어떻게 컴파일되고 실행되는지 살짝 깊게 알아보자. 이번엔 1탄 컴파일 편이다. 2탄 실행 편은 여기에.. 컴파일전통적으로 컴파일이라고 하면 어떤 언어로 된 소스 코드를 기계가 인식할 수 있는 네이티브 코드로 변환하는 과정을">
 <meta name="twitter:image" content="https://i.imgur.com/6Gixn4m.png">
     
         <meta rel="publisher" content="https://plus.google.com/+오명운"/>
@@ -232,7 +232,7 @@
     <div class="post-content markdown main-content-wrap" itemprop="articleBody">
         
             <h1 id="Back-to-the-Essence-Java-컴파일에서-실행까지-1"><a href="#Back-to-the-Essence-Java-컴파일에서-실행까지-1" class="headerlink" title="Back to the Essence - Java 컴파일에서 실행까지 - (1)"></a>Back to the Essence - Java 컴파일에서 실행까지 - (1)</h1><p>Java 11 JVM 스펙을 기준으로 Java 소스 코드가 어떻게 컴파일되고 실행되는지 살짝 깊게 알아보자.</p>
-<p>이번엔 1탄 컴파일 편이다. 2탄은 <a href="">여기</a>에..</p>
+<p>이번엔 1탄 컴파일 편이다. 2탄 실행 편은 <a href="https://homoefficio.github.io/2019/01/31/Back-to-the-Essence-Java-컴파일에서-실행까지-2/">여기</a>에..</p>
 <h1 id="컴파일"><a href="#컴파일" class="headerlink" title="컴파일"></a>컴파일</h1><p>전통적으로 컴파일이라고 하면 어떤 언어로 된 소스 코드를 기계가 인식할 수 있는 네이티브 코드로 변환하는 과정을 의미하지만, 자바에서의 컴파일은 자바 언어로 된 코드를 JVM이 인식할 수 있는 JVM 명령어 코드(바이트코드)로 변환하는 것을 의미한다.<br>드물지만 자바에서의 컴파일도 일반적인 의미의 컴파일처럼 기계가 인식할 수 있는 코드로 변환하는 과정을 의미할 때도 있다. 대표적으로 JIT 컴파일러가 하는 컴파일은 바이트코드로 변환하는 것이 아니라 바이트코드를 네이티브 코드로 변환하는 것을 의미한다.</p>
 <h2 id="실행-파일-생성-과정"><a href="#실행-파일-생성-과정" class="headerlink" title="실행 파일 생성 과정"></a>실행 파일 생성 과정</h2><p>자바 소스 코드를 컴파일하는 과정이 몇 단계로 구성되는지 구체적으로 스펙에 규정되어 있지는 않다. 참고로 C로 작성된 코드로부터 실행 파일을 만드는 과정은 보통 다음과 같이 4 단계로 구분한다.</p>
 <ol>
@@ -439,7 +439,7 @@
             <div class="post-footer-tags">
                 <span class="text-color-light text-small">TAGGED IN</span><br/>
                 
-    <a class="tag tag--primary tag--small t-link" href="/tags/Bytecode/">Bytecode</a> <a class="tag tag--primary tag--small t-link" href="/tags/Code-Optimization/">Code Optimization</a> <a class="tag tag--primary tag--small t-link" href="/tags/Compile/">Compile</a> <a class="tag tag--primary tag--small t-link" href="/tags/Constant-Pool/">Constant Pool</a> <a class="tag tag--primary tag--small t-link" href="/tags/Intermediate-Code-Generation/">Intermediate Code Generation</a> <a class="tag tag--primary tag--small t-link" href="/tags/JVM/">JVM</a> <a class="tag tag--primary tag--small t-link" href="/tags/JVM-Spec/">JVM Spec</a> <a class="tag tag--primary tag--small t-link" href="/tags/JVM-명세/">JVM 명세</a> <a class="tag tag--primary tag--small t-link" href="/tags/JVM-스펙/">JVM 스펙</a> <a class="tag tag--primary tag--small t-link" href="/tags/Java/">Java</a> <a class="tag tag--primary tag--small t-link" href="/tags/Lexical-Analysis/">Lexical Analysis</a> <a class="tag tag--primary tag--small t-link" href="/tags/Symantic-Analysis/">Symantic Analysis</a> <a class="tag tag--primary tag--small t-link" href="/tags/Syntax-Analysis/">Syntax Analysis</a> <a class="tag tag--primary tag--small t-link" href="/tags/invokeinterface/">invokeinterface</a> <a class="tag tag--primary tag--small t-link" href="/tags/invokevirtual/">invokevirtual</a> <a class="tag tag--primary tag--small t-link" href="/tags/구문-분석/">구문 분석</a> <a class="tag tag--primary tag--small t-link" href="/tags/바이트코드/">바이트코드</a> <a class="tag tag--primary tag--small t-link" href="/tags/상수-풀/">상수 풀</a> <a class="tag tag--primary tag--small t-link" href="/tags/어휘-분석/">어휘 분석</a> <a class="tag tag--primary tag--small t-link" href="/tags/의미-분석/">의미 분석</a> <a class="tag tag--primary tag--small t-link" href="/tags/자바/">자바</a> <a class="tag tag--primary tag--small t-link" href="/tags/중간-코드-생성/">중간 코드 생성</a> <a class="tag tag--primary tag--small t-link" href="/tags/컴파일/">컴파일</a> <a class="tag tag--primary tag--small t-link" href="/tags/코드-최적화/">코드 최적화</a>
+    <a class="tag tag--primary tag--small t-link" href="/tags/Bytecode/">Bytecode</a> <a class="tag tag--primary tag--small t-link" href="/tags/Code-Optimization/">Code Optimization</a> <a class="tag tag--primary tag--small t-link" href="/tags/Compile/">Compile</a> <a class="tag tag--primary tag--small t-link" href="/tags/Constant-Pool/">Constant Pool</a> <a class="tag tag--primary tag--small t-link" href="/tags/Intermediate-Code-Generation/">Intermediate Code Generation</a> <a class="tag tag--primary tag--small t-link" href="/tags/JVM/">JVM</a> <a class="tag tag--primary tag--small t-link" href="/tags/JVM-Spec/">JVM Spec</a> <a class="tag tag--primary tag--small t-link" href="/tags/JVM-명세/">JVM 명세</a> <a class="tag tag--primary tag--small t-link" href="/tags/JVM-스펙/">JVM 스펙</a> <a class="tag tag--primary tag--small t-link" href="/tags/Java/">Java</a> <a class="tag tag--primary tag--small t-link" href="/tags/Lexical-Analysis/">Lexical Analysis</a> <a class="tag tag--primary tag--small t-link" href="/tags/Symantic-Analysis/">Symantic Analysis</a> <a class="tag tag--primary tag--small t-link" href="/tags/Syntax-Analysis/">Syntax Analysis</a> <a class="tag tag--primary tag--small t-link" href="/tags/invokeinterface/">invokeinterface</a> <a class="tag tag--primary tag--small t-link" href="/tags/invokevirtual/">invokevirtual</a> <a class="tag tag--primary tag--small t-link" href="/tags/javap/">javap</a> <a class="tag tag--primary tag--small t-link" href="/tags/구문-분석/">구문 분석</a> <a class="tag tag--primary tag--small t-link" href="/tags/바이트코드/">바이트코드</a> <a class="tag tag--primary tag--small t-link" href="/tags/상수-풀/">상수 풀</a> <a class="tag tag--primary tag--small t-link" href="/tags/어휘-분석/">어휘 분석</a> <a class="tag tag--primary tag--small t-link" href="/tags/의미-분석/">의미 분석</a> <a class="tag tag--primary tag--small t-link" href="/tags/자바/">자바</a> <a class="tag tag--primary tag--small t-link" href="/tags/중간-코드-생성/">중간 코드 생성</a> <a class="tag tag--primary tag--small t-link" href="/tags/컴파일/">컴파일</a> <a class="tag tag--primary tag--small t-link" href="/tags/코드-최적화/">코드 최적화</a>
 
             </div>
         
@@ -448,7 +448,7 @@
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--disabled">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/01/31/Back-to-the-Essence-Java-컴파일에서-실행까지-2/"  data-tooltip="Back to the Essence - Java 컴파일에서 실행까지 - (2)">
                 
                     <i class="fa fa-angle-left"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
@@ -525,7 +525,7 @@
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--disabled">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/01/31/Back-to-the-Essence-Java-컴파일에서-실행까지-2/"  data-tooltip="Back to the Essence - Java 컴파일에서 실행까지 - (2)">
                 
                     <i class="fa fa-angle-left"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
