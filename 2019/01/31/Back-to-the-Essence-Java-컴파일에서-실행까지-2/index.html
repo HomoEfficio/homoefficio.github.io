@@ -14,13 +14,13 @@
     
         <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <meta name="description" content="Back to the Essence - Java 컴파일에서 실행까지 - (2)Java 11 JVM 스펙을 기준으로 Java 소스 코드가 어떻게 컴파일되고 실행되는지 살짝 깊게 알아보자. 이번엔 2탄 실행 편이다. 1탄 컴파일편은 여기에.. 실행자바 애플리케이션은 java 명령어로 실행할 수 있다. 오라클의 Tools Reference 문서에 나오는 java">
+    <meta name="description" content="Back to the Essence - Java 컴파일에서 실행까지 - (2)Java 11 JVM 스펙을 기준으로 Java 소스 코드가 어떻게 컴파일되고 실행되는지 살짝 깊게 알아보자. 이번엔 2탄 실행 편이다. 1탄 컴파일 편은 여기에.. 실행자바 애플리케이션은 java 명령어로 실행할 수 있다. 오라클의 Tools Reference 문서에 나오는 jav">
 <meta name="keywords" content="Java,자바,JVM,Bytecode,Compile,JVM Spec,invokeinterface,invokevirtual,javap,컴파일,바이트코드,JVM 명세,JVM 스펙,JRE,JVM Instruction,Run-Time Data Area,Heap,Method Area,PC Register,JVM Stack,Native Method Stack,Frame,Local Variables,Operand Stack,Reference to Run-Time Constant Pool,Run-Time Constant Pool,Link,Verification,Preparation,Initialization,Resolution,invokespecial,JVM 명령어,런타임 데이터 영역,자바 메모리 모델,JVM 메모리 모델,힙,메서드 영역,PC 레지스터,JVM 스택,네이티브 메서드 스택,프레임,로컬 변수 배열,오퍼랜드 스택,런타임 상수 풀,링크,확인,준비,초기화,해석">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Back to the Essence - Java 컴파일에서 실행까지 - (2)">
 <meta property="og:url" content="http://homoefficio.github.io/2019/01/31/Back-to-the-Essence-Java-컴파일에서-실행까지-2/index.html">
 <meta property="og:site_name" content="뒤태지존의 끄적거림">
-<meta property="og:description" content="Back to the Essence - Java 컴파일에서 실행까지 - (2)Java 11 JVM 스펙을 기준으로 Java 소스 코드가 어떻게 컴파일되고 실행되는지 살짝 깊게 알아보자. 이번엔 2탄 실행 편이다. 1탄 컴파일편은 여기에.. 실행자바 애플리케이션은 java 명령어로 실행할 수 있다. 오라클의 Tools Reference 문서에 나오는 java">
+<meta property="og:description" content="Back to the Essence - Java 컴파일에서 실행까지 - (2)Java 11 JVM 스펙을 기준으로 Java 소스 코드가 어떻게 컴파일되고 실행되는지 살짝 깊게 알아보자. 이번엔 2탄 실행 편이다. 1탄 컴파일 편은 여기에.. 실행자바 애플리케이션은 java 명령어로 실행할 수 있다. 오라클의 Tools Reference 문서에 나오는 jav">
 <meta property="og:locale" content="ko">
 <meta property="og:image" content="https://i.imgur.com/wChPQEV.png">
 <meta property="og:image" content="https://i.imgur.com/Mh4DuRB.png">
@@ -53,10 +53,10 @@
 <meta property="og:image" content="https://i.imgur.com/BWa4gBm.png">
 <meta property="og:image" content="https://i.imgur.com/So2s54L.png">
 <meta property="og:image" content="https://i.imgur.com/S0cm4E8.png">
-<meta property="og:updated_time" content="2019-01-30T15:29:26.635Z">
+<meta property="og:updated_time" content="2019-01-30T15:32:46.025Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Back to the Essence - Java 컴파일에서 실행까지 - (2)">
-<meta name="twitter:description" content="Back to the Essence - Java 컴파일에서 실행까지 - (2)Java 11 JVM 스펙을 기준으로 Java 소스 코드가 어떻게 컴파일되고 실행되는지 살짝 깊게 알아보자. 이번엔 2탄 실행 편이다. 1탄 컴파일편은 여기에.. 실행자바 애플리케이션은 java 명령어로 실행할 수 있다. 오라클의 Tools Reference 문서에 나오는 java">
+<meta name="twitter:description" content="Back to the Essence - Java 컴파일에서 실행까지 - (2)Java 11 JVM 스펙을 기준으로 Java 소스 코드가 어떻게 컴파일되고 실행되는지 살짝 깊게 알아보자. 이번엔 2탄 실행 편이다. 1탄 컴파일 편은 여기에.. 실행자바 애플리케이션은 java 명령어로 실행할 수 있다. 오라클의 Tools Reference 문서에 나오는 jav">
 <meta name="twitter:image" content="https://i.imgur.com/wChPQEV.png">
     
         <meta rel="publisher" content="https://plus.google.com/+오명운"/>
@@ -258,7 +258,7 @@
     <div class="post-content markdown main-content-wrap" itemprop="articleBody">
         
             <h1 id="Back-to-the-Essence-Java-컴파일에서-실행까지-2"><a href="#Back-to-the-Essence-Java-컴파일에서-실행까지-2" class="headerlink" title="Back to the Essence - Java 컴파일에서 실행까지 - (2)"></a>Back to the Essence - Java 컴파일에서 실행까지 - (2)</h1><p>Java 11 JVM 스펙을 기준으로 Java 소스 코드가 어떻게 컴파일되고 실행되는지 살짝 깊게 알아보자.</p>
-<p>이번엔 2탄 실행 편이다. 1탄 컴파일편은 <a href="https://homoefficio.github.io/2019/01/31/Back-to-the-Essence-Java-컴파일에서-실행까지-1/">여기</a>에..</p>
+<p>이번엔 2탄 실행 편이다. 1탄 컴파일 편은 <a href="https://homoefficio.github.io/2019/01/31/Back-to-the-Essence-Java-컴파일에서-실행까지-1/">여기</a>에..</p>
 <h1 id="실행"><a href="#실행" class="headerlink" title="실행"></a>실행</h1><p>자바 애플리케이션은 <code>java</code> 명령어로 실행할 수 있다. <a href="https://docs.oracle.com/en/java/javase/11/tools/java.html#GUID-3B1CE181-CD30-4178-9602-230B800D4FAE" target="_blank" rel="noopener">오라클의 Tools Reference 문서</a>에 나오는 <code>java</code>에 대한 설명은 다음과 같다.</p>
 <blockquote>
 <p><code>java</code> 명령어는 자바 애플리케이션을 시작한다.<br><code>java</code> 명령어는 먼저 JRE(Java Runtime Environment)를 시작하고,<br>인자로 지정된 클래스(<code>public static void main(String[] args)</code>를 포함하고 있는 클래스)를 로딩하고,<br><code>main()</code> 메서드를 호출한다.</p>
