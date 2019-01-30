@@ -60,7 +60,7 @@ coverImage: cover-jvm-02.jpg
 
 Java 11 JVM 스펙을 기준으로 Java 소스 코드가 어떻게 컴파일되고 실행되는지 살짝 깊게 알아보자.
 
-이번엔 2탄 실행 편이다. 1탄 컴파일편은 [여기](https://homoefficio.github.io/2019/01/31/Back-to-the-Essence-Java-컴파일에서-실행까지-1/)에..
+이번엔 2탄 실행 편이다. 1탄 컴파일 편은 [여기](https://homoefficio.github.io/2019/01/31/Back-to-the-Essence-Java-컴파일에서-실행까지-1/)에..
 
 
 # 실행
