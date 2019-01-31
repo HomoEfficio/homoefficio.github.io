@@ -33,7 +33,7 @@
 <meta property="og:image" content="https://i.imgur.com/XBMPitk.png">
 <meta property="og:image" content="https://i.imgur.com/RJ3ZLvX.png">
 <meta property="og:image" content="https://i.imgur.com/izWNxMs.png">
-<meta property="og:image" content="https://i.imgur.com/uV7vHx5.png">
+<meta property="og:image" content="https://i.imgur.com/t1MmhAk.png">
 <meta property="og:image" content="https://i.imgur.com/O7LRpA6.png">
 <meta property="og:image" content="https://i.imgur.com/e6u8VRO.png">
 <meta property="og:image" content="https://i.imgur.com/Ve6moKN.png">
@@ -53,7 +53,7 @@
 <meta property="og:image" content="https://i.imgur.com/BWa4gBm.png">
 <meta property="og:image" content="https://i.imgur.com/So2s54L.png">
 <meta property="og:image" content="https://i.imgur.com/S0cm4E8.png">
-<meta property="og:updated_time" content="2019-01-30T15:32:46.025Z">
+<meta property="og:updated_time" content="2019-01-31T13:56:00.310Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Back to the Essence - Java 컴파일에서 실행까지 - (2)">
 <meta name="twitter:description" content="Back to the Essence - Java 컴파일에서 실행까지 - (2)Java 11 JVM 스펙을 기준으로 Java 소스 코드가 어떻게 컴파일되고 실행되는지 살짝 깊게 알아보자. 이번엔 2탄 실행 편이다. 1탄 컴파일 편은 여기에.. 실행자바 애플리케이션은 java 명령어로 실행할 수 있다. 오라클의 Tools Reference 문서에 나오는 jav">
@@ -331,9 +331,13 @@
 <p><img src="https://i.imgur.com/KXJsPgs.png" alt="Imgur"></p>
 <h2 id="시작-클래스-생성"><a href="#시작-클래스-생성" class="headerlink" title="시작 클래스 생성"></a>시작 클래스 생성</h2><p>시작 클래스는 Hello를 지칭하며 시작 클래스를 생성하는 것은 파일시스템에 있는 Hello.class 파일을 JVM의 메서드 영역으로 읽어들이는 것을 의미한다고 했다. 따라서 <strong>이 시점에서 Hello의 바이트코드 내용이 메서드 영역에 저장</strong>된다.</p>
 <p><img src="https://i.imgur.com/QBQyTab.png" alt="Imgur"></p>
+<p>그런데 Hello 클래스는 누가 로딩하는 걸까? 당연하지만 클래스로더가 로딩한다. 그럼 클래스로더는 누가 로딩할까?</p>
+<h3 id="클래스로더"><a href="#클래스로더" class="headerlink" title="클래스로더"></a>클래스로더</h3><p>자바 런타임은 네이티브 코드로 작성된 부트스트랩 클래스로더, 플랫폼 클래스로더, 시스템 클래스로더, 이렇게 <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/ClassLoader.html" target="_blank" rel="noopener">3가지 빌트인(built-in) 클래스로더를 제공</a>한다.</p>
+<p>결론적으로 <strong>Hello 클래스는 시스템 클래스로더가 로딩</strong>하는데, <strong>시스템 클래스로더는 플랫폼 클래스로더가 로딩하고, 플랫폼 클래스로더는 부트스트랩 클래스로더가 로딩하고, 부트스트랩 클래스로더는 <code>java</code> 명령에 의해 JRE가 조성될 때 실행</strong>된다.</p>
+<p>클래스로딩은 <a href="https://homoefficio.github.io/2018/10/13/Java-클래스로더-훑어보기/">Java 클래스로더 훑어보기</a>와 <a href="ttps://homoefficio.github.io/2018/10/14/Java-URLClassLoader로-알아보는-클래스로딩/">Java URLClassLoader로 알아보는 클래스로딩</a>을 참고하자.</p>
 <h3 id="런타임-상수-풀"><a href="#런타임-상수-풀" class="headerlink" title="런타임 상수 풀"></a>런타임 상수 풀</h3><p>클래스가 생성되면 <a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-2.html#jvms-2.5.5" target="_blank" rel="noopener">런타임 상수 풀(Run-Time Constant Pool)</a>도 함께 생성된다고 했다. <strong>런타임 상수 풀에는 컴파일 타임에 이미 알 수 있는 숫자 리터럴 값부터 런타임에 해석되는 메서드와 필드의 참조까지를 포괄하는 여러 종류의 상수가 포함</strong>된다. 런타임 상수 풀은 다른 전통적인 언어에서 말하는 심볼 테이블과 비슷한 기능을 한다고 보면 된다.</p>
 <p><img src="https://i.imgur.com/ZtsNYAv.png" alt="Imgur"></p>
-<h2 id="링크"><a href="#링크" class="headerlink" title="링크"></a>링크</h2><p><strong>링크는 클래스나 인터페이스의 바로 위 수퍼클래스나 수퍼인터페이스, 또는 배열일 경우 배열의 원소인 클래스나 인터페이스를 확인(verify)/준비(prepare)하고, 심볼릭 참조를 해석(resolve)하는 과정</strong>을 말한다.</p>
+<h2 id="링크"><a href="#링크" class="headerlink" title="링크"></a>링크</h2><p><strong><a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-5.html#jvms-5.4" target="_blank" rel="noopener">링크</a>는 클래스나 인터페이스의 바로 위 수퍼클래스나 수퍼인터페이스, 또는 배열일 경우 배열의 원소인 클래스나 인터페이스를 확인(verify)/준비(prepare)하고, 심볼릭 참조를 해석(resolve)하는 과정</strong>을 말한다.</p>
 <p>그럼 확인, 준비, 해석은 뭘 의미하는 걸까?</p>
 <h3 id="확인"><a href="#확인" class="headerlink" title="확인"></a>확인</h3><p><strong><a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-5.html#jvms-5.4.1" target="_blank" rel="noopener">확인(verification)</a>은 클래스나 인터페이스의 바이너리 표현이 구조적으로 올바른지를 보장해주는 과정</strong>이다. 확인 과정은 다른 클래스나 인터페이스의 로딩을 유발할 수도 있지만, 로딩된 다른 클래스나 인터페이스의 확인이나 준비를 필수적으로 유발하지는 않는다.</p>
 <p>Hello.class 파일은 JDK에 포함된 공식 컴파일러인 <code>javac</code>에 의해 정상적으로 컴파일되었으므로 구조적으로 올바르다고 가정하면, <strong>확인 과정에서 Hello의 부모 클래스인 Object가 로딩</strong>된다.</p>
@@ -447,7 +451,7 @@
 <h3 id="Frame"><a href="#Frame" class="headerlink" title="Frame"></a>Frame</h3><p>JVM 스택에 쌓이는 정보의 단위가 <a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-2.html#jvms-2.6" target="_blank" rel="noopener">프레임(Frame)</a>이다. 프레임은 데이터나 중간 결과의 저장, 동적 링크, 값 반환, 예외 디스패치에 사용된다.</p>
 <p><strong>메서드 하나가 호출될 때마다 새 프레임이 생성되어 스택에 쌓이고, 메서드 호출이 정상 완료되거나 예외가 던져지면 프레임은 스택에서 빠지면서 소멸된다.</strong></p>
 <p><strong>프레임은 로컬 변수 배열, 오퍼랜드 스택, 프레임에 해당하는 메서드가 속한 클래스의 런타임 상수 풀에 대한 참조 이렇게 3개의 자료구조로 구성</strong>된다.</p>
-<p><img src="https://i.imgur.com/uV7vHx5.png" alt="Imgur"></p>
+<p><img src="https://i.imgur.com/t1MmhAk.png" alt="Imgur"></p>
 <h4 id="Local-Variables"><a href="#Local-Variables" class="headerlink" title="Local Variables"></a>Local Variables</h4><p>프레임은 <a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-2.html#jvms-2.6.1" target="_blank" rel="noopener">로컬 변수 배열(Local Variables</a>을 하나 가지고 있다. 로컬 변수 배열의 크기는 컴파일 타임에 결정되며 바이트코드의 <code>Code</code> 속성에 <code>locals</code>으로 표시된다.</p>
 <p><code>boolean</code>, <code>byte</code>, <code>char</code>, <code>short</code>, <code>int</code>, <code>float</code>, <code>reference</code>, <code>returnAddress</code>는 배열의 1개의 슬롯에 저장되고, <code>long</code>과 <code>double</code>은 2개의 슬롯에 걸쳐 저장된다.</p>
 <p>메서드가 호출될 때 그 <strong>메서드의 파라미터 값은 로컬 변수 배열을 통해 넘겨진다.</strong></p>
