@@ -546,7 +546,7 @@ Constant pool:
         39: invokevirtual #7                  // Method java/io/PrintStream.println:(Ljava/lang/String;)V
 ```
 
-이 글은 컴파일 과정을 훑어보는 게 목적이었으므로 바이트코드 구경은 여기서 줄인다. 바이트코드에 대한 내용은 더 궁금하다면 알고 싶은 부분을 직접 코딩/컴파일하고 `javap`와 JVM 스펙으로 확인해보는 것이 가장 좋고, [2탄]()을 참고해도 좋다.
+이 글은 컴파일 과정을 훑어보는 게 목적이었으므로 바이트코드 구경은 여기서 줄인다. 바이트코드에 대한 내용은 더 궁금하다면 알고 싶은 부분을 직접 코딩/컴파일하고 `javap`와 JVM 스펙으로 확인해보는 것이 가장 좋고, [2탄](https://homoefficio.github.io/2019/01/31/Back-to-the-Essence-Java-컴파일에서-실행까지-2/)을 참고해도 좋다.
 
 
 # 마무리
