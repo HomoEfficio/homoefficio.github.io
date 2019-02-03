@@ -135,3 +135,21 @@ coverImage: cover-image-01.png
 - https://www.slideshare.net/PramestiHattaK/golang-101-concurrency-vs-parallelism
 - http://tutorials.jenkov.com/java-concurrency/concurrency-vs-parallelism.html
 - https://www.amazon.com/Reactive-Programming-RxJava-Asynchronous-Applications/dp/1491931655/
+
+
+## 추가
+
+페북에 공유하고 보니 이규원 님으로부터 다음과 같은 아주 쌈박한 의견을 얻을 수 있었다.
+
+>Concurrency는 다수의 문제가 동시에 일어난 상황에 대한 것이고,  
+>Parallelism은 다수의 문제를 동시에 해결하는 방법에 대한 것입니다.
+
+개인적으로는
+
+>Concurrency는 해결해야 할 문제고,
+>Parallelisma은 해결하는 방법이다.
+
+라고 생각해왔는데, 몇 군데 조사해보니 이런 식으로 서술된 게 없어서 아닌가보다.. 하고 구조 vs 실행에 힘을 실어주고 끝맺었는데, 우군을 얻었으니 다시 다음과 같이 결론낸다.
+
+>**Concurrency는 동시에 발생한 다수의 일을 처리해야하는 상황을 의미**하고,  
+>**Parallelism은 다수의 일을 동시에 실행하는 방식**을 의미한다.
