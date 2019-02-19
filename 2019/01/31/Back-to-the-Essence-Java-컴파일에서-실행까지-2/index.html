@@ -51,9 +51,9 @@
 <meta property="og:image" content="https://i.imgur.com/NCga0nz.png">
 <meta property="og:image" content="https://i.imgur.com/vz0uuaf.png">
 <meta property="og:image" content="https://i.imgur.com/BWa4gBm.png">
-<meta property="og:image" content="https://i.imgur.com/So2s54L.png">
+<meta property="og:image" content="https://i.imgur.com/NCga0nz.png">
 <meta property="og:image" content="https://i.imgur.com/S0cm4E8.png">
-<meta property="og:updated_time" content="2019-01-31T13:56:00.310Z">
+<meta property="og:updated_time" content="2019-02-19T16:03:36.553Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Back to the Essence - Java 컴파일에서 실행까지 - (2)">
 <meta name="twitter:description" content="Back to the Essence - Java 컴파일에서 실행까지 - (2)Java 11 JVM 스펙을 기준으로 Java 소스 코드가 어떻게 컴파일되고 실행되는지 살짝 깊게 알아보자. 이번엔 2탄 실행 편이다. 1탄 컴파일 편은 여기에.. 실행자바 애플리케이션은 java 명령어로 실행할 수 있다. 오라클의 Tools Reference 문서에 나오는 jav">
@@ -329,6 +329,8 @@
 <p>그래서 엄밀히 말하면 정확하지 않지만, <strong>바이트코드 내용이 메서드 영역에 저장된다</strong>라고 이해해도 크게 틀리지는 않다.</p>
 <p>Hello는 이 시점에서는 아직 생성되지 않았으므로 메서드 영역도 비어있다.</p>
 <p><img src="https://i.imgur.com/KXJsPgs.png" alt="Imgur"></p>
+<p>JVM 스펙은 런타임 데이터 영역을 6가지로 나눠서 설명하고 있고, 그에따라 그림에도 힙과 메서드 영역을 분리해서 표현했지만, 스펙에는 다음과 같이 메서드 영역이 논리적으로 힙의 일부지만(그래서 가비지 컬렉션 대상이 되지만), 단순하게는 가비지 컬렉션이나 압축을 하지 않게 구현할 수도 있으며, 스펙은 메서드의 영역의 위치에 대해 강제하지 않는다고 나와 있기도 하다. 결국 메서드 영역의 위치는 JVM 구현체에 따라 달라질 수 있다는 말이다.</p>
+<p>참고로 Java 8 부터 Metaspace가 기존의 PermGen 영역을 대체한다는 자료들이 많이 있는데, JVM 스펙에는 Megaspace라는 용어는 전혀 나오지 않는다. Metaspace는 JVM 구현체인 HotSpot JVM에서 나오는 용어이며, Metaspace에 저장되는 데이터를 기준으로 보면 HotSpot JVM은 JVM 스펙의 메서드 영역을 Metaspace로 구현한 거라고 볼 수 있다.</p>
 <h2 id="시작-클래스-생성"><a href="#시작-클래스-생성" class="headerlink" title="시작 클래스 생성"></a>시작 클래스 생성</h2><p>시작 클래스는 Hello를 지칭하며 시작 클래스를 생성하는 것은 파일시스템에 있는 Hello.class 파일을 JVM의 메서드 영역으로 읽어들이는 것을 의미한다고 했다. 따라서 <strong>이 시점에서 Hello의 바이트코드 내용이 메서드 영역에 저장</strong>된다.</p>
 <p><img src="https://i.imgur.com/QBQyTab.png" alt="Imgur"></p>
 <p>그런데 Hello 클래스는 누가 로딩하는 걸까? 당연하지만 클래스로더가 로딩한다. 그럼 클래스로더는 누가 로딩할까?</p>
@@ -554,7 +556,7 @@
 <p>main 스레드가 생성되면 PC 레지스터, JVM 스택, 네이티브 메서드 스택이 한 개씩 main 스레드에 생성된다.<br>JVM 스택이 생성되면 main 메서드를 위한 main 메서드 프레임이 생성된다.<br>main 메서드 프레임이 생성되면 로컬 변수 배열, 오퍼랜드 스택, 런타임 상수 풀에 대한 참조가 한 개씩 main 메서드 프레임에 생성된다.</p>
 <p>main 메서드의 내용에 따라 로컬 변수 배열, 오퍼랜드 스택, 런타임 상수 풀에 대한 참조를 이용해서 필요한 값이나 참조를 연산하고,<br>메서드 호출이 발생하면 해당 메서드를 위한 새 로컬 변수 배열, 오퍼랜드 스택, 런타임 상수 풀에 대한 참조가 포함된 새 프레임이 생성되어 JVM 스택 위에 쌓이고,<br>메서드 호출이 종료되면 해당 프레임이 JVM 스택에서 빠져나가고 제어는 다시 호출한 메서드의 프레임으로 돌아온다.<br>이 때 반환값이 있다면 호출한 메서드의 프레임의 오퍼랜드 스택의 맨 위에 쌓인다.</p>
 <p>한 장의 그림으로 보면 다음과 같다.</p>
-<p><img src="https://i.imgur.com/So2s54L.png" alt="Imgur"></p>
+<p><img src="https://i.imgur.com/NCga0nz.png" alt="Imgur"></p>
 </blockquote>
 <h2 id="마지막-쉬운-퀴즈"><a href="#마지막-쉬운-퀴즈" class="headerlink" title="마지막 쉬운 퀴즈"></a>마지막 쉬운 퀴즈</h2><p>다음과 같은 코드를 실행하면 HelloNoInstance 인스턴스가 힙에 만들어질까 안 만들어질까?</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> homo.efficio.jvm.sample;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloNoInstance</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"Hello, JVM"</span>);</span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
