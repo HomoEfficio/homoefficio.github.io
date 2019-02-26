@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="뒤태지존의 끄적거림">
+    <title>Java NIO Direct Memory Access를 활용한 대용량 파일 행 단위로 쪼개기 - 뒤태지존의 끄적거림</title>
+    <meta name="author" content="HomoEfficio">
+    <meta name="description" content="뒤태지존의 끄적거림">
+    
+        <link rel="icon" href="/assets/images/favicon.ico">
+    
+    
+        <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <meta name="description" content="Java NIO Direct Memory Access를 활용한 대용량 파일 행 단위로 쪼개기기가 단위의 파일을 외부에 전송할 일이 생겼다.  한 방에 보내기엔 너무 커서 파일을 쪼개서(split) 보내려고 하는데, 그마저도 쉽지 않다. 쪼개기 위해 대용량 파일을 읽을 때 이미 수십분 동안 CPU를 너무 잡아 먹어서 이 쪼개는 배치 작업을 스케줄링하는 스케줄">
+<meta name="keywords" content="Java,자바,NIO,DMA,Direct Memory Access,DirectBuffer,ByteBuffer,Buffer,FileChannel,Large File,Split,New Line,Carriage Return,CR,Line Feed,LF,readLine,직접 메모리 접근,다이렉트버퍼,바이트버퍼,버퍼,파일 채널,스플릿,대용량,대용량 파일,줄 바꿈">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Java NIO Direct Memory Access를 활용한 대용량 파일 행 단위로 쪼개기">
+<meta property="og:url" content="http://homoefficio.github.io/2019/02/27/Java-NIO-Direct-Memory-Access를-활용한-대용량-파일-행-단위로-쪼개기/index.html">
+<meta property="og:site_name" content="뒤태지존의 끄적거림">
+<meta property="og:description" content="Java NIO Direct Memory Access를 활용한 대용량 파일 행 단위로 쪼개기기가 단위의 파일을 외부에 전송할 일이 생겼다.  한 방에 보내기엔 너무 커서 파일을 쪼개서(split) 보내려고 하는데, 그마저도 쉽지 않다. 쪼개기 위해 대용량 파일을 읽을 때 이미 수십분 동안 CPU를 너무 잡아 먹어서 이 쪼개는 배치 작업을 스케줄링하는 스케줄">
+<meta property="og:locale" content="ko">
+<meta property="og:image" content="https://i.imgur.com/LNHHp8h.png">
+<meta property="og:image" content="https://i.imgur.com/6BET1z3.png">
+<meta property="og:image" content="https://i.imgur.com/7dkgJCg.png">
+<meta property="og:image" content="https://i.imgur.com/wdWRADA.png">
+<meta property="og:image" content="https://i.imgur.com/sdaNr3t.png">
+<meta property="og:image" content="https://i.imgur.com/G14IWFv.png">
+<meta property="og:image" content="https://i.imgur.com/kEmfUja.png">
+<meta property="og:image" content="https://i.imgur.com/axhhB1Z.png">
+<meta property="og:image" content="https://i.imgur.com/gJAbo3g.png">
+<meta property="og:updated_time" content="2019-02-26T15:33:55.794Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java NIO Direct Memory Access를 활용한 대용량 파일 행 단위로 쪼개기">
+<meta name="twitter:description" content="Java NIO Direct Memory Access를 활용한 대용량 파일 행 단위로 쪼개기기가 단위의 파일을 외부에 전송할 일이 생겼다.  한 방에 보내기엔 너무 커서 파일을 쪼개서(split) 보내려고 하는데, 그마저도 쉽지 않다. 쪼개기 위해 대용량 파일을 읽을 때 이미 수십분 동안 CPU를 너무 잡아 먹어서 이 쪼개는 배치 작업을 스케줄링하는 스케줄">
+<meta name="twitter:image" content="https://i.imgur.com/LNHHp8h.png">
+    
+        <meta rel="publisher" content="https://plus.google.com/+오명운"/>
+    
+    
+    
+        <meta property="og:image" content="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=640"/>
+    
+    
+        <meta property="og:image" content="/2019/02/27/Java-NIO-Direct-Memory-Access를-활용한-대용량-파일-행-단위로-쪼개기/https:/i.imgur.com/rSAa4on.gif"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2019/02/27/Java-NIO-Direct-Memory-Access를-활용한-대용량-파일-행-단위로-쪼개기/https://i.imgur.com/rSAa4on.gif" />
+    
+    
+        <meta property="og:image" content="/2019/02/27/Java-NIO-Direct-Memory-Access를-활용한-대용량-파일-행-단위로-쪼개기/cover-java-dma.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2019/02/27/Java-NIO-Direct-Memory-Access를-활용한-대용량-파일-행-단위로-쪼개기/cover-java-dma.png" />
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style.min.css">
+    <!--STYLES END-->
+    
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-79893978-1']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6494847158566766",
+    enable_page_level_ads: true
+  });
+</script>
+</head>
+
+    <body>
+        <div id="blog">
+            <header id="header" data-behavior="1">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="/ ">뒤태지존의 끄적거림</a>
+    </h1>
+    
+        <a class="header-right-picture" href="/#about">
+            <img class="header-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+        </a>
+    
+</header>
+            <nav id="sidebar" data-behavior="1">
+    
+    <div class="sidebar-profile">
+        <a href="/#about">
+            
+            <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+            
+        </a>
+        <span class="sidebar-profile-name">HomoEfficio</span>
+    </div>
+    
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/ 
+                    ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">Home</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-categories
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">Categories</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-tags
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">Tags</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-archives
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">Archives</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link st-search-show-outputs"
+                    href="#search
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                    <span class="sidebar-button-desc">Search</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="#about
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">About me</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="https://github.com/HomoEfficio" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                    <span class="sidebar-button-desc">GitHub</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="mailto:homo.efficio@gmail.com" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-envelope-o"></i>
+                    <span class="sidebar-button-desc">Mail</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/atom.xml
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+            <div id="main" data-behavior="1">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+        <div class="post-header-cover" style="background-image:url('/2019/02/27/Java-NIO-Direct-Memory-Access를-활용한-대용량-파일-행-단위로-쪼개기/cover-java-dma.png');">
+            <div class="post-header main-content-wrap">
+    
+        <h1 class="post-title" itemprop="headline">Java NIO Direct Memory Access를 활용한 대용량 파일 행 단위로 쪼개기</h1>
+    
+    <div class="post-meta">
+    <time  itemprop="datePublished" content="Wed Feb 27 2019 00:23:43 GMT+0900">
+        Feb 27, 2019
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Technique/">Technique</a>
+
+
+    
+</div>
+</div>
+        </div>
+    
+    <div class="post-content markdown main-content-wrap" itemprop="articleBody">
+        
+            <h1 id="Java-NIO-Direct-Memory-Access를-활용한-대용량-파일-행-단위로-쪼개기"><a href="#Java-NIO-Direct-Memory-Access를-활용한-대용량-파일-행-단위로-쪼개기" class="headerlink" title="Java NIO Direct Memory Access를 활용한 대용량 파일 행 단위로 쪼개기"></a>Java NIO Direct Memory Access를 활용한 대용량 파일 행 단위로 쪼개기</h1><p>기가 단위의 파일을 외부에 전송할 일이 생겼다. </p>
+<p>한 방에 보내기엔 너무 커서 파일을 쪼개서(split) 보내려고 하는데, 그마저도 쉽지 않다. 쪼개기 위해 대용량 파일을 읽을 때 이미 수십분 동안 CPU를 너무 잡아 먹어서 이 쪼개는 배치 작업을 스케줄링하는 스케줄러(Quartz)에 문제를 일으킨다.</p>
+<p>DMA(Direct Memory Access)를 사용하는 것이 좋겠다.</p>
+<h1 id="DMA"><a href="#DMA" class="headerlink" title="DMA"></a>DMA</h1><p><img src="https://i.imgur.com/LNHHp8h.png" alt="Imgur"></p>
+<p>(그림 출처: <a href="https://howtodoinjava.com/java/io/how-java-io-works-internally-at-lower-level/" target="_blank" rel="noopener">https://howtodoinjava.com/java/io/how-java-io-works-internally-at-lower-level/</a>)</p>
+<p>디스크 컨트롤러는 DMA를 통해 CPU를 건드리지 않고 직접 운영체제 메모리에 접근할 수 있고, 응용 프로그램은 DirectBuffer를 활용해서 JVM 메모리가 아닌 운영체제 메모리에 직접 접근할 수 있다.</p>
+<p>장점은 다음과 같다.</p>
+<ol>
+<li>디스크에 있는 파일을 운영체제 메모리로 읽어들일 때 CPU를 건드리지 않는다.</li>
+<li>운영체제 메모리에 있는 파일 내용을 JVM 내 메모리로 다시 복사할 필요가 없다.</li>
+<li>JVM 내 힙 메모리를 쓰지 않으므로 GC를 유발하지 않는다.</li>
+</ol>
+<p>단점은 다음과 같다.</p>
+<ol>
+<li>DMA에 사용할 버퍼 생성 시 시간이 더 소요될 수 있다.</li>
+<li>바이트 단위로 데이터를 취급하므로, <strong>데이터를 행 단위로 취급하기 불편하다.</strong></li>
+</ol>
+<p>Aㅏ.. 파일 쪼개기 할 때 행 단위로 쪼개야 하는데.. 일단 불편한 것일 뿐 아예 안 되는 것은 아니므로 시도해보자.</p>
+<p>종합해보면 <strong>파일의 크기가 대단히 클 때 DMA의 장점을 누릴 수 있고 단점을 피할 수 있다.</strong></p>
+<h1 id="FileChannel"><a href="#FileChannel" class="headerlink" title="FileChannel"></a>FileChannel</h1><p>Java 1.4 부터 도입된 NIO에 <code>FileChannel</code>이 포함되어 있는데, <code>ByteBuffer</code>를 통해 File I/O를 수행할 수 있다.</p>
+<p>대략 다음과 같은 방식으로 사용할 수 있다.</p>
+<h2 id="파일-읽기-용-FileChannel"><a href="#파일-읽기-용-FileChannel" class="headerlink" title="파일 읽기 용 FileChannel"></a>파일 읽기 용 FileChannel</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">FileChannel srcFileChannel = Files.open(Paths.get(<span class="string">"/home/homo-efficio/tmp/LargeFile"</span>), StandardOpenOption.READ);</span><br></pre></td></tr></table></figure>
+<h2 id="파일-쓰기-용-FileChannel"><a href="#파일-쓰기-용-FileChannel" class="headerlink" title="파일 쓰기 용 FileChannel"></a>파일 쓰기 용 FileChannel</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">FileChannel destFileChannel = Files.open(Paths.get(<span class="string">"/home/homo-efficio/tmp/LargeFile"</span>), StandardOpenOption.WRITE);</span><br></pre></td></tr></table></figure>
+<p><code>Path</code> 말고 <code>RandomAccessFile</code>을 활용하는 방법도 있고, 파일 열기 모드에도 <code>TRUNCATE_EXIST</code>, <code>CREATE</code>, <code>CREATE_NEW</code> 등 여러가지가 있고 혼합해서 사용할 수 있다.</p>
+<h1 id="ByteBuffer"><a href="#ByteBuffer" class="headerlink" title="ByteBuffer"></a>ByteBuffer</h1><p>DMA를 수행할 수 있는 DirectBuffer를 할당할 수 있는 유일한 Buffer다. DirectBuffer는 다음과 같이 간단하게 생성할 수 있다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ByteBuffer buffer = ByteBuffer.allocateDirect(<span class="number">100</span> * <span class="number">1024</span> * <span class="number">1024</span>);</span><br></pre></td></tr></table></figure>
+<p>버퍼가 direct 인지 아닌지 <code>buffer.isDirect()</code>를 통해 판별할 수도 있다.</p>
+<h2 id="위치-관련-속성"><a href="#위치-관련-속성" class="headerlink" title="위치 관련 속성"></a>위치 관련 속성</h2><h3 id="position"><a href="#position" class="headerlink" title="position"></a>position</h3><p>버퍼 내에서 값을 읽거나 쓸 수 있는 <strong>시작 위치</strong>를 나타낸다. 버퍼 내로 1 바이트의 데이터가 추가될 때마다 <code>position</code> 값도 1 증가한다.</p>
+<p><code>buffer.position()</code>, <code>buffer.position(int)</code></p>
+<h3 id="limit"><a href="#limit" class="headerlink" title="limit"></a>limit</h3><p>버퍼 내에서 값을 읽거나 쓸 수 있는 <strong>끝 위치</strong>를 나타낸다. <code>limit - 1</code> 위치까지의 데이터가 읽거나 써진다.</p>
+<p><code>buffer.position()</code>, <code>buffer.position(int)</code></p>
+<h3 id="mark"><a href="#mark" class="headerlink" title="mark"></a>mark</h3><p>현재 <code>position</code> 위치에 <strong>표시</strong>를 해두고, 나중에 <code>reset()</code>을 호출하면 <code>position</code>이 표시해둔 위치로 이동한다.</p>
+<p><code>buffer.mark()</code></p>
+<h3 id="capacity"><a href="#capacity" class="headerlink" title="capacity"></a>capacity</h3><p>버퍼의 용량(담을 수 있는 데이터의 크기)를 나타낸다.</p>
+<p><code>buffer.capacity()</code></p>
+<h2 id="위치-관련-메서드"><a href="#위치-관련-메서드" class="headerlink" title="위치 관련 메서드"></a>위치 관련 메서드</h2><h3 id="flip"><a href="#flip" class="headerlink" title="flip()"></a>flip()</h3><p><code>position</code>을 0으로, <code>limit</code>을 읽어들인 데이터의 마지막 바이트+1 위치로 세팅한다. </p>
+<p>버퍼에 있는 데이터를 처음부터 모두 읽을 때 사용한다.</p>
+<h3 id="rewind"><a href="#rewind" class="headerlink" title="rewind()"></a>rewind()</h3><p><code>position</code>을 0으로, <code>limit</code>은 현재 그대로 유지한다.</p>
+<p>버퍼에 있는 데이터를 처음부터 현재 <code>limit</code> 위치 바로 앞까지 읽을 때 사용한다.</p>
+<h3 id="reset"><a href="#reset" class="headerlink" title="reset()"></a>reset()</h3><p><code>position</code>을 <code>mark</code> 위치로 세팅한다.</p>
+<h3 id="compact"><a href="#compact" class="headerlink" title="compact()"></a>compact()</h3><p>현재 <code>position</code>부터 <code>limit - 1</code> 까지의 데이터를 버퍼의 맨 앞으로 복사한 후에, <code>position</code>을 복사한 데이터 바로 다음 위치로 이동시키고, <code>limit</code>는 <code>capacity</code>로 이동한다. 행 단위로 데이터를 다룰 때 핵심 역할을 담당한다. </p>
+<h2 id="읽고-쓰는-값-관련-메서드"><a href="#읽고-쓰는-값-관련-메서드" class="headerlink" title="읽고 쓰는 값 관련 메서드"></a>읽고 쓰는 값 관련 메서드</h2><h3 id="get"><a href="#get" class="headerlink" title="get()"></a>get()</h3><p><code>position</code> 에 있는 값을 읽어서 반환한다.</p>
+<h3 id="put-byte"><a href="#put-byte" class="headerlink" title="put(byte)"></a>put(byte)</h3><p><code>byte</code>를 <code>position</code> 위치에 쓴다.</p>
+<h1 id="코드"><a href="#코드" class="headerlink" title="코드"></a>코드</h1><p>DirectBuffer를 생성하는 것 자체는 그저 전용 메서드 하나 호출하는 것밖에 없어 단순하다. 다만, 줄 바꿈 처리에 좀 신경을 써야 한다.</p>
+<p>대용량 파일 대상이므로 행의 크기 보다 버퍼 크기가 크다고 가정했다. 버퍼가 작을 때도 적용되도록 구현할 수는 있겠지만 불필요하게 로직만 복잡해지므로 이 때는 그냥 예외를 던지게 했다.</p>
+<p>쉽게 요약하면,</p>
+<ol>
+<li>파일에서 버퍼만큼 읽어들인 후,</li>
+<li>버퍼에서 LF가 나올 때까지 1 바이트씩 뒤로 이동,</li>
+<li>LF가 나오면(버퍼 내의 마지막 LF) 버퍼의 시작부터 버퍼내에 존재하는 마지막 LF까지를 target 파일에 쓰고,</li>
+<li>마지막 LF 뒤에서 버퍼 끝까지의 내용을 <code>compact()</code> 메서드를 이용해서 버퍼의 시작 위치로 복사하고,</li>
+<li>그 이후의 내용은 다시 1번으로 돌아가서 반복</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">splitFileIntoDirChannel</span><span class="params">(String srcFilePath,</span></span></span><br><span class="line"><span class="function"><span class="params">                                           String destDirPath,</span></span></span><br><span class="line"><span class="function"><span class="params">                                           String splittedFileNameFormat,</span></span></span><br><span class="line"><span class="function"><span class="params">                                           ByteBuffer buffer)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">final</span> Path path = Paths.get(srcFilePath);</span><br><span class="line">    <span class="keyword">final</span> FileChannel srcFileChannel = FileChannel.open(path, StandardOpenOption.READ);</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">byte</span> LINE_FEED = <span class="number">0x0A</span>;</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">byte</span> CARRIAGE_RETURN = <span class="number">0x0D</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> fileCounter = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> totalReadBytes = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> totalWriteBytes = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> readBytes;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> ((readBytes = srcFileChannel.read(buffer)) &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">        totalReadBytes += readBytes;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span> contentLength = buffer.position();</span><br><span class="line">        <span class="keyword">int</span> newLinePosition = buffer.position();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (fileCounter == <span class="number">0</span></span><br><span class="line">            &amp;&amp; (buffer.get(contentLength - <span class="number">1</span>) == LINE_FEED</span><br><span class="line">                || buffer.get(contentLength - <span class="number">1</span>) == CARRIAGE_RETURN)) &#123;</span><br><span class="line">            <span class="keyword">if</span> (srcFileChannel.isOpen()) srcFileChannel.close();</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(</span><br><span class="line">                    String.format(</span><br><span class="line">                            <span class="string">"Buffer 사이즈가 한 행의 길이보다 커야 합니다. BuffeSize: [%d], LineLength: [%d]"</span>,</span><br><span class="line">                            buffer.capacity(), contentLength));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">final</span> FileChannel splittedFileChannel =</span><br><span class="line">                FileChannel.open(Paths.get(destDirPath, String.format(splittedFileNameFormat, ++fileCounter)),</span><br><span class="line">                        StandardOpenOption.TRUNCATE_EXISTING,</span><br><span class="line">                        StandardOpenOption.CREATE,</span><br><span class="line">                        StandardOpenOption.WRITE);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">boolean</span> hasLineFeed = <span class="keyword">false</span>;</span><br><span class="line">        <span class="keyword">while</span> (newLinePosition &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (buffer.get(--newLinePosition) == LINE_FEED) &#123;  <span class="comment">// 1 byte 씩 뒤로 가면서 줄바꿈 탐색</span></span><br><span class="line">                buffer.position(<span class="number">0</span>);  <span class="comment">// buffer의 처음부터</span></span><br><span class="line">                buffer.limit(++newLinePosition);  <span class="comment">// LINE_FEED 까지 포함해서 write 되도록 limit 조정</span></span><br><span class="line">                <span class="comment">// 버퍼의 [0, limit)의 내용을 splittedFileChannel이 바인딩된 파일에 write</span></span><br><span class="line">                totalWriteBytes += splittedFileChannel.write(buffer);</span><br><span class="line">                splittedFileChannel.close();</span><br><span class="line">                hasLineFeed = <span class="keyword">true</span>;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (!hasLineFeed) &#123;</span><br><span class="line">            <span class="keyword">if</span> (splittedFileChannel.isOpen()) splittedFileChannel.close();</span><br><span class="line">            <span class="keyword">if</span> (srcFileChannel.isOpen()) srcFileChannel.close();</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"줄바꿈이 하나도 없습니다. 최소 하나 이상 줄바꿈이 있어야 합니다."</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// compact()를 위해 원래 읽었던 내용의 마지막 바이트 위치+1(==contentLength) 로 limit 설정</span></span><br><span class="line">        buffer.limit(contentLength);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 버퍼의 [position, limit) 의 내용을 [0, limit - position) 으로 복사</span></span><br><span class="line">        buffer.compact();</span><br><span class="line">        <span class="comment">// 복사 후 position은 limit에 위치하며 다음에 파일에서 읽어오는 내용이 position 부터 이어짐</span></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    srcFileChannel.close();</span><br><span class="line"></span><br><span class="line">    System.out.println(<span class="string">"Total Read  Bytes: "</span> + totalReadBytes);</span><br><span class="line">    System.out.println(<span class="string">"Total Write Bytes: "</span> + totalWriteBytes);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="Benchmark"><a href="#Benchmark" class="headerlink" title="Benchmark"></a>Benchmark</h1><p>한 행 당 70바이트 이내, 4,096,000행, 263MB 짜리 csv 파일을 1M, 10M, 50M, 100M 버퍼 크기 단위로 쪼개서 비교해 본 결과는 다음과 같다.</p>
+<h2 id="수행-시간-비교"><a href="#수행-시간-비교" class="headerlink" title="수행 시간 비교"></a>수행 시간 비교</h2><p>버퍼 크기를 1M, 10M, 50M, 100M 를 한 사이클로 해서 2 사이클을 실행해서 수행 시간(초)을 비교해 본 결과,<br>전반적으로 DirectBuffer는 일반 Buffer보다 약 10% 정도 빠르고,<br>DirectBuffer는 readLine() 방식보다 적게는 약 2배, 많게는 약 5배 정도 빠르다.</p>
+<table>
+<thead>
+<tr>
+<th>버퍼 크기</th>
+<th>회차</th>
+<th>DirectBuffer</th>
+<th>Buffer</th>
+<th>readLine</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1M</td>
+<td>1</td>
+<td>1.62</td>
+<td>1.87</td>
+<td>3.85</td>
+</tr>
+<tr>
+<td>1M</td>
+<td>2</td>
+<td>1.39</td>
+<td>1.52</td>
+<td>3.47</td>
+</tr>
+<tr>
+<td>10M</td>
+<td>1</td>
+<td>0.46</td>
+<td>0.52</td>
+<td>2.41</td>
+</tr>
+<tr>
+<td>10M</td>
+<td>2</td>
+<td>0.33</td>
+<td>0.47</td>
+<td>2.37</td>
+</tr>
+<tr>
+<td>50M</td>
+<td>1</td>
+<td>1.23</td>
+<td>2.65</td>
+<td>2.33</td>
+</tr>
+<tr>
+<td>50M</td>
+<td>2</td>
+<td>1.12</td>
+<td>1.34</td>
+<td>2.32</td>
+</tr>
+<tr>
+<td>100M</td>
+<td>1</td>
+<td>1.37</td>
+<td>1.51</td>
+<td>2.42</td>
+</tr>
+<tr>
+<td>100M</td>
+<td>2</td>
+<td>1.40</td>
+<td>1.46</td>
+<td>2.32</td>
+</tr>
+</tbody>
+</table>
+<p>FileChannel과 버퍼를 사용하는 방식은 버퍼 크기가 10M 일 때 다른 크기일 때에 비해 약 3 ~ 4배 정도 빨라지는 것이 특이하다.</p>
+<h2 id="CPU-메모리-사용량-비교"><a href="#CPU-메모리-사용량-비교" class="headerlink" title="CPU, 메모리 사용량 비교"></a>CPU, 메모리 사용량 비교</h2><p>DirectBuffer, Buffer, readLine() 방식을 순서대로 실행해서 VisualVM으로 측정했다. 그래프에 표시된 것도 맨 왼쪽부터 DirectBuffer, Buffer, readLine() 방식이다.</p>
+<p>예상대로 DirectBuffer는 JVM 메모리를 사용하지 않고 운영체제 메모리에 직접 접근하므로 JVM의 힙 메모리 사용량은 거의 없다.<br>일반 Buffer는 버퍼 크기에 따라 메모리 사용량도 비례해서 커지며,<br>readLine()은 1M, 10M, 50M 단위로 파일을 쪼개도 메모리 사용량은 100M를 넘나든다.</p>
+<p>CPU는 DirectBuffer와 Buffer는 아주 큰 차이는 없이 모두 10% 이내다. readLine()에 비해 약 1/3 정도에 불과하지만, readLine() 방식도 30%에 미치지 않은 걸 보면 역시 263MB 짜리 파일은 DirectBuffer 효과를 현저히 누릴 수 있을 정도로 큰 파일은 아니라고 볼 수 있다.</p>
+<h3 id="1M-버퍼-1M-단위로-자르기"><a href="#1M-버퍼-1M-단위로-자르기" class="headerlink" title="1M 버퍼, 1M 단위로 자르기"></a>1M 버퍼, 1M 단위로 자르기</h3><p><img src="https://i.imgur.com/6BET1z3.png" alt="Imgur"></p>
+<p><img src="https://i.imgur.com/7dkgJCg.png" alt="Imgur"></p>
+<h3 id="10M-버퍼-10M-단위로-자르기"><a href="#10M-버퍼-10M-단위로-자르기" class="headerlink" title="10M 버퍼, 10M 단위로 자르기"></a>10M 버퍼, 10M 단위로 자르기</h3><p><img src="https://i.imgur.com/wdWRADA.png" alt="Imgur"></p>
+<p><img src="https://i.imgur.com/sdaNr3t.png" alt="Imgur"></p>
+<h3 id="50M-버퍼-50M-단위로-자르기"><a href="#50M-버퍼-50M-단위로-자르기" class="headerlink" title="50M 버퍼, 50M 단위로 자르기"></a>50M 버퍼, 50M 단위로 자르기</h3><p><img src="https://i.imgur.com/G14IWFv.png" alt="Imgur"></p>
+<p><img src="https://i.imgur.com/kEmfUja.png" alt="Imgur"></p>
+<h3 id="100M-버퍼-100M-단위로-자르기"><a href="#100M-버퍼-100M-단위로-자르기" class="headerlink" title="100M 버퍼, 100M 단위로 자르기"></a>100M 버퍼, 100M 단위로 자르기</h3><p><img src="https://i.imgur.com/axhhB1Z.png" alt="Imgur"></p>
+<p><img src="https://i.imgur.com/gJAbo3g.png" alt="Imgur"></p>
+<h1 id="정리"><a href="#정리" class="headerlink" title="정리"></a>정리</h1><blockquote>
+<p>읽을 소스 파일이 기가 단위로 매우 크면 BufferedReader.readLine()은 CPU와 메모리를 엄청 잡아먹는다.</p>
+<p>이 때 Java NIO의 FileChannel과 DirectBuffer를 써서 Direct Memory Access를 활용하면 자원 사용량을 줄일 수 있다.</p>
+<p>Buffer를 사용하면 자원 사용량과 속도 관점에서는 좋지만 행 단위로 데이터를 처리하는데 불편함이 있다.</p>
+<p>Buffer가 제공하는 메서드(position, mark, limit, flip, reset, rewind, compact)를 잘 활용하면 행 단위 처리도 가능하다.</p>
+</blockquote>
+<h2 id="읽을거리"><a href="#읽을거리" class="headerlink" title="읽을거리"></a>읽을거리</h2><ul>
+<li><p>Java I/O를 Low Level에서 아주 잘 설명한 글: <a href="https://howtodoinjava.com/java/io/how-java-io-works-internally-at-lower-level/" target="_blank" rel="noopener">https://howtodoinjava.com/java/io/how-java-io-works-internally-at-lower-level/</a></p>
+</li>
+<li><p>Buffer의 사용법을 아주 잘 설명한 글: <a href="https://palpit.tistory.com/641" target="_blank" rel="noopener">https://palpit.tistory.com/641</a></p>
+</li>
+</ul>
+<h2 id="기타"><a href="#기타" class="headerlink" title="기타"></a>기타</h2><p>DirectBuffer를 사용하더라도 channel의 read/write 메서드가 아니라 buffer의 get/put을 쓰면 DMA가 작동하지 않는다는 글을 봤는데 확인해보진 않았다.</p>
+
+        
+        
+            
+        
+        <hr/>
+        <div>
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="크리에이티브 커먼즈 라이선스" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><a href='https://github.com/homoefficio' target='_blank'>HomoEfficio</a>가 작성한 이 저작물은(는) <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스</a>에 따라 이용할 수 있습니다.
+        </div>
+    </div>
+    <div class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/Buffer/">Buffer</a> <a class="tag tag--primary tag--small t-link" href="/tags/ByteBuffer/">ByteBuffer</a> <a class="tag tag--primary tag--small t-link" href="/tags/CR/">CR</a> <a class="tag tag--primary tag--small t-link" href="/tags/Carriage-Return/">Carriage Return</a> <a class="tag tag--primary tag--small t-link" href="/tags/DMA/">DMA</a> <a class="tag tag--primary tag--small t-link" href="/tags/Direct-Memory-Access/">Direct Memory Access</a> <a class="tag tag--primary tag--small t-link" href="/tags/DirectBuffer/">DirectBuffer</a> <a class="tag tag--primary tag--small t-link" href="/tags/FileChannel/">FileChannel</a> <a class="tag tag--primary tag--small t-link" href="/tags/Java/">Java</a> <a class="tag tag--primary tag--small t-link" href="/tags/LF/">LF</a> <a class="tag tag--primary tag--small t-link" href="/tags/Large-File/">Large File</a> <a class="tag tag--primary tag--small t-link" href="/tags/Line-Feed/">Line Feed</a> <a class="tag tag--primary tag--small t-link" href="/tags/NIO/">NIO</a> <a class="tag tag--primary tag--small t-link" href="/tags/New-Line/">New Line</a> <a class="tag tag--primary tag--small t-link" href="/tags/Split/">Split</a> <a class="tag tag--primary tag--small t-link" href="/tags/readLine/">readLine</a> <a class="tag tag--primary tag--small t-link" href="/tags/다이렉트버퍼/">다이렉트버퍼</a> <a class="tag tag--primary tag--small t-link" href="/tags/대용량/">대용량</a> <a class="tag tag--primary tag--small t-link" href="/tags/대용량-파일/">대용량 파일</a> <a class="tag tag--primary tag--small t-link" href="/tags/바이트버퍼/">바이트버퍼</a> <a class="tag tag--primary tag--small t-link" href="/tags/버퍼/">버퍼</a> <a class="tag tag--primary tag--small t-link" href="/tags/스플릿/">스플릿</a> <a class="tag tag--primary tag--small t-link" href="/tags/자바/">자바</a> <a class="tag tag--primary tag--small t-link" href="/tags/줄-바꿈/">줄 바꿈</a> <a class="tag tag--primary tag--small t-link" href="/tags/직접-메모리-접근/">직접 메모리 접근</a> <a class="tag tag--primary tag--small t-link" href="/tags/파일-채널/">파일 채널</a>
+
+            </div>
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/02/02/Back-to-the-Essence-Concurrency-vs-Parallelism/" data-tooltip="Back to the Essence - Concurrency vs Parallelism">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2019/02/27/Java-NIO-Direct-Memory-Access를-활용한-대용량-파일-행-단위로-쪼개기/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2019/02/27/Java-NIO-Direct-Memory-Access를-활용한-대용량-파일-행-단위로-쪼개기/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2019/02/27/Java-NIO-Direct-Memory-Access를-활용한-대용량-파일-행-단위로-쪼개기/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+        
+            <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2019 HomoEfficio. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="1">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/02/02/Back-to-the-Essence-Concurrency-vs-Parallelism/" data-tooltip="Back to the Essence - Concurrency vs Parallelism">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2019/02/27/Java-NIO-Direct-Memory-Access를-활용한-대용량-파일-행-단위로-쪼개기/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2019/02/27/Java-NIO-Direct-Memory-Access를-활용한-대용량-파일-행-단위로-쪼개기/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2019/02/27/Java-NIO-Direct-Memory-Access를-활용한-대용량-파일-행-단위로-쪼개기/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="1">
+    <ul class="share-options">
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2019/02/27/Java-NIO-Direct-Memory-Access를-활용한-대용량-파일-행-단위로-쪼개기/">
+                <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2019/02/27/Java-NIO-Direct-Memory-Access를-활용한-대용량-파일-행-단위로-쪼개기/">
+                <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2019/02/27/Java-NIO-Direct-Memory-Access를-활용한-대용량-파일-행-단위로-쪼개기/">
+                <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+            
+        </div>
+        <div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=110"/>
+        
+            <h4 id="about-card-name">HomoEfficio</h4>
+        
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Seoul, Korea.
+            </h5>
+        
+    </div>
+</div>
+        <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/script.min.js"></script>
+<!--SCRIPTS END-->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'hanmomhanda';
+        (function() {
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+
+
+
+</html>
