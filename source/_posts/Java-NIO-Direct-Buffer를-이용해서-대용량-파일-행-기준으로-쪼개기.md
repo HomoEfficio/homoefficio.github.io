@@ -116,7 +116,7 @@ ByteBuffer buffer = ByteBuffer.allocateDirect(100 * 1024 * 1024);
 
 ### capacity
 
-버퍼의 용량(담을 수 있는 데이터의 크기)를 나타내며, 버퍼 생성 시 `ByteBuffer.allocate(capacity)` 나 `ByteBuffer.allocate(capacity)` 로 지정할 수 있다.
+버퍼의 용량(담을 수 있는 데이터의 크기)를 나타내며, 버퍼 생성 시 `ByteBuffer.allocate(capacity)` 나 `ByteBuffer.allocateDirect(capacity)` 로 지정할 수 있다.
 
 `buffer.capacity()`
 
@@ -170,75 +170,85 @@ Direct Buffer를 생성하는 것 자체는 그저 전용 메서드 하나 호�
 1. 그 이후의 내용은 다시 1번으로 돌아가서 버퍼에 읽어들이면서 반복
 
 ```java
-public static void splitFileIntoDirChannel(String srcFilePath,
-                                           String destDirPath,
-                                           String splittedFileNameFormat,
-                                           ByteBuffer buffer) throws IOException {
+public static void splitFileIntoDir(String srcFilePath,
+                                    String destDirPath,
+                                    String splittedFileNameFormat,
+                                    String header,
+                                    ByteBuffer buffer) throws IOException {
 
-    final Path path = Paths.get(srcFilePath);
-    final FileChannel srcFileChannel = FileChannel.open(path, StandardOpenOption.READ);
     final byte LINE_FEED = 0x0A;
     final byte CARRIAGE_RETURN = 0x0D;
 
     int fileCounter = 0;
-    int totalReadBytes = 0;
-    int totalWriteBytes = 0;
-    int readBytes;
+    long totalReadBytes = 0L;
+    long totalWriteBytes = 0L;
+    long readBytes;
 
-    while ((readBytes = srcFileChannel.read(buffer)) >= 0) {
-        totalReadBytes += readBytes;
+    final Path path = Paths.get(srcFilePath);
 
-        final int contentLength = buffer.position();
-        int newLinePosition = buffer.position();
+    try (final FileChannel srcFileChannel = FileChannel.open(path, StandardOpenOption.READ)) {
+        while ((readBytes = srcFileChannel.read(buffer)) >= 0) {
+            totalReadBytes += readBytes;
 
-        if (fileCounter == 0
-            && (buffer.get(contentLength - 1) == LINE_FEED
-                || buffer.get(contentLength - 1) == CARRIAGE_RETURN)) {
-            if (srcFileChannel.isOpen()) srcFileChannel.close();
-            throw new IllegalArgumentException(
-                    String.format(
-                            "Buffer 사이즈가 한 행의 길이보다 커야 합니다. BufferSize: [%d], LineLength: [%d]",
-                            buffer.capacity(), contentLength));
-        }
+            final int contentLength = buffer.position();
+            int newLinePosition = buffer.position();
 
-        final FileChannel splittedFileChannel =
-                FileChannel.open(Paths.get(destDirPath, String.format(splittedFileNameFormat, ++fileCounter)),
-                        StandardOpenOption.TRUNCATE_EXISTING,
-                        StandardOpenOption.CREATE,
-                        StandardOpenOption.WRITE);
+            try (final FileChannel splittedFileChannel =
+                         FileChannel.open(Paths.get(destDirPath, String.format(splittedFileNameFormat, ++fileCounter)),
+                                 StandardOpenOption.TRUNCATE_EXISTING,
+                                 StandardOpenOption.CREATE,
+                                 StandardOpenOption.WRITE)) {
+                writeHeader(header, readBytes, splittedFileChannel);
 
-        boolean hasLineFeed = false;
-        while (newLinePosition > 0) {
-            if (buffer.get(--newLinePosition) == LINE_FEED) {  // 1 byte 씩 뒤로 가면서 줄바꿈 탐색
-                buffer.position(0);  // buffer의 처음부터
-                buffer.limit(++newLinePosition);  // LINE_FEED 까지 포함해서 write 되도록 limit 조정
-                // 버퍼의 [0, limit)의 내용을 splittedFileChannel이 바인딩된 파일에 write
-                totalWriteBytes += splittedFileChannel.write(buffer);
-                splittedFileChannel.close();
-                hasLineFeed = true;
-                break;
+                boolean hasLineFeed = false;
+                boolean needCompact = true;
+                while (newLinePosition > 0) {
+                    if (buffer.get(--newLinePosition) == LINE_FEED) {  // 1 byte 씩 뒤로 가면서 줄바꿈 탐색
+                        if (newLinePosition + 1 == buffer.capacity()) {  // 버퍼 끝에 줄바꿈이 있으면 compact 불필요
+                            needCompact = false;
+                        }
+                        buffer.position(0);  // buffer의 처음부터
+                        buffer.limit(++newLinePosition);  // LINE_FEED 까지 포함해서 write 되도록 limit 조정
+                        // 버퍼의 [0, limit)의 내용을 splittedFileChannel이 바인딩된 파일에 write
+                        totalWriteBytes += splittedFileChannel.write(buffer);
+                        splittedFileChannel.close();
+                        hasLineFeed = true;
+                        break;
+                    }
+                }
+
+                if (!hasLineFeed) {
+                    throw new IllegalArgumentException("버퍼 안에 줄바꿈이 없습니다. 버퍼 크기는 한 행의 길이보다 커야 합니다.");
+                }
+
+                if (needCompact) {
+                    // compact()를 위해 원래 읽었던 내용의 마지막 바이트 위치+1(==contentLength) 로 limit 설정
+                    buffer.limit(contentLength);
+
+                    // 버퍼의 [position, limit) 의 내용을 [0, limit - position) 으로 복사
+                    buffer.compact();
+                    // 복사 후 position은 limit에 위치하며 다음에 파일에서 읽어오는 내용이 position 부터 이어짐
+                    // limit는 capacity로 이동
+                } else {
+                    // compact()가 필요없다면 파일을 읽어서 버퍼의 처음 위치부터 저장하도록 초기화
+                    buffer.clear();
+                }                
             }
         }
-
-        if (!hasLineFeed) {
-            if (splittedFileChannel.isOpen()) splittedFileChannel.close();
-            if (srcFileChannel.isOpen()) srcFileChannel.close();
-            throw new IllegalArgumentException("줄바꿈이 하나도 없습니다. 최소 하나 이상 줄바꿈이 있어야 합니다.");
-        }
-
-        // compact()를 위해 원래 읽었던 내용의 마지막 바이트 위치+1(==contentLength) 로 limit 설정
-        buffer.limit(contentLength);
-
-        // 버퍼의 [position, limit - 1] 의 내용을 [0, limit - 1 - position] 으로 복사
-        buffer.compact();
-        // 복사 후 position은 limit에 위치하며, 다음에 파일에서 읽어오는 내용이 position 부터 이어짐
-
+    } catch (Exception e) {
+        throw new RuntimeException("File Split 도중 예외 발생", e);
     }
-
-    srcFileChannel.close();
 
     System.out.println("Total Read  Bytes: " + totalReadBytes);
     System.out.println("Total Write Bytes: " + totalWriteBytes);
+}
+
+
+private static void writeHeader(String header, long readBytes, FileChannel splittedFileChannel) throws IOException {
+    if (readBytes > 0 && !StringUtils.isEmpty(header)) {
+        byte[] headerBytes = (header + "\n").getBytes(StandardCharsets.UTF_8);
+        splittedFileChannel.write(ByteBuffer.wrap(headerBytes));
+    }
 }
 ```
 
@@ -300,8 +310,8 @@ FileChannel과 버퍼를 사용하는 방식은 버퍼 크기가 10M 일 때 다
 Direct Buffer, Buffer, readLine() 방식을 순서대로 실행해서 VisualVM으로 측정했다. 그래프에 표시된 것도 맨 왼쪽부터 Direct Buffer, Buffer, readLine() 방식이다.
 
 예상대로 Direct Buffer는 JVM 메모리를 사용하지 않고 운영체제 메모리에 직접 접근하므로 JVM의 힙 메모리 사용량은 거의 없다. 물론 JVM 관점에서나 힙을 쓰지 않기 때문에 사용량이 적어 보이는 것이고, 운영체제 관점에서는 여전히 버퍼 크기 만큼의 메모리를 더 사용한다.  
-일반 Buffer는 버퍼 크기에 따라 메모리 사용량도 비례해서 커지며,  
-readLine()은 1M, 10M, 50M 단위로 파일을 쪼개더라도 메모리 사용량은 100M를 넘나든다.
+일반 Buffer는 버퍼 크기에 따라 JVM 힙 메모리 사용량도 비례해서 커지며,  
+readLine()은 1M, 10M, 50M 단위로 파일을 쪼개더라도 JVM 힙 메모리 사용량은 100M를 넘나든다.
 
 CPU는 Direct Buffer와 Buffer는 아주 큰 차이는 없이 모두 10% 이내다. readLine()에 비해 약 1/3 정도에 불과할 정도로 절감 효과가 크지만, readLine() 방식도 30%에 미치지 않은 걸 보면 역시 263MB 짜리 파일은 Direct Buffer 효과가 두드러질 정도로 큰 파일은 아니라고 볼 수 있다.
 
