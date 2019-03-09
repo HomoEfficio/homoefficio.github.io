@@ -246,7 +246,7 @@ public static void splitFileIntoDir(String srcFilePath,
 
 private static void writeHeader(String header, long readBytes, FileChannel splittedFileChannel) throws IOException {
     if (readBytes > 0 && !StringUtils.isEmpty(header)) {
-        byte[] headerBytes = (header + "\n").getBytes(StandardCharsets.UTF_8);
+        byte[] headerBytes = (header + System.lineSeparator()).getBytes(StandardCharsets.UTF_8);
         splittedFileChannel.write(ByteBuffer.wrap(headerBytes));
     }
 }
