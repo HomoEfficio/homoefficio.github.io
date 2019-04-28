@@ -44,10 +44,10 @@ Simple Request는 서버에 1번 요청하고, 서버도 1번 회신하는 것�
 GET /resources/public-data/ HTTP/1.1
 Host: bar.other
 User-Agent: Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.5; en-US; rv:1.9.1b3pre) Gecko/20081130 Minefield/3.1b3pre
-Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,\*/\*;q=0.8
 Accept-Language: en-us,en;q=0.5
 Accept-Encoding: gzip,deflate
-Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7
+Accept-Charset: ISO-8859-1,utf-8;q=0.7,\*;q=0.7
 Connection: keep-alive
 Referer: http://foo.example/examples/access-control/simpleXSInvocation.html
 Origin: http://foo.example
@@ -94,10 +94,10 @@ OPTIONS 요청으로 오는 예비 요청과 GET, POST, HEAD, PUT, DELETE 등으
 OPTIONS /resources/post-here/ HTTP/1.1
 Host: bar.other
 User-Agent: Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.5; en-US; rv:1.9.1b3pre) Gecko/20081130 Minefield/3.1b3pre
-Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,\*/\*;q=0.8
 Accept-Language: en-us,en;q=0.5
 Accept-Encoding: gzip,deflate
-Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7
+Accept-Charset: ISO-8859-1,utf-8;q=0.7,\*;q=0.7
 Connection: keep-alive
 Origin: http://foo.example
 Access-Control-Request-Method: POST
@@ -121,10 +121,10 @@ Content-Type: text/plain
 POST /resources/post-here/ HTTP/1.1
 Host: bar.other
 User-Agent: Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.5; en-US; rv:1.9.1b3pre) Gecko/20081130 Minefield/3.1b3pre
-Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,\*/\*;q=0.8
 Accept-Language: en-us,en;q=0.5
 Accept-Encoding: gzip,deflate
-Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7
+Accept-Charset: ISO-8859-1,utf-8;q=0.7,\*;q=0.7
 Connection: keep-alive
 X-PINGOTHER: pingpong
 Content-Type: text/xml; charset=UTF-8
