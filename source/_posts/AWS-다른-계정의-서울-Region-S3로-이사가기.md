@@ -39,7 +39,7 @@ AWS 프리티어 기간 만료가 가까워서 새 계정을 개설해서 옮겨
 
 # credentials 파일에 새 IAM 계정 정보 추가
 
-보통 ~/.aws/ 에 위치한 credentials 파일에 새 IAM 계정의 ACCESS_KEY 정보를 아래와 같이 `[프로파일이름]`의 형식으로 프로파일 이름을 지정해서 추가한다.
+보통 \~/.aws/ 에 위치한 credentials 파일에 새 IAM 계정의 ACCESS_KEY 정보를 아래와 같이 `[프로파일이름]`의 형식으로 프로파일 이름을 지정해서 추가한다.
 
 기존 계정의 ACCESS_KEY 정보에는 일단 default 라는 프로파일 이름을 지정한다.
 
@@ -49,7 +49,7 @@ credentials 관련 정보는 http://docs.aws.amazon.com/cli/latest/userguide/cli
 
 # config 파일에 profile 정보 추가
 
-~/.aws/config 파일에 아래와 같이 Region과 출력 형식(output)을 지정해준다. 
+\~/.aws/config 파일에 아래와 같이 Region과 출력 형식(output)을 지정해준다. 
 서울은 ap-northeast-2 이며, 출력 형식은 json과 text가 가능한데 CLI에서는 text가 아무래도 익숙하다.
 
 Region에 지정할 값은 http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region 를 참고한다.
@@ -84,7 +84,7 @@ config 관련 정보도 http://docs.aws.amazon.com/cli/latest/userguide/cli-chap
 
 기존 S3 버킷의 Permissions > Bucket Policy Editor 에 아래의 내용을 입력한다.
 
-```
+```text
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -121,7 +121,7 @@ IAM Group에 Policy를 설정할 수도 있고, IAM User에 Policy를 설정할 
     - Policy Name : GetObjectsFromOldGradnetS3 와 같이 적당한 이름을 지정
     - Policy Document : 아래의 Policy 입력
 
-        ```
+        ```text
         {
             "Version": "2012-10-17",
             "Statement": {
@@ -208,7 +208,7 @@ AWS CLI 설치를 위한 정보는 http://docs.aws.amazon.com/ko_kr/cli/latest/u
 
 먼저 새 계정으로 새 S3 버킷에 접근하도록 계정 정보를 업데이트 해줘야 한다. 
 
-단순하게는 ~/.aws/credentials 파일에서 새 계정의 ACCESS_KEY 정보 위에 [default]를 지정해서 기본 프로파일로 지정해주면 된다.
+단순하게는 \~/.aws/credentials 파일에서 새 계정의 ACCESS_KEY 정보 위에 [default]를 지정해서 기본 프로파일로 지정해주면 된다.
 
 아니면 프로파일을 명시적으로 지정해주는 방식을 쓸 수도 있는데, AmazonS3Client를 아래와 같이 설정해준다.
 
