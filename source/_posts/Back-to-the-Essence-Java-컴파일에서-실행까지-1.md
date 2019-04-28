@@ -285,7 +285,7 @@ public class KoreanGreeting implements Greeting {
 
 >javap -v -l -p homo/efficio/jvm/sample/KoreanGreeting.class
 
-```
+```text
 Classfile /C:/gitrepo/scratchpad/plain-java-scratchpad/out/production/classes/homo/efficio/jvm/sample/KoreanGreeting.class
   Last modified 2019. 1. 12.; size 1132 bytes
   MD5 checksum d7ac2a6fd38c67407480720ca730d987
@@ -481,7 +481,7 @@ public class GreetingMain {
 
 바이트코드 대략적인 구조 설명은 앞에서 했으므로 여기에서는 인터페이스를 통한 자바의 다형성이 발현되는 지점을 알 수 있는 부분만 살펴보자. 나머지 내용이 궁금하다면 https://github.com/HomoEfficio/plain-java-scratchpad/tree/master/src/main/java/homo/efficio/jvm/sample 를 참고한다.
 
-```
+```text
 Constant pool:
     ...
     #8 = InterfaceMethodref #16.#65       // homo/efficio/jvm/sample/Greeting.sayHello:(Ljava/lang/String;)Ljava/lang/String;
