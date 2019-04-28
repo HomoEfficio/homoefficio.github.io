@@ -37,7 +37,7 @@
 <meta property="og:image" content="https://i.imgur.com/UdBaQzE.png">
 <meta property="og:image" content="https://i.imgur.com/VEluHdM.png">
 <meta property="og:image" content="https://i.imgur.com/aO5SviF.png">
-<meta property="og:updated_time" content="2018-10-13T15:49:56.189Z">
+<meta property="og:updated_time" content="2019-04-28T17:03:55.328Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="EOS Visual Studio Code 개발 환경 구성">
 <meta name="twitter:description" content="EOS Visual Studio Code 개발 환경 구성https://infinitexlabs.com/setup-ide-for-eos-development/ 를 참고해서 작성한 EOS 개발 환경 구성 Visual Studio Code다운로드 및 설치https://code.visualstudio.com/docs/setup/linux 참고해서 .deb 파일 다">
@@ -267,7 +267,7 @@
 <p>버튼을 눌러보면 <a href="https://code.visualstudio.com/docs/setup/linux#_visual-studio-code-is-unable-to-watch-for-file-changes-in-this-large-workspace-error-enospc" target="_blank" rel="noopener">여기</a> 로 이동해서 아래와 같은 내용이 표시된다.</p>
 <p><img src="https://i.imgur.com/gcvmYnM.png" alt="Imgur"></p>
 <p>대략 워크스페이스가 너무 많은 파일을 가지고 있는 게 문제라는 얘기인데, 설명에 나온 것처럼 <code>/etc/sysctl.conf</code> 파일을 열어서 아래의 내용을 추가해준다. 524,288개의 파일까지 변경 감지가 가능하다는 설정이다.</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fs<span class="selector-class">.inotify</span><span class="selector-class">.max_user_watches</span>=<span class="number">524288</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fs.inotify.max_user_watches=524288</span><br></pre></td></tr></table></figure>
 <p>파일을 저장하고 <code>sudo sysctl -p</code> 명령을 실행해서 설정 내용을 적용한다.</p>
 <p>아래 화면을 보면 설정 내용을 적용하기 전에는 8192 였고, 설정 후 524288 이 적용되었음을 확인할 수 있다.</p>
 <p><img src="https://i.imgur.com/lAFDUyE.png" alt="Imgur"></p>

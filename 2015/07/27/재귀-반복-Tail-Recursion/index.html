@@ -28,7 +28,7 @@
 <meta property="og:image" content="http://homoefficio.github.io/2015/07/27/재귀-반복-Tail-Recursion/stack-overflow.png">
 <meta property="og:image" content="http://homoefficio.github.io/2015/07/27/재귀-반복-Tail-Recursion/tail-call-optimization-not-supported.png">
 <meta property="og:image" content="http://homoefficio.github.io/2015/07/27/재귀-반복-Tail-Recursion/loop-billion.png">
-<meta property="og:updated_time" content="2018-10-13T15:49:56.296Z">
+<meta property="og:updated_time" content="2019-04-28T17:03:55.456Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="재귀, 반복, Tail Recursion">
 <meta name="twitter:description" content="fibonacci(피보나치) 수열잘 알려져 있듯 피보나치 수열은 다음과 같다. 10, 1, 1, 2, 3, 5, 8, 13, 21, 34, ... 프로그래밍과는 관련 없는 얘기를 살짝 하자면, 이 수열의 이름은 본명은 Leonardo da Pisa이지만 fibonacci로 알려진 12세기 이탈리아 수학자의 이름을 따서 지어졌는데, 사실 이 수열을 가장 먼저">
@@ -233,7 +233,7 @@
     <div class="post-content markdown main-content-wrap" itemprop="articleBody">
         
             <h1 id="fibonacci-피보나치-수열"><a href="#fibonacci-피보나치-수열" class="headerlink" title="fibonacci(피보나치) 수열"></a>fibonacci(피보나치) 수열</h1><p>잘 알려져 있듯 피보나치 수열은 다음과 같다.</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">8</span>, <span class="number">13</span>, <span class="number">21</span>, <span class="number">34</span>, ...</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0, 1, 1, 2, 3, 5, 8, 13, 21, 34, ...</span><br></pre></td></tr></table></figure>
 <p>프로그래밍과는 관련 없는 얘기를 살짝 하자면, 이 수열의 이름은 본명은 Leonardo da Pisa이지만 fibonacci로 알려진 12세기 이탈리아 수학자의 이름을 따서 지어졌는데, 사실 이 수열을 가장 먼저 언급한 사람, 즉 가장 먼저 발견한 사람은 피보나치가 아니라 <a href="https://en.wikipedia.org/wiki/Pingala" target="_blank" rel="noopener">핑갈라</a>라고 하는 기원전 4세기 또는 2세기로 추정되는 시기의 인도인이라고 한다. <a href="https://en.wikipedia.org/wiki/Fibonacci_number" target="_blank" rel="noopener">위키 참고</a></p>
 <p>암튼 피보나치 수열은 다음과 같이 정의된다.</p>
 <p><img src="https://upload.wikimedia.org/math/b/e/1/be15d40af5bc02d538b8d9ea7d49d909.png" alt=""><br>출처 : <a href="https://ko.wikipedia.org/wiki/%ED%94%BC%EB%B3%B4%EB%82%98%EC%B9%98_%EC%88%98" target="_blank" rel="noopener">위키피디아</a></p>

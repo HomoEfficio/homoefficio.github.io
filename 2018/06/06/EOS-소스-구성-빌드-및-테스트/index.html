@@ -48,7 +48,7 @@
 <meta property="og:image" content="https://i.imgur.com/HMxnI2o.png">
 <meta property="og:image" content="https://i.imgur.com/e5ML3FO.png">
 <meta property="og:image" content="https://i.imgur.com/Lz3OG75.png">
-<meta property="og:updated_time" content="2018-10-13T15:49:56.194Z">
+<meta property="og:updated_time" content="2019-04-28T17:03:55.334Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="EOS 소스 구성, 빌드 및 테스트">
 <meta name="twitter:description" content="EOS 소스 구성, 빌드 및 테스트EOSIO 1.0.0이 출시되었다.  공식 문서인 https://github.com/EOSIO/eos/wiki/Local-Environment 를 기준으로 약간의 커스터마이징과 과도한 친절함을 가미했다.  참고로 이 글은 EOSIO 1.0.0의 바로 앞 버전인 EOSIO Dawn 4.2를 기준으로 작성되었으나 EOSIO 1">
@@ -344,7 +344,7 @@
 <blockquote>
 <p>$ git remote -v</p>
 </blockquote>
- <figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">origin  https:<span class="regexp">//gi</span>thub.com<span class="regexp">/YOUR_USERNAME/</span>eos.git (fetch)</span><br><span class="line">origin  https:<span class="regexp">//gi</span>thub.com<span class="regexp">/YOUR_USERNAME/</span>eos.git (push)</span><br></pre></td></tr></table></figure>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">origin  https://github.com/YOUR_USERNAME/eos.git (fetch)</span><br><span class="line">origin  https://github.com/YOUR_USERNAME/eos.git (push)</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>원본 리포지토리를 가리키는 upstream 추가</p>
 <blockquote>
@@ -355,7 +355,7 @@
 <blockquote>
 <p>$ git remote -v</p>
 </blockquote>
- <figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">origin    https:<span class="regexp">//gi</span>thub.com<span class="regexp">/YOUR_USERNAME/</span>eos.git (fetch)</span><br><span class="line">origin    https:<span class="regexp">//gi</span>thub.com<span class="regexp">/YOUR_USERNAME/</span>eos.git (push)</span><br><span class="line">upstream  https:<span class="regexp">//gi</span>thub.com<span class="regexp">/EOSIO/</span>eos.git (fetch)</span><br><span class="line">upstream  https:<span class="regexp">//gi</span>thub.com<span class="regexp">/EOSIO/</span>eos.git (push)</span><br></pre></td></tr></table></figure>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">origin    https://github.com/YOUR_USERNAME/eos.git (fetch)</span><br><span class="line">origin    https://github.com/YOUR_USERNAME/eos.git (push)</span><br><span class="line">upstream  https://github.com/EOSIO/eos.git (fetch)</span><br><span class="line">upstream  https://github.com/EOSIO/eos.git (push)</span><br></pre></td></tr></table></figure>
 </li>
 </ol>
 <h3 id="원본-리포지토리와-Sync"><a href="#원본-리포지토리와-Sync" class="headerlink" title="원본 리포지토리와 Sync"></a>원본 리포지토리와 Sync</h3><p>EOSIO 프로젝트가 진행되면서 버전이 올라가면 로컬 개발 환경의 버전도 맞춰줘야 한다.</p>
@@ -388,7 +388,7 @@
 <p>boost 등 의존 라이브러리 버전이 변경된 경우 재설치하므로 20분 가량 소요되며, boost 버전 관련 다음과 같은 에러가 발생한다(발생하지 않으면 boost 버전 변경 작업 불필요).</p>
 <p><img src="https://i.imgur.com/e5ML3FO.png" alt="Imgur"></p>
 <p><code>~/.bashrc</code>에 지정해둔 boost 관련 버전을 1.67로 변경해준다.</p>
-<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="builtin-name">export</span> <span class="attribute">BOOST_ROOT</span>=~/opt/boost_1_67_0</span><br><span class="line"><span class="builtin-name">export</span> <span class="attribute">BOOST_INCLUDEDIR</span>=~/opt/boost_1_67_0/include</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export BOOST_ROOT=~/opt/boost_1_67_0</span><br><span class="line">export BOOST_INCLUDEDIR=~/opt/boost_1_67_0/include</span><br></pre></td></tr></table></figure>
 <p>이전 버전의 빌드 캐시가 남아있는 build 디렉터리를 삭제하고 다시 빌드 스크립트를 실행하면 약 15분 후 빌드가 성공적으로 마무리 된다.</p>
 <blockquote>
 <p>rm -rf build/</p>
