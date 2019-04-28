@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="뒤태지존의 끄적거림">
+    <title>JPA 일대다 단방향 매핑 잘못 사용하면 벌어지는 일 - 뒤태지존의 끄적거림</title>
+    <meta name="author" content="HomoEfficio">
+    <meta name="description" content="뒤태지존의 끄적거림">
+    
+        <link rel="icon" href="/assets/images/favicon.ico">
+    
+    
+        <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <meta name="description" content="JPA 일대다 단방향 매핑 잘못 사용하면 벌어지는 일Parent : Child = 1 : N 의 관계가 있으면 일대다 단방향으로 매핑하는 것보다 일대다 양방향으로 매핑하는 것이 좋다. 조인테이블 방식의 일대다 단방향 매핑그런데 어떤 특별한 이유가 있을 수도 있고, 그냥 별 생각없이 작성된 레거시 일 수도 있고, 아니면 JPA에 살짝 서툴러서도 있고, 여튼">
+<meta name="keywords" content="JPA,Spring Data JPA,ORM,Hibernate,하이버네이트,1:N,OneToMany,ManyToOne,일대다,unidirectional,단방향,bidirectional,양방향,association,연관관계,엔티티,Entity,JoinColumn,JoinTable,mappedBy,cascade,orphanRemoval,스프링 데이터 JPA">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="JPA 일대다 단방향 매핑 잘못 사용하면 벌어지는 일">
+<meta property="og:url" content="http://homoefficio.github.io/2019/04/28/JPA-일대다-단방향-매핑-잘못-사용하면-벌어지는-일/index.html">
+<meta property="og:site_name" content="뒤태지존의 끄적거림">
+<meta property="og:description" content="JPA 일대다 단방향 매핑 잘못 사용하면 벌어지는 일Parent : Child = 1 : N 의 관계가 있으면 일대다 단방향으로 매핑하는 것보다 일대다 양방향으로 매핑하는 것이 좋다. 조인테이블 방식의 일대다 단방향 매핑그런데 어떤 특별한 이유가 있을 수도 있고, 그냥 별 생각없이 작성된 레거시 일 수도 있고, 아니면 JPA에 살짝 서툴러서도 있고, 여튼">
+<meta property="og:locale" content="ko">
+<meta property="og:updated_time" content="2019-04-28T02:57:22.972Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JPA 일대다 단방향 매핑 잘못 사용하면 벌어지는 일">
+<meta name="twitter:description" content="JPA 일대다 단방향 매핑 잘못 사용하면 벌어지는 일Parent : Child = 1 : N 의 관계가 있으면 일대다 단방향으로 매핑하는 것보다 일대다 양방향으로 매핑하는 것이 좋다. 조인테이블 방식의 일대다 단방향 매핑그런데 어떤 특별한 이유가 있을 수도 있고, 그냥 별 생각없이 작성된 레거시 일 수도 있고, 아니면 JPA에 살짝 서툴러서도 있고, 여튼">
+    
+        <meta rel="publisher" content="https://plus.google.com/+오명운"/>
+    
+    
+    
+        <meta property="og:image" content="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=640"/>
+    
+    
+        <meta property="og:image" content="/2019/04/28/JPA-일대다-단방향-매핑-잘못-사용하면-벌어지는-일/https:/i.imgur.com/rQScnoT.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2019/04/28/JPA-일대다-단방향-매핑-잘못-사용하면-벌어지는-일/https://i.imgur.com/rQScnoT.png" />
+    
+    
+        <meta property="og:image" content="/2019/04/28/JPA-일대다-단방향-매핑-잘못-사용하면-벌어지는-일/cover-jpa-onetomany.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2019/04/28/JPA-일대다-단방향-매핑-잘못-사용하면-벌어지는-일/cover-jpa-onetomany.png" />
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style.min.css">
+    <!--STYLES END-->
+    
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-79893978-1']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6494847158566766",
+    enable_page_level_ads: true
+  });
+</script>
+</head>
+
+    <body>
+        <div id="blog">
+            <header id="header" data-behavior="1">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="/ ">뒤태지존의 끄적거림</a>
+    </h1>
+    
+        <a class="header-right-picture" href="/#about">
+            <img class="header-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+        </a>
+    
+</header>
+            <nav id="sidebar" data-behavior="1">
+    
+    <div class="sidebar-profile">
+        <a href="/#about">
+            
+            <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+            
+        </a>
+        <span class="sidebar-profile-name">HomoEfficio</span>
+    </div>
+    
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/ 
+                    ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">Home</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-categories
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">Categories</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-tags
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">Tags</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-archives
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">Archives</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link st-search-show-outputs"
+                    href="#search
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                    <span class="sidebar-button-desc">Search</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="#about
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">About me</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="https://github.com/HomoEfficio" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                    <span class="sidebar-button-desc">GitHub</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="mailto:homo.efficio@gmail.com" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-envelope-o"></i>
+                    <span class="sidebar-button-desc">Mail</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/atom.xml
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+            <div id="main" data-behavior="1">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+        <div class="post-header-cover" style="background-image:url('/2019/04/28/JPA-일대다-단방향-매핑-잘못-사용하면-벌어지는-일/cover-jpa-onetomany.png');">
+            <div class="post-header main-content-wrap">
+    
+        <h1 class="post-title" itemprop="headline">JPA 일대다 단방향 매핑 잘못 사용하면 벌어지는 일</h1>
+    
+    <div class="post-meta">
+    <time  itemprop="datePublished" content="Sun Apr 28 2019 10:30:35 GMT+0900">
+        Apr 28, 2019
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Technique/">Technique</a>
+
+
+    
+</div>
+</div>
+        </div>
+    
+    <div class="post-content markdown main-content-wrap" itemprop="articleBody">
+        
+            <h1 id="JPA-일대다-단방향-매핑-잘못-사용하면-벌어지는-일"><a href="#JPA-일대다-단방향-매핑-잘못-사용하면-벌어지는-일" class="headerlink" title="JPA 일대다 단방향 매핑 잘못 사용하면 벌어지는 일"></a>JPA 일대다 단방향 매핑 잘못 사용하면 벌어지는 일</h1><p><code>Parent : Child = 1 : N</code> 의 관계가 있으면 일대다 단방향으로 매핑하는 것보다 일대다 양방향으로 매핑하는 것이 좋다.</p>
+<h1 id="조인테이블-방식의-일대다-단방향-매핑"><a href="#조인테이블-방식의-일대다-단방향-매핑" class="headerlink" title="조인테이블 방식의 일대다 단방향 매핑"></a>조인테이블 방식의 일대다 단방향 매핑</h1><p>그런데 어떤 특별한 이유가 있을 수도 있고, 그냥 별 생각없이 작성된 레거시 일 수도 있고, 아니면 JPA에 살짝 서툴러서도 있고, 여튼 다음과 같이 직관적으로 단순하게 <strong><code>@OneToMany</code>만 달랑 붙여서 매핑하면 조인테이블 방식의 일대다 단방향 방식으로 매핑된다.</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Entity</span></span><br><span class="line"><span class="meta">@Getter</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Parent</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Id</span></span><br><span class="line">    <span class="meta">@GeneratedValue</span>(strategy = GenerationType.IDENTITY)</span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@OneToMany</span>(cascade = CascadeType.ALL, orphanRemoval = <span class="keyword">true</span>)</span><br><span class="line">    <span class="keyword">private</span> List&lt;Child&gt; children = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="title">Parent</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Parent</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Parent</span><span class="params">(String name, List&lt;Child&gt; children)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">        <span class="keyword">this</span>.children.addAll(children);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Entity</span></span><br><span class="line"><span class="meta">@Getter</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Child</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Id</span></span><br><span class="line">    <span class="meta">@GeneratedValue</span>(strategy = GenerationType.IDENTITY)</span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="title">Child</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Child</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>위와 같이 작성하면 조인테이블인 <code>parent_children</code>라는 테이블이 새로 생긴다. 뭐 테이블 하나 생기면 어때.. 큰일 나겠어 라고 생각할 수도 있지만, <strong><code>children</code>이 많지 않을 때만 큰 일이 안 나고, 많으면 제법 큰 일이 난다.</strong></p>
+<h1 id="시나리오"><a href="#시나리오" class="headerlink" title="시나리오"></a>시나리오</h1><p>위와 같이 매핑된 상태에서 다음과 같은 간단한 시나리오를 생각해보자.</p>
+<ol>
+<li><code>parent</code>가 10개의 Child를 포함하는 <code>children</code>을 가진다.</li>
+<li><code>parent.children</code>에서 Child의 id가 1, 2인 것만 2개만 삭제한다.</li>
+</ol>
+<p>1번은 뭐 처음 생성이니 <code>parent</code> 1개에 대해 <code>parent</code> 테이블에 insert 1회, <code>children</code> 10개에 대해 <code>child</code> 테이블에 insert 10회 실행된다. 그리고 조인테이블 방식으로 동작하므로 <code>parent_children</code> 테이블에도 insert 10회 실행된다.</p>
+<p>2번에서 <code>children</code> 중에서 2개를 지우므로 <code>parent_children</code> 테이블에서 delete 2회 실행되고, <code>orphanRemoval = true</code>로 설정되어 있으므로 <code>child</code> 테이블에서 delete 2회 실행될 것이다.</p>
+<p>하지만 직접 실행해보면 2번은 예상과 완전히 다르게 동작한다!!</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@Transactional</span></span><br><span class="line"><span class="meta">@RequiredArgsConstructor</span>(onConstructor = @__(<span class="meta">@Autowired</span>))</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OneToManyRunner</span> <span class="keyword">implements</span> <span class="title">CommandLineRunner</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@NonNull</span></span><br><span class="line">    <span class="keyword">private</span> ParentRepository parentRepository;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">(String... args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        Parent parent1 = <span class="keyword">new</span> Parent(<span class="string">"parent 1"</span>);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span> ; i &lt;= <span class="number">10</span> ; i++) &#123;</span><br><span class="line">            parent1.getChildren().add(</span><br><span class="line">                    <span class="keyword">new</span> Child(<span class="string">"child "</span> + i)</span><br><span class="line">            );</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        Parent dbParent = <span class="keyword">this</span>.parentRepository.saveAndFlush(parent1);</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">"*****************************"</span>);</span><br><span class="line">        </span><br><span class="line">        List&lt;Child&gt; children = dbParent.getChildren();</span><br><span class="line">        children.removeIf(child -&gt; child.getId() % <span class="number">2</span> == <span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="실행-결과"><a href="#실행-결과" class="headerlink" title="실행 결과"></a>실행 결과</h1><p><code>parent_children</code> 테이블에서 delete 2개, <code>orphanRemoval = true</code>로 설정되어 있으므로 <code>child</code> 테이블에서 delete 2개가 실행될 것으로 예상했지만 실제로는,</p>
+<ul>
+<li><strong><code>parent.children</code> 10개 모두 delete 되면서 <code>parent_children</code> 테이블에서 <code>children_id</code>가 1, 2인 것을 제외한 8개의 레코드에 대해 모두 8회의 insert가 실행</strong>되고, </li>
+<li>마지막에 <code>child</code> 테이블에서 2회의 delete가 실행된다.</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><span class="line">insert into parent (name) values (?)</span><br><span class="line">binding parameter [1] as [VARCHAR] - [parent 1]</span><br><span class="line">insert into child (name) values (?)</span><br><span class="line">binding parameter [1] as [VARCHAR] - [child 1]</span><br><span class="line">insert into child (name) values (?)</span><br><span class="line">binding parameter [1] as [VARCHAR] - [child 2]</span><br><span class="line">insert into child (name) values (?)</span><br><span class="line">binding parameter [1] as [VARCHAR] - [child 3]</span><br><span class="line">insert into child (name) values (?)</span><br><span class="line">binding parameter [1] as [VARCHAR] - [child 4]</span><br><span class="line">insert into child (name) values (?)</span><br><span class="line">binding parameter [1] as [VARCHAR] - [child 5]</span><br><span class="line">insert into child (name) values (?)</span><br><span class="line">binding parameter [1] as [VARCHAR] - [child 6]</span><br><span class="line">insert into child (name) values (?)</span><br><span class="line">binding parameter [1] as [VARCHAR] - [child 7]</span><br><span class="line">insert into child (name) values (?)</span><br><span class="line">binding parameter [1] as [VARCHAR] - [child 8]</span><br><span class="line">insert into child (name) values (?)</span><br><span class="line">binding parameter [1] as [VARCHAR] - [child 9]</span><br><span class="line">insert into child (name) values (?)</span><br><span class="line">binding parameter [1] as [VARCHAR] - [child 10]</span><br><span class="line">insert into parent_children (parent_id, children_id) values (?, ?)</span><br><span class="line">binding parameter [1] as [BIGINT] - [1]</span><br><span class="line">binding parameter [2] as [BIGINT] - [1]</span><br><span class="line">insert into parent_children (parent_id, children_id) values (?, ?)</span><br><span class="line">binding parameter [1] as [BIGINT] - [1]</span><br><span class="line">binding parameter [2] as [BIGINT] - [2]</span><br><span class="line">insert into parent_children (parent_id, children_id) values (?, ?)</span><br><span class="line">binding parameter [1] as [BIGINT] - [1]</span><br><span class="line">binding parameter [2] as [BIGINT] - [3]</span><br><span class="line">insert into parent_children (parent_id, children_id) values (?, ?)</span><br><span class="line">binding parameter [1] as [BIGINT] - [1]</span><br><span class="line">binding parameter [2] as [BIGINT] - [4]</span><br><span class="line">insert into parent_children (parent_id, children_id) values (?, ?)</span><br><span class="line">binding parameter [1] as [BIGINT] - [1]</span><br><span class="line">binding parameter [2] as [BIGINT] - [5]</span><br><span class="line">insert into parent_children (parent_id, children_id) values (?, ?)</span><br><span class="line">binding parameter [1] as [BIGINT] - [1]</span><br><span class="line">binding parameter [2] as [BIGINT] - [6]</span><br><span class="line">insert into parent_children (parent_id, children_id) values (?, ?)</span><br><span class="line">binding parameter [1] as [BIGINT] - [1]</span><br><span class="line">binding parameter [2] as [BIGINT] - [7]</span><br><span class="line">insert into parent_children (parent_id, children_id) values (?, ?)</span><br><span class="line">binding parameter [1] as [BIGINT] - [1]</span><br><span class="line">binding parameter [2] as [BIGINT] - [8]</span><br><span class="line">insert into parent_children (parent_id, children_id) values (?, ?)</span><br><span class="line">binding parameter [1] as [BIGINT] - [1]</span><br><span class="line">binding parameter [2] as [BIGINT] - [9]</span><br><span class="line">insert into parent_children (parent_id, children_id) values (?, ?)</span><br><span class="line">binding parameter [1] as [BIGINT] - [1]</span><br><span class="line">binding parameter [2] as [BIGINT] - [10]</span><br><span class="line">*****************************</span><br><span class="line">delete from parent_children where parent_id=?  &lt;== 헉!! 형이 왜 여기서 나와!!</span><br><span class="line">binding parameter [1] as [BIGINT] - [1]</span><br><span class="line">insert into parent_children (parent_id, children_id) values (?, ?)</span><br><span class="line">binding parameter [1] as [BIGINT] - [1]</span><br><span class="line">binding parameter [2] as [BIGINT] - [3]</span><br><span class="line">insert into parent_children (parent_id, children_id) values (?, ?)</span><br><span class="line">binding parameter [1] as [BIGINT] - [1]</span><br><span class="line">binding parameter [2] as [BIGINT] - [4]</span><br><span class="line">insert into parent_children (parent_id, children_id) values (?, ?)</span><br><span class="line">binding parameter [1] as [BIGINT] - [1]</span><br><span class="line">binding parameter [2] as [BIGINT] - [5]</span><br><span class="line">insert into parent_children (parent_id, children_id) values (?, ?)</span><br><span class="line">binding parameter [1] as [BIGINT] - [1]</span><br><span class="line">binding parameter [2] as [BIGINT] - [6]</span><br><span class="line">insert into parent_children (parent_id, children_id) values (?, ?)</span><br><span class="line">binding parameter [1] as [BIGINT] - [1]</span><br><span class="line">binding parameter [2] as [BIGINT] - [7]</span><br><span class="line">insert into parent_children (parent_id, children_id) values (?, ?)</span><br><span class="line">binding parameter [1] as [BIGINT] - [1]</span><br><span class="line">binding parameter [2] as [BIGINT] - [8]</span><br><span class="line">insert into parent_children (parent_id, children_id) values (?, ?)</span><br><span class="line">binding parameter [1] as [BIGINT] - [1]</span><br><span class="line">binding parameter [2] as [BIGINT] - [9]</span><br><span class="line">insert into parent_children (parent_id, children_id) values (?, ?)</span><br><span class="line">binding parameter [1] as [BIGINT] - [1]</span><br><span class="line">binding parameter [2] as [BIGINT] - [10]</span><br><span class="line">delete from child where id=?</span><br><span class="line">binding parameter [1] as [BIGINT] - [1]</span><br><span class="line">delete from child where id=?</span><br><span class="line">binding parameter [1] as [BIGINT] - [2]</span><br></pre></td></tr></table></figure>
+<p>앞에서 <code>children</code>의 갯수가 많지 않을 때만 큰 일이 안 생긴다고 한 이유가 여기에 있다. 위의 사례에서는 <code>children</code>이 10개 밖에 되지 않으므로 insert를 10개 쯤 한다고 해도 사실 거의 티가 나지 않는다. 하지만 10개가 아니라 1000개, 10000개 그 이상이라면? <strong>고작 레코드 2개 삭제하려는 것 뿐인데 1000회, 10000회의 insert가 실행된다.</strong> ㄷㄷㄷ</p>
+<p>그런데 왜 이렇게 동작하는 걸까?</p>
+<h1 id="나름의-사연"><a href="#나름의-사연" class="headerlink" title="나름의 사연"></a>나름의 사연</h1><p>실행한 후 <code>parent_children</code> 테이블을 보면 다음과 같다.</p>
+<table>
+<thead>
+<tr>
+<th>parent_id</th>
+<th>children_id</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>3</td>
+</tr>
+<tr>
+<td>1</td>
+<td>4</td>
+</tr>
+<tr>
+<td>1</td>
+<td>5</td>
+</tr>
+<tr>
+<td>1</td>
+<td>6</td>
+</tr>
+<tr>
+<td>1</td>
+<td>7</td>
+</tr>
+<tr>
+<td>1</td>
+<td>8</td>
+</tr>
+<tr>
+<td>1</td>
+<td>9</td>
+</tr>
+<tr>
+<td>1</td>
+<td>10</td>
+</tr>
+</tbody>
+</table>
+<p>나: 뭐야, <code>1 | 1</code>인 행이랑 <code>1 | 2</code>인 행 2개만 지울 수 있잖아. 왜 <code>parent_id</code>가 1인 걸 몽땅 지워?</p>
+<p>Hibernate: 허허.. 그게 말이야.. 허허.. 테이블로 보기엔 저런데.. 허허.. <strong>일대다 단방향이 잖아.. 허허.. 그래서.. 허허.. <code>parent_id</code>가 1이라는 것을 개별 행에 대한 조건으로 줄 수가 없어..</strong> 허허..</p>
+<p>나: 뭐래냐..</p>
+<p>이것도 말보다 코드가 더 쉽고 명확한 케이스다. id가 1, 2인 child를 삭제하는 코드는 다음과 같다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Child&gt; children = dbParent.getChildren();</span><br><span class="line">children.removeIf(child -&gt; child.getId() % <span class="number">2</span> == <span class="number">0</span>);  <span class="comment">// &lt;-- 여기!!</span></span><br></pre></td></tr></table></figure>
+<p>위에 <code>여기</code>로 표시한 부분에서 <code>parent_id</code>에 대한 조건을 줄 수가 없다. 왜냐고? 위에 Hibernate가 얘기해 준대로 <strong>일대일 단방향이라서 <code>child</code>는 <code>parent</code>를 모른다. 따라서 개별 행에 대한 조건으로 <code>parent_id</code>를 줄 수가 없다.</strong></p>
+<p>대신에 <code>dbParent.getChildren()</code>의 <code>dbParent</code>에는 <code>parent_id</code>가 1이라는 정보가 있다. 그래서 <strong>개별 행에 대한 조건으로 줄 수는 없지만 <code>parent_children</code> 테이블에서는 <code>parent_id</code>가 1인 것을 모두 지울 수 있다.</strong> 그래서 <code>parent_id</code>가 1인 레코드를 모두 delete 한 후에 다시 insert를 반복하는 노가다를 한 것이다.</p>
+<p>결국 Hibernate는 주어진 환경에서 최선을 다한 셈이고 아무 죄가 없다. 모두 delete 후 다시 모두 insert 반복으로만 해결할 수 있게 코드를 짠 사람이 잘못이다.</p>
+<h1 id="해결"><a href="#해결" class="headerlink" title="해결"></a>해결</h1><p>이제 문제를 바로잡아보자. 조인테이블 방식의 일대다 단방향 매핑때문에 <code>children</code> 쪽에서 행 단위로 <code>parent_id</code>를 알 수 없다는 게 원인이었으므로, <strong>어떻게든 <code>children</code> 쪽에서 행 단위로 <code>parent_id</code>를 알 수 있게 해주면 된다. 즉 테이블 상에서 <code>children</code> 쪽에 <code>parent_id</code> 컬럼이 추가되도록 매핑하면 된다.</strong></p>
+<p>방법은 두 가지가 있다. 조인테이블이 아닌 조인컬럼 방식의 일대다 단방향 매핑과 일대다 양방향 매핑이다.</p>
+<p>먼저 조인컬럼 방식의 일대다 단방향 매핑부터 알아보자.</p>
+<h2 id="조인컬럼-방식의-일대일-단방향-매핑"><a href="#조인컬럼-방식의-일대일-단방향-매핑" class="headerlink" title="조인컬럼 방식의 일대일 단방향 매핑"></a>조인컬럼 방식의 일대일 단방향 매핑</h2><p>이 방식은 단 한 줄의 코드로 쉽게 적용할 수 있다. 물론 예제 코드에서만..</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@OneToMany</span>(cascade = CascadeType.ALL, orphanRemoval = <span class="keyword">true</span>)</span><br><span class="line"><span class="meta">@JoinColumn</span>(name = <span class="string">"parent_id"</span>)  <span class="comment">// &lt;-- 여기!!</span></span><br><span class="line"><span class="keyword">private</span> List&lt;Child&gt; children = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br></pre></td></tr></table></figure>
+<p>위와 같이 Parent 엔티티에 <code>@JoinColumn(name = &quot;parent_id&quot;)</code>만 추가해주면 된다.</p>
+<p>이제 조인테이블 방식이 아니므로 <code>parent_children</code> 테이블은 필요 없고, <code>child</code> 테이블에 <code>parent_id</code> 컬럼이 추가되고, <code>child</code> 테이블의 행 단위로 <code>parent_id</code>를 알 수 있으므로 몽창 delete 후 몽창 insert 하는 노가다는 발생하지 않고 id가 1, 2인 <code>child</code>만 삭제할 수 있을 것이다.</p>
+<p>실행해보면 다음과 같다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line">insert into parent (name) values (?)</span><br><span class="line">binding parameter [1] as [VARCHAR] - [parent 1]</span><br><span class="line">insert into child (name) values (?)</span><br><span class="line">binding parameter [1] as [VARCHAR] - [child 1]</span><br><span class="line">insert into child (name) values (?)</span><br><span class="line">binding parameter [1] as [VARCHAR] - [child 2]</span><br><span class="line">insert into child (name) values (?)</span><br><span class="line">binding parameter [1] as [VARCHAR] - [child 3]</span><br><span class="line">insert into child (name) values (?)</span><br><span class="line">binding parameter [1] as [VARCHAR] - [child 4]</span><br><span class="line">insert into child (name) values (?)</span><br><span class="line">binding parameter [1] as [VARCHAR] - [child 5]</span><br><span class="line">insert into child (name) values (?)</span><br><span class="line">binding parameter [1] as [VARCHAR] - [child 6]</span><br><span class="line">insert into child (name) values (?)</span><br><span class="line">binding parameter [1] as [VARCHAR] - [child 7]</span><br><span class="line">insert into child (name) values (?)</span><br><span class="line">binding parameter [1] as [VARCHAR] - [child 8]</span><br><span class="line">insert into child (name) values (?)</span><br><span class="line">binding parameter [1] as [VARCHAR] - [child 9]</span><br><span class="line">insert into child (name) values (?)</span><br><span class="line">binding parameter [1] as [VARCHAR] - [child 10]</span><br><span class="line">update child set parent_id=? where id=?</span><br><span class="line">binding parameter [1] as [BIGINT] - [1]</span><br><span class="line">binding parameter [2] as [BIGINT] - [1]</span><br><span class="line">update child set parent_id=? where id=?</span><br><span class="line">binding parameter [1] as [BIGINT] - [1]</span><br><span class="line">binding parameter [2] as [BIGINT] - [2]</span><br><span class="line">update child set parent_id=? where id=?</span><br><span class="line">binding parameter [1] as [BIGINT] - [1]</span><br><span class="line">binding parameter [2] as [BIGINT] - [3]</span><br><span class="line">update child set parent_id=? where id=?</span><br><span class="line">binding parameter [1] as [BIGINT] - [1]</span><br><span class="line">binding parameter [2] as [BIGINT] - [4]</span><br><span class="line">update child set parent_id=? where id=?</span><br><span class="line">binding parameter [1] as [BIGINT] - [1]</span><br><span class="line">binding parameter [2] as [BIGINT] - [5]</span><br><span class="line">update child set parent_id=? where id=?</span><br><span class="line">binding parameter [1] as [BIGINT] - [1]</span><br><span class="line">binding parameter [2] as [BIGINT] - [6]</span><br><span class="line">update child set parent_id=? where id=?</span><br><span class="line">binding parameter [1] as [BIGINT] - [1]</span><br><span class="line">binding parameter [2] as [BIGINT] - [7]</span><br><span class="line">update child set parent_id=? where id=?</span><br><span class="line">binding parameter [1] as [BIGINT] - [1]</span><br><span class="line">binding parameter [2] as [BIGINT] - [8]</span><br><span class="line">update child set parent_id=? where id=?</span><br><span class="line">binding parameter [1] as [BIGINT] - [1]</span><br><span class="line">binding parameter [2] as [BIGINT] - [9]</span><br><span class="line">update child set parent_id=? where id=?</span><br><span class="line">binding parameter [1] as [BIGINT] - [1]</span><br><span class="line">binding parameter [2] as [BIGINT] - [10]</span><br><span class="line">*****************************</span><br><span class="line">update child set parent_id=null where parent_id=? and id=?</span><br><span class="line">binding parameter [1] as [BIGINT] - [1]</span><br><span class="line">binding parameter [2] as [BIGINT] - [1]</span><br><span class="line">update child set parent_id=null where parent_id=? and id=?</span><br><span class="line">binding parameter [1] as [BIGINT] - [1]</span><br><span class="line">binding parameter [2] as [BIGINT] - [2]</span><br><span class="line">delete from child where id=?</span><br><span class="line">binding parameter [1] as [BIGINT] - [1]</span><br><span class="line">delete from child where id=?</span><br><span class="line">binding parameter [1] as [BIGINT] - [2]</span><br></pre></td></tr></table></figure>
+<p>오 역시나 <code>*****</code> 아래에 수많은 insert 가 모두 사라지고 맨 아래 delete 2회만 실행된 것을 확인할 수 있다.</p>
+<p>그런데, 뭔 update가 이리 많냐.. 왜 일까?</p>
+<p>이유는 이번에도 단방향이기 때문이다. <strong>조인컬럼 방식으로 변환하면서 <code>child</code> 테이블에 <code>parent_id</code> 컬럼이 추가되기는 했지만, 단방향이라서 <code>child</code>는 <code>parent</code>의 존재를 모르므로 <code>parent_id</code>의 값을 알 수는 없다.</strong> 뭐랄까 결혼 반지를 사놨는데 누구한테 줘야할지 모르는.. 쥬륵..</p>
+<p>그래서 <code>parent_id</code> 컬럼에 값이 없는 채로 insert 되고, 그 후에 update 를 통해 <code>parent_id</code> 값이 설정된다. 하지만 그건 최초에 데이터가 세팅될 때 1회만 그런거고, 몽창 지우는 게 아니라 행 단위로 지울 수 있으므로 어쨌든 조인테이블 방식의 문제는 해결한 거라고 할 수도 있겠다.</p>
+<p>하지만, 삭제되는 행이 2개가 아니라 수천, 수만이라면? <strong>수천, 수만 회의 delete만 실행되어야 하는데, 수천, 수만의 불필요한 update가 추가로 발생한다.</strong></p>
+<p><strong>조인테이블 방식에서는 조금만 삭제해도 수 많은 insert 실행이 불필요하게 동반된다는 문제였던 것이, 조인컬럼 방식에서는 많이 삭제하면 수 많은 update가 불필요하게 동반되는 문제로 조금 바뀌었을 뿐 불필요한 오버헤드가 발생한다는 점은 마찬가지다.</strong></p>
+<p>참고로 앞에서 단 한 줄로 적용가능 한 것은 예제 코드라서 가능하다고 했는데, 구체적으로 말하면 <code>*****</code> 위에 update로 값을 자동 세팅해주는 것도 예제 코드라서, <code>spring.jpa.properties.hibernate.hbm2ddl.auto</code> 옵션을 <code>create</code> 등 마음대로 줄 수 있기 때문에 가능한 것이고, 실 운영 환경에서는 저렇게 수행할 수 없다. </p>
+<p>운영 환경에서는 <code>child</code> 테이블에 <code>parent_id</code> 컬럼도 직접 추가해줘야 하고 다음과 같이 update 쿼리를 만들어서 <strong>기존에 <code>parent_children</code> 테이블에 있던 값을 기준으로 <code>child</code> 테이블의 <code>parent_id</code> 컬럼에 수동으로 입력해줘야 한다.</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">update</span> <span class="keyword">child</span> a</span><br><span class="line"><span class="keyword">set</span> a.parent_id = (</span><br><span class="line">    <span class="keyword">select</span> b.parent_id </span><br><span class="line">    <span class="keyword">from</span> parent_children b</span><br><span class="line">    <span class="keyword">where</span> a.id = b.children_id</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>어쨌든 이번에도 Hibernate는 최선을 다 했다. 사람이 문제지..</p>
+<h2 id="일대다-양방향-매핑"><a href="#일대다-양방향-매핑" class="headerlink" title="일대다 양방향 매핑"></a>일대다 양방향 매핑</h2><p>결국 일대다 단방향 매핑은 insert 든 update 든 오버헤드가 발생할 수 밖에 없다. 가장 깔끔한 답은 양방향 매핑이다.</p>
+<p>조인컬럼 방식으로 전환할 때보다는 조금 손이 더 가지만 양은 그리 많지 않다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Entity</span></span><br><span class="line"><span class="meta">@Getter</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Parent</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Id</span></span><br><span class="line">    <span class="meta">@GeneratedValue</span>(strategy = GenerationType.IDENTITY)</span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// mappedBy 추가</span></span><br><span class="line">    <span class="meta">@OneToMany</span>(mappedBy = <span class="string">"parent"</span>, cascade = CascadeType.ALL, orphanRemoval = <span class="keyword">true</span>)</span><br><span class="line">    <span class="keyword">private</span> List&lt;Child&gt; children = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="title">Parent</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Parent</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Parent</span><span class="params">(String name, List&lt;Child&gt; children)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">        <span class="keyword">this</span>.children.addAll(children);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Entity</span></span><br><span class="line"><span class="meta">@Getter</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Child</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Id</span></span><br><span class="line">    <span class="meta">@GeneratedValue</span>(strategy = GenerationType.IDENTITY)</span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Parent 필드 추가</span></span><br><span class="line">    <span class="meta">@ManyToOne</span></span><br><span class="line">    <span class="meta">@JoinColumn</span>(name = <span class="string">"parent_id"</span>)</span><br><span class="line">    <span class="keyword">private</span> Parent parent;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="title">Child</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 생성자에 Parent 추가</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Child</span><span class="params">(String name, Parent parent)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">        <span class="keyword">this</span>.parent = parent;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@Transactional</span></span><br><span class="line"><span class="meta">@RequiredArgsConstructor</span>(onConstructor = @__(<span class="meta">@Autowired</span>))</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OneToManyRunner</span> <span class="keyword">implements</span> <span class="title">CommandLineRunner</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@NonNull</span></span><br><span class="line">    <span class="keyword">private</span> ParentRepository parentRepository;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">(String... args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        Parent parent1 = <span class="keyword">new</span> Parent(<span class="string">"parent 1"</span>);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span> ; i &lt;= <span class="number">10</span> ; i++) &#123;</span><br><span class="line">            parent1.getChildren().add(</span><br><span class="line">                    <span class="keyword">new</span> Child(<span class="string">"child "</span> + i, parent1)  <span class="comment">// 생성 시 parent1 추가</span></span><br><span class="line">            );</span><br><span class="line">        &#125;</span><br><span class="line">        Parent dbParent = <span class="keyword">this</span>.parentRepository.saveAndFlush(parent1);</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">"*****************************"</span>);</span><br><span class="line"></span><br><span class="line">        List&lt;Child&gt; children = dbParent.getChildren();</span><br><span class="line">        children.removeIf(child -&gt; child.getId() == <span class="number">1L</span> || child.getId() == <span class="number">2L</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>실행 결과는 다음과 같다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">insert into parent (name) values (?)</span><br><span class="line">binding parameter [1] as [VARCHAR] - [parent 1]</span><br><span class="line">insert into child (name, parent_id) values (?, ?)</span><br><span class="line">binding parameter [1] as [VARCHAR] - [child 1]</span><br><span class="line">binding parameter [2] as [BIGINT] - [1]</span><br><span class="line">insert into child (name, parent_id) values (?, ?)</span><br><span class="line">binding parameter [1] as [VARCHAR] - [child 2]</span><br><span class="line">binding parameter [2] as [BIGINT] - [1]</span><br><span class="line">insert into child (name, parent_id) values (?, ?)</span><br><span class="line">binding parameter [1] as [VARCHAR] - [child 3]</span><br><span class="line">binding parameter [2] as [BIGINT] - [1]</span><br><span class="line">insert into child (name, parent_id) values (?, ?)</span><br><span class="line">binding parameter [1] as [VARCHAR] - [child 4]</span><br><span class="line">binding parameter [2] as [BIGINT] - [1]</span><br><span class="line">insert into child (name, parent_id) values (?, ?)</span><br><span class="line">binding parameter [1] as [VARCHAR] - [child 5]</span><br><span class="line">binding parameter [2] as [BIGINT] - [1]</span><br><span class="line">insert into child (name, parent_id) values (?, ?)</span><br><span class="line">binding parameter [1] as [VARCHAR] - [child 6]</span><br><span class="line">binding parameter [2] as [BIGINT] - [1]</span><br><span class="line">insert into child (name, parent_id) values (?, ?)</span><br><span class="line">binding parameter [1] as [VARCHAR] - [child 7]</span><br><span class="line">binding parameter [2] as [BIGINT] - [1]</span><br><span class="line">insert into child (name, parent_id) values (?, ?)</span><br><span class="line">binding parameter [1] as [VARCHAR] - [child 8]</span><br><span class="line">binding parameter [2] as [BIGINT] - [1]</span><br><span class="line">insert into child (name, parent_id) values (?, ?)</span><br><span class="line">binding parameter [1] as [VARCHAR] - [child 9]</span><br><span class="line">binding parameter [2] as [BIGINT] - [1]</span><br><span class="line">insert into child (name, parent_id) values (?, ?)</span><br><span class="line">binding parameter [1] as [VARCHAR] - [child 10]</span><br><span class="line">binding parameter [2] as [BIGINT] - [1]</span><br><span class="line">*****************************</span><br><span class="line">delete from child where id=?</span><br><span class="line">binding parameter [1] as [BIGINT] - [1]</span><br><span class="line">delete from child where id=?</span><br><span class="line">binding parameter [1] as [BIGINT] - [2]</span><br></pre></td></tr></table></figure>
+<p>오! 처음에 원했던 그대로 delete 만 2회 실행될 뿐 아무런 오버헤드도 발생하지 않는다!</p>
+<h1 id="정리"><a href="#정리" class="headerlink" title="정리"></a>정리</h1><blockquote>
+<p>일대다 단방향 매핑은 직관적으로는 단순해서 좋지만,<br>조인테이블 방식은 insert가, 조인컬럼 방식은 update가 오버헤드로 작용한다.</p>
+<p>따라서 1:N에서 N이 큰 상황에서는 일대다 단방향 매핑은 사용하지 않는 것이 좋다.</p>
+<p><strong>1:N에서는 웬만하면 일대다 양방향 매핑을 사용하자.</strong></p>
+</blockquote>
+
+        
+        
+            
+        
+        <hr/>
+        <div>
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="크리에이티브 커먼즈 라이선스" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><a href='https://github.com/homoefficio' target='_blank'>HomoEfficio</a>가 작성한 이 저작물은(는) <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스</a>에 따라 이용할 수 있습니다.
+        </div>
+    </div>
+    <div class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/1-N/">1:N</a> <a class="tag tag--primary tag--small t-link" href="/tags/Entity/">Entity</a> <a class="tag tag--primary tag--small t-link" href="/tags/Hibernate/">Hibernate</a> <a class="tag tag--primary tag--small t-link" href="/tags/JPA/">JPA</a> <a class="tag tag--primary tag--small t-link" href="/tags/JoinColumn/">JoinColumn</a> <a class="tag tag--primary tag--small t-link" href="/tags/JoinTable/">JoinTable</a> <a class="tag tag--primary tag--small t-link" href="/tags/ManyToOne/">ManyToOne</a> <a class="tag tag--primary tag--small t-link" href="/tags/ORM/">ORM</a> <a class="tag tag--primary tag--small t-link" href="/tags/OneToMany/">OneToMany</a> <a class="tag tag--primary tag--small t-link" href="/tags/Spring-Data-JPA/">Spring Data JPA</a> <a class="tag tag--primary tag--small t-link" href="/tags/association/">association</a> <a class="tag tag--primary tag--small t-link" href="/tags/bidirectional/">bidirectional</a> <a class="tag tag--primary tag--small t-link" href="/tags/cascade/">cascade</a> <a class="tag tag--primary tag--small t-link" href="/tags/mappedBy/">mappedBy</a> <a class="tag tag--primary tag--small t-link" href="/tags/orphanRemoval/">orphanRemoval</a> <a class="tag tag--primary tag--small t-link" href="/tags/unidirectional/">unidirectional</a> <a class="tag tag--primary tag--small t-link" href="/tags/단방향/">단방향</a> <a class="tag tag--primary tag--small t-link" href="/tags/스프링-데이터-JPA/">스프링 데이터 JPA</a> <a class="tag tag--primary tag--small t-link" href="/tags/양방향/">양방향</a> <a class="tag tag--primary tag--small t-link" href="/tags/엔티티/">엔티티</a> <a class="tag tag--primary tag--small t-link" href="/tags/연관관계/">연관관계</a> <a class="tag tag--primary tag--small t-link" href="/tags/일대다/">일대다</a> <a class="tag tag--primary tag--small t-link" href="/tags/하이버네이트/">하이버네이트</a>
+
+            </div>
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/02/27/Java-NIO-Direct-Buffer를-이용해서-대용량-파일-행-기준으로-쪼개기/" data-tooltip="Java NIO Direct Buffer를 이용해서 대용량 파일 행 기준으로 쪼개기">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2019/04/28/JPA-일대다-단방향-매핑-잘못-사용하면-벌어지는-일/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2019/04/28/JPA-일대다-단방향-매핑-잘못-사용하면-벌어지는-일/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2019/04/28/JPA-일대다-단방향-매핑-잘못-사용하면-벌어지는-일/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+        
+            <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2019 HomoEfficio. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="1">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/02/27/Java-NIO-Direct-Buffer를-이용해서-대용량-파일-행-기준으로-쪼개기/" data-tooltip="Java NIO Direct Buffer를 이용해서 대용량 파일 행 기준으로 쪼개기">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2019/04/28/JPA-일대다-단방향-매핑-잘못-사용하면-벌어지는-일/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2019/04/28/JPA-일대다-단방향-매핑-잘못-사용하면-벌어지는-일/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2019/04/28/JPA-일대다-단방향-매핑-잘못-사용하면-벌어지는-일/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="1">
+    <ul class="share-options">
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2019/04/28/JPA-일대다-단방향-매핑-잘못-사용하면-벌어지는-일/">
+                <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2019/04/28/JPA-일대다-단방향-매핑-잘못-사용하면-벌어지는-일/">
+                <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2019/04/28/JPA-일대다-단방향-매핑-잘못-사용하면-벌어지는-일/">
+                <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+            
+        </div>
+        <div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=110"/>
+        
+            <h4 id="about-card-name">HomoEfficio</h4>
+        
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Seoul, Korea.
+            </h5>
+        
+    </div>
+</div>
+        <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/script.min.js"></script>
+<!--SCRIPTS END-->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'hanmomhanda';
+        (function() {
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+
+
+
+</html>
