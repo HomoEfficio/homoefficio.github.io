@@ -17,6 +17,7 @@ tags:
   - 양방향
   - association
   - 연관관계
+  - 매핑
   - 엔티티
   - Entity
   - JoinColumn
