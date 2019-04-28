@@ -27,7 +27,7 @@ parameterName이 특별한 점 없이 그냥 일반적이라면 모든 과정이
 
 같은 형식으로 들어오면 다음과 같은 에러를 만나게 되는데, 더 안타까운 것은 이 에러는 `BindingResult`로는 잡히지도 않는다는 점이다.
 
-```
+```java
 org.springframework.beans.InvalidPropertyException: 
   Invalid property 'items[0][count]' of bean class [어쩌구DTO]: 
     Property referenced in indexed property path 'items[0][count]' is neither an array nor a List nor a Map
@@ -64,13 +64,13 @@ $.ajax({
 
 다음과 같은 URL로 서버에 요청이 전달된다.
 
-```
+```text
 GET /어쩌구-서버-API?id=321&items%5B0%5D%5Bid%5D=abc987&items%5B0%5D%5Bcount%5D=3&emails%5B%5D=abc%40abc.com&emails%5B%5D=sdf%40sdf.com
 ```
 
 눈으로 읽을 수 있도록 URL Decoding하면 다음과 같다.
 
-```
+```text
 GET /어쩌구-서버-API?id=321&items[0][id]=abc987&items[0][count]=3&emails[]=abc@abc.com&emails[]=sdf@sdf.com
 ```
 
