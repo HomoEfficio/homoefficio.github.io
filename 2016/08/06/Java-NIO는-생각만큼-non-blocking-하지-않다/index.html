@@ -22,7 +22,7 @@
 <meta property="og:site_name" content="뒤태지존의 끄적거림">
 <meta property="og:description" content="일부러 낚시 냄새가 독하게 풍기는 제목을 지어봤다. Java NIO는 New IO의 줄임말인데, Non-blocking IO 의 줄임말이라고 알고 있는 개발자도 많은 것 같다.(나도 그랬다..)  그만큼 NIO는 Non-blocking이라는 마케팅이 꽤나 열심이었고, 또 그게 잘 먹혔기 때문인지, File I/O를 사용할 때마저 기존의 IO 방식 대신 NI">
 <meta property="og:locale" content="ko">
-<meta property="og:updated_time" content="2018-10-13T15:49:56.220Z">
+<meta property="og:updated_time" content="2019-04-28T16:02:13.321Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java NIO는 생각만큼 non-blocking 하지 않다">
 <meta name="twitter:description" content="일부러 낚시 냄새가 독하게 풍기는 제목을 지어봤다. Java NIO는 New IO의 줄임말인데, Non-blocking IO 의 줄임말이라고 알고 있는 개발자도 많은 것 같다.(나도 그랬다..)  그만큼 NIO는 Non-blocking이라는 마케팅이 꽤나 열심이었고, 또 그게 잘 먹혔기 때문인지, File I/O를 사용할 때마저 기존의 IO 방식 대신 NI">
@@ -229,8 +229,8 @@
 <p><strong>Java NIO는 New IO의 줄임말</strong>인데, <strong>Non-blocking IO 의 줄임말이라고 알고 있는 개발자도 많은 것 같다.</strong>(나도 그랬다..) </p>
 <p>그만큼 NIO는 Non-blocking이라는 마케팅이 꽤나 열심이었고, 또 그게 잘 먹혔기 때문인지, File I/O를 사용할 때마저 기존의 IO 방식 대신 NIO를 쓰면 Non-blocking이라서 좋다는 글도 많다. 그냥 그런가보다.. 했는데 알고보니 그렇지 않더라는..</p>
 <h1 id="IO-NIO-Stream-Channel"><a href="#IO-NIO-Stream-Channel" class="headerlink" title="IO : NIO = Stream : Channel"></a>IO : NIO = Stream : Channel</h1><p>옛날에 적성검사나 카투사 시험에서 다음과 같은 유형의 문제와 자주 맞닥뜨렸던 기억이 있다.</p>
-<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">고모 : 이모 = 아빠 : ?</span><br></pre></td></tr></table></figure>
-<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">아빠 : 형 = ? : 누나</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">고모 : 이모 = 아빠 : ?</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">아빠 : 형 = ? : 누나</span><br></pre></td></tr></table></figure>
 <p>뭐랄까.. 가족계보를 선형대수로 알싸하게 풀어낸, 실로 참신하고 현란하기 그지 없는 문제들이다.</p>
 <p>IO와 NIO의 관계도 위와 같은 현란한 비례식으로 생각해보면 머리에 조금이라도 더 남을 수 있을 것만 같다. 특히나 <code>IO : NIO = Blocking : Non-blocking</code> 이라는, 조금 섣부른 넘겨집기에서 나온 비례식은 아래와 같이 바꾸는 것이 좋을 것 같다.</p>
 <blockquote>
