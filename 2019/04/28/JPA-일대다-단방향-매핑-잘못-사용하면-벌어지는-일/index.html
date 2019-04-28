@@ -22,7 +22,7 @@
 <meta property="og:site_name" content="뒤태지존의 끄적거림">
 <meta property="og:description" content="JPA 일대다 단방향 매핑 잘못 사용하면 벌어지는 일Parent : Child = 1 : N 의 관계가 있으면 일대다 단방향으로 매핑하는 것보다 일대다 양방향으로 매핑하는 것이 좋다. 조인테이블 방식의 일대다 단방향 매핑그런데 어떤 특별한 이유가 있을 수도 있고, 그냥 별 생각없이 작성된 레거시 일 수도 있고, 아니면 JPA에 살짝 서툴러서도 있고, 여튼">
 <meta property="og:locale" content="ko">
-<meta property="og:updated_time" content="2019-04-28T02:59:43.777Z">
+<meta property="og:updated_time" content="2019-04-28T03:00:32.376Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JPA 일대다 단방향 매핑 잘못 사용하면 벌어지는 일">
 <meta name="twitter:description" content="JPA 일대다 단방향 매핑 잘못 사용하면 벌어지는 일Parent : Child = 1 : N 의 관계가 있으면 일대다 단방향으로 매핑하는 것보다 일대다 양방향으로 매핑하는 것이 좋다. 조인테이블 방식의 일대다 단방향 매핑그런데 어떤 특별한 이유가 있을 수도 있고, 그냥 별 생각없이 작성된 레거시 일 수도 있고, 아니면 JPA에 살짝 서툴러서도 있고, 여튼">
@@ -289,7 +289,7 @@
 </tr>
 </tbody>
 </table>
-<p>나: 뭐야, <code>1 | 1</code>인 행이랑 <code>1 | 2</code>인 행 2개만 지울 수 있잖아. 왜 <code>parent_id</code>가 1인 걸 몽땅 지워?</p>
+<p>나: 뭐야, <code>1 | 1</code>인 행이랑 <code>1 | 2</code>인 행 2개만 지울 수 있었을 것 같은데, 왜 <code>parent_id</code>가 1인 걸 몽땅 지워?</p>
 <p>Hibernate: 허허.. 그게 말이야.. 허허.. 테이블로 보기엔 저런데.. 허허.. <strong>일대다 단방향이 잖아.. 허허.. 그래서.. 허허.. <code>parent_id</code>가 1이라는 것을 개별 행에 대한 조건으로 줄 수가 없어..</strong> 허허..</p>
 <p>나: 뭐래냐..</p>
 <p>이것도 말보다 코드가 더 쉽고 명확한 케이스다. id가 1, 2인 child를 삭제하는 코드는 다음과 같다.</p>
