@@ -63,7 +63,7 @@ one-way(InputStream or OutputStream)|two-way(Channel)
 Blocking|Non-bloking**도 가능** (언제나 Non-blocking인 것이 아니라)
 
 
-# Files.new~~()는 모두 blocking이다.
+# Files.new\~\~()는 모두 blocking이다.
 
 `java.nio.Files`는 NIO 중에서 File I/O를 담당하는데, 결론부터 말하면,
 
