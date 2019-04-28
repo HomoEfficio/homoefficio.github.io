@@ -1,4 +1,0 @@
-This is a Brave Rewards publisher verification file.
-
-Domain: homoefficio.github.io
-Token: 185c573630a565bc6454e0257967e0dd84298d40b94c452c9adc2c3fb8ac0a68
