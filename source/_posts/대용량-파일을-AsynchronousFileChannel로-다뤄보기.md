@@ -526,9 +526,9 @@ totalBytesRead : 159718093
  
 ![](http://i.imgur.com/hNq09Zb.png)
  
-`AsynchronousFileChannel`은 약 2.75초 정도 소요되었고, 가장 빠른 `FileChannel`과 `BufferedInputStream`은 0.5초 이내, `BufferedReader`와 `InputStreamReader`는 4~5초 정도 소요되었다.
- 
-텍스트을 읽을 때 간편해서 가장 많이 사용하는 `BufferedReader.readLine()`이 아무래도 8k 보다는 현저히 바이트수가 작을 행 단위로 반복을 하므로 반복 회수가 가장 많을테고, 따라서 가장 느릴 거라고 예상은 했지만 이 정도 차이라면 상당히 놀랍다. 작은 파일은 관계없겠지만 대용량 파일에서는 `BufferedReader.readLine()`는 피하는 것이 좋을 것 같다.
+`AsynchronousFileChannel`은 약 2.75초 정도 소요되었고, 가장 빠른 `FileChannel`과 `BufferedInputStream`은 0.5초 이내, `BufferedReader`와 `InputStreamReader`는 4\~5초 정도 소요되었다.
+
+텍스트를 읽을 때 간편해서 가장 많이 사용하는 `BufferedReader.readLine()`이 아무래도 8k 보다는 현저히 바이트수가 작을 행 단위로 반복을 하므로 반복 회수가 가장 많을테고, 따라서 가장 느릴 거라고 예상은 했지만 이 정도 차이라면 상당히 놀랍다. 작은 파일은 관계없겠지만 대용량 파일에서는 `BufferedReader.readLine()`는 피하는 것이 좋을 것 같다.
  
 ## 자원 사용
 
