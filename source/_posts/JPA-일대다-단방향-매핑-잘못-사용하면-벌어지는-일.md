@@ -4,7 +4,9 @@ categories:
   - Technique
 tags:
   - JPA
+  - Java Persistence API
   - ORM
+  - Object Relation Mapping
   - Hibernate
   - 하이버네이트
   - 1:N
@@ -27,6 +29,8 @@ tags:
   - orphanRemoval
   - Spring Data JPA
   - 스프링 데이터 JPA
+  - Overhead
+  - 오버헤드
 thumbnailImage: https://i.imgur.com/rQScnoT.png
 coverImage: cover-jpa-onetomany.png
 ---
@@ -126,7 +130,7 @@ public class OneToManyRunner implements CommandLineRunner {
         
         List<Child> children = dbParent.getChildren();
         children.removeIf(child -> 
-                child.getId() == 1L && child.getId() == 2L);
+                child.getId() == 1L || child.getId() == 2L);
     }
 
 }
@@ -257,7 +261,7 @@ Hibernate: 허허.. 그게 말이야.. 허허.. 테이블로 보기엔 저런데
 ```java
 List<Child> children = dbParent.getChildren();
 children.removeIf(child -> 
-        child.getId() == 1L && child.getId() == 2L);  // <-- 여기!!
+        child.getId() == 1L || child.getId() == 2L);  // <-- 여기!!
 ```
 
 위에 `여기`로 표시한 부분에서 `parent_id`에 대한 조건을 줄 수가 없다. 왜냐고? 위에 Hibernate가 얘기해 준대로 **일대일 단방향이라서 `child`는 `parent`를 모른다. 따라서 `parent_id`를 `children`의 개별 행에 대한 삭제 조건으로 지정할 수가 없다.**
@@ -278,7 +282,7 @@ children.removeIf(child ->
 
 ## 조인컬럼 방식의 일대일 단방향 매핑
 
-이 방식은 단 한 줄의 코드로 쉽게 적용할 수 있다. 물론 예제 코드에서만..
+이 방식은 Parent에 단 한 줄의 코드만 추가하면 된다. 물론 예제 코드에서만..
 
 ```java
 @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -364,13 +368,23 @@ binding parameter [1] as [BIGINT] - [2]
 
 이유는 이번에도 단방향이기 때문이다. **조인컬럼 방식으로 변환하면서 `child` 테이블에 `parent_id` 컬럼이 추가되기는 했지만, 단방향이라서 `child`는 `parent`의 존재를 모르므로 `parent_id`의 값을 알 수는 없다.** 뭐랄까 냉장고는 사놨는데 뭘로 채워야할지 모르는..
 
-그래서 **개별 행 단위로는 `parent_id` 컬럼에 값이 없는 채로 insert 되고, insert 된 10개의 행의 `parent_id` 컬럼에는 `dbParent.getChildren()`에서 알아낼 수 있는 `parent_id` 값을 update 를 통해 설정**한다. 하지만 그건 최초에 데이터가 세팅될 때 1회만 그런거고, 그 후에 원하는 레코드만 지울 때는 몽창 지우는 게 아니라 행 단위로 지울 수 있으므로 어쨌든 조인테이블 방식의 문제는 해결한 거라고 할 수도 있겠다.
+그래서 **개별 행 단위로는 `parent_id` 컬럼에 값이 없는 채로 insert 되고, insert 된 10개의 행의 `parent_id` 컬럼에는 `dbParent.getChildren()`에서 알아낼 수 있는 `parent_id` 값을 update 를 통해 설정**한다. 하지만 이건 최초에 데이터가 세팅될 때 1회만 그런거고, 이렇게 `parent_id` 값이 저장된 후에는 삭제를 원하는 레코드만 삭제할 수 있게 되므로 조인테이블 방식의 문제는 해결했다고 볼 수 있다.
 
-하지만, 삭제되는 행이 2개가 아니라 수천, 수만이라면? **수천, 수만 회의 delete만 실행되어야 하는데, 수천, 수만의 불필요한 update가 추가로 발생한다.**
+이제 `*****` 아래에 실행된 쿼리를 살펴보자. update가 2회, delete가 2회 실행됐다. delete 2회만 실행되기를 예상했지만 update 2회가 먼저 실행됐다. 이 부분은 자세히 살펴볼 필요가 있다.
 
-**조인테이블 방식에서는 조금만 삭제해도 수 많은 insert 실행이 불필요하게 동반된다는 게 문제였다면, 조인컬럼 방식에서는 많이 삭제하면 수 많은 update가 불필요하게 동반되는 문제로 조금 바뀌었을 뿐 불필요한 오버헤드가 발생한다는 점은 마찬가지다.**
+**신동민 님의 도움**으로 정확히 알게 되었는데, 일대다 조인컬럼 방식에서 `children.remove(child)`를 실행해서 `children` 쪽의 레코드 삭제를 시도하면 실제 쿼리는 delete가 아니라 해당 레코드의 `parent_id`에 null을 저장하는 update가 실행된다. 의도와 다르게 동작한 것 같아서 이상해보이지만, 일대다 단방향 매핑에서 **`children.remove(child)`는 사실 `child` 자체를 삭제하라는 게 아니라 `child`가 `parent`의 `children`의 하나로 존재하는 관계를 remove 하라는 것이다. 따라서 `child` 자체를 delete 하는 게 아니라 `parent_id`에 null 값을 넣는 update를 실행하는 게 정확히 맞다.** 이 부분의 코드도 신동민 님이 알려주셨는데 [여기](https://github.com/hibernate/hibernate-orm/blob/master/hibernate-core/src/main/java/org/hibernate/persister/collection/OneToManyPersister.java)에서 확인할 수 있다. 
 
-참고로 앞에서 단 한 줄로 적용가능 한 것은 예제 코드라서 가능하다고 했는데, 구체적으로 말하면 `*****` 위에서 update로 값을 자동 세팅해주는 것도 예제 코드라서, `spring.jpa.properties.hibernate.hbm2ddl.auto` 옵션을 `create` 등 마음대로 줄 수 있기 때문에 가능한 것이고, 실 운영 환경에서는 저렇게 수행할 수 없다. 
+결국 이번에도 Hibernate는 정확히 동작한다. 관계의 remove를 레코드의 delete로 넘겨짚은 사람이 문제지..
+
+**그럼 마지막에 실행된 2회의 delete는 뭘까? 이건 `orphanRemoval = true`로 설정되어 있기 때문에 2개의 `child` 자체를 delete 한 것**이다.
+
+그런데 사실 Hibernate가 어찌 동작하든 간에, 데이터 처리 관점에서 보자면 원했던 것은 2개의 레코드를 delete 하는 것이었는데, 2회의 update와 2회의 delete가 실행되는 것은 여전히 불필요한 작업이 추가된 것 같다. 하지만 **이를 불필요한 오버헤드라고 부르는 것은 적합하지 않아 보인다.** 
+
+**RDB 관점에서 보면 테이블 사이의 관계는 언제나 양방향이지만 JPA의 엔티티 사이의 관계는 단방향과 양방향이 분명히 다르다.** 따라서 RDB 관점에서야 이걸 오버헤드라고 부를 수도 있겠지만, **단방향으로 매핑된 JPA에서는 레코드의 delete가 아니라 관계의 remove로 동작하는 것이 정확하고 따라서 delete가 아니라 update로 실행되는 것이 맞으므로 불필요한 오버헤드라고 부르는 것은 적합하지 않다.**
+
+그래도 여전히 2회의 delete만으로 끝날 일을 2회의 update와 `orphanRemoval`을 동원해서 2회의 delete로 실행하는 것이 마음에 안 든다면, **RDB 처럼 양방향으로 만들어 주면 JPA도 RDB 처럼 2회의 delete만으로 끝낸다.** 그럼 이제 일대다 양방향 매핑을 살펴보자.
+
+그 전에, 앞에서 조인커럼 방식으로의 전환을 단 한 줄로 적용가능 한 것은 예제 코드라서 가능하다고 했는데, 구체적으로 말하면 `*****` 위에서 update로 값을 자동 세팅해주는 것도 예제 코드라서, **`spring.jpa.properties.hibernate.hbm2ddl.auto` 옵션을 `create` 등 마음대로 줄 수 있기 때문에 가능한 것이고, 실 운영 환경에서는 저렇게 수행할 수 없다.**
 
 운영 환경에서는 `child` 테이블에 `parent_id` 컬럼도 직접 추가해줘야 하고 다음과 같이 update 쿼리를 만들어서 **기존에 `parent_children` 테이블에 있던 값을 기준으로 `child` 테이블의 `parent_id` 컬럼에 수동으로 입력해줘야 한다.**
 
@@ -383,14 +397,10 @@ set a.parent_id = (
 )
 ```
 
-어쨌든 이번에도 Hibernate는 최선을 다 했다. 사람이 문제지..
-
 
 ## 일대다 양방향 매핑
 
-결국 일대다 단방향 매핑은 insert 든 update 든 오버헤드가 발생할 수 밖에 없다. 가장 깔끔한 답은 양방향 매핑이다.
-
-조인컬럼 방식으로 전환할 때보다는 조금 손이 더 가지만 양은 그리 많지 않다.
+앞에서 살펴본 것처럼 RDB와 똑같이 동작하기를 원한다면 JPA에서도 양방향으로 매핑을 해줘야 한다. 조인컬럼 방식으로 전환할 때보다는 조금 손이 더 가지만 작업량은 그리 많지 않다.
 
 ```java
 @Entity
@@ -519,22 +529,26 @@ binding parameter [1] as [BIGINT] - [2]
 
 **일대다 양방향 매핑과 일대다 단방향 조인컬럼 매핑의 결과로 나타나는 테이블 구조는 두 방식에서 모두 동일**하다. **두 방식 모두 `child`에 `parent_id` FK 컬럼**을 두게 된다. 
 
-이 상황에서 차이점은 다음과 같다.
+일대다 양방향 매핑과 일대다 단방향 조인컬럼 매핑의 차이점은 다음과 같다.
 
-- 조인컬럼 일대다 단방향 매핑은 `child`가 `parent`를 모르기 때문에 앞에서 설명한 것처럼 update 오버헤드가 발생
-- 일대다 양방향 매핑은 `child`가 `parent`를 알기 때문에 불필요한 오버헤드가 발생하지 않음
+- 조인컬럼 일대다 단방향 매핑은 `child`가 `parent`를 모르기 때문에, 앞에서 설명한 것처럼 1회성이긴 하지만 `parent_id` 값을 저장하기 위해 update 오버헤드가 발생한다.
+- 일대다 양방향 매핑은 `child`가 `parent`를 알기 때문에 불필요한 오버헤드가 발생하지 않는다.
 
-다만 **일대다 양방향 매핑은 도메인 로직 상에서 `parent`를 몰라도 되는 `child`에게 굳이 `parent`를 강제로 알게 만드는 점이 단점**인데, 이 단점은 **`parent`에 대한 public getter 메서드를 만들지 않거나 또는 극단적으로 아예 `parent`에 대한 getter 메서드를 만들지 않는 방식으로 보완할 수 있다.**
+다만 **일대다 양방향 매핑은 도메인 로직 상에서 `parent`를 몰라도 되는 `child`에게 굳이 `parent`를 강제로 알게 만드는 것이 단점**인데, 이 단점은 **`parent`에 대한 public getter 메서드를 만들지 않거나 또는 극단적으로 아예 `parent`에 대한 getter 메서드를 만들지 않는 방식으로 보완할 수 있다.**
 
 
 # 정리
 
 >일대다 단방향 매핑은 직관적으로는 단순해서 좋지만,  
->조인테이블 방식은 insert가, 조인컬럼 방식은 update가 오버헤드로 작용한다.
+>조인테이블 방식은 insert가, 조인컬럼 방식은 1회성이긴 하지만 update가 오버헤드로 작용한다.
 >
->따라서 1:N에서 N이 큰 상황에서는 일대다 단방향 매핑은 사용하지 않는 것이 좋다.
+>따라서 1:N에서 N이 큰 상황에서는,
 >
->**1:N에서는 웬만하면 일대다 양방향 매핑을 사용하자.**
+>- 오버헤드가 없는 일대다 양방향 매핑을 사용하는 것이 가장 좋고,  
+>- 그 다음은 일대다 단방향 조인컬럼 방식,  
+>- 그리고 parent 쪽에 `@OneToMany`만 달랑 붙이는 일대다 단방향 조인테이블 방식은 사용하지 않는 것이 좋다.
+>
+>더 축약하자면, **1:N에서 N이 클 때는 웬만하면 일대다 양방향 매핑을 사용하자.**
 
 
 # 부록 - 응용편
