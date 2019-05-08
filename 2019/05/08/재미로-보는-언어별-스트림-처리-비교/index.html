@@ -14,23 +14,23 @@
     
         <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <meta name="description" content="언어별 스트림 처리 구경하기NBA를 즐겨보는데 갑자기 역대 MVP가 궁금해서 찾아보니 https://www.nba.com/history/awards/mvp 여기에서 볼 수 있었다. 연도별로 주욱 나열되어 있는데 수상횟수 기준으로 집계해서 내림차순으로 보고 싶었다. 그래서 연습도 할 겸 자바로 먼저 짜봤는데 다른 언어로 짜주신 분들도 계셔서 재미로 비교를 해">
+    <meta name="description" content="재미로 보는 언어별 스트림 처리 비교NBA를 즐겨보는데 갑자기 역대 MVP가 궁금해서 찾아보니 https://www.nba.com/history/awards/mvp 여기에서 볼 수 있었다. 연도별로 주욱 나열되어 있는데 수상횟수 기준으로 집계해서 내림차순으로 보고 싶었다. 그래서 연습도 할 겸 자바로 먼저 짜봤는데 다른 언어로 짜주신 분들도 계셔서 재미로">
 <meta name="keywords" content="Java,자바,Stream,스트림,Scala,Kotlin,Clojure,Rust,groupBy,groupingBy,sort by value,map,reduce,fold,peek,onEach,inspect,Tuple,Pair,it,_,jooL,reference doc,스칼라,코틀린,클로저,러스트,변환,집계,튜플,페어,값으로 정렬,값 기준 정렬">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="재미로 보는 언어별 스트림 처리 비교">
 <meta property="og:url" content="http://homoefficio.github.io/2019/05/08/재미로-보는-언어별-스트림-처리-비교/index.html">
 <meta property="og:site_name" content="뒤태지존의 끄적거림">
-<meta property="og:description" content="언어별 스트림 처리 구경하기NBA를 즐겨보는데 갑자기 역대 MVP가 궁금해서 찾아보니 https://www.nba.com/history/awards/mvp 여기에서 볼 수 있었다. 연도별로 주욱 나열되어 있는데 수상횟수 기준으로 집계해서 내림차순으로 보고 싶었다. 그래서 연습도 할 겸 자바로 먼저 짜봤는데 다른 언어로 짜주신 분들도 계셔서 재미로 비교를 해">
+<meta property="og:description" content="재미로 보는 언어별 스트림 처리 비교NBA를 즐겨보는데 갑자기 역대 MVP가 궁금해서 찾아보니 https://www.nba.com/history/awards/mvp 여기에서 볼 수 있었다. 연도별로 주욱 나열되어 있는데 수상횟수 기준으로 집계해서 내림차순으로 보고 싶었다. 그래서 연습도 할 겸 자바로 먼저 짜봤는데 다른 언어로 짜주신 분들도 계셔서 재미로">
 <meta property="og:locale" content="ko">
 <meta property="og:image" content="https://i.imgur.com/NyfU0Gq.png">
 <meta property="og:image" content="https://i.imgur.com/iBoGbKT.png">
 <meta property="og:image" content="https://i.imgur.com/WVi56uS.png">
 <meta property="og:image" content="https://i.imgur.com/VWlC5NZ.png">
 <meta property="og:image" content="https://i.imgur.com/W1rg6ZV.png">
-<meta property="og:updated_time" content="2019-05-08T13:54:43.147Z">
+<meta property="og:updated_time" content="2019-05-08T13:58:15.769Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="재미로 보는 언어별 스트림 처리 비교">
-<meta name="twitter:description" content="언어별 스트림 처리 구경하기NBA를 즐겨보는데 갑자기 역대 MVP가 궁금해서 찾아보니 https://www.nba.com/history/awards/mvp 여기에서 볼 수 있었다. 연도별로 주욱 나열되어 있는데 수상횟수 기준으로 집계해서 내림차순으로 보고 싶었다. 그래서 연습도 할 겸 자바로 먼저 짜봤는데 다른 언어로 짜주신 분들도 계셔서 재미로 비교를 해">
+<meta name="twitter:description" content="재미로 보는 언어별 스트림 처리 비교NBA를 즐겨보는데 갑자기 역대 MVP가 궁금해서 찾아보니 https://www.nba.com/history/awards/mvp 여기에서 볼 수 있었다. 연도별로 주욱 나열되어 있는데 수상횟수 기준으로 집계해서 내림차순으로 보고 싶었다. 그래서 연습도 할 겸 자바로 먼저 짜봤는데 다른 언어로 짜주신 분들도 계셔서 재미로">
 <meta name="twitter:image" content="https://i.imgur.com/NyfU0Gq.png">
     
         <meta rel="publisher" content="https://plus.google.com/+오명운"/>
@@ -231,7 +231,7 @@
     
     <div class="post-content markdown main-content-wrap" itemprop="articleBody">
         
-            <h1 id="언어별-스트림-처리-구경하기"><a href="#언어별-스트림-처리-구경하기" class="headerlink" title="언어별 스트림 처리 구경하기"></a>언어별 스트림 처리 구경하기</h1><p>NBA를 즐겨보는데 갑자기 역대 MVP가 궁금해서 찾아보니 <a href="https://www.nba.com/history/awards/mvp" target="_blank" rel="noopener">https://www.nba.com/history/awards/mvp</a> 여기에서 볼 수 있었다. 연도별로 주욱 나열되어 있는데 <strong>수상횟수 기준으로 집계해서 내림차순</strong>으로 보고 싶었다.</p>
+            <h1 id="재미로-보는-언어별-스트림-처리-비교"><a href="#재미로-보는-언어별-스트림-처리-비교" class="headerlink" title="재미로 보는 언어별 스트림 처리 비교"></a>재미로 보는 언어별 스트림 처리 비교</h1><p>NBA를 즐겨보는데 갑자기 역대 MVP가 궁금해서 찾아보니 <a href="https://www.nba.com/history/awards/mvp" target="_blank" rel="noopener">https://www.nba.com/history/awards/mvp</a> 여기에서 볼 수 있었다. 연도별로 주욱 나열되어 있는데 <strong>수상횟수 기준으로 집계해서 내림차순</strong>으로 보고 싶었다.</p>
 <p>그래서 연습도 할 겸 자바로 먼저 짜봤는데 다른 언어로 짜주신 분들도 계셔서 <strong>재미로 비교</strong>를 해보려 한다. 언어의 전반적인 우열을 가리는 목적이 전혀 아니므로 구경하는 재미로만 참고하면 좋겠다.</p>
 <p>자바 외에 다른 언어에 대한 지식이 많지 않으므로 잘못된 정보가 포함될 수도 있으며 이 부분은 댓글로 바로잡아주시면 정말 감사드리며 바로 반영하겠다.</p>
 <p>자 이제 시작해보자. 연도별 NBA MVP 명단 데이터는 다음과 같다.</p>
