@@ -27,7 +27,7 @@
 <meta property="og:image" content="https://i.imgur.com/WVi56uS.png">
 <meta property="og:image" content="https://i.imgur.com/VWlC5NZ.png">
 <meta property="og:image" content="https://i.imgur.com/W1rg6ZV.png">
-<meta property="og:updated_time" content="2019-05-08T13:58:15.769Z">
+<meta property="og:updated_time" content="2019-05-08T14:21:29.052Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="재미로 보는 언어별 스트림 처리 비교">
 <meta name="twitter:description" content="재미로 보는 언어별 스트림 처리 비교NBA를 즐겨보는데 갑자기 역대 MVP가 궁금해서 찾아보니 https://www.nba.com/history/awards/mvp 여기에서 볼 수 있었다. 연도별로 주욱 나열되어 있는데 수상횟수 기준으로 집계해서 내림차순으로 보고 싶었다. 그래서 연습도 할 겸 자바로 먼저 짜봤는데 다른 언어로 짜주신 분들도 계셔서 재미로">
@@ -248,7 +248,7 @@
 <h2 id="Scala"><a href="#Scala" class="headerlink" title="Scala"></a>Scala</h2><p>스칼라 버전은 <strong>Kevin Lee 님</strong>께서 작성해주신 걸 살짝 다듬었다.</p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> lines = <span class="type">MVPS</span>.split(<span class="string">"\n"</span>)</span><br><span class="line"><span class="keyword">val</span> mvpList = lines</span><br><span class="line">  .groupBy(_.drop(<span class="number">12</span>).takeWhile(_ != ','))  </span><br><span class="line">  .mapValues(_.size)</span><br><span class="line">  .toList</span><br><span class="line">  .sortBy(_._2)(<span class="type">Ordering</span>.<span class="type">Int</span>.reverse)</span><br><span class="line"></span><br><span class="line">println(mvpList.map &#123; <span class="keyword">case</span> (name, count) =&gt; <span class="string">s"<span class="subst">$name</span>: <span class="subst">$count</span>"</span> &#125;.mkString(<span class="string">"\n"</span>))</span><br><span class="line">println(lines.size == mvpList.map(_._2).sum)</span><br></pre></td></tr></table></figure>
 <p>스칼라에서도 큰 흐름은 <code>키(선수 이름) 추출</code>, <code>groupBy</code>, <code>수상횟수 집계</code>, <code>정렬</code>, <code>출력</code>, <code>전체 합계</code>로 달라진 것은 없다. </p>
-<p>키 추출이 자바와 조금 다르게 구현되었지만 장황한 점은 비슷해 보이고, 자바의 <code>groupBy()</code>에서 키 별 분류와 수상횟수 집계를 함께 처리할 수 있었지만, 스칼라의 <code>groupBy()</code>는 키 별 분류만 가능하고 수상횟수의 집계는 <code>mapValues(_.size)</code>를 통해 따로 처리하는 점이 다르다.</p>
+<p>키 추출이 자바와 조금 다르게 구현되었지만 장황한 점은 비슷해 보이고, 자바의 <code>groupingBy()</code>에서 키 별 분류와 수상횟수 집계를 함께 처리할 수 있었지만, 스칼라의 <code>groupBy()</code>는 키 별 분류만 가능하고 수상횟수의 집계는 <code>mapValues(_.size)</code>를 통해 따로 처리하는 점이 다르다.</p>
 <p>정렬하기 전에 리스트로 만드는 과정(<code>toList</code>)이 하나 추가되는 것도 절차상으로는 <code>entrySet().stream()</code>으로 스트림을 새로 만드는 자바와 비슷하고, 정렬 과정도 자바와 비슷하다. </p>
 <p><strong><code>(_.drop(12))</code>, <code>(_.size)</code>, <code>(_._2)</code> 같은 표현법으로 <code>-&gt;</code> 없이도 람다식을 표현할 수 있고, <code>getKey()</code>, <code>getValue()</code> 대신 <code>._1</code>, <code>._2</code>로 짧게 표현할 수 있어서 비슷한 구조임에도 자바보다 훨씬 간결해보인다.</strong> 하지만 <code>_</code>를 쓰지 않는다면 <code>map { case (name, count) =&gt; ... }</code>에서처럼 <code>=&gt;</code>뿐 아니라 <code>case</code>도 나오면서 조금 복잡해진다.</p>
 <p>자바의 <code>peek()</code> 같은 메서드가 없어서인지 출력과 전체 합계를 하나의 스트림으로 처리하지 못하고 별도로 처리하는 것도 다르다.</p>
