@@ -27,7 +27,7 @@
 <meta property="og:image" content="https://i.imgur.com/WVi56uS.png">
 <meta property="og:image" content="https://i.imgur.com/VWlC5NZ.png">
 <meta property="og:image" content="https://i.imgur.com/W1rg6ZV.png">
-<meta property="og:updated_time" content="2019-05-08T14:32:40.430Z">
+<meta property="og:updated_time" content="2019-05-09T11:30:32.488Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="재미로 보는 언어별 스트림 처리 비교">
 <meta name="twitter:description" content="재미로 보는 언어별 스트림 처리 비교NBA를 즐겨보는데 갑자기 역대 MVP가 궁금해서 찾아보니 https://www.nba.com/history/awards/mvp 여기에서 볼 수 있었다. 연도별로 주욱 나열되어 있는데 수상횟수 기준으로 집계해서 내림차순으로 보고 싶었다. 그래서 연습도 할 겸 자바로 먼저 짜봤는데 다른 언어로 짜주신 분들도 계셔서 재미로">
@@ -268,7 +268,7 @@
 </blockquote>
 <h2 id="뽕-맞은-자바-feat-jooL"><a href="#뽕-맞은-자바-feat-jooL" class="headerlink" title="뽕 맞은 자바(feat. jooL)"></a>뽕 맞은 자바(feat. jooL)</h2><p><strong>박성철 님</strong>께서 바닐라 자바는 쓰는 게 아니라고 하시면서 <code>jooL 라이브러리</code>(<a href="https://github.com/jOOQ/jOOL" target="_blank" rel="noopener">https://github.com/jOOQ/jOOL</a>) 를 사용해서 작성해주신 버전을 보면 ‘오~~ 이게 정녕 자바란 말씀입니까?’란 소리가 나올 정도로 감동적이다. 스칼라나 코틀린보다 더 간결하다!!</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    String[] lines = MVPS.split(<span class="string">"\\n"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">long</span> mvpCount = Seq.of(lines)</span><br><span class="line">            .grouped(line -&gt; line.substring(<span class="number">12</span>, line.indexOf(<span class="string">','</span>)), counting()))</span><br><span class="line">            .sorted(t -&gt; - t.v2)</span><br><span class="line">            .peek(t -&gt; out.println(t.v1 + <span class="string">": "</span> + t.v2))</span><br><span class="line">            .sumLong(t -&gt; t.v2);</span><br><span class="line"></span><br><span class="line">    out.println(lines.length == mvpCount);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>스칼라나 코틀린처럼 <strong>튜플이 있어서 <code>t.v2</code>같은 간략한 표현이 가능</strong>해졌고, 특히 <strong>값 기준 내림차순 정렬을 <code>sorted(t -&gt; - t.v2)</code>로 간단 명료하게 표현할 수 있는 점이 눈에 띈다.</strong></p>
+<p>스칼라나 코틀린처럼 <strong>튜플이 있어서 <code>t.v2</code>같은 간략한 표현이 가능</strong>해졌고, 특히 <strong>값 기준 내림차순 정렬을 <code>sorted(t -&gt; - t.v2)</code>로 간단 명료하게 표현할 수 있는 점이 눈에 띈다.</strong> 그리고 groupBy 후에 <code>entrySet().stream()</code>이나 <code>toList</code> 없이도 클로저처럼 바로 정렬할 수 있다.</p>
 <blockquote>
 <p>한 줄 평: 바닐라 자바는 쓰는 게 아니다.</p>
 </blockquote>
