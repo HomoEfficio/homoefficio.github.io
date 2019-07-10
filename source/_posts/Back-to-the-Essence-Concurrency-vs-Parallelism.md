@@ -95,9 +95,17 @@ coverImage: cover-image-01.png
 ![Imgur](https://i.imgur.com/2KAJ16s.png)
 
 
-## 마무리
+## Go 언어를 만든 Rob Pike의 강연
 
-자 이렇게 시간 관점, 작업 독립성 관점, 조합 관점에서 구체적으로 살펴보고 나니, 예전에는 별로 와닿지 않았던 다음과 같은 조금 추상적인 단문 비교도 조금은 달라 보인다.
+Rob Pike는 [강연](https://www.youtube.com/watch?v=cN_DpYBzKso)에서 Concurrency와 Parallelism는 다르다며 여러 주옥 같은 표현을 남겼다.
+
+>동시성은 독립적인 실행 프로세스의 조합을 의미하고,
+>병렬성은 여러 가지 일을 동시에 실행하는 것을 의미한다.
+>
+>`Concurrency is the composition of independently executing processes.`
+>`Parallelism is the simultaneous execution of multiple things.`
+
+참고로 이 말에 나온 프로세스는 리눅스 프로세스가 아닌 스레드, 코루틴을 포괄하는 일반적인 의미의 프로세스를 의미한다.
 
 >동시성은 여러 가지 일을 한 번에 **처리**하는 것을 말하고,  
 >병렬성은 여러 가지 일을 한 번에 **수행**하는 것을 말한다.
@@ -105,7 +113,8 @@ coverImage: cover-image-01.png
 >`Concurrency is about **dealing with** lots of things at once.`  
 >`Parallelism is about **doing** lots of things at once.`
 
-간결해서 좋아보이기는 하는데 우리말로 옮겨보면 처리나 수행이나 비슷해져버려서.. 이건 원어민에게는 좋은 비교겠지만, 우리에겐 아쉽게도 그다지.. 게다가 '한 번에(at once)'도 '동시에'와 마찬가지로 우리말로 옮겨놓고 엄밀하게 보면 틀린 표현이고 부가적인 설명이 필요하므로 꼬리에 꼬리를 무는.. 그래서 흔히 볼 수 있기는 하지만 별로다!
+`dealing with`와 `doing`이 영어로는 확연하게 대조되지만, 간결함과 글자수 맞춤을 위해 `처리`와 `수행`으로 옮겨보면 그 차이가 좀 희석되는 것 같다.  
+`dealing with`에는 설계가 포함되고, `doing`은 설계된 대로 수행하는 것을 의미한다고 이해하면 크게 틀리지 않을 것 같다.
 
 >동시성은 **구조**에 관한 것이고,  
 >병렬성은 **실행**에 관한 것이다.
@@ -115,6 +124,10 @@ coverImage: cover-image-01.png
 
 오호 이게 좋다. 영어든 국어든 글자수까지 똑같아서 아름답기까지 하다..  
 이렇게 보면 Parallelism을 병렬성보다는 병행성으로 옮기는 게 더 나은 것 같다.  
+
+정리하면 Rob Pike는 Concurrency는 설계 쪽에 무게를 두고, Parallelism은 실행 쪽에 무게를 두는 것 같다.
+
+## 그림 비교
 
 간단하게는 썸네일로 사용한 이 그림도 괜찮고,
 
@@ -127,6 +140,23 @@ coverImage: cover-image-01.png
 ![Imgur](https://i.imgur.com/uIMnkj1.jpg)
 
 (출처: https://twitter.com/ohidxy/status/946110898539659264)
+
+## 마무리
+
+Concurrency와 Parallelism을 구별할 때 다음과 같은 해석이 도움이 된다.
+
+- '동시'의 차이
+  - Concurrency에서 말하는 동시성은 사실 상 동시라고 간주해도 되는 시간 간격을 의미
+  - Parallelism에서 말하는 동시성은 완전히 동일한 시점을 의미
+
+- 작업 독립성의 차이
+  - Concurrent하게 실행되는 작업은 일반적으로 서로 독립적
+  - Parallel하게 실행되는 작업은 일반적으로 원래 하나인 작업을 동시에 실행할 수 있도록 분할한 작업을 의미
+
+Go 언어를 만든 Rob Pike에 의하면,
+
+- Concurrency는 독립적인 여러 작업을 한 번에 수행하도록 설계하는 쪽에 무게를 둔 개념
+- Parallelism은 하나의 작업을 설계된 대로 분할해서 동시에 수행하는 쪽에 무게를 둔 개념
 
 
 ### 참고 자료
@@ -149,7 +179,7 @@ coverImage: cover-image-01.png
 >Concurrency는 해결해야 할 문제고,
 >Parallelisma은 해결하는 방법이다.
 
-라고 생각해왔는데, 몇 군데 조사해보니 이런 식으로 서술된 게 없어서 아닌가보다.. 하고 구조 vs 실행에 힘을 실어주고 끝맺었는데, 우군을 얻었으니 다시 다음과 같이 결론낸다.
+라고 생각해왔는데, 몇 군데 조사해보니 이런 식으로 서술된 게 없어서 아닌가보다.. 하고 Rob Pike의 설명대로 구조 vs 실행에 힘을 실어주고 끝맺었는데, 우군을 얻었으니 Rob Pike와는 조금 다를지라도 다음과 같이 결론낸다.
 
 >**Concurrency는 동시에 발생한 다수의 일을 처리해야하는 상황을 의미**하고,  
 >**Parallelism은 다수의 일을 동시에 실행하는 방식을 의미**한다.
