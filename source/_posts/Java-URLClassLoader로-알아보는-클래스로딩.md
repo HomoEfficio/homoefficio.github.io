@@ -18,6 +18,7 @@ tags:
   - Platform ClassLoader
   - System ClassLoader
   - 자바 클래스로더
+  - 자바 URLClassLoader
   - 부트스트랩 클래스로더
   - 애플리케이션 클래스로더
   - 플랫폼 클래스로더
@@ -111,7 +112,7 @@ public class ClassLoaderRunner {
 
 마지막으로 프로젝트 경로 외부에 있는 클래스를 `URLClassLoader`를 통해 읽어오는 부분이 있다. `URLClassLoader`를 생성할 때 **URL만 인자로 넘기면 기본값으로 `ClassLoaderRunner`를 로딩한 애플리케이션 클래스로더가 parent classloader로 사용된다.**
 
-유의해야할 점은 **URLClassLoader의 생성자 인자로 URL을 넘겨줄 떄 `/`로 끝나는 문자열을 줘야 `.class` 파일을 인식할 수 있다**는 점이다.
+유의해야할 점은 **URLClassLoader의 생성자 인자로 URL을 넘겨줄 때 로딩하고자 하는 `.class` 파일을 포함하고 있는 디렉토리(`/`로 끝나야 함)를 넘겨줘야 `.class` 파일을 인식할 수 있다**는 점이다. 예를 들어 패키지를 포함한 클래스 이름이 'a.b.c.ABC.class'라면 실제로는 '.../어딘가/a/b/c/ABC.class'로 저장돼 있는데, '/a'를 포함하고 있는 '.../어딘가/'를 URL로 변환해서 넘겨줘야 한다.
 
 ### Internal
 
@@ -185,7 +186,7 @@ Process finished with exit code 0
 - Bootstrap ClassLoader는 `null` 로 표시된다. 실제로 Bootstrap ClassLoader는 Native C로 구현되어 있다.
 - `jre/lib/ext` 폴더에 있는 jar 파일 안에 있는 `ZipInfo.class`를 통해 Extension ClassLoader를 확인할 수 있다.
   - 참고로 Java 9 에서는 모듈 시스템이 도입되면서 클래스로더에도 변화가 있었으며, `ZipInfo.class` 파일을 찾지 못해 컴파일 에러가 발생한다.
-- External 클래스는 `URLClassLoader`를 통해 로딩을 시도하더라도, **클래스 파일이 프로젝트 외부가 아닌 내부에 존재하고 있으면 클래스로딩 위임에 의해 [여기](https://github.com/HomoEfficio/dev-tips/blob/master/Java%20ClassLoader%20훑어보기.md)에 나온 것처럼 Application ClassLoader에 의해 로딩된다.**
+- External 클래스는 `URLClassLoader`를 통해 로딩을 시도하더라도, **클래스 파일이 프로젝트 외부가 아닌 내부에 존재하고 있으면 클래스로딩 위임에 의해 [여기](https://homoefficio.github.io/2018/10/13/Java-클래스로더-훑어보기/)에 나온 것처럼 Application ClassLoader에 의해 로딩된다.**
 
 ## External 클래스를 프로젝트 내부에서 외부로 옮긴 후 실행
 
@@ -283,7 +284,7 @@ public class ClassLoaderRunner9 {
 }
 ```
 
-Java 8과 달라진 점은 Platform ClassLoader와 System ClassLoader를 `ZipInfo.class`나 `Internal.class`와 같은 개별 클래스의 `getClassLoader()`가 아니라 **`ClassLoader.getPlatformClassLoader()`, `ClassLoader.getSystemClassLoader()`와 같이 `ClassLoader`의 static 메서드를 통해 직접 가졍로 수 있다**는 점이다.
+Java 8과 달라진 점은 Platform ClassLoader와 System ClassLoader를 `ZipInfo.class`나 `Internal.class`와 같은 개별 클래스의 `getClassLoader()`가 아니라 **`ClassLoader.getPlatformClassLoader()`, `ClassLoader.getSystemClassLoader()`와 같이 `ClassLoader`의 static 메서드를 통해 직접 가져올 수 있다**는 점이다.
 
 ## 실행 결과
 
@@ -315,6 +316,6 @@ ClassLoader of Internal: jdk.internal.loader.ClassLoaders$AppClassLoader@726f3b5
 
 > URLClassLoader를 사용하면 클래스패스 외부에 있는 클래스를 로딩해서 클래스패스 내부에 있는 클래스와 조합해서 사용할 수 있다.
 >
-> URLClassLoader로 개별 `.class` 파일을 로딩하려면 해당 클래스 파일을 포함한 URL이 `/`로 끝나야 한다.
+> URLClassLoader로 개별 `.class` 파일을 로딩하려면 해당 클래스 파일을 포함하고 있는 디렉토리('/'로 끝나야 함)를 URL로 전달해야 한다.
 >
 > URLClassLoader로 로딩을 시도하더라도 클래스 파일이 클래스패스 내에 존재하면 클래스로더 위임 원칙에 의해 URLClassLoader가 아닌 애플리케이션 클래스로더(Java 9부터는 시스템 클래스로더)에 의해 로딩된다.
