@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://homoefficio.github.io/"/>
-  <updated>2019-09-28T09:53:51.238Z</updated>
+  <updated>2019-09-29T03:53:37.050Z</updated>
   <id>http://homoefficio.github.io/</id>
   
   <author>
@@ -15,6 +15,73 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Quartz 스케줄러 적용 아키텍처 개선 - 2</title>
+    <link href="http://homoefficio.github.io/2019/09/29/Quartz-%EC%8A%A4%EC%BC%80%EC%A4%84%EB%9F%AC-%EC%A0%81%EC%9A%A9-%EC%95%84%ED%82%A4%ED%85%8D%EC%B2%98-%EA%B0%9C%EC%84%A0-2/"/>
+    <id>http://homoefficio.github.io/2019/09/29/Quartz-스케줄러-적용-아키텍처-개선-2/</id>
+    <published>2019-09-29T03:49:40.000Z</published>
+    <updated>2019-09-29T03:53:37.050Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="Quartz-스케줄러-적용-아키텍처-개선-2"><a href="#Quartz-스케줄러-적용-아키텍처-개선-2" class="headerlink" title="Quartz 스케줄러 적용 아키텍처 개선 - 2"></a>Quartz 스케줄러 적용 아키텍처 개선 - 2</h1><p><a href="https://homoefficio.github.io/2019/09/28/Quartz-스케줄러-적용-아키텍처-개선-1/">1편</a>에서는 Quartz 스케줄러 적용 시 변경 주기가 다른 스케줄러 모듈과 작업 클래스 모듈을 분리해서 클린 아키텍처에 다가가는 방법을 알아봤다.</p><p>분리된 작업 클래스 모듈은 DB 작업을 할 수도 있고, 하둡 인프라 관련 작업을 할 수도 있고, 알림 메일도 보내야하는 등 여러 작업을 할 수 있어야 한다. 그런데 작업 클래스 모듈은 말 그대로 작업 클래스만 모아 놓은 jar 라이브러리일 뿐이라서 JDBC 드라이버나 SMTP 메일 서버 설정 등을 포함하고 있지 않으며, 이런 것들을 스스로 가지고 있는 것 자체도 Single Responsibility Principle 관점에서 보면 적절하지 않다.</p><p>그래서 작업 클래스 모듈을 동적으로 로딩하는 스케줄러 모듈이 작업 클래스가 필요로 하는 컴포넌트를 주입해주는 구조로 구성할 수 있다면 가장 좋다. 즉, 다음과 같이 <code>@Autowire</code>를 통해 작업 클래스에 필요한 의존 관계를 주입해 줄 수 있다면 딱 좋다. </p><p><img src="https://i.imgur.com/mT6CfNb.png" alt="Imgur"></p><p>그런데 보통 <code>@Autowire</code>는 스프링 애플리케이션이 구동되면서 bean을 생성하고 객체 협력망을 구성할 때 작동한다. 지금처럼 스케줄러를 포함한 스프링 애플리케이션이 완전히 구동된 후에 동적으로 작업 클래스를 로딩할 때도 <code>@Autowire</code>를 통해 의존 관계 주입하는 것이 가능할까?</p><h1 id="SpringBeanJobFactory"><a href="#SpringBeanJobFactory" class="headerlink" title="SpringBeanJobFactory"></a>SpringBeanJobFactory</h1><p>결론부터 말하면 <strong>스프링부트가 제공하는 <code>SpringBeanJobFactory</code>를 통해 애플리케이션 구동 완료 후에 동적으로 추가하는 bean에도 의존 관계를 쉽게 주입할 수 있다.</strong></p><p>예제에서는 편의상 스케줄링 직후 작업이 수행되도록 작성했지만, 스케줄러는 일반적으로 작업을 스케줄하는 시점과 작업을 실행하는 시점이 다르다. Quartz 스케줄러도 마찬가지며 스케줄하는 시점에도 작업 클래스를 로딩하지만 작업을 실행하는 시점에도 클래스를 로딩한다. 그리고 작업을 실행하려면 작업 클래스를 인스턴스화 해야 하는데, 이 때 <code>JobFactory</code>가 사용된다. <a href="https://www.quartz-scheduler.org/api/2.3.1-SNAPSHOT/index.html" target="_blank" rel="noopener">문서</a>에도 나와있는 것처럼 <strong><code>JobFactory</code>를 의존 관계 주입 통로로 사용할 수 있다.</strong></p><p>스프링은 꽤 오래 전부터 Quartz를 지원해오고 있으며, 스프링부트에도 quartz starter가 있고 그 안에 <code>JobFactory</code>를 구현한 <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/scheduling/quartz/SpringBeanJobFactory.html" target="_blank" rel="noopener"><code>SpringBeanJobFactory</code></a>가 있다. 애플리케이션 실행 로그를 살펴보면 <code>SpringBeanJobFactory</code>가 사용되고 있음을 알 수 있다.</p><p><img src="https://i.imgur.com/6cElvr0.png" alt="Imgur"></p><p>따라서 <strong>스프링부트를 통해 quartz를 사용하고 있다면, <code>SpringBeanJobFactory</code> 덕분에 작업 클래스도 일반적인 스프링 bean과 마찬가지로 간단하게 의존 관계 주입이 가능하다.</strong> 이제 관련 코드를 작성하면서 알아보자.</p><h2 id="주입할-컴포넌트-생성"><a href="#주입할-컴포넌트-생성" class="headerlink" title="주입할 컴포넌트 생성"></a>주입할 컴포넌트 생성</h2><p>먼저 주입할 컴포넌트를 만들자. 스케줄러 모듈 쪽에 다음과 같이 단순한 <code>HelloService</code>를 추가한다.</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sayHello</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        log.info(<span class="string">"OOO &#123;&#125;.sayHello() executed"</span>, <span class="keyword">this</span>.getClass().getSimpleName());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="모듈-의존-관계-추가"><a href="#모듈-의존-관계-추가" class="headerlink" title="모듈 의존 관계 추가"></a>모듈 의존 관계 추가</h2><p>작업 클래스 모듈에 있는 <code>RemoteSimpleJob</code>가 스케줄러 모듈에 있는 <code>HelloService</code>를 주입 받으려면 다음과 같이 코드 상으로 <code>HelloService</code>가 명시돼야 하는데, 작업 클래스 모듈에서는 <code>HelloService</code>를 인식할 수 없으며, 컴파일 에러가 발생한다.</p><p>따라서 작업 클래스 모듈의 <code>build.gradle</code> 파일에 다음과 같이 스케줄러 모듈(quartz-scheduler)에 대한 의존 관계를 추가한다.</p><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    compile project(<span class="string">':quartz-scheduler'</span>)  <span class="comment">// 여기!!</span></span><br><span class="line"></span><br><span class="line">    compileOnly <span class="string">'org.projectlombok:lombok:1.18.8'</span></span><br><span class="line">    annotationProcessor <span class="string">'org.projectlombok:lombok:1.18.8'</span></span><br><span class="line">    compile <span class="string">group:</span> <span class="string">'org.quartz-scheduler'</span>, <span class="string">name:</span> <span class="string">'quartz'</span>, <span class="string">version:</span> <span class="string">'2.3.1'</span></span><br><span class="line">    compile <span class="string">group:</span> <span class="string">'org.springframework'</span>, <span class="string">name:</span> <span class="string">'spring-context-support'</span>, <span class="string">version:</span> <span class="string">'5.1.9.RELEASE'</span></span><br><span class="line"></span><br><span class="line">    testCompile <span class="string">group:</span> <span class="string">'junit'</span>, <span class="string">name:</span> <span class="string">'junit'</span>, <span class="string">version:</span> <span class="string">'4.12'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="작업-클래스에-의존-관계-추가"><a href="#작업-클래스에-의존-관계-추가" class="headerlink" title="작업 클래스에 의존 관계 추가"></a>작업 클래스에 의존 관계 추가</h2><p>다음과 같이 스케줄러 모듈에 있는 <code>HelloService</code>를 주입 받아서 사용하는 코드를 <code>RemoteSimpleJob</code>에 추가한다.</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="meta">@RequiredArgsConstructor</span>  <span class="comment">// 여기!!</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RemoteSimpleJob</span> <span class="keyword">implements</span> <span class="title">Job</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> HelloService helloService;  <span class="comment">// 여기!!</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">(JobExecutionContext context)</span> <span class="keyword">throws</span> JobExecutionException </span>&#123;</span><br><span class="line">        log.info(<span class="string">"OOO REMOTE JOB [&#123;&#125;] executed."</span>, <span class="keyword">this</span>.getClass().getSimpleName());</span><br><span class="line">        JobDataMap mergedJobDataMap = context.getMergedJobDataMap();</span><br><span class="line">        mergedJobDataMap.forEach((k, v) -&gt; log.info(<span class="string">"OOOOO &#123;&#125;: &#123;&#125;"</span>, k, v));</span><br><span class="line"></span><br><span class="line">        helloService.sayHello();  <span class="comment">// 여기!!</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>작업 클래스 모듈에 추가해둔 <code>deployJar</code>를 실행하고 애플리케이션을 다시 실행하면 <code>RemoteSimpleJob</code>이 <code>HelloService</code>를 주입 받아서 사용함을 확인할 수 있다.</p><p><img src="https://i.imgur.com/wBqMrZP.png" alt="Imgur"></p><p>자 이제 의존 관계 주입이라는 두 번째 고개를 넘었다. 그래서 DB 작업도 할 수 있게 됐다. 그런데 DB 작업을 할 때는 트랜잭션 처리를 해줘야 한다. 스프링에서는 <code>@Transactional</code>을 통해 아주 쉽게 트랜잭션 처리를 할 수 있다. 작업 클래스에서도 <code>@Transactional</code>을 사용할 수 있을까? 마지막 세 번째 고개는 <code>@Transactional</code>이다. 3편에서<br>다룬다.</p><h1 id="정리"><a href="#정리" class="headerlink" title="정리"></a>정리</h1><blockquote><ul><li><p>Quartz 작업 클래스 모듈이 실무에서 발생하는 다양한 작업을 수행하려면 관련 컴포넌트를 주입 받아야 한다.</p></li><li><p>스프링부트에서 제공하는 <code>SpringBeanJobFactory</code> 덕분에 Quartz 작업 클래스에서도 일반적인 bean과 마찬가지 방식으로 간단하게 의존 관계를 주입 받을 수 있다.</p></li></ul></blockquote><h1 id="번외편-스프링부트가-아닌-그냥-스프링일-경우"><a href="#번외편-스프링부트가-아닌-그냥-스프링일-경우" class="headerlink" title="(번외편) 스프링부트가 아닌 그냥 스프링일 경우"></a>(번외편) 스프링부트가 아닌 그냥 스프링일 경우</h1><p>스프링부트가 아니라 그냥 스프링에서 Quartz를 사용할 때도 의존 관계 주입이 가능하다.</p><p>Quartz에서는 <code>JobFactory</code>라는 의존 관계 주입 통로를 제공하고 있고, 스프링에서는 <code>JobFactory</code>의 구현체인 <code>AdaptableJobFactory</code>를 스프링 2.0부터 제공해오고 있다. 그리고 스프링에는 의존 관계를 주입하면서 bean을 만들어 주는 <code>AutowireCapableBeanFactory</code>가 있다. 따라서 다음과 같은 커스텀 팩토리를 만들어주고, 이를 Quartz 스케줄러에서 사용할 수 있게 설정해주면 된다.</p><h2 id="커스텀-작업-팩토리"><a href="#커스텀-작업-팩토리" class="headerlink" title="커스텀 작업 팩토리"></a>커스텀 작업 팩토리</h2><p>커스텀 작업 팩토리의 역할은 작업 클래스 인스턴스 생성과 의존 관계 주입하기, 이렇게 두 가지다.</p><p>작업 클래스 인스턴스 생성은 <code>AdaptableJobFactory</code>에 이미 있는 기능이다. 여기에 의존 관계 주입 기능만 추가해주면 되므로 <code>AdaptableJobFactory</code>를 상속받아서 해당 부분만 오버라이드 하면 된다.</p><p>의존 관계를 주입하려면 <code>AutowireCapableBeanFactory</code>가 필요하고, <code>AutowireCapableBeanFactory</code>를 얻으려면 <code>ApplicationContext</code>가 필요하다. 어떻게든 <code>ApplicationContext</code>를 주입 받을 수 있으면 그만이지만 딱 이런 역할을 의미하는 <code>ApplicationContextAware</code>라는 인터페이스가 있으니 구현해주자.</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">QuartzJobFactory</span> <span class="keyword">extends</span> <span class="title">AdaptableJobFactory</span> <span class="keyword">implements</span> <span class="title">ApplicationContextAware</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> ApplicationContext applicationContext;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setApplicationContext</span><span class="params">(ApplicationContext applicationContext)</span> <span class="keyword">throws</span> BeansException </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.applicationContext = applicationContext;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> Object <span class="title">createJobInstance</span><span class="params">(TriggerFiredBundle bundle)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        Object jobInstance = <span class="keyword">super</span>.createJobInstance(bundle);</span><br><span class="line">        autowireBean(jobInstance);</span><br><span class="line">        <span class="keyword">return</span> jobInstance;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">autowireBean</span><span class="params">(Object jobInstance)</span> </span>&#123;</span><br><span class="line">        AutowireCapableBeanFactory autowireCapableBeanFactory = applicationContext.getAutowireCapableBeanFactory();</span><br><span class="line">        autowireCapableBeanFactory.autowireBean(jobInstance);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="커스텀-스케줄러-팩토리-및-Configuration-클래스"><a href="#커스텀-스케줄러-팩토리-및-Configuration-클래스" class="headerlink" title="커스텀 스케줄러 팩토리 및 @Configuration 클래스"></a>커스텀 스케줄러 팩토리 및 @Configuration 클래스</h2><p>스프링부트는 starter를 통해 자동 설정한 Quartz 스케줄러를 제공하지만 스프링이라면 스케줄러도 직접 생성하고 설정해줘야 한다. 그리고 앞에서 만든 커스텀 작업 팩토리를 직접 생성한 스케줄러에 설정해주면 된다.</p><p>스프링에서는 4.1부터 Quartz 스케줄러 생성 작업을 쉽게 해주는 <code>SchedulerFactoryBean</code>도 제공한다. Quartz 2.1.4 이상이면 호환 가능하다. 따라서 다음과 같이 커스텀 스케줄러 팩토리를 만들어서 Autowiring 기능이 탑재된 커스텀 작업 팩토리를 설정해주고, Quartz 스케줄러를 bean으로 반환하는 설정 클래스를 작성하면 된다.</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">QuartzConfig</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Scheduler <span class="title">scheduler</span><span class="params">(ApplicationContext applicationContext)</span> </span>&#123;</span><br><span class="line">        SchedulerFactoryBean schedulerFactoryBean = getSchedulerFactoryBean(applicationContext);</span><br><span class="line">        <span class="keyword">return</span> schedulerFactoryBean.getScheduler();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">private</span> SchedulerFactoryBean <span class="title">getSchedulerFactoryBean</span><span class="params">(ApplicationContext applicationContext)</span> </span>&#123;</span><br><span class="line">        QuartzJobFactory quartzJobFactory = <span class="keyword">new</span> QuartzJobFactory();</span><br><span class="line">        quartzJobFactory.setApplicationContext(applicationContext);</span><br><span class="line"></span><br><span class="line">        SchedulerFactoryBean schedulerFactoryBean = <span class="keyword">new</span> SchedulerFactoryBean();</span><br><span class="line">        schedulerFactoryBean.setJobFactory(quartzJobFactory);</span><br><span class="line"><span class="comment">//        schedulerFactoryBean.setXXX(...); // 기타 스케줄러 설정값 직접 지정 필요</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> schedulerFactoryBean;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;Quartz-스케줄러-적용-아키텍처-개선-2&quot;&gt;&lt;a href=&quot;#Quartz-스케줄러-적용-아키텍처-개선-2&quot; class=&quot;headerlink&quot; title=&quot;Quartz 스케줄러 적용 아키텍처 개선 - 2&quot;&gt;&lt;/a&gt;Quartz 스케줄러 
+      
+    
+    </summary>
+    
+      <category term="Technique" scheme="http://homoefficio.github.io/categories/Technique/"/>
+    
+    
+      <category term="Java" scheme="http://homoefficio.github.io/tags/Java/"/>
+    
+      <category term="자바" scheme="http://homoefficio.github.io/tags/%EC%9E%90%EB%B0%94/"/>
+    
+      <category term="Quartz" scheme="http://homoefficio.github.io/tags/Quartz/"/>
+    
+      <category term="Scheduler" scheme="http://homoefficio.github.io/tags/Scheduler/"/>
+    
+      <category term="Clean Architecture" scheme="http://homoefficio.github.io/tags/Clean-Architecture/"/>
+    
+      <category term="Interface Segregation Principle" scheme="http://homoefficio.github.io/tags/Interface-Segregation-Principle/"/>
+    
+      <category term="Dependency Inversion Principle" scheme="http://homoefficio.github.io/tags/Dependency-Inversion-Principle/"/>
+    
+      <category term="Isolation" scheme="http://homoefficio.github.io/tags/Isolation/"/>
+    
+      <category term="쿼츠" scheme="http://homoefficio.github.io/tags/%EC%BF%BC%EC%B8%A0/"/>
+    
+      <category term="스케줄러" scheme="http://homoefficio.github.io/tags/%EC%8A%A4%EC%BC%80%EC%A4%84%EB%9F%AC/"/>
+    
+      <category term="클린 아키텍처" scheme="http://homoefficio.github.io/tags/%ED%81%B4%EB%A6%B0-%EC%95%84%ED%82%A4%ED%85%8D%EC%B2%98/"/>
+    
+      <category term="인터페이스 분리 원칙" scheme="http://homoefficio.github.io/tags/%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4-%EB%B6%84%EB%A6%AC-%EC%9B%90%EC%B9%99/"/>
+    
+      <category term="격리" scheme="http://homoefficio.github.io/tags/%EA%B2%A9%EB%A6%AC/"/>
+    
+      <category term="ApplicationContext" scheme="http://homoefficio.github.io/tags/ApplicationContext/"/>
+    
+      <category term="Dependency Injection" scheme="http://homoefficio.github.io/tags/Dependency-Injection/"/>
+    
+      <category term="SpringBeanJobFactory" scheme="http://homoefficio.github.io/tags/SpringBeanJobFactory/"/>
+    
+      <category term="ApplicationContextAware" scheme="http://homoefficio.github.io/tags/ApplicationContextAware/"/>
+    
+      <category term="AdaptableJobFactory" scheme="http://homoefficio.github.io/tags/AdaptableJobFactory/"/>
+    
+      <category term="AutowireCapableBeanFactory" scheme="http://homoefficio.github.io/tags/AutowireCapableBeanFactory/"/>
+    
+      <category term="SchedulerFactoryBean" scheme="http://homoefficio.github.io/tags/SchedulerFactoryBean/"/>
+    
+      <category term="의존 관계 역전 원칙" scheme="http://homoefficio.github.io/tags/%EC%9D%98%EC%A1%B4-%EA%B4%80%EA%B3%84-%EC%97%AD%EC%A0%84-%EC%9B%90%EC%B9%99/"/>
+    
+      <category term="의존 관계 주입" scheme="http://homoefficio.github.io/tags/%EC%9D%98%EC%A1%B4-%EA%B4%80%EA%B3%84-%EC%A3%BC%EC%9E%85/"/>
+    
+  </entry>
   
   <entry>
     <title>Quartz 스케줄러 적용 아키텍처 개선 - 1</title>
@@ -45,10 +112,6 @@
     
       <category term="Scheduler" scheme="http://homoefficio.github.io/tags/Scheduler/"/>
     
-      <category term="쿼츠" scheme="http://homoefficio.github.io/tags/%EC%BF%BC%EC%B8%A0/"/>
-    
-      <category term="스케줄러" scheme="http://homoefficio.github.io/tags/%EC%8A%A4%EC%BC%80%EC%A4%84%EB%9F%AC/"/>
-    
       <category term="Clean Architecture" scheme="http://homoefficio.github.io/tags/Clean-Architecture/"/>
     
       <category term="Interface Segregation Principle" scheme="http://homoefficio.github.io/tags/Interface-Segregation-Principle/"/>
@@ -56,6 +119,10 @@
       <category term="Dependency Inversion Principle" scheme="http://homoefficio.github.io/tags/Dependency-Inversion-Principle/"/>
     
       <category term="Isolation" scheme="http://homoefficio.github.io/tags/Isolation/"/>
+    
+      <category term="쿼츠" scheme="http://homoefficio.github.io/tags/%EC%BF%BC%EC%B8%A0/"/>
+    
+      <category term="스케줄러" scheme="http://homoefficio.github.io/tags/%EC%8A%A4%EC%BC%80%EC%A4%84%EB%9F%AC/"/>
     
       <category term="클린 아키텍처" scheme="http://homoefficio.github.io/tags/%ED%81%B4%EB%A6%B0-%EC%95%84%ED%82%A4%ED%85%8D%EC%B2%98/"/>
     
@@ -838,13 +905,13 @@
     
       <category term="Scheduler" scheme="http://homoefficio.github.io/tags/Scheduler/"/>
     
-      <category term="Job Chaining" scheme="http://homoefficio.github.io/tags/Job-Chaining/"/>
-    
-      <category term="Template Method Pattern" scheme="http://homoefficio.github.io/tags/Template-Method-Pattern/"/>
-    
       <category term="쿼츠" scheme="http://homoefficio.github.io/tags/%EC%BF%BC%EC%B8%A0/"/>
     
       <category term="스케줄러" scheme="http://homoefficio.github.io/tags/%EC%8A%A4%EC%BC%80%EC%A4%84%EB%9F%AC/"/>
+    
+      <category term="Job Chaining" scheme="http://homoefficio.github.io/tags/Job-Chaining/"/>
+    
+      <category term="Template Method Pattern" scheme="http://homoefficio.github.io/tags/Template-Method-Pattern/"/>
     
       <category term="Job 연속 실행" scheme="http://homoefficio.github.io/tags/Job-%EC%97%B0%EC%86%8D-%EC%8B%A4%ED%96%89/"/>
     
@@ -1132,55 +1199,6 @@
       <category term="Bitcoin" scheme="http://homoefficio.github.io/tags/Bitcoin/"/>
     
       <category term="합의 알고리듬" scheme="http://homoefficio.github.io/tags/%ED%95%A9%EC%9D%98-%EC%95%8C%EA%B3%A0%EB%A6%AC%EB%93%AC/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>(번역) IOTA-Transaction-Confirmation-Consensus</title>
-    <link href="http://homoefficio.github.io/2017/11/19/IOTA-Transaction-Confirmation-Consensus/"/>
-    <id>http://homoefficio.github.io/2017/11/19/IOTA-Transaction-Confirmation-Consensus/</id>
-    <published>2017-11-19T03:52:18.000Z</published>
-    <updated>2019-04-28T17:03:55.358Z</updated>
-    
-    <content type="html"><![CDATA[<blockquote><p>IOTA Donations: QPLGOG9PMIMUAW9UDMUNZQHPXZPXDNGLBEIHILXHWHIOFHLIHPDDERXAJQKUQDEORMHSUWVZQE9JYSHIWADIIPAOJD</p></blockquote><blockquote><p>IOTA Donations for Korean version: RLNVZQOKBZRUNZUHDLNMW9XVRVTOBMNLZKXBW9PYMBCOGPCVAEMNUESFD9OGCZVILOACELXGXHIWSXWYCDMXXHNIUX</p></blockquote><h1 id="IOTA-트랜잭션-확정-및-합의"><a href="#IOTA-트랜잭션-확정-및-합의" class="headerlink" title="IOTA 트랜잭션, 확정 및 합의"></a>IOTA 트랜잭션, 확정 및 합의</h1><p>이 글은 <a href="https://github.com/noneymous/iota-consensus-presentation/blob/master/README.md" target="_blank" rel="noopener">https://github.com/noneymous/iota-consensus-presentation/blob/master/README.md</a> 를 원저자의 허락을 받고 번역한 글입니다.</p><h2 id="탱글-초기-상태"><a href="#탱글-초기-상태" class="headerlink" title="탱글 초기 상태"></a>탱글 초기 상태</h2><p><img src="https://i.imgur.com/xCzNwSB.png" alt="Imgur"></p><p>블록 체인 기술에서는 하나의 정적 블록이 여러 개의 트랜잭션을 담고 있고, 그런 정적 블록을 시간 순으로 정렬된 시퀀스로 구성합니다. IOTA는 블록 체인과 다르게 시간 순서로 된 정적 블록의 시퀀스를 만들지 않습니다. 대신에 하나의 트랜잭션이 다른 트랜잭션에 병렬적으로 추가될 수 있습니다. 이제부터 그림과 설명을 통해 IOTA에서 트랜잭션을 어떻게 추가하고 검증하며 합의를 이루는지 알아보겠습니다.</p><p>위의 그림에는 탱글(Tangle) 네트워크가 나와있습니다. 앞으로 나올 여러 시나리오는 이 그림을 바탕으로 진행됩니다. </p><p>초록색 네모는 네트워크에서 높은 신뢰도를 가진 확정된 트랜잭션을 나타내고, 파란색 네모는 부분적으로 확정된, 즉 낮은 신뢰도로 확정된 트랜잭션을 나타냅니다. 회색 네모는 아직 아무 검증도 받지 못한 트랜잭션을 나타냅니다. 노란색 네모는 방금 새로 생긴 트랜잭션을 나타냅니다. 나중에 나올 빨간색 네모는 충돌이 있거나 유효하지 않은 트랜잭션을 나타냅니다. 회색 네모나 노란색 네모처럼 아직 검증 받지 않은 트랜잭션을 팁이라고 합니다.</p><p>위의 그림에서 <code>α</code>는 비정상적인 트랜잭션 입니다. <code>α</code>는 <code>h</code>와 <code>l</code>를 참조하고 있는데, <code>α</code>는 자기가 추가될 때 팁이었던 <code>l</code>과 함께, 이미 <code>l</code>에 의해 참조되고 있으므로 명백하게 팁이 아닌 상태인 <code>h</code>를 참조하기 때문입니다. 비정상적이긴 하지만 문제가 되지는 않으며 현재 시점에서는 네트워크에서 그냥 용인됩니다.</p><h2 id="새-트랜잭션-추가"><a href="#새-트랜잭션-추가" class="headerlink" title="새 트랜잭션 추가"></a>새 트랜잭션 추가</h2><p><img src="https://i.imgur.com/VEhr0LW.png" alt="Imgur"></p><p>탱글 사용자가 새 트랜잭션 <code>1</code>을 추가하려면 <code>w</code>과 <code>x</code> 두 개의 팁을 무작위로 선택하고, 그 <code>w</code>과 <code>x</code>를 검증해야 합니다. 검증이란 팁의 시그너처, 작업 증명(스팸 방지를 위한 낮은 난이도의 작업 증명)을 검사하고, 팁이 직간접적으로 참조하는 과거의 트랜잭션과 충돌이 없는지 확인하는 것을 말합니다. 선택한 팁에 문제가 없다면 사용자는 그 두 개의 팁 <code>w</code>와 <code>x</code>를 참조하는 새 트랜잭션 <code>1</code>을 탱글에 추가합니다.</p><p>선택된 두 개의 팁 <code>w</code>와 <code>x</code>에 의해 직간접적으로 참조되지 않는 트랜잭션(회색 경계 밖에 있는 <code>l</code>, <code>o</code>, <code>r</code>, <code>t</code>, <code>v</code>, <code>y</code>, <code>z</code>)은 <code>1</code>이 탱글에 추가되는 과정에서는 검증되지 않습니다. 이 트랜잭션들은 나중에 다른 트랜잭션이 추가될 때 검증됩니다. </p><h2 id="다른-트랜잭션의-추가"><a href="#다른-트랜잭션의-추가" class="headerlink" title="다른 트랜잭션의 추가"></a>다른 트랜잭션의 추가</h2><p><img src="https://i.imgur.com/y9vIdMj.png" alt="Imgur"></p><p><code>1</code>이 추가됨과 거의 동시(직전이든 직후든 상관없음)에 다른 사용자가 새로운 트랜잭션 <code>2</code>를 <code>1</code>과는 다른 위치에 추가하려고 합니다. <code>2</code>는 두 개의 팁 <code>y</code>와 <code>z</code>를 선택해서 앞에서 설명한 것처럼 검증합니다. <code>1</code>에 의해 검증되었던 <code>a</code>, <code>b</code>, <code>c</code>, <code>d</code>, <code>e</code>, <code>f</code>, <code>g</code>, <code>h</code>, <code>i</code>, <code>j</code>, <code>k</code>, <code>m</code>, <code>n</code>은 <code>2</code>에 의해서도 또 한 번 검증되고, <code>l</code>, <code>o</code>, <code>r</code>, <code>t</code>, <code>v</code>, <code>y</code>, <code>z</code>는 <code>2</code>에 의해 검증됩니다. </p><h2 id="탱글-상태의-변화"><a href="#탱글-상태의-변화" class="headerlink" title="탱글 상태의 변화"></a>탱글 상태의 변화</h2><p><img src="https://i.imgur.com/Byjez9N.png" alt="Imgur"></p><p><code>1</code>과 <code>2</code>에 의한 검증 경로를 겹쳐보면 위의 그림과 같습니다. 어떤 트랜잭션은 <code>1</code>이나 <code>2</code>중 한 쪽에 의해서만 확정되고, 어떤 트랜잭션은 <code>1</code>, <code>2</code> 모두에 의해 확정됩니다. 현재 시점에 존재하는 팁 모두에 의해 검증되고 확정된 트랜잭션들은 ‘완전 확정’되었다고 합니다. 그래서 <code>n</code>은 새롭게 전체 확정되어 탱글에서 더 깊숙히 들어가고 초록색 네모로 바뀝니다. <code>1</code> 또는 <code>2</code>에 추가되는 자손 트랜잭션들은 <code>n</code>을 계속해서 재검증하게 될 것입니다. </p><p>여기서 알 수 있는 것은?</p><ul><li><p>어떤 사용자도 모든 트랜잭션을 확인하고 검증할 필요는 없습니다. 모든 사용자는 2개의 트랜잭션과 그의 조상 트랜잭션을 선택하고 검증하면 됩니다. 이를 통해 탱글의 일부분을 검증하게 되겠죠. 다른 사용자들은 다른 팁과 조상 트랜잭션을 선택하고 검증할테고, 이 모두의 총합은 결국 탱글 전체를 검증하게 됩니다.</p></li><li><p>시간이 지나서 한 트랜잭션이 충분히 많은 검증을 받으면, 이 트랜잭션은 탱글에 새로 추가되는 모든 트랜잭션의 검증 경로에 직간접적으로 포함됩니다. 이런 트랜잭션은 완전히 검증되었다고 볼 수 있으며 새 트랜잭션이 추가될 때마다 계속 검증되고 확정될 것입니다. 그럼 이 트랜잭션은 모든 사용자(또는 기계)로부터 확정되었다고 가정할 수 있으며, 높은 확실성을 가지고 있다고 가정할 수 있습니다.</p></li><li><p>확정 여부를 검사하려면 송금자로부터 IOTA를 받는 수금자는 자신에게 지불하는 정보를 담고 있는 트랜잭션이 탱글에 존재하는 모든 팁으로부터(또는 좀더 낮은, 예를 들어 80%의 확실성만으로도 괜찮다면 80%의 팁으로부터) 직간접적으로 참조되고 있는지만 검사하면 됩니다. 해당 트랜잭션을 별도로 다시 검증하거나 비슷한 절차를 거칠 필요가 없습니다. 주의: 수천 개의 팁이 존재할 수 있으므로 모든 팁의 부모를 검사하는 대신에 무작위 샘플을 선정해서 통계적인 평가를 하는 것도 가능합니다.</p></li></ul><p>팁의 갯수가 너무 작으므로 <code>n</code>은 아직 확정되었다고 볼 수는 없습니다. 더 많은 팁을 포함하고 있는 다음 그림에서 설명을 이어갑니다.</p><h2 id="확정도"><a href="#확정도" class="headerlink" title="확정도"></a>확정도</h2><p><img src="https://i.imgur.com/6Ct1D5Y.png" alt="Imgur"></p><p>이번에는 팁의 갯수가 더 많은 확장된 그림으로 살펴봅시다. 새 팁은 각자의 검증 경로가 있고, 그림에서 옅은색 영역으로 표시되어 있습니다. 영역이 겹칠 수록 색이 짙어지는 것을 유심히 보면 어떤 트랜잭션이 얼마나 많은 팁에 의해 검증되는지와 그에 따른 확정도가 어느 정도인지 알 수 있습니다.</p><p>IOTA를 받는 수금자는 허용 확정도를 스스로 정할 수 있습니다. 트랜잭션 속도가 거래 금액보다 더 중요하다면(즉, 액수가 매우 작은 마이크로 트랜잭션 또는 0원 짜리 트랜잭션), 또는 송금자가 믿을 만한 친구라면 75%의 확정도면 충분할 겁니다. 허용 확정도가 75%라면, 다시 말해 4개 팁 중에서 3개의 팁으로부터 검증을 받으면 되는 수준이라면, 그림에 표시된 4개의 팁 중 <code>2</code>, <code>3</code>, <code>4</code> 세 개의 팁으로부터 검증 받은 <code>l</code>, <code>o</code>, <code>t</code>는 확정되었다고 볼 수 있습니다.</p><h2 id="전파-지연"><a href="#전파-지연" class="headerlink" title="전파 지연"></a>전파 지연</h2><p><img src="https://i.imgur.com/Pyuvqxc.png" alt="Imgur"></p><p>작업증명이 오래 걸릴 수도 있고, 트랜잭션의 전파가 지연될 수 있으므로 이론적으로는 <code>5</code> 같은 느린 트랜잭션이 뒤늦게 탱글에 추가될 수 있습니다. <code>5</code>가 추가되기 전에는 <code>n</code>이 모든 팁으로부터 검증을 받은 상태였지만, <code>5</code>의 검증 경로에는 <code>n</code>이 포함되지 않으므로 <code>5</code>가 추가되면 <code>n</code>은 더이상 모든 팁으로부터 검증 받은 트랜잭션이 아닌 상태로 바뀝니다. 하지만 확정도는 80%로 여전히 매우 높습니다(그림에서는 5개의 팁만 있지만 실제로는 수천 개의 팁이 있을 것입니다).</p><p><code>5</code>가 추가된다고 해서 <code>n</code>의 상태가 확정에서 미확정으로 바뀌지는 않습니다. 단지 수학적으로 정확한 확정도 값이 변할 뿐입니다(예를 들어 99개의 팁 모두로부터 검증을 받은 상태였다가 새로 추가된 1개의 팁으로부터 검증을 받지 못하게 되었다면 확정도는 100%에서 99%로 변합니다). <code>5</code>가 추가된 후에 새로 추가된 팁이 <code>1</code>과 <code>5</code>를 참조한다면 <code>n</code>의 확정도는 다시 100%로 변합니다. 더 많은 트랜잭션이 탱글에 추가된다면 미미하나마 이런 확정도 변동이 생길 가능성도 작아집니다.</p><p>어쨌든 100%의 확정도는 획득하는 것은 어려운 일이라는 점을 알아둘 필요가 있습니다. 왜냐하면 비정상적인 트랜잭션을 참조하거나 정해진 프로토콜을 따르지 않는 악의적인 팁이 존재할 수 있기 때문입니다.</p><h2 id="이중-지불"><a href="#이중-지불" class="headerlink" title="이중 지불"></a>이중 지불</h2><p><img src="https://i.imgur.com/ikL18Ic.png" alt="Imgur"></p><p>사용자가 두 개의 충돌되는 트랜잭션 <code>w</code>와 <code>y</code>를 탱글의 서로 다른 영역에서 발생시켰다고 가정해봅시다. 그 이후에 추가되는 트랜잭션은 팁 선정이나 전파 지연 때문에, 충돌되는 트랜잭션인 <code>w</code>와 <code>y</code> 중 하나의 트랜잭션만 검증 경로에 포함할 가능성이 있습니다. </p><p>예를 들어 <code>1</code>을 탱글에 추가하는 사용자와 <code>2</code>를 탱글에 추가하는 사용자는 <code>w</code>와 <code>y</code>가 충돌된다는 사실을 알 수 없으며, 결과적으로 <code>w</code>와 <code>y</code>를 충돌 없는 유효한 트랜잭션으로 판별하게 됩니다. </p><p>하지만 그 충돌은 머지 않아 발견됩니다. 예를 들어 <code>1</code>과 <code>2</code>를 참조하는 <code>5</code>가 추가되면 <code>5</code>의 검증 경로에는 <code>w</code>와 <code>y</code>가 모두 포함되므로 <code>5</code>는 충돌을 발견할 수 있습니다. 그래서 <code>5</code>는 <code>1</code>과 <code>2</code>를 선택하지 않고 충돌이 없는 다른 두 개의 팁을 다시 선택할 겁니다. 그래야 <code>5</code> 자신이 나중에 추가되는 트랜잭션에 의해 유효한 트랜잭션으로서 검증 받을 수 있기 때문입니다.  </p><p>팁 선정 알고리듬과 탱글 프로세스에 따르면 충돌이 명백하게 발견되기 전에 <code>w</code>와 <code>y</code> 중 하나만 검증 경로에 포함한 많은 사용자는 <code>w</code>와 <code>y</code>의 충돌을 발견할 수 없으므로, <code>w</code>와 <code>y</code>를 유효한 트랜잭션으로 인정할 가능성이 있습니다. </p><p>하지만 결국에는 사용자들이 새로운 트랜잭션을 <code>w</code>를 검증 경로에 포함하는 팁과 <code>y</code>를 검증 경로에 포함하는 팁 중 어느 쪽에 더 많이 추가했느냐에 따라 <code>w</code>와 <code>y</code> 둘 중 하나만 확정되고 나머지 하나는 버려집니다. </p><p>버려진 쪽에 추가된 트랜잭션들은 충돌이 있었는지 몰랐지만 억울하게도 함께 버려집니다. 하지만 충돌을 모른채 버려진 트랜잭션들이 탱글에서 아예 사라지는 것은 아니고 다른 사용자(IOTA를 받는 수금자일 가능성이 높습니다)에 의해 선택되서 탱글에 다시 추가되고 검증 받을 수 있는 기회를 얻게 됩니다. </p><p>검증을 받으려면 작업 증명이 다시 실행되겠지만 송금자로부터 거래 승인 정보를 다시 받아와야 할 필요는 없습니다.</p><h2 id="이중-지불-문제-해결"><a href="#이중-지불-문제-해결" class="headerlink" title="이중 지불 문제 해결"></a>이중 지불 문제 해결</h2><p><img src="https://i.imgur.com/PvYUUpM.png" alt="Imgur"></p><p>앞의 이중 지불 그림에서 사용자는 <code>5</code>를 <code>1</code>과 <code>2</code>에 추가하려고 했지만, <code>w</code>와 <code>y</code>가 충돌된다는 걸 발견하고는 팁을 다시 선택해서 <code>1</code>과 <code>4</code>를 선택했고, <code>1</code>과 <code>4</code>에서는 충돌이 발견되지 않았으므로 <code>5</code>는 <code>1</code>과 <code>4</code>에 추가 되었습니다. 다른 사용자는(반드시 다른 사용자일 필요는 없습니다) <code>7</code>을 <code>2</code>와 <code>3</code>에 추가 했습니다.</p><p>이렇게 되면 <code>w</code>를 포함하는 경로와 <code>y</code>를 포함하는 두 가지 경로로 일종의 분기가 발생하지만, 앞의 이중 지불 단원에서 설명한대로 둘 중 하나는 버려지고 하나만 살아남게 됩니다. 트랜잭션의 누적 가중치를 감안한 무작위 팁 선택 로직에 의해, 분기된 두 경로 중 한 쪽 경로에 더 많은 자손 트랜잭션이 추가될 것 입니다.</p><p>그리고 시간이 지나면 누적 가중치를 감안한 팁 선택 알고리듬에 의해 한 쪽 경로에는 정상적인 방법으로 트랜잭션을 추가하는 것이 불가능해집니다. 앞의 그림에서 <code>5</code>, <code>6</code>, <code>8</code> 다음에는 새로운 트랜잭션이 계속 추가될 수 있지만, <code>7</code> 다음에는 트랜잭션을 추가할 수 없게 됩니다. 그래서 <code>y</code>, <code>2</code>, <code>3</code>, <code>7</code>은 더 이상 검증을 받지 못하게 되고 완전 확정 상태가 될 수 없습니다.</p><p>이중 지불 단원에서 설명한 것처럼 버려지는 경로에 있던 <code>y</code>, <code>2</code>, <code>3</code>, <code>7</code>은 일단 탱글에서 떨어져나간 후에 다른 새로운 트랜잭션들에 의해 검증되면 다시 탱글에 추가될 수 있습니다. <code>y</code>, <code>2</code>, <code>3</code>, <code>7</code> 각각이 유효한 트랜잭션이라면 다른 정상적인 트랜잭션과 마찬가지로 결국에는 확정될 수 있습니다. 그래서 <code>2</code>, <code>3</code>, <code>7</code>은 확정될 수 있지만 충돌 내용이 포함된 <code>y</code>는 끝내 확정될 수 없습니다.</p><h2 id="오프라인-탱글"><a href="#오프라인-탱글" class="headerlink" title="오프라인 탱글"></a>오프라인 탱글</h2><p><img src="https://i.imgur.com/60kh0yc.png" alt="Imgur"></p><p>탱글 사용자는 탱글 네트워크에 연결되어 있지 않은 오프라인 네트워크에서도 트랜잭션을 계속 붙여나갈 수 있습니다. 그러기 위해서는 트랜잭션이 프로토콜로 정해진 규약에 따라 생성되고 연결되어야 합니다. </p><p>오프라인 네트워크는 외부 인터넷 연결이 끊어져서 메인 탱글 네트워크에 연결할 수는 없지만, 인트라넷처럼 내부의 연결은 가능한 상태의 네트워크를 말합니다. </p><p>위의 예제 그림에서 <code>1</code>과 <code>2</code>는 처음으로 온라인 탱글 네트워크와 연결이 끊어져서 오프라인 상태가 된 트랜잭션 입니다. 그 둘은 온라인 탱글의 가장 끝에 있던 팁인 <code>r</code>과 <code>t</code>에 연결되어 있습니다. </p><p>노란색 영역으로 표시된 오프라인 네트워크에서 <code>1</code>과 <code>2</code> 이후에 발생하는 트랜잭션은 온라인 네트워크일 때와 마찬가지 방식으로 <code>1</code>과 <code>2</code>를 조상으로 해서 계속해서 추가됩니다.</p><p>다시 인터넷과 연결되어 오프라인 네트워크의 트랜잭션들을 다시 메인 탱글 네트워크에 연결할 수 있게 되면, 메인 탱글 네트워크와 방금 다시 온라인 네트워크가 된 노란색 영역 모두를 볼 수 있는 <code>8</code>이 메인 탱글 네트워크에 있는 <code>y</code>와 오프라인 네트워크에 있던 <code>7</code>을 선택해서 검증하면서 오프라인 네트워크와 메인 탱글 네트워크를 병합합니다. 나중에 <code>8</code>에 트랜잭션이 추가되면 오프라인 네트워크에 있던 <code>1</code>, <code>2</code>, <code>3</code>, <code>4</code>, <code>5</code>, <code>6</code>, <code>7</code>이 검증 경로에 포함되어 함께 검증됩니다.</p><p>오프라인 네트워크에 있던 트랜잭션이 완전 확정 상태가 되려면, 메인 탱글 네트워크에 있는 트랜잭션과 마찬가지로 충돌이 없어야 합니다. 만약 <code>1</code>~<code>7</code> 중에서 하나라도 메인 탱글 네트워크에 있는 트랜잭션과 충돌이 있다면, <code>1</code>~<code>8</code> 모두 확정되지 못합니다. 이중 지불 단원에서 설명한 것처럼 충돌이 메인 탱글에 있는 모든(또는 대다수의) 팁에 의해 발견되려면 어느 정도 후속 트랜잭션이 탱글 네트워크에 추가되어야 합니다.</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;blockquote&gt;
-&lt;p&gt;IOTA Donations: QPLGOG9PMIMUAW9UDMUNZQHPXZPXDNGLBEIHILXHWHIOFHLIHPDDERXAJQKUQDEORMHSUWVZQE9JYSHIWADIIPAOJD&lt;/p&gt;
-&lt;/blockquote&gt;
-      
-    
-    </summary>
-    
-      <category term="BlockChain" scheme="http://homoefficio.github.io/categories/BlockChain/"/>
-    
-    
-      <category term="BlockChain" scheme="http://homoefficio.github.io/tags/BlockChain/"/>
-    
-      <category term="블록체인" scheme="http://homoefficio.github.io/tags/%EB%B8%94%EB%A1%9D%EC%B2%B4%EC%9D%B8/"/>
-    
-      <category term="FinTech" scheme="http://homoefficio.github.io/tags/FinTech/"/>
-    
-      <category term="핀테크" scheme="http://homoefficio.github.io/tags/%ED%95%80%ED%85%8C%ED%81%AC/"/>
-    
-      <category term="Cryptocurrency" scheme="http://homoefficio.github.io/tags/Cryptocurrency/"/>
-    
-      <category term="IOTA" scheme="http://homoefficio.github.io/tags/IOTA/"/>
-    
-      <category term="아이오타" scheme="http://homoefficio.github.io/tags/%EC%95%84%EC%9D%B4%EC%98%A4%ED%83%80/"/>
-    
-      <category term="Tangle" scheme="http://homoefficio.github.io/tags/Tangle/"/>
-    
-      <category term="DAG" scheme="http://homoefficio.github.io/tags/DAG/"/>
-    
-      <category term="Directed Acyclic Graph" scheme="http://homoefficio.github.io/tags/Directed-Acyclic-Graph/"/>
-    
-      <category term="Consensus" scheme="http://homoefficio.github.io/tags/Consensus/"/>
-    
-      <category term="암호화폐" scheme="http://homoefficio.github.io/tags/%EC%95%94%ED%98%B8%ED%99%94%ED%8F%90/"/>
     
   </entry>
   
