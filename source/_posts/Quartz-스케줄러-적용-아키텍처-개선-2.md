@@ -114,7 +114,7 @@ public class RemoteSimpleJob implements Job {
 
 ![Imgur](https://i.imgur.com/wBqMrZP.png)
 
-자 이제 의존 관계 주입이라는 두 번째 고개를 넘었다. 그래서 DB 작업도 할 수 있게 됐다. 그런데 DB 작업을 할 때는 트랜잭션 처리를 해줘야 한다. 스프링에서는 `@Transactional`을 통해 아주 쉽게 트랜잭션 처리를 할 수 있다. 작업 클래스에서도 `@Transactional`을 사용할 수 있을까? 마지막 세 번째 고개는 `@Transactional`이다. 3편에서
+자 이제 의존 관계 주입이라는 두 번째 고개를 넘었다. 그래서 DB 작업도 할 수 있게 됐다. 그런데 DB 작업을 할 때는 트랜잭션 처리를 해줘야 한다. 스프링에서는 `@Transactional`을 통해 아주 쉽게 트랜잭션 처리를 할 수 있다. 작업 클래스에서도 `@Transactional`을 사용할 수 있을까? 마지막 세 번째 고개는 `@Transactional`이다. [3편](ttps://homoefficio.github.io/2019/09/29/Quartz-스케줄러-적용-아키텍처-개선-3/)에서
 다룬다.
 
 
