@@ -73,17 +73,15 @@ return member.orElseThrow(() -> new NoSuchElementException());
 
 ## 2. `orElse(new ...)` 대신 `orElseGet(() -> new ...)`
 
->**`Optional`에 값이 없을 때만 새로운 객체를 생성하거나 새로운 연산이 수행되도록 `orElse()` 대신 `orElseGet()`을 쓰자.**
-
-**`orElse(...)`에서 `...`는 `Optional`에 값이 있든 없든 무조건 실행된다.**
+>**`orElse(...)`에서 `...`는 `Optional`에 값이 있든 없든 무조건 실행된다. 따라서 `...`가 새로운 객체를 생성하거나 새로운 연산을 수행하는 경우에는 `orElse()` 대신 `orElseGet()`을 써야한다.**
 
 이거 사실 생각해보면 굉장히 당연한 내용이다. `method1(method2())`이 실행되면 `method2()`는 `method1()`보다 먼저 그리고 언제나 실행된다. 따라서 `orElse(new ...)`에서도 `new ...`가 무조건 실행되는 것이 당연하다.  
 
-그런데 아마도 이름 때문이겠지만 묘하게도 무심결에 생각없이 써보면 `orElse(new ...)`에서 `new ...`는 `Optional`에 값이 없을 때만 실행될 것 같은 착각을 불러온다.
+그런데 아마도 이름 때문이겠지만 묘하게도 무심결에 생각없이 `orElse(new ...)`를 써보면 `new ...`는 `Optional`에 값이 없을 때만 실행될 것 같은 착각이 든다.
 
-암튼 `Optional`에 값이 없으면 `orElse()`의 인자로서 실행된 값이 반환되므로 실행한 의미가 있지만, **`Optional`에 값이 있으면 `orElse()`의 인자로서 실행된 값이 무시되고 버려진다.** 따라서 **`orElse(...)`는 `...`가 새 객체 생성이나 새로운 연산을 유발하지 않고 이미 생성되었거나 계산된 값일 때만 사용해야 한다.**
+암튼 `Optional`에 값이 없으면 `orElse()`의 인자로서 실행된 값이 반환되므로 실행한 의미가 있지만, **`Optional`에 값이 있으면 `orElse()`의 인자로서 실행된 값이 무시되고 버려진다.** 따라서 **`orElse(...)`는 `...`가 새 객체 생성이나 새로운 연산을 유발하지 않고 이미 생성되었거나 이미 계산된 값일 때만 사용해야 한다.**
 
-**`orElseGet(Supplier)`에서 `Supplier`는 `Optional`에 값이 없을 때만 실행된다. 따라서 `Optional`에 값이 없을 때만 새 객체를 생성하거나 새 연산을 수행하므로 불필요한 오버헤드가 없다.**
+**`orElseGet(Supplier)`에서 `Supplier`는 `Optional`에 값이 없을 때만 실행된다. 따라서 `Optional`에 값이 없을 때만 새 객체를 생성하거나 새 연산을 수행하므로 불필요한 오버헤드가 없다.** 물론 람다식이나 메서드참조에 대한 오버헤드는 있겠지만 불필요한 객체 생성이나 연산을 수행하는 것에 비하면 대부분 경미할 것이다.
 
 ```java
 // 안 좋음
@@ -101,7 +99,7 @@ Optional<Member> member = ...;
 return member.orElse(EMPTY_MEMBER);  // 이미 생성됐거나 계산된 값은 orElse()를 사용해도 무방
 ```
 
-참고로 `orElse(Collections.emptyList())`는 `Collections.emptyList()`가 호출될 때마다 비어있는 리스트를 반환하는 것이 아니라 이미 생성된 static 변수인 `EMPTY_LIST`를 반환하므로 괜찮다. 하지만, 이런 용법은 많이 사용되면 `orElse(new ...)` 같은 안티 패턴을 정상적인 사용법으로 보이게 하는 좋지 않은 착시 효과가 발생할 수 있으므로 **`orElseGet(Collections::emptyList)`를 사용하는 것이 더 좋다.**
+참고로 `Collections.emptyList()`는 호출될 때마다 비어있는 리스트를 반환하는 것이 아니라 이미 생성된 static 변수인 `EMPTY_LIST`를 반환하므로 `orElse(Collections.emptyList())`를 써도 괜찮다. 하지만, 이런 용법은 많이 사용되면 `orElse(new ...)`나 `orElse(연산을유발하는메서드())` 같은 안티 패턴마저 정상적인 사용법으로 인식되게 하는 좋지 않은 착시 효과가 발생할 수 있으므로 **`orElseGet(Collections::emptyList)`를 사용하는 것이 더 좋다.**
 
 
 ## 3. 단지 값을 얻을 목적이라면 `Optional` 대신 `null` 비교
