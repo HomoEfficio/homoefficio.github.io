@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="뒤태지존의 끄적거림">
+    <title>IntelliJ에서 H2 연결하고 JPA Console 사용하기 - 뒤태지존의 끄적거림</title>
+    <meta name="author" content="HomoEfficio">
+    <meta name="description" content="뒤태지존의 끄적거림">
+    
+        <link rel="icon" href="/assets/images/favicon.ico">
+    
+    
+        <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <meta name="description" content="IntelliJ에서 H2 연결하고 JPA Console 사용하기H2는 Web 콘솔도 지원해줘서 로컬 환경에서 웹을 통해 쉽게 데이터를 확인할 수 있다.IntelliJ Ultimate 버전에는 DB Client 도구가 포함돼있어서 로컬에서 H2 DB를 사용할 때 편리하게 사용할 수 있다.또한 JPA를 사용하는 경우 JPA Console을 사용할 수 있고, H">
+<meta name="keywords" content="IntelliJ,H2,H2 TCP Server,JPA,JPA Console,SpringBoot">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="IntelliJ에서 H2 연결하고 JPA Console 사용하기">
+<meta property="og:url" content="http://homoefficio.github.io/2019/10/09/IntelliJ에서-H2-연결하고-JPA-Console-사용하기/index.html">
+<meta property="og:site_name" content="뒤태지존의 끄적거림">
+<meta property="og:description" content="IntelliJ에서 H2 연결하고 JPA Console 사용하기H2는 Web 콘솔도 지원해줘서 로컬 환경에서 웹을 통해 쉽게 데이터를 확인할 수 있다.IntelliJ Ultimate 버전에는 DB Client 도구가 포함돼있어서 로컬에서 H2 DB를 사용할 때 편리하게 사용할 수 있다.또한 JPA를 사용하는 경우 JPA Console을 사용할 수 있고, H">
+<meta property="og:locale" content="ko">
+<meta property="og:image" content="https://i.imgur.com/V3jgpSb.png">
+<meta property="og:image" content="https://i.imgur.com/7iSodqX.png">
+<meta property="og:image" content="https://i.imgur.com/ZY7UV9y.png">
+<meta property="og:image" content="https://i.imgur.com/UnochEY.png">
+<meta property="og:image" content="https://i.imgur.com/1h22PXY.png">
+<meta property="og:image" content="https://i.imgur.com/H3ASiJO.png">
+<meta property="og:image" content="https://i.imgur.com/OjIh2EW.png">
+<meta property="og:image" content="https://i.imgur.com/36vMBtK.png">
+<meta property="og:image" content="https://i.imgur.com/Rf6nGyG.png">
+<meta property="og:image" content="https://i.imgur.com/9F1V9ks.png">
+<meta property="og:image" content="https://i.imgur.com/iM8KTCQ.png">
+<meta property="og:image" content="https://i.imgur.com/0tpkaJo.png">
+<meta property="og:image" content="https://i.imgur.com/Qo9F6Da.png">
+<meta property="og:image" content="https://i.imgur.com/h6LUtjB.png">
+<meta property="og:image" content="https://i.imgur.com/gVcR6zH.png">
+<meta property="og:image" content="https://i.imgur.com/7Rixe39.png">
+<meta property="og:image" content="https://i.imgur.com/PcIGAh2.png">
+<meta property="og:image" content="https://i.imgur.com/GPCA6zX.png">
+<meta property="og:image" content="https://i.imgur.com/wYRCu07.png">
+<meta property="og:image" content="https://i.imgur.com/6bpkFbW.png">
+<meta property="og:image" content="https://i.imgur.com/OyeIBe8.png">
+<meta property="og:image" content="https://i.imgur.com/E5GlHhN.png">
+<meta property="og:image" content="https://i.imgur.com/Bx022sX.png">
+<meta property="og:updated_time" content="2019-10-09T10:11:22.719Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="IntelliJ에서 H2 연결하고 JPA Console 사용하기">
+<meta name="twitter:description" content="IntelliJ에서 H2 연결하고 JPA Console 사용하기H2는 Web 콘솔도 지원해줘서 로컬 환경에서 웹을 통해 쉽게 데이터를 확인할 수 있다.IntelliJ Ultimate 버전에는 DB Client 도구가 포함돼있어서 로컬에서 H2 DB를 사용할 때 편리하게 사용할 수 있다.또한 JPA를 사용하는 경우 JPA Console을 사용할 수 있고, H">
+<meta name="twitter:image" content="https://i.imgur.com/V3jgpSb.png">
+    
+        <meta rel="publisher" content="https://plus.google.com/+오명운"/>
+    
+    
+    
+        <meta property="og:image" content="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=640"/>
+    
+    
+        <meta property="og:image" content="/2019/10/09/IntelliJ에서-H2-연결하고-JPA-Console-사용하기/https:/i.imgur.com/QAMtKHW.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2019/10/09/IntelliJ에서-H2-연결하고-JPA-Console-사용하기/https://i.imgur.com/QAMtKHW.png" />
+    
+    
+        <meta property="og:image" content="/2019/10/09/IntelliJ에서-H2-연결하고-JPA-Console-사용하기/cover-intellij-tools.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2019/10/09/IntelliJ에서-H2-연결하고-JPA-Console-사용하기/cover-intellij-tools.jpg" />
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style.min.css">
+    <!--STYLES END-->
+    
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-79893978-1']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6494847158566766",
+    enable_page_level_ads: true
+  });
+</script>
+</head>
+
+    <body>
+        <div id="blog">
+            <header id="header" data-behavior="1">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="/ ">뒤태지존의 끄적거림</a>
+    </h1>
+    
+        <a class="header-right-picture" href="/#about">
+            <img class="header-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+        </a>
+    
+</header>
+            <nav id="sidebar" data-behavior="1">
+    
+    <div class="sidebar-profile">
+        <a href="/#about">
+            
+            <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+            
+        </a>
+        <span class="sidebar-profile-name">HomoEfficio</span>
+    </div>
+    
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/ 
+                    ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">Home</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-categories
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">Categories</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-tags
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">Tags</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-archives
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">Archives</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link st-search-show-outputs"
+                    href="#search
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                    <span class="sidebar-button-desc">Search</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="#about
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">About me</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="https://github.com/HomoEfficio" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                    <span class="sidebar-button-desc">GitHub</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="mailto:homo.efficio@gmail.com" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-envelope-o"></i>
+                    <span class="sidebar-button-desc">Mail</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/atom.xml
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+            <div id="main" data-behavior="1">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+        <div class="post-header-cover" style="background-image:url('/2019/10/09/IntelliJ에서-H2-연결하고-JPA-Console-사용하기/cover-intellij-tools.jpg');">
+            <div class="post-header main-content-wrap">
+    
+        <h1 class="post-title" itemprop="headline">IntelliJ에서 H2 연결하고 JPA Console 사용하기</h1>
+    
+    <div class="post-meta">
+    <time  itemprop="datePublished" content="Wed Oct 09 2019 19:00:09 GMT+0900">
+        Oct 09, 2019
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/개발-환경-및-도구/">개발 환경 및 도구</a>
+
+
+    
+</div>
+</div>
+        </div>
+    
+    <div class="post-content markdown main-content-wrap" itemprop="articleBody">
+        
+            <h1 id="IntelliJ에서-H2-연결하고-JPA-Console-사용하기"><a href="#IntelliJ에서-H2-연결하고-JPA-Console-사용하기" class="headerlink" title="IntelliJ에서 H2 연결하고 JPA Console 사용하기"></a>IntelliJ에서 H2 연결하고 JPA Console 사용하기</h1><p>H2는 Web 콘솔도 지원해줘서 로컬 환경에서 웹을 통해 쉽게 데이터를 확인할 수 있다.<br>IntelliJ <strong>Ultimate 버전</strong>에는 DB Client 도구가 포함돼있어서 로컬에서 H2 DB를 사용할 때 편리하게 사용할 수 있다.<br>또한 JPA를 사용하는 경우 JPA Console을 사용할 수 있고, Hibernate Console처럼 JPA 구현체에 따른 콘솔도 지원한다.</p>
+<p>스프링부트 애플리케이션에 H2를 임베디드 모드로 사용하는 케이스를 기준으로 한 번 시도해보자.</p>
+<p>IntelliJ 2019.2.3, 자바 11, Gradle 5.6.2, 스프링부트 버전 2.2.0 RC1, H2 1.4 기준이고, 기본 <code>build.gradle</code>은 다음과 같다.</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">dependencies &#123;</span><br><span class="line">    implementation <span class="string">'org.springframework.boot:spring-boot-starter-actuator'</span></span><br><span class="line">    implementation <span class="string">'org.springframework.boot:spring-boot-starter-data-jpa'</span></span><br><span class="line">    implementation <span class="string">'org.springframework.boot:spring-boot-starter-web'</span></span><br><span class="line">    compileOnly <span class="string">'org.projectlombok:lombok'</span></span><br><span class="line">    developmentOnly <span class="string">'org.springframework.boot:spring-boot-devtools'</span></span><br><span class="line">    runtimeOnly <span class="string">'com.h2database:h2'</span></span><br><span class="line">    annotationProcessor <span class="string">'org.springframework.boot:spring-boot-configuration-processor'</span></span><br><span class="line">    annotationProcessor <span class="string">'org.projectlombok:lombok'</span></span><br><span class="line">    testImplementation(<span class="string">'org.springframework.boot:spring-boot-starter-test'</span>) &#123;</span><br><span class="line">        exclude <span class="string">group:</span> <span class="string">'org.junit.vintage'</span>, <span class="string">module:</span> <span class="string">'junit-vintage-engine'</span></span><br><span class="line">    &#125;</span><br><span class="line">    testImplementation <span class="string">'org.springframework.security:spring-security-test'</span></span><br><span class="line">&#125;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<h2 id="H2-웹-콘솔"><a href="#H2-웹-콘솔" class="headerlink" title="H2 웹 콘솔"></a>H2 웹 콘솔</h2><p>H2는 기본적으로 웹 콘솔을 지원하며, 스프링부트에서는 다음의 2가지 방법으로 웹 콘솔을 활성화 할 수 있다. </p>
+<ol>
+<li><code>spring-boot-devtools</code> 적용</li>
+<li>application.properties 에 <code>spring.h2.console.enabled=true</code> 명시</li>
+</ol>
+<p>기본 JDBC URL은 <code>jdbc:h2:mem:testdb</code> 이며, 스프링부트 애플리케이션을 실행하면 <code>localhost:8080/h2-console</code>을 통해 웹 콘솔에 접근할 수 있다.</p>
+<p><img src="https://i.imgur.com/V3jgpSb.png" alt="Imgur"></p>
+<p>H2 웹 콘솔은 다음과 같이 여러 웹 브라우저로부터의 접근은 가능하지만,</p>
+<p><img src="https://i.imgur.com/7iSodqX.png" alt="Imgur"><br>&lt;<a href="https://www.h2database.com/html/tutorial.html#tutorial_starting_h2_console" target="_blank" rel="noopener">https://www.h2database.com/html/tutorial.html#tutorial_starting_h2_console</a> 그림 수정&gt;</p>
+<p>웹 콘솔이므로 당연한 말일 수도 있지만 다음과 같이 웹 브라우저가 아닌 다른 클라이언트로부터의 접근은 불가능하다.</p>
+<p><img src="https://i.imgur.com/ZY7UV9y.png" alt="Imgur"><br>&lt;<a href="https://www.h2database.com/html/tutorial.html#tutorial_starting_h2_console" target="_blank" rel="noopener">https://www.h2database.com/html/tutorial.html#tutorial_starting_h2_console</a> 그림 수정&gt;</p>
+<p>따라서 IntelliJ와 같은 다른 클라이언트로에서 접근하려면 먼저 H2 TCP 서버를 별도로 구동해야 한다.</p>
+<h2 id="H2-TCP-서버-생성"><a href="#H2-TCP-서버-생성" class="headerlink" title="H2 TCP 서버 생성"></a>H2 TCP 서버 생성</h2><h3 id="의존-관계-설정-변경"><a href="#의존-관계-설정-변경" class="headerlink" title="의존 관계 설정 변경"></a>의존 관계 설정 변경</h3><p>H2 TCP 서버를 구동하려면 H2가 제공하는 라이브러리를 소스 코드 수준에서 사용해야하므로 H2를 더 이상 <code>runtimeOnly</code>로만 사용할 수 없다. 따라서 <code>build.gradle</code>에서 H2를 다음과 같이 <code>compile</code>로 변경해줘야 한다.</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">dependencies &#123;</span><br><span class="line">    ...</span><br><span class="line">    compile <span class="string">'com.h2database:h2'</span></span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<h3 id="H2-TCP-서버-구동-빈-추가"><a href="#H2-TCP-서버-구동-빈-추가" class="headerlink" title="H2 TCP 서버 구동 빈 추가"></a>H2 TCP 서버 구동 빈 추가</h3><p>다음과 같이 H2 TCP 서버를 구동하는 빈을 추가한다. 스프링이 아니라면 빈 대신 별도의 Java 애플리케이션으로 작성해도 된다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> io.homo_efficio.learnmicroservicesspringboot.config;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.h2.tools.Server;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.sql.SQLException;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">H2ServerConfig</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Server <span class="title">h2TcpServer</span><span class="params">()</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Server.createTcpServer().start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>H2 TCP 서버의 기본 포트는 9092이며, 포트 등 기타 옵션은 <code>createTcpServer()</code>의 정의 부분을 보면 상세히 알 수 있다.</p>
+<p>이제 스프링부트 애플리케이션을 실행하면 H2 TCP 서버가 함께 구동되고, 스프링부트 애플리케이션이 종료될 때 H2 TCP 서버도 함께 종료된다.</p>
+<p>보통 H2는 개발용으로 로컬에서 사용하므로 빈 설정 시 다음과 같이 프로파일을 지정해두고 스프링부트 애플리케이션 구동 시 적절한 프로파일을 지정해서 실행하는 것이 좋다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Profile</span>(<span class="string">"local"</span>)</span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">H2ServerConfig</span> </span>&#123;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>이제 IntelliJ 쪽 설정을 알아보자.</p>
+<h2 id="IntelliJ-데이터-소스-설정"><a href="#IntelliJ-데이터-소스-설정" class="headerlink" title="IntelliJ 데이터 소스 설정"></a>IntelliJ 데이터 소스 설정</h2><p>다음과 같이 데이터베이스 설정 메뉴에서 H2를 선택하고,</p>
+<p><img src="https://i.imgur.com/UnochEY.png" alt="Imgur"></p>
+<p>다음과 같이 H2 JDBC 드라이버를 지정한다.</p>
+<p><img src="https://i.imgur.com/1h22PXY.png" alt="Imgur"></p>
+<p>다음과 같이 왼쪽 상단의 ‘Project Data Sources’에 표시된 항목을 클릭하고 URL, User를 입력한다. URL 입력 시 뭔가 오류를 표시하는 듯한 빨간색 세로 막대가 표시되는데 무시하면 된다.</p>
+<p><img src="https://i.imgur.com/H3ASiJO.png" alt="Imgur"></p>
+<p>Test Connection을 클릭하면 다음과 같이 연결에 성공한다.</p>
+<p><img src="https://i.imgur.com/OjIh2EW.png" alt="Imgur"></p>
+<p>H2 TCP 서버는 인메모리 모드, 파일 모드 둘 다 지원하며 URL 형식은 다음을 참고한다.</p>
+<p><img src="https://i.imgur.com/36vMBtK.png" alt="Imgur"><br>&lt;출처: <a href="https://h2database.com/html/features.html#database_url&gt;" target="_blank" rel="noopener">https://h2database.com/html/features.html#database_url&gt;</a></p>
+<p>참고로 다음과 같이 IntelliJ의 드라이버 지정 화면에서도 Connection type 별로 다음과 같이 URL 템플릿을 친절하게 알려준다.</p>
+<p><img src="https://i.imgur.com/Rf6nGyG.png" alt="Imgur"></p>
+<p>데이터 소스 설정 화면에서 Test Connection에 성공한 후 다음과 같이 ‘Schemas’ 탭을 클릭해서 1초 정도 기다린 후 뜨는 목록에서 ‘PUBLIC’ 스키마를 선택한다.</p>
+<p><img src="https://i.imgur.com/9F1V9ks.png" alt="Imgur"></p>
+<p>OK를 클릭하면 IntelliJ 화면이 다음과 같이 바뀐다.</p>
+<p><img src="https://i.imgur.com/iM8KTCQ.png" alt="Imgur"></p>
+<p>console 창에서는 다음과 같이 자동 완성 도움을 받으면서 쿼리를 작성하고 실행할 수 있다.</p>
+<p><img src="https://i.imgur.com/0tpkaJo.png" alt="Imgur"></p>
+<h2 id="JPA-Console-설정"><a href="#JPA-Console-설정" class="headerlink" title="JPA Console 설정"></a>JPA Console 설정</h2><p>IntelliJ Ultimate 버전에서는 DB Client 뿐만 아니라 JPA Console도 제공하며, 여기서 JPQL 쿼리를 직접 실행할 수 있다.</p>
+<p>다음과 같이 ‘Project Structure’ 화면에서 JPA Console을 사용할 모듈의 ‘main’에서 우클릭하고 JPA를 클릭한다.</p>
+<p><img src="https://i.imgur.com/Qo9F6Da.png" alt="Imgur"></p>
+<p>다음과 같이 ‘Default JPA Provider’에서 실제 사용하는 JPA 구현체를 선택한다.</p>
+<p><img src="https://i.imgur.com/h6LUtjB.png" alt="Imgur"></p>
+<p>다음과 같이 ‘Persistence’ 탭을 클릭하고 ‘entityManagerFactory’를 펼치면 엔티티 클래스가 표시된다.</p>
+<p><img src="https://i.imgur.com/gVcR6zH.png" alt="Imgur"></p>
+<p>다음과 같이 ‘entityManagerFactory’를 우클릭하고 ‘Assign Data Sources…’를 클릭한다.</p>
+<p><img src="https://i.imgur.com/7Rixe39.png" alt="Imgur"></p>
+<p>다음과 같이 ‘Data Source’란을 클릭하면 나오는 목록에서 앞에서 설정한 데이터 소스를 선택하고 OK를 클릭한다.</p>
+<p><img src="https://i.imgur.com/PcIGAh2.png" alt="Imgur"></p>
+<p>다음과 같이 ‘entityManagerFactory’에서 우클릭하고 ‘Console’을 클릭하면,</p>
+<p><img src="https://i.imgur.com/GPCA6zX.png" alt="Imgur"></p>
+<p>다음과 같이 Console 선택 메뉴가 표시된다. JPA Console을 클릭하면,</p>
+<p><img src="https://i.imgur.com/wYRCu07.png" alt="Imgur"></p>
+<p>다음과 같이 JPA Console이 화면에 표시된다.</p>
+<p><img src="https://i.imgur.com/6bpkFbW.png" alt="Imgur"></p>
+<p>바로 JPQL을 입력해서 실행할 수 있다. 현재 스프링부트 애플리케이션이 실행 중이지 않아서 H2 TCP 서버가 기동 중인 상태가 아니므로 다음과 같은 에러가 발생한다.</p>
+<p><img src="https://i.imgur.com/OyeIBe8.png" alt="Imgur"></p>
+<p>스프링부트 애플리케이션을 실행해서 H2 TCP 서버가 기동된 후에 다음과 같이 다시 JPQL을 실행하면 결과가 표시된다.</p>
+<p><img src="https://i.imgur.com/E5GlHhN.png" alt="Imgur"></p>
+<h3 id="JPQL-이름-인식-문제"><a href="#JPQL-이름-인식-문제" class="headerlink" title="JPQL 이름 인식 문제"></a>JPQL 이름 인식 문제</h3><p>그런데 JPA Console에서 JPQL 실행 시 Java의 CamelCase 표기법을 snake_case 표기법으로 자동으로 변환하지 않아서 다음과 같이 엔티티 클래스 이름이나 필드 이름에 CamelCase 표기법이 사용된 경우 ‘not found’ 에러가 난다.</p>
+<p>다음 그림을 보면 CamelCase를 사용하면서도 <code>@Table(name = &quot;MULTIPLICATION_ATTEMPT&quot;)</code>나 <code>@Column(name=&quot;MULTIPLICATION_ATTEMPT_ID&quot;)</code>를 명시해준 건 에러가 나지 않지만, <code>resultAttempt</code>처럼 CamelCase이면서도 <code>@Column</code>으로 이름을 지정해주지 않은 건 에러가 발생한다.</p>
+<p><img src="https://i.imgur.com/Bx022sX.png" alt="Imgur"></p>
+<p>따라서 현재로는 JPA Console을 통해 JPQL을 문제 없이 사용하려면 CamelCase를 사용하는 엔티티 클래스 이름이나 필드 이름에는 <code>@Table</code>,<code>@Column</code>을 통해 실제 테이블에 사용될 snake_case 이름을 모두 지정해줘야 하는 불편함이 있다.</p>
+<h1 id="정리"><a href="#정리" class="headerlink" title="정리"></a>정리</h1><blockquote>
+<ul>
+<li>IntelliJ Ultimate 버전에서는 DB Client를 사용할 수 있다.  </li>
+<li>스프링부트 애플리케이션에서는 H2 TCP 서버를 빈으로 띄우면 IntelliJ DB Client로 연결해서 사용할 수 있다.  </li>
+<li>Project Structure에서 main 모듈에 JPA를 추가하고 데이터 소스를 설정해주면 JPA Console을 사용할 수 있다.  <ul>
+<li>엔티티 클래스 이름이나 필드 이름이 CamelCase로 작성된 경우 <code>@Table</code>, <code>@Column</code>으로 snake_case 이름을 모두 지정해줘야 한다.</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+
+        
+        
+            
+        
+        <hr/>
+        <div>
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="크리에이티브 커먼즈 라이선스" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><a href='https://github.com/homoefficio' target='_blank'>HomoEfficio</a>가 작성한 이 저작물은(는) <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스</a>에 따라 이용할 수 있습니다.
+        </div>
+    </div>
+    <div class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/H2/">H2</a> <a class="tag tag--primary tag--small t-link" href="/tags/H2-TCP-Server/">H2 TCP Server</a> <a class="tag tag--primary tag--small t-link" href="/tags/IntelliJ/">IntelliJ</a> <a class="tag tag--primary tag--small t-link" href="/tags/JPA/">JPA</a> <a class="tag tag--primary tag--small t-link" href="/tags/JPA-Console/">JPA Console</a> <a class="tag tag--primary tag--small t-link" href="/tags/SpringBoot/">SpringBoot</a>
+
+            </div>
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/10/03/Java-Optional-바르게-쓰기/" data-tooltip="Java Optional 바르게 쓰기">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2019/10/09/IntelliJ에서-H2-연결하고-JPA-Console-사용하기/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2019/10/09/IntelliJ에서-H2-연결하고-JPA-Console-사용하기/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2019/10/09/IntelliJ에서-H2-연결하고-JPA-Console-사용하기/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+        
+            <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2019 HomoEfficio. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="1">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/10/03/Java-Optional-바르게-쓰기/" data-tooltip="Java Optional 바르게 쓰기">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2019/10/09/IntelliJ에서-H2-연결하고-JPA-Console-사용하기/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2019/10/09/IntelliJ에서-H2-연결하고-JPA-Console-사용하기/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2019/10/09/IntelliJ에서-H2-연결하고-JPA-Console-사용하기/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="1">
+    <ul class="share-options">
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2019/10/09/IntelliJ에서-H2-연결하고-JPA-Console-사용하기/">
+                <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2019/10/09/IntelliJ에서-H2-연결하고-JPA-Console-사용하기/">
+                <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2019/10/09/IntelliJ에서-H2-연결하고-JPA-Console-사용하기/">
+                <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+            
+        </div>
+        <div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=110"/>
+        
+            <h4 id="about-card-name">HomoEfficio</h4>
+        
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Seoul, Korea.
+            </h5>
+        
+    </div>
+</div>
+        <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/script.min.js"></script>
+<!--SCRIPTS END-->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'hanmomhanda';
+        (function() {
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+
+
+
+</html>
