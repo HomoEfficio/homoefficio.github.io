@@ -5,6 +5,9 @@ categories:
 tags:
   - Git
   - rebase
+  - 리베이스
+  - commit 수정
+  - 커밋 수정
 thumbnailImage: https://git-for-windows.github.io/img/git_logo.png
 coverImage:
 ---
@@ -20,8 +23,8 @@ coverImage:
 작업의 큰 흐름은 다음과 같다.
 
 - 수정하려는 커밋의 바로 이전 커밋을 base로 다시(re) 설정, 즉 rebase 한다.
-- 내용을 수정하고 `git add`, `commit --amend`로 커밋도 수정한다.
-- git rebase --continue로 마무리.
+- 내용을 수정하고 `git add`, `git commit --amend`로 커밋도 수정한다.
+- `git rebase --continue`로 마무리.
 - rebase 완료 후에는 수정한 커밋 이후의 커밋들도 새로운 커밋번호가 할당되어, 수정 커밋 및 그 이후의 커밋들은 사실 상 새로운 커밋이 된다.
 
 이 정도를 알아두고 실제 화면을 보며 이해해보자.
