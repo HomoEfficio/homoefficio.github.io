@@ -36,7 +36,7 @@
 <meta property="og:image" content="http://i.imgur.com/339qZF6.png">
 <meta property="og:image" content="http://i.imgur.com/qckdlTs.png">
 <meta property="og:image" content="http://i.imgur.com/nXKC1wl.png">
-<meta property="og:updated_time" content="2019-11-23T05:37:26.813Z">
+<meta property="og:updated_time" content="2019-11-23T14:11:18.221Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Git 과거의 특정 커밋 수정하기">
 <meta name="twitter:description" content="과거의 특정 커밋에 포함된 내용을 수정해야할 때가 있다. git rebase를 사용하면 가능하기는 한데, 수정 후 remote에 올릴 때 결국 git push --force(또는 조금이라도 안전하게 하려면 git push --force-with-lease)를 써서 기존의 내용을 덮어써야 하므로, 기존의 내용을 공유하고 있던 공동 작업자가 있는 환경에서는 뒷">
@@ -246,9 +246,9 @@
 <li>rebase 완료 후에는 수정한 커밋 이후의 커밋들도 새로운 커밋번호가 할당되어, 수정 커밋 및 그 이후의 커밋들은 사실 상 새로운 커밋이 된다.</li>
 </ul>
 <p>이 정도를 알아두고 실제 화면을 보며 이해해보자.</p>
-<h2 id="git-log"><a href="#git-log" class="headerlink" title="git log"></a>git log</h2><p>수정할 커밋을 확인하고, 바꾸려는 커밋의 바로 이전 커밋을 <code>git rebase --interactive</code>의 target으로 지정한다.</p>
+<h2 id="git-log"><a href="#git-log" class="headerlink" title="git log"></a><code>git log</code></h2><p>수정할 커밋을 확인하고, 바꾸려는 커밋의 바로 이전 커밋을 <code>git rebase --interactive</code>의 target으로 지정한다.</p>
 <p><img src="http://i.imgur.com/i5vxEeR.png" alt="Imgur"></p>
-<h2 id="git-rebase-–interactive"><a href="#git-rebase-–interactive" class="headerlink" title="git rebase –interactive"></a>git rebase –interactive</h2><p><code>git rebase --interactive</code>를 실행하면 다음과 같은 화면이 표시된다.</p>
+<h2 id="git-rebase-interactive"><a href="#git-rebase-interactive" class="headerlink" title="git rebase --interactive"></a><code>git rebase --interactive</code></h2><p><code>git rebase --interactive</code>를 실행하면 다음과 같은 화면이 표시된다.</p>
 <p><img src="http://i.imgur.com/gM3SKOb.png" alt="Imgur"></p>
 <p>아래와 같이 수정할 커밋에 <code>pick</code>라고 표시된 것을 <code>edit</code>로 수정한다.</p>
 <p><img src="http://i.imgur.com/keN0obw.png" alt="Imgur"></p>
@@ -256,13 +256,13 @@
 <p><img src="http://i.imgur.com/1skcCKh.png" alt="Imgur"></p>
 <h2 id="원하는-커밋의-내용-수정"><a href="#원하는-커밋의-내용-수정" class="headerlink" title="원하는 커밋의 내용 수정"></a>원하는 커밋의 내용 수정</h2><p>다음과 같이 수정하기를 원했던 파일을 열어서 수정한다.</p>
 <p><img src="http://i.imgur.com/5pdes49.png" alt="Imgur"></p>
-<h2 id="git-add-amp-git-commit-–amend"><a href="#git-add-amp-git-commit-–amend" class="headerlink" title="git add . &amp; git commit –amend"></a>git add . &amp; git commit –amend</h2><p>수정 후 <code>git status</code>로 확인하면 다음과 같이 표시된다. 수정한 파일을 add 하고,</p>
+<h2 id="git-add-amp-git-commit-amend"><a href="#git-add-amp-git-commit-amend" class="headerlink" title="git add . &amp; git commit --amend"></a><code>git add .</code> &amp; <code>git commit --amend</code></h2><p>수정 후 <code>git status</code>로 확인하면 다음과 같이 표시된다. 수정한 파일을 add 하고,</p>
 <p><img src="http://i.imgur.com/PgCqApP.png" alt="Imgur"></p>
 <p><code>git commit --amend</code>로 수정 내용을 커밋한다.</p>
 <p><img src="http://i.imgur.com/wlJ1vF5.png" alt="Imgur"></p>
 <p>커밋하면 다음과 같이 커밋 내용에 대한 화면이 표시된다.</p>
 <p><img src="http://i.imgur.com/SeRegph.png" alt="Imgur"></p>
-<h2 id="git-rebase-–continue"><a href="#git-rebase-–continue" class="headerlink" title="git rebase –continue"></a>git rebase –continue</h2><p><code>:q!</code>를 입력해서 빠져 나온 후, <code>git rebase --continue</code>를 실행한다.</p>
+<h2 id="git-rebase-continue"><a href="#git-rebase-continue" class="headerlink" title="git rebase --continue"></a><code>git rebase --continue</code></h2><p><code>:q!</code>를 입력해서 빠져 나온 후, <code>git rebase --continue</code>를 실행한다.</p>
 <p><img src="http://i.imgur.com/YjvA2DA.png" alt="Imgur"></p>
 <p>다음과 같이 성공 메시지가 표시된다.</p>
 <p><img src="http://i.imgur.com/f6M9egA.png" alt="Imgur"></p>
@@ -272,7 +272,7 @@
 <p><img src="http://i.imgur.com/339qZF6.png" alt="Imgur"></p>
 <p>git status로 확인해봐도 수정한 커밋을 포함하여 그 이후 5개의 커밋이 origin/master와 달라져있다는, 위의 히스토리 및 로그와 동일한 내용을 확인할 수 있다.</p>
 <p><img src="http://i.imgur.com/qckdlTs.png" alt="Imgur"></p>
-<h2 id="git-push"><a href="#git-push" class="headerlink" title="git push"></a>git push</h2><p>이 상태에서 <code>git push</code>를 실행하면 거절된다.</p>
+<h2 id="git-push"><a href="#git-push" class="headerlink" title="git push"></a><code>git push</code></h2><p>이 상태에서 <code>git push</code>를 실행하면 거절된다.</p>
 <p><img src="http://i.imgur.com/nXKC1wl.png" alt="Imgur"></p>
 <p>그렇다고 <code>git fetch</code> 후 <code>git rebase</code> 또는 <code>git merge</code>를 하면, 원래의 목적인 ‘특정 커밋만 수정하기’는 수포로 돌아간다.</p>
 <p>방법은 <code>git push --force</code>로 특정 커밋만 수정한 내 로컬 버전을 원격에 강제로 덮어쓰는 방법 밖에는 없다. 조금이라도 더 안전하게 작업하려면, 덮어쓰기 전에 로컬의 <code>remotes/브랜치A</code>가 참조하고 있는 것과 현재 원격의 <code>브랜치A</code>가 참조하고 있는 내용이 동일할 경우에만, 즉, 다른 누군가가 원격의 <code>브랜치A</code>에 push를 하지 않은 상태에서만 <code>git push --force</code>를 실행하는 <code>git push --force-with-lease</code>를 실행할 수도 있다. </p>
