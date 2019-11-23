@@ -36,7 +36,7 @@
 <meta property="og:image" content="http://i.imgur.com/339qZF6.png">
 <meta property="og:image" content="http://i.imgur.com/qckdlTs.png">
 <meta property="og:image" content="http://i.imgur.com/nXKC1wl.png">
-<meta property="og:updated_time" content="2019-11-23T05:34:11.910Z">
+<meta property="og:updated_time" content="2019-11-23T05:37:26.813Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Git 과거의 특정 커밋 수정하기">
 <meta name="twitter:description" content="과거의 특정 커밋에 포함된 내용을 수정해야할 때가 있다. git rebase를 사용하면 가능하기는 한데, 수정 후 remote에 올릴 때 결국 git push --force(또는 조금이라도 안전하게 하려면 git push --force-with-lease)를 써서 기존의 내용을 덮어써야 하므로, 기존의 내용을 공유하고 있던 공동 작업자가 있는 환경에서는 뒷">
@@ -241,7 +241,7 @@
 <h2 id="큰-흐름"><a href="#큰-흐름" class="headerlink" title="큰 흐름"></a>큰 흐름</h2><p>작업의 큰 흐름은 다음과 같다.</p>
 <ul>
 <li>수정하려는 커밋의 바로 이전 커밋을 base로 다시(re) 설정, 즉 rebase 한다.</li>
-<li>내용을 수정하고 <code>git add</code>, <code>commit --amend</code>로 커밋도 수정한다.</li>
+<li>내용을 수정하고 <code>git add</code>, <code>git commit --amend</code>로 커밋도 수정한다.</li>
 <li><code>git rebase --continue</code>로 마무리.</li>
 <li>rebase 완료 후에는 수정한 커밋 이후의 커밋들도 새로운 커밋번호가 할당되어, 수정 커밋 및 그 이후의 커밋들은 사실 상 새로운 커밋이 된다.</li>
 </ul>
