@@ -29,14 +29,14 @@ coverImage:
 
 이 정도를 알아두고 실제 화면을 보며 이해해보자.
 
-## git log
+## `git log`
 
 수정할 커밋을 확인하고, 바꾸려는 커밋의 바로 이전 커밋을 `git rebase --interactive`의 target으로 지정한다.
 
 ![Imgur](http://i.imgur.com/i5vxEeR.png)
 
 
-## git rebase --interactive
+## `git rebase --interactive`
 
 `git rebase --interactive`를 실행하면 다음과 같은 화면이 표시된다.
 
@@ -57,7 +57,7 @@ coverImage:
 
 ![Imgur](http://i.imgur.com/5pdes49.png)
 
-## git add . & git commit --amend
+## `git add .` & `git commit --amend`
 
 수정 후 `git status`로 확인하면 다음과 같이 표시된다. 수정한 파일을 add 하고,
 
@@ -71,7 +71,7 @@ coverImage:
 
 ![Imgur](http://i.imgur.com/SeRegph.png)
 
-## git rebase --continue
+## `git rebase --continue`
 
 `:q!`를 입력해서 빠져 나온 후, `git rebase --continue`를 실행한다.
 
@@ -95,7 +95,7 @@ git status로 확인해봐도 수정한 커밋을 포함하여 그 이후 5개�
 
 ![Imgur](http://i.imgur.com/qckdlTs.png)
 
-## git push
+## `git push`
 
 이 상태에서 `git push`를 실행하면 거절된다.
 
