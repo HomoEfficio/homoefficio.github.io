@@ -4,7 +4,11 @@ categories:
   - Specification
 tags:
   - Java
+  - Java Execution Process
+  - Java Memory Structure
+  - Java Memory Model
   - JVM
+  - JVM Memory
   - Bytecode
   - Compile
   - JVM Spec
@@ -30,13 +34,17 @@ tags:
   - invokeinterface
   - invokevirtual
   - 자바
+  - 자바 실행 과정
+  - java 실행 과정
   - 컴파일
   - 바이트코드
   - JVM 명세
   - JVM 스펙
   - JVM 명령어
   - 런타임 데이터 영역
+  - 자바 메모리 구조
   - 자바 메모리 모델
+  - JVM 메모리 구조
   - JVM 메모리 모델
   - 힙
   - 메서드 영역

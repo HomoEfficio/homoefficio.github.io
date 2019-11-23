@@ -4,6 +4,7 @@ categories:
   - Specification
 tags:
   - Java
+  - Java Execution Process
   - JVM
   - Bytecode
   - Compile
@@ -18,6 +19,8 @@ tags:
   - invokevirtual
   - javap
   - 자바
+  - 자바 실행 과정
+  - java 실행 과정
   - 컴파일
   - 바이트코드
   - JVM 명세
