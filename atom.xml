@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://homoefficio.github.io/"/>
-  <updated>2019-10-13T15:45:27.784Z</updated>
+  <updated>2019-12-21T08:52:28.474Z</updated>
   <id>http://homoefficio.github.io/</id>
   
   <author>
@@ -15,6 +15,39 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Raspberry Pi 3에 Ubuntu 설치 하기</title>
+    <link href="http://homoefficio.github.io/2019/12/21/Raspberry-Pi-3%EC%97%90-Ubuntu-%EC%84%A4%EC%B9%98-%ED%95%98%EA%B8%B0/"/>
+    <id>http://homoefficio.github.io/2019/12/21/Raspberry-Pi-3에-Ubuntu-설치-하기/</id>
+    <published>2019-12-21T08:34:41.000Z</published>
+    <updated>2019-12-21T08:52:28.474Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="Install-Ubuntu-on-Raspberry-Pi-3"><a href="#Install-Ubuntu-on-Raspberry-Pi-3" class="headerlink" title="Install Ubuntu on Raspberry Pi 3"></a>Install Ubuntu on Raspberry Pi 3</h1><h2 id="준비물"><a href="#준비물" class="headerlink" title="준비물"></a>준비물</h2><ul><li>Raspberry Pi 3 + 전원 장치</li><li>MicroSD 카드</li><li>USB Keyboard</li><li>Monitor + HDMI 케이블</li><li>Ubuntu 이미지를 다운로드 하고 MicroSD에 Ubuntu 이미지를 Flash 할 인터넷 연결 컴퓨터</li></ul><h2 id="Ubuntu-이미지-파일-다운로드"><a href="#Ubuntu-이미지-파일-다운로드" class="headerlink" title="Ubuntu 이미지 파일 다운로드"></a>Ubuntu 이미지 파일 다운로드</h2><ul><li><a href="https://ubuntu.com/download/raspberry-pi" target="_blank" rel="noopener">https://ubuntu.com/download/raspberry-pi</a><ul><li><code>64-bit for Raspberry Pi 3 and 4</code> 다운로드</li></ul></li></ul><p>약 3G 정도로 다운로드에 시간이 좀 걸리므로 그동안 아래의 ‘Image Flash 프로그램 다운로드 및 설치’, ‘MicroSD 메모리 카드 준비’ 수행</p><h2 id="Image-Flash-프로그램-다운로드-및-설치"><a href="#Image-Flash-프로그램-다운로드-및-설치" class="headerlink" title="Image Flash 프로그램 다운로드 및 설치"></a>Image Flash 프로그램 다운로드 및 설치</h2><ul><li><a href="https://sourceforge.net/projects/win32diskimager/files/latest/download" target="_blank" rel="noopener">https://sourceforge.net/projects/win32diskimager/files/latest/download</a></li></ul><h2 id="MicroSD-메모리-카드-준비"><a href="#MicroSD-메모리-카드-준비" class="headerlink" title="MicroSD 메모리 카드 준비"></a>MicroSD 메모리 카드 준비</h2><p>윈도우 10 기준</p><ul><li><p>MicroSD 메모리 카드를 컴퓨터에 연결</p><ul><li>포맷 등의 팝업이 뜨면 모두 무시</li><li><img src="https://i.imgur.com/93adzTR.png" alt="Imgur"></li><li><img src="https://i.imgur.com/UM67S8u.png" alt="Imgur"></li></ul></li><li><p>기존에 사용하던 카드라 파티션이 나뉘어 있는 경우 파티션 삭제</p><ul><li>윈도우 버튼 우클릭 &gt; 디스크 관리자 실행</li><li><img src="https://i.imgur.com/cGeAsxt.png" alt="Imgur"></li><li>MicroSD 메모리에 있던 볼륨(파티션) 모두 삭제</li><li><img src="https://i.imgur.com/hr9w14r.png" alt="Imgur"></li><li>아래와 같이 모두 삭제 되면 준비 완료</li><li><img src="https://i.imgur.com/rPKVxcJ.png" alt="Imgur"></li></ul></li></ul><h2 id="MicroSD-메모리-카드에-Ubuntu-이미지-파일-Flash"><a href="#MicroSD-메모리-카드에-Ubuntu-이미지-파일-Flash" class="headerlink" title="MicroSD 메모리 카드에 Ubuntu 이미지 파일 Flash"></a>MicroSD 메모리 카드에 Ubuntu 이미지 파일 Flash</h2><ul><li>Ubuntu 이미지 파일 압축 해제<ul><li>필요 시 반디집 설치 후 해제</li></ul></li><li>Image Flash 프로그램 실행<ul><li>Ubuntu 이미지 파일 위치 지정 및 Flash 할 대상 디바이스(MicroSD 카드) 지정 후 Write</li><li><img src="https://i.imgur.com/hFTpk31.png" alt="Imgur"></li><li><img src="https://i.imgur.com/p2inqJO.png" alt="Imgur"></li></ul></li><li>사양에 따라 다르겠지만 약 2~3분 후 다음과 같이 Flash 완료<ul><li><img src="https://i.imgur.com/00yqpDc.png" alt="Imgur"></li></ul></li><li>포맷 팝업창이 다시 뜨면 무시<ul><li><img src="https://i.imgur.com/uV31oML.png" alt="Imgur"></li></ul></li><li>탐색기에서 꺼내기 후 MicroSD 메모리 카드를 빼낸다.</li></ul><h2 id="Raspberry-Pi-부팅-설치-완료-및-로그인"><a href="#Raspberry-Pi-부팅-설치-완료-및-로그인" class="headerlink" title="Raspberry Pi 부팅, 설치 완료 및 로그인"></a>Raspberry Pi 부팅, 설치 완료 및 로그인</h2><ul><li>Ubuntu 이미지가 Flash 된 MicroSD 카드, 모니터와 연결된 HDMI 케이블과 키보드를 Raspberry PI 에 연결하고 마지막으로 Raspberry PI 전원 연결<ul><li><img src="https://i.imgur.com/YwBAux3.jpg" alt="Imgur"></li></ul></li><li>Ubuntu 로 부팅되며 몇 분간 자동 설정 후 로그인 프롬프트 나옴<ul><li><img src="https://i.imgur.com/5P5wgZ6.jpg" alt="Imgur"></li><li><img src="https://i.imgur.com/9G6Zqos.jpg" alt="Imgur"></li><li><img src="https://i.imgur.com/JkXmeLR.jpg" alt="Imgur"></li><li><img src="https://i.imgur.com/LV5d4or.jpg" alt="Imgur"></li><li><strong>놀랍게도 위 사진에 나오는 로그인 프롬프트는 페이크..</strong> 여기서 입력해봤자 비번 틀리다는 얘기만 나오며, 그냥 기다리면 다음 사진과 같이 후속 절차가 자동으로 계속 진행된다.</li><li><img src="https://i.imgur.com/dgSIjFH.jpg" alt="Imgur"></li><li><img src="https://i.imgur.com/dggNhk9.jpg" alt="Imgur"></li></ul></li><li>다음과 같이 <strong><code>[  OK  ] Reached target Cloud-init target.</code> 이 보여야 로그인 준비가 완료</strong>된 것이다. 하지만 자동으로 로그인 프롬프트가 뜨지는 않고 엔터를 눌러줘야 로그인 프롬프트가 뜬다.<ul><li><img src="https://i.imgur.com/oL5bc8f.jpg" alt="Imgur"></li></ul></li><li>초기 아이디/비번은 ubuntu/ubuntu 이며 로그인 후 위 그림과 같이 비번 변경하면 셸 프롬프트가 뜬다.<ul><li><img src="https://i.imgur.com/njltjMN.jpg" alt="Imgur"></li></ul></li><li>이것으로 부팅, 설치, 로그인 완료</li></ul>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;Install-Ubuntu-on-Raspberry-Pi-3&quot;&gt;&lt;a href=&quot;#Install-Ubuntu-on-Raspberry-Pi-3&quot; class=&quot;headerlink&quot; title=&quot;Install Ubuntu on Raspberry 
+      
+    
+    </summary>
+    
+      <category term="개발 환경 및 도구" scheme="http://homoefficio.github.io/categories/%EA%B0%9C%EB%B0%9C-%ED%99%98%EA%B2%BD-%EB%B0%8F-%EB%8F%84%EA%B5%AC/"/>
+    
+    
+      <category term="Raspberry Pi" scheme="http://homoefficio.github.io/tags/Raspberry-Pi/"/>
+    
+      <category term="Ubuntu" scheme="http://homoefficio.github.io/tags/Ubuntu/"/>
+    
+      <category term="IoT" scheme="http://homoefficio.github.io/tags/IoT/"/>
+    
+      <category term="라즈베리 파이" scheme="http://homoefficio.github.io/tags/%EB%9D%BC%EC%A6%88%EB%B2%A0%EB%A6%AC-%ED%8C%8C%EC%9D%B4/"/>
+    
+      <category term="우분투" scheme="http://homoefficio.github.io/tags/%EC%9A%B0%EB%B6%84%ED%88%AC/"/>
+    
+  </entry>
   
   <entry>
     <title>IntelliJ에서 H2 연결하고 JPA Console 사용하기</title>
@@ -637,6 +670,8 @@
     
       <category term="자바" scheme="http://homoefficio.github.io/tags/%EC%9E%90%EB%B0%94/"/>
     
+      <category term="Java Execution Process" scheme="http://homoefficio.github.io/tags/Java-Execution-Process/"/>
+    
       <category term="JVM" scheme="http://homoefficio.github.io/tags/JVM/"/>
     
       <category term="Bytecode" scheme="http://homoefficio.github.io/tags/Bytecode/"/>
@@ -651,6 +686,10 @@
     
       <category term="javap" scheme="http://homoefficio.github.io/tags/javap/"/>
     
+      <category term="자바 실행 과정" scheme="http://homoefficio.github.io/tags/%EC%9E%90%EB%B0%94-%EC%8B%A4%ED%96%89-%EA%B3%BC%EC%A0%95/"/>
+    
+      <category term="java 실행 과정" scheme="http://homoefficio.github.io/tags/java-%EC%8B%A4%ED%96%89-%EA%B3%BC%EC%A0%95/"/>
+    
       <category term="컴파일" scheme="http://homoefficio.github.io/tags/%EC%BB%B4%ED%8C%8C%EC%9D%BC/"/>
     
       <category term="바이트코드" scheme="http://homoefficio.github.io/tags/%EB%B0%94%EC%9D%B4%ED%8A%B8%EC%BD%94%EB%93%9C/"/>
@@ -658,6 +697,12 @@
       <category term="JVM 명세" scheme="http://homoefficio.github.io/tags/JVM-%EB%AA%85%EC%84%B8/"/>
     
       <category term="JVM 스펙" scheme="http://homoefficio.github.io/tags/JVM-%EC%8A%A4%ED%8E%99/"/>
+    
+      <category term="Java Memory Structure" scheme="http://homoefficio.github.io/tags/Java-Memory-Structure/"/>
+    
+      <category term="Java Memory Model" scheme="http://homoefficio.github.io/tags/Java-Memory-Model/"/>
+    
+      <category term="JVM Memory" scheme="http://homoefficio.github.io/tags/JVM-Memory/"/>
     
       <category term="JRE" scheme="http://homoefficio.github.io/tags/JRE/"/>
     
@@ -701,7 +746,11 @@
     
       <category term="런타임 데이터 영역" scheme="http://homoefficio.github.io/tags/%EB%9F%B0%ED%83%80%EC%9E%84-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EC%98%81%EC%97%AD/"/>
     
+      <category term="자바 메모리 구조" scheme="http://homoefficio.github.io/tags/%EC%9E%90%EB%B0%94-%EB%A9%94%EB%AA%A8%EB%A6%AC-%EA%B5%AC%EC%A1%B0/"/>
+    
       <category term="자바 메모리 모델" scheme="http://homoefficio.github.io/tags/%EC%9E%90%EB%B0%94-%EB%A9%94%EB%AA%A8%EB%A6%AC-%EB%AA%A8%EB%8D%B8/"/>
+    
+      <category term="JVM 메모리 구조" scheme="http://homoefficio.github.io/tags/JVM-%EB%A9%94%EB%AA%A8%EB%A6%AC-%EA%B5%AC%EC%A1%B0/"/>
     
       <category term="JVM 메모리 모델" scheme="http://homoefficio.github.io/tags/JVM-%EB%A9%94%EB%AA%A8%EB%A6%AC-%EB%AA%A8%EB%8D%B8/"/>
     
@@ -733,22 +782,6 @@
     
       <category term="해석" scheme="http://homoefficio.github.io/tags/%ED%95%B4%EC%84%9D/"/>
     
-      <category term="Java Execution Process" scheme="http://homoefficio.github.io/tags/Java-Execution-Process/"/>
-    
-      <category term="자바 실행 과정" scheme="http://homoefficio.github.io/tags/%EC%9E%90%EB%B0%94-%EC%8B%A4%ED%96%89-%EA%B3%BC%EC%A0%95/"/>
-    
-      <category term="java 실행 과정" scheme="http://homoefficio.github.io/tags/java-%EC%8B%A4%ED%96%89-%EA%B3%BC%EC%A0%95/"/>
-    
-      <category term="Java Memory Structure" scheme="http://homoefficio.github.io/tags/Java-Memory-Structure/"/>
-    
-      <category term="Java Memory Model" scheme="http://homoefficio.github.io/tags/Java-Memory-Model/"/>
-    
-      <category term="JVM Memory" scheme="http://homoefficio.github.io/tags/JVM-Memory/"/>
-    
-      <category term="자바 메모리 구조" scheme="http://homoefficio.github.io/tags/%EC%9E%90%EB%B0%94-%EB%A9%94%EB%AA%A8%EB%A6%AC-%EA%B5%AC%EC%A1%B0/"/>
-    
-      <category term="JVM 메모리 구조" scheme="http://homoefficio.github.io/tags/JVM-%EB%A9%94%EB%AA%A8%EB%A6%AC-%EA%B5%AC%EC%A1%B0/"/>
-    
   </entry>
   
   <entry>
@@ -776,6 +809,8 @@
     
       <category term="자바" scheme="http://homoefficio.github.io/tags/%EC%9E%90%EB%B0%94/"/>
     
+      <category term="Java Execution Process" scheme="http://homoefficio.github.io/tags/Java-Execution-Process/"/>
+    
       <category term="JVM" scheme="http://homoefficio.github.io/tags/JVM/"/>
     
       <category term="Bytecode" scheme="http://homoefficio.github.io/tags/Bytecode/"/>
@@ -802,6 +837,10 @@
     
       <category term="javap" scheme="http://homoefficio.github.io/tags/javap/"/>
     
+      <category term="자바 실행 과정" scheme="http://homoefficio.github.io/tags/%EC%9E%90%EB%B0%94-%EC%8B%A4%ED%96%89-%EA%B3%BC%EC%A0%95/"/>
+    
+      <category term="java 실행 과정" scheme="http://homoefficio.github.io/tags/java-%EC%8B%A4%ED%96%89-%EA%B3%BC%EC%A0%95/"/>
+    
       <category term="컴파일" scheme="http://homoefficio.github.io/tags/%EC%BB%B4%ED%8C%8C%EC%9D%BC/"/>
     
       <category term="바이트코드" scheme="http://homoefficio.github.io/tags/%EB%B0%94%EC%9D%B4%ED%8A%B8%EC%BD%94%EB%93%9C/"/>
@@ -821,12 +860,6 @@
       <category term="코드 최적화" scheme="http://homoefficio.github.io/tags/%EC%BD%94%EB%93%9C-%EC%B5%9C%EC%A0%81%ED%99%94/"/>
     
       <category term="상수 풀" scheme="http://homoefficio.github.io/tags/%EC%83%81%EC%88%98-%ED%92%80/"/>
-    
-      <category term="Java Execution Process" scheme="http://homoefficio.github.io/tags/Java-Execution-Process/"/>
-    
-      <category term="자바 실행 과정" scheme="http://homoefficio.github.io/tags/%EC%9E%90%EB%B0%94-%EC%8B%A4%ED%96%89-%EA%B3%BC%EC%A0%95/"/>
-    
-      <category term="java 실행 과정" scheme="http://homoefficio.github.io/tags/java-%EC%8B%A4%ED%96%89-%EA%B3%BC%EC%A0%95/"/>
     
   </entry>
   
@@ -1205,49 +1238,6 @@
       <category term="cleos" scheme="http://homoefficio.github.io/tags/cleos/"/>
     
       <category term="지갑" scheme="http://homoefficio.github.io/tags/%EC%A7%80%EA%B0%91/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>EOS Single Node Testnet 실행</title>
-    <link href="http://homoefficio.github.io/2018/06/06/EOS-Single-Node-Testnet-%EC%8B%A4%ED%96%89/"/>
-    <id>http://homoefficio.github.io/2018/06/06/EOS-Single-Node-Testnet-실행/</id>
-    <published>2018-06-05T23:45:33.000Z</published>
-    <updated>2019-04-28T17:03:55.325Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="EOS-Single-Node-Testnet-실행"><a href="#EOS-Single-Node-Testnet-실행" class="headerlink" title="EOS Single Node Testnet 실행"></a>EOS Single Node Testnet 실행</h1><p>공식 문서인 <a href="https://developers.eos.io/eosio-nodeos/docs/local-single-node-testnet" target="_blank" rel="noopener">https://developers.eos.io/eosio-nodeos/docs/local-single-node-testnet</a> 를 기준으로 약간의 커스터마이징과 과도한 친절함을 가미했다.</p><h2 id="사전-조건"><a href="#사전-조건" class="headerlink" title="사전 조건"></a>사전 조건</h2><p><a href="https://homoefficio.github.io/2018/06/06/EOS-소스-구성-빌드-및-테스트/">https://homoefficio.github.io/2018/06/06/EOS-소스-구성-빌드-및-테스트/</a> 에서와 같이 빌드를 성공적으로 마치면 아래와 같이 build 디렉토리에 빌드 결과물이 생성된다.</p><p><img src="https://i.imgur.com/3JFK47Y.png" alt="Imgur"></p><h2 id="EOSIO-아키텍처-다시-보기"><a href="#EOSIO-아키텍처-다시-보기" class="headerlink" title="EOSIO 아키텍처 다시 보기"></a>EOSIO 아키텍처 다시 보기</h2><p><img src="https://i.imgur.com/nnJYbmt.png" alt="Imgur"></p><p>이 글에서는 위 3가지 컴포넌트 중 <code>nodeos</code> 실행에 대해 알아본다.</p><h2 id="nodeos-실행"><a href="#nodeos-실행" class="headerlink" title="nodeos 실행"></a>nodeos 실행</h2><blockquote><p>cd build/programs/nodeos</p><p>./nodeos -e -p eosio --plugin eosio::chain_api_plugin --plugin eosio::history_api_plugin</p><p>1.0.9 부터는<br>./nodeos -e -p eosio --plugin eosio::chain_api_plugin --plugin eosio::history_api_plugin --http-validate-host=false</p></blockquote><ul><li><code>-e</code>: 체인이 stale 상태이더라도 블록을 생성할 수 있도록 한다.</li><li><code>-p</code>: 실행될 노드에 의해 제어되는 블록 생산자의 계정 이름을 지정한다.<ul><li>예제에서는 <code>eosio</code>가 블록 생산자 계정이며, <code>eosio</code> 계정의 Key는 <code>nodeos</code>의 설정 파일인 <code>~/.local/share/eosio/config/config.ini</code>(Mac OS: <code>~/Library/Application Support/eosio/nodeos/config/config.ini</code>)에서 확인할 수 있다.</li></ul></li><li><code>--plugin</code>: <code>nodeos</code>에서 사용할 플러그인을 지정한다. 여러번 지정할 수 있다.<ul><li>예제에서는 <code>eosio::chain_api_plugin</code>, <code>eosio::history_api_plugin</code> 플러그인을 사용한다.</li></ul></li></ul><p>위와 같이 실행하면 아래와 같이 싱글 노드로 구성된 테스트넷이 실행되고, 블록도 매우 빠른 속도(0.5초)로 계속 생성된다.</p><p><img src="https://i.imgur.com/BJNM5Et.png" alt="Imgur"></p><p>싱글 노드로 구성된 테스트넷에는 아래 그림과 같이 <code>keosd</code>, <code>cleos</code>, <code>nodeos</code> 모두 하나의 호스트 안에서 실행된다.</p><p><img src="https://i.imgur.com/ehc7Jpa.png" alt="Imgur"></p><p><code>nodeos</code>가 실행되면 아래와 같이 <code>~/.local/share/eosio</code>(Mac OS: <code>~/Library/Application Support/eosio</code>) 디렉터리에 테스트넷 관련 데이터 및 설정 파일이 생성된다.</p><p><img src="https://i.imgur.com/dOsfBVI.png" alt="Imgur"></p><p><code>~/.local/share/eosio/nodeos/config/config.ini</code>(Mac OS: <code>~/Library/Application Support/eosio/nodeos/config/config.ini</code>) 파일에 여러가지 네트워크 설정 사항이 담겨 있다.</p><p><code>~/.local/share/eosio/nodeos/data</code>(Mac OS: <code>~/Library/Application Support/eosio/nodeos/data</code>) 디렉터리에는 공유 메모리, 로그 등 EOS 블록체인 관련 여러 런타임 데이터가 저장된다. 데이터 디렉터리의 위치는 <code>nodeos</code> 실행 시 <code>--data-dir</code> 옵션으로 다른 위치를 지정할 수도 있다.</p><p><code>nodeos</code>는 CTRL+C로 종료할 수 있으며 화면은 다음과 같다. #184번 블록까지 생성한 후 종료되었다.</p><p><img src="https://i.imgur.com/pgbzFRE.png" alt="Imgur"></p><p>다시 <code>./nodeos -e -p eosio --plugin eosio::chain_api_plugin --plugin eosio::history_api_plugin</code> 명령으로 실행하면 다음과 같이 #185번 블록부터 다시 블록 생성이 이어진다.</p><p><img src="https://i.imgur.com/pbCVcz1.png" alt="Imgur"></p><h2 id="cleos-에서-nodeos-정보-확인"><a href="#cleos-에서-nodeos-정보-확인" class="headerlink" title="cleos 에서 nodeos 정보 확인"></a>cleos 에서 nodeos 정보 확인</h2><p><code>nodeos</code>를 실행한 터미널 말고 다른 새 터미널의 eos 디렉터리에서 아래 명령 실행</p><blockquote><p>./build/programs/cleos/cleos --url <a href="http://localhost:8888" target="_blank" rel="noopener">http://localhost:8888</a> get info</p></blockquote><p><img src="https://i.imgur.com/99DPIh2.png" alt="Imgur"></p><h2 id="nodeos-종료"><a href="#nodeos-종료" class="headerlink" title="nodeos 종료"></a>nodeos 종료</h2><p><code>CTRL+C</code>로 종료한다. 더 우아한 방법이 있을거라 생각했지만 <code>nodeos --help</code>로 확인해본 결과 종료 옵션은 없는 것 같다. </p><p>계속 켜두어도 되지만 다음 과정인 지갑 만들기 및 Key 연동에서는 <code>nodeos</code>를 사용하지 않으므로 종료해도 무방하다.</p><p>이것으로 <code>nodeos</code> 실행을 마쳤다. 다음에는 <a href="https://homoefficio.github.io/2018/06/06/EOS-지갑-만들기-및-Key-연동/">EOS 지갑 만들기 및 Key 연동</a>에서 지갑을 만들고 Key를 생성해서 연동하는 방법을 알아본다.</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;h1 id=&quot;EOS-Single-Node-Testnet-실행&quot;&gt;&lt;a href=&quot;#EOS-Single-Node-Testnet-실행&quot; class=&quot;headerlink&quot; title=&quot;EOS Single Node Testnet 실행&quot;&gt;&lt;/a&gt;EOS Sing
-      
-    
-    </summary>
-    
-      <category term="BlockChain" scheme="http://homoefficio.github.io/categories/BlockChain/"/>
-    
-    
-      <category term="BlockChain" scheme="http://homoefficio.github.io/tags/BlockChain/"/>
-    
-      <category term="EOS" scheme="http://homoefficio.github.io/tags/EOS/"/>
-    
-      <category term="블록체인" scheme="http://homoefficio.github.io/tags/%EB%B8%94%EB%A1%9D%EC%B2%B4%EC%9D%B8/"/>
-    
-      <category term="이오스" scheme="http://homoefficio.github.io/tags/%EC%9D%B4%EC%98%A4%EC%8A%A4/"/>
-    
-      <category term="development" scheme="http://homoefficio.github.io/tags/development/"/>
-    
-      <category term="개발" scheme="http://homoefficio.github.io/tags/%EA%B0%9C%EB%B0%9C/"/>
-    
-      <category term="dapp" scheme="http://homoefficio.github.io/tags/dapp/"/>
-    
-      <category term="디앱" scheme="http://homoefficio.github.io/tags/%EB%94%94%EC%95%B1/"/>
-    
-      <category term="Testnet" scheme="http://homoefficio.github.io/tags/Testnet/"/>
-    
-      <category term="테스트넷" scheme="http://homoefficio.github.io/tags/%ED%85%8C%EC%8A%A4%ED%8A%B8%EB%84%B7/"/>
     
   </entry>
   

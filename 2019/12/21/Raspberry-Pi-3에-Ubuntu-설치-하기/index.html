@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="뒤태지존의 끄적거림">
+    <title>Raspberry Pi 3에 Ubuntu 설치 하기 - 뒤태지존의 끄적거림</title>
+    <meta name="author" content="HomoEfficio">
+    <meta name="description" content="뒤태지존의 끄적거림">
+    
+        <link rel="icon" href="/assets/images/favicon.ico">
+    
+    
+        <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <meta name="description" content="Install Ubuntu on Raspberry Pi 3준비물 Raspberry Pi 3 + 전원 장치 MicroSD 카드 USB Keyboard Monitor + HDMI 케이블 Ubuntu 이미지를 다운로드 하고 MicroSD에 Ubuntu 이미지를 Flash 할 인터넷 연결 컴퓨터  Ubuntu 이미지 파일 다운로드 https://ubuntu.com">
+<meta name="keywords" content="Raspberry Pi,Ubuntu,IoT,라즈베리 파이,우분투">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Raspberry Pi 3에 Ubuntu 설치 하기">
+<meta property="og:url" content="http://homoefficio.github.io/2019/12/21/Raspberry-Pi-3에-Ubuntu-설치-하기/index.html">
+<meta property="og:site_name" content="뒤태지존의 끄적거림">
+<meta property="og:description" content="Install Ubuntu on Raspberry Pi 3준비물 Raspberry Pi 3 + 전원 장치 MicroSD 카드 USB Keyboard Monitor + HDMI 케이블 Ubuntu 이미지를 다운로드 하고 MicroSD에 Ubuntu 이미지를 Flash 할 인터넷 연결 컴퓨터  Ubuntu 이미지 파일 다운로드 https://ubuntu.com">
+<meta property="og:locale" content="ko">
+<meta property="og:image" content="https://i.imgur.com/93adzTR.png">
+<meta property="og:image" content="https://i.imgur.com/UM67S8u.png">
+<meta property="og:image" content="https://i.imgur.com/cGeAsxt.png">
+<meta property="og:image" content="https://i.imgur.com/hr9w14r.png">
+<meta property="og:image" content="https://i.imgur.com/rPKVxcJ.png">
+<meta property="og:image" content="https://i.imgur.com/hFTpk31.png">
+<meta property="og:image" content="https://i.imgur.com/p2inqJO.png">
+<meta property="og:image" content="https://i.imgur.com/00yqpDc.png">
+<meta property="og:image" content="https://i.imgur.com/uV31oML.png">
+<meta property="og:image" content="https://i.imgur.com/YwBAux3.jpg">
+<meta property="og:image" content="https://i.imgur.com/5P5wgZ6.jpg">
+<meta property="og:image" content="https://i.imgur.com/9G6Zqos.jpg">
+<meta property="og:image" content="https://i.imgur.com/JkXmeLR.jpg">
+<meta property="og:image" content="https://i.imgur.com/LV5d4or.jpg">
+<meta property="og:image" content="https://i.imgur.com/dgSIjFH.jpg">
+<meta property="og:image" content="https://i.imgur.com/dggNhk9.jpg">
+<meta property="og:image" content="https://i.imgur.com/oL5bc8f.jpg">
+<meta property="og:image" content="https://i.imgur.com/njltjMN.jpg">
+<meta property="og:updated_time" content="2019-12-21T08:52:28.474Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Raspberry Pi 3에 Ubuntu 설치 하기">
+<meta name="twitter:description" content="Install Ubuntu on Raspberry Pi 3준비물 Raspberry Pi 3 + 전원 장치 MicroSD 카드 USB Keyboard Monitor + HDMI 케이블 Ubuntu 이미지를 다운로드 하고 MicroSD에 Ubuntu 이미지를 Flash 할 인터넷 연결 컴퓨터  Ubuntu 이미지 파일 다운로드 https://ubuntu.com">
+<meta name="twitter:image" content="https://i.imgur.com/93adzTR.png">
+    
+        <meta rel="publisher" content="https://plus.google.com/+오명운"/>
+    
+    
+    
+        <meta property="og:image" content="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=640"/>
+    
+    
+        <meta property="og:image" content="/2019/12/21/Raspberry-Pi-3에-Ubuntu-설치-하기/https:/i.imgur.com/nipLXjK.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2019/12/21/Raspberry-Pi-3에-Ubuntu-설치-하기/https://i.imgur.com/nipLXjK.png" />
+    
+    
+        <meta property="og:image" content="/2019/12/21/Raspberry-Pi-3에-Ubuntu-설치-하기/coverImage-ubuntu-raspberry-pi-3.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2019/12/21/Raspberry-Pi-3에-Ubuntu-설치-하기/coverImage-ubuntu-raspberry-pi-3.jpg" />
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style.min.css">
+    <!--STYLES END-->
+    
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-79893978-1']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6494847158566766",
+    enable_page_level_ads: true
+  });
+</script>
+</head>
+
+    <body>
+        <div id="blog">
+            <header id="header" data-behavior="1">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="/ ">뒤태지존의 끄적거림</a>
+    </h1>
+    
+        <a class="header-right-picture" href="/#about">
+            <img class="header-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+        </a>
+    
+</header>
+            <nav id="sidebar" data-behavior="1">
+    
+    <div class="sidebar-profile">
+        <a href="/#about">
+            
+            <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+            
+        </a>
+        <span class="sidebar-profile-name">HomoEfficio</span>
+    </div>
+    
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/ 
+                    ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">Home</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-categories
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">Categories</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-tags
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">Tags</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-archives
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">Archives</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link st-search-show-outputs"
+                    href="#search
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                    <span class="sidebar-button-desc">Search</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="#about
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">About me</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="https://github.com/HomoEfficio" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                    <span class="sidebar-button-desc">GitHub</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="mailto:homo.efficio@gmail.com" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-envelope-o"></i>
+                    <span class="sidebar-button-desc">Mail</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/atom.xml
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+            <div id="main" data-behavior="1">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+        <div class="post-header-cover" style="background-image:url('/2019/12/21/Raspberry-Pi-3에-Ubuntu-설치-하기/coverImage-ubuntu-raspberry-pi-3.jpg');">
+            <div class="post-header main-content-wrap">
+    
+        <h1 class="post-title" itemprop="headline">Raspberry Pi 3에 Ubuntu 설치 하기</h1>
+    
+    <div class="post-meta">
+    <time  itemprop="datePublished" content="Sat Dec 21 2019 17:34:41 GMT+0900">
+        Dec 21, 2019
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/개발-환경-및-도구/">개발 환경 및 도구</a>
+
+
+    
+</div>
+</div>
+        </div>
+    
+    <div class="post-content markdown main-content-wrap" itemprop="articleBody">
+        
+            <h1 id="Install-Ubuntu-on-Raspberry-Pi-3"><a href="#Install-Ubuntu-on-Raspberry-Pi-3" class="headerlink" title="Install Ubuntu on Raspberry Pi 3"></a>Install Ubuntu on Raspberry Pi 3</h1><h2 id="준비물"><a href="#준비물" class="headerlink" title="준비물"></a>준비물</h2><ul>
+<li>Raspberry Pi 3 + 전원 장치</li>
+<li>MicroSD 카드</li>
+<li>USB Keyboard</li>
+<li>Monitor + HDMI 케이블</li>
+<li>Ubuntu 이미지를 다운로드 하고 MicroSD에 Ubuntu 이미지를 Flash 할 인터넷 연결 컴퓨터</li>
+</ul>
+<h2 id="Ubuntu-이미지-파일-다운로드"><a href="#Ubuntu-이미지-파일-다운로드" class="headerlink" title="Ubuntu 이미지 파일 다운로드"></a>Ubuntu 이미지 파일 다운로드</h2><ul>
+<li><a href="https://ubuntu.com/download/raspberry-pi" target="_blank" rel="noopener">https://ubuntu.com/download/raspberry-pi</a><ul>
+<li><code>64-bit for Raspberry Pi 3 and 4</code> 다운로드</li>
+</ul>
+</li>
+</ul>
+<p>약 3G 정도로 다운로드에 시간이 좀 걸리므로 그동안 아래의 ‘Image Flash 프로그램 다운로드 및 설치’, ‘MicroSD 메모리 카드 준비’ 수행</p>
+<h2 id="Image-Flash-프로그램-다운로드-및-설치"><a href="#Image-Flash-프로그램-다운로드-및-설치" class="headerlink" title="Image Flash 프로그램 다운로드 및 설치"></a>Image Flash 프로그램 다운로드 및 설치</h2><ul>
+<li><a href="https://sourceforge.net/projects/win32diskimager/files/latest/download" target="_blank" rel="noopener">https://sourceforge.net/projects/win32diskimager/files/latest/download</a></li>
+</ul>
+<h2 id="MicroSD-메모리-카드-준비"><a href="#MicroSD-메모리-카드-준비" class="headerlink" title="MicroSD 메모리 카드 준비"></a>MicroSD 메모리 카드 준비</h2><p>윈도우 10 기준</p>
+<ul>
+<li><p>MicroSD 메모리 카드를 컴퓨터에 연결</p>
+<ul>
+<li>포맷 등의 팝업이 뜨면 모두 무시</li>
+<li><img src="https://i.imgur.com/93adzTR.png" alt="Imgur"></li>
+<li><img src="https://i.imgur.com/UM67S8u.png" alt="Imgur"></li>
+</ul>
+</li>
+<li><p>기존에 사용하던 카드라 파티션이 나뉘어 있는 경우 파티션 삭제</p>
+<ul>
+<li>윈도우 버튼 우클릭 &gt; 디스크 관리자 실행</li>
+<li><img src="https://i.imgur.com/cGeAsxt.png" alt="Imgur"></li>
+<li>MicroSD 메모리에 있던 볼륨(파티션) 모두 삭제</li>
+<li><img src="https://i.imgur.com/hr9w14r.png" alt="Imgur"></li>
+<li>아래와 같이 모두 삭제 되면 준비 완료</li>
+<li><img src="https://i.imgur.com/rPKVxcJ.png" alt="Imgur"></li>
+</ul>
+</li>
+</ul>
+<h2 id="MicroSD-메모리-카드에-Ubuntu-이미지-파일-Flash"><a href="#MicroSD-메모리-카드에-Ubuntu-이미지-파일-Flash" class="headerlink" title="MicroSD 메모리 카드에 Ubuntu 이미지 파일 Flash"></a>MicroSD 메모리 카드에 Ubuntu 이미지 파일 Flash</h2><ul>
+<li>Ubuntu 이미지 파일 압축 해제<ul>
+<li>필요 시 반디집 설치 후 해제</li>
+</ul>
+</li>
+<li>Image Flash 프로그램 실행<ul>
+<li>Ubuntu 이미지 파일 위치 지정 및 Flash 할 대상 디바이스(MicroSD 카드) 지정 후 Write</li>
+<li><img src="https://i.imgur.com/hFTpk31.png" alt="Imgur"></li>
+<li><img src="https://i.imgur.com/p2inqJO.png" alt="Imgur"></li>
+</ul>
+</li>
+<li>사양에 따라 다르겠지만 약 2~3분 후 다음과 같이 Flash 완료<ul>
+<li><img src="https://i.imgur.com/00yqpDc.png" alt="Imgur"></li>
+</ul>
+</li>
+<li>포맷 팝업창이 다시 뜨면 무시<ul>
+<li><img src="https://i.imgur.com/uV31oML.png" alt="Imgur"></li>
+</ul>
+</li>
+<li>탐색기에서 꺼내기 후 MicroSD 메모리 카드를 빼낸다.</li>
+</ul>
+<h2 id="Raspberry-Pi-부팅-설치-완료-및-로그인"><a href="#Raspberry-Pi-부팅-설치-완료-및-로그인" class="headerlink" title="Raspberry Pi 부팅, 설치 완료 및 로그인"></a>Raspberry Pi 부팅, 설치 완료 및 로그인</h2><ul>
+<li>Ubuntu 이미지가 Flash 된 MicroSD 카드, 모니터와 연결된 HDMI 케이블과 키보드를 Raspberry PI 에 연결하고 마지막으로 Raspberry PI 전원 연결<ul>
+<li><img src="https://i.imgur.com/YwBAux3.jpg" alt="Imgur"></li>
+</ul>
+</li>
+<li>Ubuntu 로 부팅되며 몇 분간 자동 설정 후 로그인 프롬프트 나옴<ul>
+<li><img src="https://i.imgur.com/5P5wgZ6.jpg" alt="Imgur"></li>
+<li><img src="https://i.imgur.com/9G6Zqos.jpg" alt="Imgur"></li>
+<li><img src="https://i.imgur.com/JkXmeLR.jpg" alt="Imgur"></li>
+<li><img src="https://i.imgur.com/LV5d4or.jpg" alt="Imgur"></li>
+<li><strong>놀랍게도 위 사진에 나오는 로그인 프롬프트는 페이크..</strong> 여기서 입력해봤자 비번 틀리다는 얘기만 나오며, 그냥 기다리면 다음 사진과 같이 후속 절차가 자동으로 계속 진행된다.</li>
+<li><img src="https://i.imgur.com/dgSIjFH.jpg" alt="Imgur"></li>
+<li><img src="https://i.imgur.com/dggNhk9.jpg" alt="Imgur"></li>
+</ul>
+</li>
+<li>다음과 같이 <strong><code>[  OK  ] Reached target Cloud-init target.</code> 이 보여야 로그인 준비가 완료</strong>된 것이다. 하지만 자동으로 로그인 프롬프트가 뜨지는 않고 엔터를 눌러줘야 로그인 프롬프트가 뜬다.<ul>
+<li><img src="https://i.imgur.com/oL5bc8f.jpg" alt="Imgur"></li>
+</ul>
+</li>
+<li>초기 아이디/비번은 ubuntu/ubuntu 이며 로그인 후 위 그림과 같이 비번 변경하면 셸 프롬프트가 뜬다.<ul>
+<li><img src="https://i.imgur.com/njltjMN.jpg" alt="Imgur"></li>
+</ul>
+</li>
+<li>이것으로 부팅, 설치, 로그인 완료</li>
+</ul>
+
+        
+        
+            
+        
+        <hr/>
+        <div>
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="크리에이티브 커먼즈 라이선스" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><a href='https://github.com/homoefficio' target='_blank'>HomoEfficio</a>가 작성한 이 저작물은(는) <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스</a>에 따라 이용할 수 있습니다.
+        </div>
+    </div>
+    <div class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/IoT/">IoT</a> <a class="tag tag--primary tag--small t-link" href="/tags/Raspberry-Pi/">Raspberry Pi</a> <a class="tag tag--primary tag--small t-link" href="/tags/Ubuntu/">Ubuntu</a> <a class="tag tag--primary tag--small t-link" href="/tags/라즈베리-파이/">라즈베리 파이</a> <a class="tag tag--primary tag--small t-link" href="/tags/우분투/">우분투</a>
+
+            </div>
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/10/09/IntelliJ에서-H2-연결하고-JPA-Console-사용하기/" data-tooltip="IntelliJ에서 H2 연결하고 JPA Console 사용하기">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2019/12/21/Raspberry-Pi-3에-Ubuntu-설치-하기/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2019/12/21/Raspberry-Pi-3에-Ubuntu-설치-하기/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2019/12/21/Raspberry-Pi-3에-Ubuntu-설치-하기/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+        
+            <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2019 HomoEfficio. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="1">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2019/10/09/IntelliJ에서-H2-연결하고-JPA-Console-사용하기/" data-tooltip="IntelliJ에서 H2 연결하고 JPA Console 사용하기">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2019/12/21/Raspberry-Pi-3에-Ubuntu-설치-하기/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2019/12/21/Raspberry-Pi-3에-Ubuntu-설치-하기/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2019/12/21/Raspberry-Pi-3에-Ubuntu-설치-하기/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="1">
+    <ul class="share-options">
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2019/12/21/Raspberry-Pi-3에-Ubuntu-설치-하기/">
+                <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2019/12/21/Raspberry-Pi-3에-Ubuntu-설치-하기/">
+                <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2019/12/21/Raspberry-Pi-3에-Ubuntu-설치-하기/">
+                <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+            
+        </div>
+        <div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=110"/>
+        
+            <h4 id="about-card-name">HomoEfficio</h4>
+        
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Seoul, Korea.
+            </h5>
+        
+    </div>
+</div>
+        <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/script.min.js"></script>
+<!--SCRIPTS END-->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'hanmomhanda';
+        (function() {
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+
+
+
+</html>
