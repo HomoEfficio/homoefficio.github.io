@@ -15,7 +15,7 @@
         <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
     
     <meta name="description" content="Install Ubuntu on Raspberry Pi 3준비물 Raspberry Pi 3 + 전원 장치 MicroSD 카드 USB Keyboard Monitor + HDMI 케이블 Ubuntu 이미지를 다운로드 하고 MicroSD에 Ubuntu 이미지를 Flash 할 인터넷 연결 컴퓨터  Ubuntu 이미지 파일 다운로드 https://ubuntu.com">
-<meta name="keywords" content="Raspberry Pi,Ubuntu,IoT,라즈베리 파이,우분투">
+<meta name="keywords" content="Raspberry Pi,Ubuntu,IoT,라즈베리 파이,우분투,IP,Static IP">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Raspberry Pi 3에 Ubuntu 설치 하기">
 <meta property="og:url" content="http://homoefficio.github.io/2019/12/21/Raspberry-Pi-3에-Ubuntu-설치-하기/index.html">
@@ -41,7 +41,7 @@
 <meta property="og:image" content="https://i.imgur.com/oL5bc8f.jpg">
 <meta property="og:image" content="https://i.imgur.com/njltjMN.jpg">
 <meta property="og:image" content="https://i.imgur.com/3iU0f8k.jpg">
-<meta property="og:updated_time" content="2019-12-21T10:14:10.441Z">
+<meta property="og:updated_time" content="2019-12-25T15:30:53.147Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Raspberry Pi 3에 Ubuntu 설치 하기">
 <meta name="twitter:description" content="Install Ubuntu on Raspberry Pi 3준비물 Raspberry Pi 3 + 전원 장치 MicroSD 카드 USB Keyboard Monitor + HDMI 케이블 Ubuntu 이미지를 다운로드 하고 MicroSD에 Ubuntu 이미지를 Flash 할 인터넷 연결 컴퓨터  Ubuntu 이미지 파일 다운로드 https://ubuntu.com">
@@ -340,12 +340,24 @@
 </ul>
 </li>
 </ul>
-<h2 id="후기"><a href="#후기" class="headerlink" title="후기"></a>후기</h2><ul>
+<h2 id="설치-후기"><a href="#설치-후기" class="headerlink" title="설치 후기"></a>설치 후기</h2><ul>
 <li>사실 그냥 <a href="https://ubuntu.com/download/raspberry-pi" target="_blank" rel="noopener">https://ubuntu.com/download/raspberry-pi</a> 여기에 나온 공식 설명을 재연하고 몇 가지 실제 발생하는 상황(MicroSD 초기화)을 추가한 것 뿐이지만..</li>
 <li>위에 나오는 것처럼 어떤 단계가 언제 끝난 건지 잘 알기 어려운 장면들이 있고,</li>
 <li>페이크성 로그인 프롬프트 처럼 살짝 버그스럽게 보이는 지뢰들이 몇 군데 있음을 감안하면,</li>
 <li>남기길 잘했다..</li>
 </ul>
+<h2 id="고정-IP-적용"><a href="#고정-IP-적용" class="headerlink" title="고정 IP 적용"></a>고정 IP 적용</h2><p>IP 주소는 <code>/etc/netplan/50-cloud-init.yaml</code> 파일에서 설정할 수 있으며 기본은 다음과 같이 설정돼있다.</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># This file is generated from information provided by</span></span><br><span class="line"><span class="comment"># the datasource.  Changes to it will not persist across an instance.</span></span><br><span class="line"><span class="comment"># To disable cloud-init's network configuration capabilities, write a file</span></span><br><span class="line"><span class="comment"># /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg with the following:</span></span><br><span class="line"><span class="comment"># network: &#123;config: disabled&#125;</span></span><br><span class="line"><span class="attr">network:</span></span><br><span class="line"><span class="attr">    ethernets:</span></span><br><span class="line"><span class="attr">        eth0:</span>            </span><br><span class="line"><span class="attr">            dhcp4:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">            optional:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">    version:</span> <span class="number">2</span></span><br></pre></td></tr></table></figure>
+<h3 id="설정-파일-수정"><a href="#설정-파일-수정" class="headerlink" title="설정 파일 수정"></a>설정 파일 수정</h3><p>고정 IP 주소를 적용하려면 <code>sudo vi</code>로 다음과 같이 편집한다.</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># This file is generated from information provided by</span></span><br><span class="line"><span class="comment"># the datasource.  Changes to it will not persist across an instance.</span></span><br><span class="line"><span class="comment"># To disable cloud-init's network configuration capabilities, write a file</span></span><br><span class="line"><span class="comment"># /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg with the following:</span></span><br><span class="line"><span class="comment"># network: &#123;config: disabled&#125;</span></span><br><span class="line"><span class="attr">network:</span></span><br><span class="line"><span class="attr">    ethernets:</span></span><br><span class="line"><span class="attr">        eth0:</span></span><br><span class="line"><span class="attr">            addresses:</span> <span class="string">[사용할.고정.IP.주소/24]</span></span><br><span class="line"><span class="attr">            gateway4:</span> <span class="string">사용할.내부.게이트웨이.주소</span></span><br><span class="line"><span class="attr">            nameservers:</span></span><br><span class="line"><span class="attr">                addresses:</span> <span class="string">[168.126.63.1,</span> <span class="number">8.8</span><span class="number">.8</span><span class="number">.8</span><span class="string">]</span></span><br><span class="line"><span class="attr">            dhcp4:</span> <span class="literal">no</span></span><br><span class="line"><span class="attr">            optional:</span> <span class="literal">no</span></span><br><span class="line"><span class="attr">    version:</span> <span class="number">2</span></span><br></pre></td></tr></table></figure>
+<h3 id="설정-내용-적용"><a href="#설정-내용-적용" class="headerlink" title="설정 내용 적용"></a>설정 내용 적용</h3><p>다음 명령으로 설정 내용을 적용한다.</p>
+<blockquote>
+<p>sudo netplan apply</p>
+</blockquote>
+<h3 id="설정-내용-확인"><a href="#설정-내용-확인" class="headerlink" title="설정 내용 확인"></a>설정 내용 확인</h3><p>다음 명령으로 IP 주소를 확인한다.</p>
+<blockquote>
+<p>ip addr</p>
+</blockquote>
 
         
         
@@ -361,7 +373,7 @@
             <div class="post-footer-tags">
                 <span class="text-color-light text-small">TAGGED IN</span><br/>
                 
-    <a class="tag tag--primary tag--small t-link" href="/tags/IoT/">IoT</a> <a class="tag tag--primary tag--small t-link" href="/tags/Raspberry-Pi/">Raspberry Pi</a> <a class="tag tag--primary tag--small t-link" href="/tags/Ubuntu/">Ubuntu</a> <a class="tag tag--primary tag--small t-link" href="/tags/라즈베리-파이/">라즈베리 파이</a> <a class="tag tag--primary tag--small t-link" href="/tags/우분투/">우분투</a>
+    <a class="tag tag--primary tag--small t-link" href="/tags/IP/">IP</a> <a class="tag tag--primary tag--small t-link" href="/tags/IoT/">IoT</a> <a class="tag tag--primary tag--small t-link" href="/tags/Raspberry-Pi/">Raspberry Pi</a> <a class="tag tag--primary tag--small t-link" href="/tags/Static-IP/">Static IP</a> <a class="tag tag--primary tag--small t-link" href="/tags/Ubuntu/">Ubuntu</a> <a class="tag tag--primary tag--small t-link" href="/tags/라즈베리-파이/">라즈베리 파이</a> <a class="tag tag--primary tag--small t-link" href="/tags/우분투/">우분투</a>
 
             </div>
         
