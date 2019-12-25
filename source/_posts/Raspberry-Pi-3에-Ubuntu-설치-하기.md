@@ -8,6 +8,8 @@ tags:
   - IoT
   - 라즈베리 파이
   - 우분투
+  - IP
+  - Static IP
 thumbnailImage: https://i.imgur.com/Yqiraai.png
 coverImage: coverImage-ubuntu-raspberry-pi-3.jpg
 ---
@@ -90,11 +92,62 @@ coverImage: coverImage-ubuntu-raspberry-pi-3.jpg
 - 엔터를 누르면 다음과 같이 진정 유효한 로그인 프롬프트가 나오며, 로그인을 하면 셸 프롬프트가 표시된다.
   - ![Imgur](https://i.imgur.com/3iU0f8k.jpg)
 
-## 후기
+## 설치 후기
 
 - 사실 그냥 https://ubuntu.com/download/raspberry-pi 여기에 나온 공식 설명을 재연하고 몇 가지 실제 발생하는 상황(MicroSD 초기화)을 추가한 것 뿐이지만..
 - 위에 나오는 것처럼 어떤 단계가 언제 끝난 건지 잘 알기 어려운 장면들이 있고,
 - 페이크성 로그인 프롬프트 처럼 살짝 버그스럽게 보이는 지뢰들이 몇 군데 있음을 감안하면,
 - 남기길 잘했다..
 
+## 고정 IP 적용
+
+IP 주소는 `/etc/netplan/50-cloud-init.yaml` 파일에서 설정할 수 있으며 기본은 다음과 같이 설정돼있다.
+
+```yaml
+# This file is generated from information provided by
+# the datasource.  Changes to it will not persist across an instance.
+# To disable cloud-init's network configuration capabilities, write a file
+# /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg with the following:
+# network: {config: disabled}
+network:
+    ethernets:
+        eth0:            
+            dhcp4: true
+            optional: true
+    version: 2
+```
+
+### 설정 파일 수정
+
+고정 IP 주소를 적용하려면 `sudo vi`로 다음과 같이 편집한다.
+
+```yaml
+# This file is generated from information provided by
+# the datasource.  Changes to it will not persist across an instance.
+# To disable cloud-init's network configuration capabilities, write a file
+# /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg with the following:
+# network: {config: disabled}
+network:
+    ethernets:
+        eth0:
+            addresses: [사용할.고정.IP.주소/24]
+            gateway4: 사용할.내부.게이트웨이.주소
+            nameservers:
+                addresses: [168.126.63.1, 8.8.8.8]
+            dhcp4: no
+            optional: no
+    version: 2
+```
+
+### 설정 내용 적용
+
+다음 명령으로 설정 내용을 적용한다.
+
+>sudo netplan apply
+
+### 설정 내용 확인
+
+다음 명령으로 IP 주소를 확인한다.
+
+>ip addr
 
