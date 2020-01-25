@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://homoefficio.github.io/"/>
-  <updated>2019-12-27T14:34:12.388Z</updated>
+  <updated>2020-01-25T14:23:55.452Z</updated>
   <id>http://homoefficio.github.io/</id>
   
   <author>
@@ -15,6 +15,61 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Spring Data Batch Insert 최적화</title>
+    <link href="http://homoefficio.github.io/2020/01/25/Spring-Data-Batch-Insert-%EC%B5%9C%EC%A0%81%ED%99%94/"/>
+    <id>http://homoefficio.github.io/2020/01/25/Spring-Data-Batch-Insert-최적화/</id>
+    <published>2020-01-25T14:06:24.000Z</published>
+    <updated>2020-01-25T14:23:55.452Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="Spring-Data-Batch-Insert-최적화"><a href="#Spring-Data-Batch-Insert-최적화" class="headerlink" title="Spring Data Batch Insert 최적화"></a>Spring Data Batch Insert 최적화</h1><p>Spring Data JPA가 안겨주는 편리함 뒤에는 가끔 성능 손실이 숨어있다. 이번에 알아볼 Batch Insert도 그런 예 중 하나다.</p><p>성능 손실 문제가 발생하는 이유와 2가지 해결 방법을 알아본다.</p><p>전체 코드는 <a href="https://github.com/HomoEfficio/micro-benchmark-spring-boot-batch-insert" target="_blank" rel="noopener">https://github.com/HomoEfficio/micro-benchmark-spring-boot-batch-insert</a> 여기에서 볼 수 있으며 아주 쉽게 직접 테스트해 볼 수도 있다. </p><h1 id="Hibernate의-Batch-Insert-제약-사항"><a href="#Hibernate의-Batch-Insert-제약-사항" class="headerlink" title="Hibernate의 Batch Insert 제약 사항"></a>Hibernate의 Batch Insert 제약 사항</h1><p><a href="https://docs.jboss.org/hibernate/orm/5.4/userguide/html_single/Hibernate_User_Guide.html#batch-session-batch-insert" target="_blank" rel="noopener">Hibernate 레퍼런스 문서 12.2.1. Batch inserts</a>의 바로 위에 다음과 같이 <strong>식별자 생성에 IDENTITY 방식을 사용하면 Hibernate가 JDBC 수준에서 batch insert를 비활성화</strong>한다고 나와있다.</p><blockquote><p>Hibernate disables insert batching at the JDBC level transparently if you use an identity identifier generator.</p></blockquote><p>비활성화하는 이유는 Hibernate 문서에는 없는 것 같아서 다시 찾아보니 StackOverflow에 <a href="https://stackoverflow.com/a/27732138" target="_blank" rel="noopener">Vlad Mihalcea가 올린 댓글</a>에서 단서를 찾을 수 있었다.</p><blockquote><p>The only drawback is that we can’t know the newly assigned value prior to executing the INSERT statement. This restriction is hindering the “transactional write behind” flushing strategy adopted by Hibernate. For this reason, Hibernates disables the JDBC batch support for entities using the IDENTITY generator.</p></blockquote><p>요는 <strong>새로 할당할 Key 값을 미리 알 수 없는 IDENTITY 방식을 사용할 때 Batch Support를 지원하면 Hibernate가 채택한 flush 방식인 ‘Transactional Write Behind’와 충돌이 발생하기 때문</strong>에, IDENTITY 방식에서는 Batch Insert를 비활성화 한다는 얘기다. 따라서 그냥 <strong>일상적으로 가장 널리 사용하는 IDENTITY 방식을 사용하면 Batch Insert는 동작하지 않는다.</strong></p><p>그렇다고 Batch Insert를 적용하기 위해 IDENTITY 방식말고 섣불리 SEQUENCE 방식이나 TABLE 방식을 잘못 사용하면 더 나쁜 결과를 불러올 수 있다. <strong>채번에 따른 부하가 상당히 큰 SEQUENCE 방식이나 TABLE 방식을 별다른 조치 없이 사용하면 Batch Insert를 쓸 수 없는 IDENTITY 방식보다 더 느리다.</strong> 자세한 내용은 <a href="https://github.com/HomoEfficio/dev-tips/blob/master/JPA-GenerationType-별-INSERT-성능-비교.md" target="_blank" rel="noopener">https://github.com/HomoEfficio/dev-tips/blob/master/JPA-GenerationType-별-INSERT-성능-비교.md</a> 를 참고한다.</p><p>문제 발생 원인에서 유추할 수 있는 해결 방법은 2가지가 있다. </p><ol><li>SEQUENCE나 TABLE 방식을 사용하면서 채번 부하를 낮추는 방법</li><li>아예 Spring Data JPA를 벗어나는 방법</li></ol><h1 id="채번-부하-절감"><a href="#채번-부하-절감" class="headerlink" title="채번 부하 절감"></a>채번 부하 절감</h1><p>Batch Insert를 사용할 수 없는 IDENTITY 방식 대신에 SEQUENCE나 TABLE 방식을 사용하면서 채번 부하를 낮추는 방법은 <a href="https://dev.to/smartyansh/best-possible-hibernate-configuration-for-batch-inserts-2a7a" target="_blank" rel="noopener">https://dev.to/smartyansh/best-possible-hibernate-configuration-for-batch-inserts-2a7a</a> 에서 찾을 수 있었다.</p><p>간단하게 정리하면 채번 자체를 Batch 방식으로 처리해서 채번 부하를 낮추는 방식이다.</p><h2 id="일반적인-채번"><a href="#일반적인-채번" class="headerlink" title="일반적인 채번"></a>일반적인 채번</h2><p>SEQUENCE 방식은 일반적으로 다음과 같이 사용한다.</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Item</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Id</span></span><br><span class="line">    <span class="meta">@GeneratedValue</span>(strategy = GenerationType.SEQUENCE)</span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>이 방식을 사용하면 Sequence를 지원하는 DB에서는 Sequence를 이용해서 채번한다. 아래는 Sequence를 지원하는 H2 DB를 사용했을 때 나오는 Hibernate 로그 일부다.</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">Hibernate: call next value for hibernate_sequence</span><br><span class="line">Hibernate: call next value for hibernate_sequence</span><br><span class="line">Hibernate: call next value for hibernate_sequence</span><br><span class="line">...</span><br></pre></td></tr></table></figure><p>Sequence를 지원하지 않는 DB에서는 Table을 이용해서 채번한다. 아래는 Sequence를 지원하지 않는 MySQL DB의 로그 일부다.</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">SET autocommit=0</span><br><span class="line">select next_val as id_val from hibernate_sequence for update</span><br><span class="line">update hibernate_sequence set next_val= 2 where next_val=1</span><br><span class="line">commit</span><br><span class="line">autocommit=1</span><br><span class="line">autocommit=0</span><br><span class="line">select next_val as id_val from hibernate_sequence for update</span><br><span class="line">update hibernate_sequence set next_val= 3 where next_val=2</span><br><span class="line">commit</span><br><span class="line">SET autocommit=1</span><br><span class="line">SET autocommit=0</span><br><span class="line">select next_val as id_val from hibernate_sequence for update</span><br><span class="line">update hibernate_sequence set next_val= 4 where next_val=3</span><br><span class="line">commit</span><br><span class="line">SET autocommit=1</span><br><span class="line">...</span><br></pre></td></tr></table></figure><p>번호 하나 딸 때마다 쿼리를 2개씩 날리게 되므로 꽤 큰 부하가 발생될 것임을 짐작할 수 있다.</p><h2 id="Batch-채번"><a href="#Batch-채번" class="headerlink" title="Batch 채번"></a>Batch 채번</h2><p>채번 자체를 Batch로 처리하면 다음과 같이 채번 쿼리 횟수를 대폭 줄여서 성능을 높일 수 있다.</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">SET autocommit=0</span><br><span class="line">select next_val as id_val from hibernate_sequence for update</span><br><span class="line">update hibernate_sequence set next_val= 501 where next_val=1</span><br><span class="line">commit</span><br><span class="line">SET autocommit=1</span><br><span class="line">SET autocommit=0</span><br><span class="line">select next_val as id_val from hibernate_sequence for update</span><br><span class="line">update hibernate_sequence set next_val= 1001 where next_val=501</span><br><span class="line">commit</span><br><span class="line">SET autocommit=1</span><br><span class="line">SET autocommit=0</span><br><span class="line">select next_val as id_val from hibernate_sequence for update</span><br><span class="line">update hibernate_sequence set next_val= 1501 where next_val=1001</span><br><span class="line">commit</span><br><span class="line">SET autocommit=1</span><br><span class="line">...</span><br></pre></td></tr></table></figure><p>Batch 채번은 다음과 같이 다소 복잡한 Hibernate 전용 애너테이션을 지정해야 한다. </p><p>채번 배치 크기도 애너테이션 내에서 지정해야 하므로 배치 크기 설정을 yml 파일로 외부화 할 수 없다는 단점이 있다. 또한 채번 배치 크기는 엔티티 클래스에서 Hibernate 애너테이션으로 지정해야 하고, Batch Insert의 배치 크기는 yml 파일로 지정하므로 두 값이 달라질 가능성이 있다는 것도 운영 상 단점이라고 할 수 있겠다.</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Entity</span></span><br><span class="line"><span class="meta">@NoArgsConstructor</span></span><br><span class="line"><span class="meta">@AllArgsConstructor</span></span><br><span class="line"><span class="meta">@Getter</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ItemSequence</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Id</span></span><br><span class="line">    <span class="meta">@GenericGenerator</span>(</span><br><span class="line">            name = <span class="string">"SequenceGenerator"</span>,</span><br><span class="line">            strategy = <span class="string">"org.hibernate.id.enhanced.SequenceStyleGenerator"</span>,</span><br><span class="line">            parameters = &#123;</span><br><span class="line">                    <span class="meta">@Parameter</span>(name = <span class="string">"sequence_name"</span>, value = <span class="string">"hibernate_sequence"</span>),</span><br><span class="line">                    <span class="meta">@Parameter</span>(name = <span class="string">"optimizer"</span>, value = <span class="string">"pooled"</span>),</span><br><span class="line">                    <span class="meta">@Parameter</span>(name = <span class="string">"initial_value"</span>, value = <span class="string">"1"</span>),</span><br><span class="line">                    <span class="meta">@Parameter</span>(name = <span class="string">"increment_size"</span>, value = <span class="string">"500"</span>)</span><br><span class="line">            &#125;</span><br><span class="line">    )</span><br><span class="line">    <span class="meta">@GeneratedValue</span>(</span><br><span class="line">            strategy = GenerationType.SEQUENCE,</span><br><span class="line">            generator = <span class="string">"SequenceGenerator"</span></span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> String description;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h1 id="Spring-Data-JDBC"><a href="#Spring-Data-JDBC" class="headerlink" title="Spring Data JDBC"></a>Spring Data JDBC</h1><p>Spring Data에는 JPA만 있는 것이 아니다. <a href="https://spring.io/projects/spring-data" target="_blank" rel="noopener">https://spring.io/projects/spring-data</a> 에 보면 상당히 다양한 저장소를 지원하는 서브 프로젝트가 많이 있으며, 지금처럼 관계형 데이터베이스에서는 JPA 대신 JDBC를 사용할 수도 있다.</p><h2 id="JdbcTemplate-batchUpdate"><a href="#JdbcTemplate-batchUpdate" class="headerlink" title="JdbcTemplate.batchUpdate()"></a>JdbcTemplate.batchUpdate()</h2><p>JdbcTemplate에는 Batch를 지원하는 <code>batchUpdate()</code> 메서드가 마련돼있다. 여러 가지로 Overloading 돼 있어서 편리한 메서드를 골라서 사용하면 되는데, 여기에서는 batch 크기를 지정할 수 있는 <code>BatchPreparedStatementSetter</code>를 사용하는 아래의 메서드를 사용해서 구현해본다.</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">batchUpdate(String sql, BatchPreparedStatementSetter pss)</span><br></pre></td></tr></table></figure><h2 id="주요-구현-부분"><a href="#주요-구현-부분" class="headerlink" title="주요 구현 부분"></a>주요 구현 부분</h2><p><code>ItemJdbc</code>라는 객체를 <code>ITEM_JDBC</code> 테이블에 Batch Insert로 저장한다고 가정하고, 주요 구현부를 살펴보면 다음과 같다. </p><p><code>batchSize</code> 변수를 통해 배치 크기를 지정하고, 전체 데이터를 배치 크기로 나눠서 Batch Insert를 실행하고, 자투리 데이터를 다시 Batch Insert로 저장한다.</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Repository</span></span><br><span class="line"><span class="meta">@RequiredArgsConstructor</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ItemJdbcRepositoryImpl</span> <span class="keyword">implements</span> <span class="title">ItemJdbcRepository</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> JdbcTemplate jdbcTemplate;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Value</span>(<span class="string">"$&#123;batchSize&#125;"</span>)</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> batchSize;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">saveAll</span><span class="params">(List&lt;ItemJdbc&gt; items)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> batchCount = <span class="number">0</span>;</span><br><span class="line">        List&lt;ItemJdbc&gt; subItems = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; items.size(); i++) &#123;</span><br><span class="line">            subItems.add(items.get(i));</span><br><span class="line">            <span class="keyword">if</span> ((i + <span class="number">1</span>) % batchSize == <span class="number">0</span>) &#123;</span><br><span class="line">                batchCount = batchInsert(batchSize, batchCount, subItems);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (!subItems.isEmpty()) &#123;</span><br><span class="line">            batchCount = batchInsert(batchSize, batchCount, subItems);</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">"batchCount: "</span> + batchCount);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">batchInsert</span><span class="params">(<span class="keyword">int</span> batchSize, <span class="keyword">int</span> batchCount, List&lt;ItemJdbc&gt; subItems)</span> </span>&#123;</span><br><span class="line">        jdbcTemplate.batchUpdate(<span class="string">"INSERT INTO ITEM_JDBC (`NAME`, `DESCRIPTION`) VALUES (?, ?)"</span>,</span><br><span class="line">                <span class="keyword">new</span> BatchPreparedStatementSetter() &#123;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setValues</span><span class="params">(PreparedStatement ps, <span class="keyword">int</span> i)</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">                        ps.setString(<span class="number">1</span>, subItems.get(i).getName());</span><br><span class="line">                        ps.setString(<span class="number">2</span>, subItems.get(i).getDescription());</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getBatchSize</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                        <span class="keyword">return</span> batchSize;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line">        subItems.clear();</span><br><span class="line">        batchCount++;</span><br><span class="line">        <span class="keyword">return</span> batchCount;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h1 id="실험-결과"><a href="#실험-결과" class="headerlink" title="실험 결과"></a>실험 결과</h1><p>어느 방식이 가장 빠를까?</p><p>아래와 같은 환경에서 테스트 해 본 결과 <strong>Spring Data JDBC 방식이 가장 빠르다.</strong></p><h2 id="테스트-환경"><a href="#테스트-환경" class="headerlink" title="테스트 환경"></a>테스트 환경</h2><ul><li>Java 11</li><li>Spring Boot 2.2.4</li><li>MySQL 5.7.18</li><li>Sprint Data JPA 2.2.4</li><li>Hibernate Core 5.4.10.Final</li><li>Hibernate Commons Annotations 5.1.0.Final</li><li>Sprint Data JDBC 1.1.4</li></ul><h2 id="성능-비교"><a href="#성능-비교" class="headerlink" title="성능 비교"></a>성능 비교</h2><p>그렇다면 얼마나 차이가 날까?</p><p>연관 관계 없이 단 하나의 엔티티만 저장하는 시나리오에서, 배치 크기를 바꿔가면서 10,000건의 데이터를 저장하는 실험 결과 소요 시간(초 단위) 및 비교 배율은 다음과 같다.</p><table><thead><tr><th>배치 크기</th><th>JDBC(A)</th><th>Batch SEQUENCE(B)</th><th>IDENTITY(C)</th><th>(B)/(A)</th><th>(C)/(A)</th></tr></thead><tbody><tr><td>10</td><td>0.885</td><td>3.072</td><td>5.087</td><td>3.47</td><td>5.748022599</td></tr><tr><td>50</td><td>0.391</td><td>1.007</td><td>4.097</td><td>2.58</td><td>10.47826087</td></tr><tr><td>100</td><td>0.356</td><td>0.808</td><td>5.218</td><td>2.27</td><td>14.65730337</td></tr><tr><td>500</td><td>0.226</td><td>0.515</td><td>5.637</td><td>2.28</td><td>24.94247788</td></tr><tr><td>1000</td><td>0.216</td><td>0.480</td><td>6.241</td><td>2.22</td><td>28.89351852</td></tr><tr><td>5000</td><td>0.189</td><td>0.447</td><td>5.052</td><td>2.37</td><td>26.73015873</td></tr></tbody></table><p>배치 크기에 따라 다르지만, <strong>Spring Data JDBC의 <code>batchUpdate()</code>를 사용하는 방식이 Hibernate Batch Sequence 방식보다 대략 2 ~ 3배 정도 빠르고, Batch Insert가 사용되지 못 하는 Hibernate IDENTITY 방식보다는 5 ~ 25배 정도 빠르다.</strong> </p><p>MySQL에는 Sequence가 없으므로 SEQUENCE 방식을 지정했다고 하더라도 사실 상 TABLE 방식으로 동작했다는 것을 감안하면, <strong>Sequence가 지원되는 DB에서는 TABLE 방식보다 채번 부하가 더 적은 SEQUENCE 방식을 Batch 스타일로 사용하면 Spring Data JDBC 방식과 비슷한 성능을 보일 것 같다.</strong></p><h1 id="마무리"><a href="#마무리" class="headerlink" title="마무리"></a>마무리</h1><blockquote><ul><li><p><strong>아주 많은 수의 데이터를 한 꺼번에 입력할 때는 Spring Data JPA를 잠시 뒤로하고 Spring Data JDBC의 <code>batchUpdate()</code>를 활용하는 것도 좋다.</strong></p><ul><li>Spring Data JDBC는 Spring Data JPA와 함께 혼용해서 사용할 수도 있으므로, 상황에 맞게 사용할 수 있다.</li></ul></li><li><p><strong>Spring Data JPA를 사용해야만 한다면 IDENTITY 방식 말고 Batch SEQUENCE 방식을 사용하는 것이 좋다.</strong></p></li></ul></blockquote>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;Spring-Data-Batch-Insert-최적화&quot;&gt;&lt;a href=&quot;#Spring-Data-Batch-Insert-최적화&quot; class=&quot;headerlink&quot; title=&quot;Spring Data Batch Insert 최적화&quot;&gt;&lt;/a&gt;Sp
+      
+    
+    </summary>
+    
+      <category term="Performance" scheme="http://homoefficio.github.io/categories/Performance/"/>
+    
+    
+      <category term="Spring Data JPA" scheme="http://homoefficio.github.io/tags/Spring-Data-JPA/"/>
+    
+      <category term="Hibernate" scheme="http://homoefficio.github.io/tags/Hibernate/"/>
+    
+      <category term="Spring Data" scheme="http://homoefficio.github.io/tags/Spring-Data/"/>
+    
+      <category term="Spring Data JDBC" scheme="http://homoefficio.github.io/tags/Spring-Data-JDBC/"/>
+    
+      <category term="Batch Insert" scheme="http://homoefficio.github.io/tags/Batch-Insert/"/>
+    
+      <category term="MySQL" scheme="http://homoefficio.github.io/tags/MySQL/"/>
+    
+      <category term="GenerationType" scheme="http://homoefficio.github.io/tags/GenerationType/"/>
+    
+      <category term="GenerationType.IDENTITY" scheme="http://homoefficio.github.io/tags/GenerationType-IDENTITY/"/>
+    
+      <category term="GenerationType.SEQUENCE" scheme="http://homoefficio.github.io/tags/GenerationType-SEQUENCE/"/>
+    
+      <category term="GenerationType.TABLE" scheme="http://homoefficio.github.io/tags/GenerationType-TABLE/"/>
+    
+      <category term="GenerationType.AUTO" scheme="http://homoefficio.github.io/tags/GenerationType-AUTO/"/>
+    
+      <category term="Performance" scheme="http://homoefficio.github.io/tags/Performance/"/>
+    
+      <category term="IDENTITY column" scheme="http://homoefficio.github.io/tags/IDENTITY-column/"/>
+    
+      <category term="Auto Increment" scheme="http://homoefficio.github.io/tags/Auto-Increment/"/>
+    
+      <category term="Sequence" scheme="http://homoefficio.github.io/tags/Sequence/"/>
+    
+      <category term="Database" scheme="http://homoefficio.github.io/tags/Database/"/>
+    
+  </entry>
   
   <entry>
     <title>GET이냐 POST냐 그것이 문제로다</title>
@@ -213,18 +268,6 @@
     
       <category term="Dependency Inversion Principle" scheme="http://homoefficio.github.io/tags/Dependency-Inversion-Principle/"/>
     
-      <category term="Isolation" scheme="http://homoefficio.github.io/tags/Isolation/"/>
-    
-      <category term="쿼츠" scheme="http://homoefficio.github.io/tags/%EC%BF%BC%EC%B8%A0/"/>
-    
-      <category term="스케줄러" scheme="http://homoefficio.github.io/tags/%EC%8A%A4%EC%BC%80%EC%A4%84%EB%9F%AC/"/>
-    
-      <category term="클린 아키텍처" scheme="http://homoefficio.github.io/tags/%ED%81%B4%EB%A6%B0-%EC%95%84%ED%82%A4%ED%85%8D%EC%B2%98/"/>
-    
-      <category term="인터페이스 분리 원칙" scheme="http://homoefficio.github.io/tags/%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4-%EB%B6%84%EB%A6%AC-%EC%9B%90%EC%B9%99/"/>
-    
-      <category term="격리" scheme="http://homoefficio.github.io/tags/%EA%B2%A9%EB%A6%AC/"/>
-    
       <category term="Dependency Injection" scheme="http://homoefficio.github.io/tags/Dependency-Injection/"/>
     
       <category term="SpringBeanJobFactory" scheme="http://homoefficio.github.io/tags/SpringBeanJobFactory/"/>
@@ -239,9 +282,21 @@
     
       <category term="SchedulerFactoryBean" scheme="http://homoefficio.github.io/tags/SchedulerFactoryBean/"/>
     
+      <category term="Isolation" scheme="http://homoefficio.github.io/tags/Isolation/"/>
+    
+      <category term="쿼츠" scheme="http://homoefficio.github.io/tags/%EC%BF%BC%EC%B8%A0/"/>
+    
+      <category term="스케줄러" scheme="http://homoefficio.github.io/tags/%EC%8A%A4%EC%BC%80%EC%A4%84%EB%9F%AC/"/>
+    
+      <category term="클린 아키텍처" scheme="http://homoefficio.github.io/tags/%ED%81%B4%EB%A6%B0-%EC%95%84%ED%82%A4%ED%85%8D%EC%B2%98/"/>
+    
+      <category term="인터페이스 분리 원칙" scheme="http://homoefficio.github.io/tags/%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4-%EB%B6%84%EB%A6%AC-%EC%9B%90%EC%B9%99/"/>
+    
       <category term="의존 관계 역전 원칙" scheme="http://homoefficio.github.io/tags/%EC%9D%98%EC%A1%B4-%EA%B4%80%EA%B3%84-%EC%97%AD%EC%A0%84-%EC%9B%90%EC%B9%99/"/>
     
       <category term="의존 관계 주입" scheme="http://homoefficio.github.io/tags/%EC%9D%98%EC%A1%B4-%EA%B4%80%EA%B3%84-%EC%A3%BC%EC%9E%85/"/>
+    
+      <category term="격리" scheme="http://homoefficio.github.io/tags/%EA%B2%A9%EB%A6%AC/"/>
     
       <category term="Transaction" scheme="http://homoefficio.github.io/tags/Transaction/"/>
     
@@ -294,18 +349,6 @@
     
       <category term="Dependency Inversion Principle" scheme="http://homoefficio.github.io/tags/Dependency-Inversion-Principle/"/>
     
-      <category term="Isolation" scheme="http://homoefficio.github.io/tags/Isolation/"/>
-    
-      <category term="쿼츠" scheme="http://homoefficio.github.io/tags/%EC%BF%BC%EC%B8%A0/"/>
-    
-      <category term="스케줄러" scheme="http://homoefficio.github.io/tags/%EC%8A%A4%EC%BC%80%EC%A4%84%EB%9F%AC/"/>
-    
-      <category term="클린 아키텍처" scheme="http://homoefficio.github.io/tags/%ED%81%B4%EB%A6%B0-%EC%95%84%ED%82%A4%ED%85%8D%EC%B2%98/"/>
-    
-      <category term="인터페이스 분리 원칙" scheme="http://homoefficio.github.io/tags/%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4-%EB%B6%84%EB%A6%AC-%EC%9B%90%EC%B9%99/"/>
-    
-      <category term="격리" scheme="http://homoefficio.github.io/tags/%EA%B2%A9%EB%A6%AC/"/>
-    
       <category term="Dependency Injection" scheme="http://homoefficio.github.io/tags/Dependency-Injection/"/>
     
       <category term="SpringBeanJobFactory" scheme="http://homoefficio.github.io/tags/SpringBeanJobFactory/"/>
@@ -320,9 +363,21 @@
     
       <category term="SchedulerFactoryBean" scheme="http://homoefficio.github.io/tags/SchedulerFactoryBean/"/>
     
+      <category term="Isolation" scheme="http://homoefficio.github.io/tags/Isolation/"/>
+    
+      <category term="쿼츠" scheme="http://homoefficio.github.io/tags/%EC%BF%BC%EC%B8%A0/"/>
+    
+      <category term="스케줄러" scheme="http://homoefficio.github.io/tags/%EC%8A%A4%EC%BC%80%EC%A4%84%EB%9F%AC/"/>
+    
+      <category term="클린 아키텍처" scheme="http://homoefficio.github.io/tags/%ED%81%B4%EB%A6%B0-%EC%95%84%ED%82%A4%ED%85%8D%EC%B2%98/"/>
+    
+      <category term="인터페이스 분리 원칙" scheme="http://homoefficio.github.io/tags/%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4-%EB%B6%84%EB%A6%AC-%EC%9B%90%EC%B9%99/"/>
+    
       <category term="의존 관계 역전 원칙" scheme="http://homoefficio.github.io/tags/%EC%9D%98%EC%A1%B4-%EA%B4%80%EA%B3%84-%EC%97%AD%EC%A0%84-%EC%9B%90%EC%B9%99/"/>
     
       <category term="의존 관계 주입" scheme="http://homoefficio.github.io/tags/%EC%9D%98%EC%A1%B4-%EA%B4%80%EA%B3%84-%EC%A3%BC%EC%9E%85/"/>
+    
+      <category term="격리" scheme="http://homoefficio.github.io/tags/%EA%B2%A9%EB%A6%AC/"/>
     
   </entry>
   
@@ -371,9 +426,9 @@
     
       <category term="인터페이스 분리 원칙" scheme="http://homoefficio.github.io/tags/%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4-%EB%B6%84%EB%A6%AC-%EC%9B%90%EC%B9%99/"/>
     
-      <category term="의존관계 역전 원칙" scheme="http://homoefficio.github.io/tags/%EC%9D%98%EC%A1%B4%EA%B4%80%EA%B3%84-%EC%97%AD%EC%A0%84-%EC%9B%90%EC%B9%99/"/>
-    
       <category term="격리" scheme="http://homoefficio.github.io/tags/%EA%B2%A9%EB%A6%AC/"/>
+    
+      <category term="의존관계 역전 원칙" scheme="http://homoefficio.github.io/tags/%EC%9D%98%EC%A1%B4%EA%B4%80%EA%B3%84-%EC%97%AD%EC%A0%84-%EC%9B%90%EC%B9%99/"/>
     
   </entry>
   
@@ -1183,59 +1238,6 @@
       <category term="Job 순차 실행" scheme="http://homoefficio.github.io/tags/Job-%EC%88%9C%EC%B0%A8-%EC%8B%A4%ED%96%89/"/>
     
       <category term="템플릿 메서드 패턴" scheme="http://homoefficio.github.io/tags/%ED%85%9C%ED%94%8C%EB%A6%BF-%EB%A9%94%EC%84%9C%EB%93%9C-%ED%8C%A8%ED%84%B4/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>EOS 계정 생성</title>
-    <link href="http://homoefficio.github.io/2018/07/09/EOS-%EA%B3%84%EC%A0%95-%EC%83%9D%EC%84%B1/"/>
-    <id>http://homoefficio.github.io/2018/07/09/EOS-계정-생성/</id>
-    <published>2018-07-08T15:18:11.000Z</published>
-    <updated>2019-04-28T17:03:55.331Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="EOS-계정-생성"><a href="#EOS-계정-생성" class="headerlink" title="EOS 계정 생성"></a>EOS 계정 생성</h1><p>공식 문서 <a href="https://developers.eos.io/eosio-nodeos/docs/learn-about-wallets-keys-and-accounts-with-cleos#section-creating-an-account" target="_blank" rel="noopener">https://developers.eos.io/eosio-nodeos/docs/learn-about-wallets-keys-and-accounts-with-cleos#section-creating-an-account</a> 를 기준으로 약간의 커스터마이징과 과도한 친절함을 가미했다.</p><p>블록체인의 상태에 영향을 미치는 액션을 수행하려면 계정이 필요하다.</p><p><code>cleos</code>를 써서 <code>nodeos</code>로 하여금 계정을 생성하고 생성된 계정을 블록체인에 발행하게 할 수 있다. 계정을 생성하려면 기존 계정과 기존 계정의 key가 필요하다. 이를 위해 지갑이 필요하며, 지갑을 사용하려면 <code>keosd</code>를 실행해야 한다.</p><p>또한 계정을 생성하고 발행할 <code>nodeos</code>를 실행해서 EOS 노드를 띄워야 한다.</p><p>이런 관계는 아래 그림을 보면 더 쉽게 이해할 수 있다.</p><p><img src="https://i.imgur.com/nnJYbmt.png" alt="Imgur"></p><h2 id="keosd-실행"><a href="#keosd-실행" class="headerlink" title="keosd 실행"></a>keosd 실행</h2><p>계정 생성을 하려면 <code>keosd</code>와 <code>nodeos</code>를 동시에 띄워야 하는데, <code>keosd</code>를 <code>cleos</code>를 통하지 않고 직접 실행하면 8888 포트에서 실행되는데 <code>nodeos</code>도 8888 포트에서 실행되게 설정되어 있으므로 <code>keosd</code>의 설정을 변경해야 하는데, 아래 두 가지 방식 중 하나를 택해서 <code>keosd</code>를 실행하면 된다. 여기에서는 <code>keosd</code> 실행 시 옵션 지정 방식으로 진행한다.</p><h3 id="keosd-설정-파일-수정"><a href="#keosd-설정-파일-수정" class="headerlink" title="keosd 설정 파일 수정"></a>keosd 설정 파일 수정</h3><p><code>keosd</code> 설정 파일은 <code>--data-dir</code>로 지갑 데이터 저장 위치를 따로 지정하지 않았다면 기본값으로 <code>~/eosio-wallet/</code>에 저장된 <code>config.ini</code> 파일이다. <code>http-server-address = 127.0.0.1:8888</code>로 되어 있는 것을 <code>http-server-address = 127.0.0.1:8899</code>로 변경한다.</p><p><img src="https://i.imgur.com/QETOABh.png" alt="Imgur"></p><h3 id="keosd-실행-시-옵션-지정"><a href="#keosd-실행-시-옵션-지정" class="headerlink" title="keosd 실행 시 옵션 지정"></a>keosd 실행 시 옵션 지정</h3><p>다음과 같이 혹시 실행 중일 수 있는 <code>keosd</code>를 종료하고 새로 <code>keosd</code>를 실행한다. EOSIO 빌드 및 설치 과정에서 <code>make install</code>을 해줬다면 어느 디렉터리에서 실행해도 무방하다.</p><blockquote><p>pkill keosd</p><p>keosd --http-server-address=localhost:8899</p><p>1.0.9부터는 아래와 같이 --http-validate-host=false를 추가해줘야 cleos로 계정 생성 시 에러가 발생하지 않는다.</p><p>keosd --http-server-address=localhost:8899 --http-validate-host=false</p></blockquote><p><img src="https://i.imgur.com/W2LvKKU.png" alt="Imgur"></p><h2 id="nodeos-실행"><a href="#nodeos-실행" class="headerlink" title="nodeos 실행"></a>nodeos 실행</h2><p>새로운 터미널에서 <code>nodeos</code> 명령으로 EOS 노드를 띄운다.</p><blockquote><p>nodeos -e -p eosio --plugin eosio::chain_api_plugin --plugin eosio::history_api_plugin --http-validate-host=false</p></blockquote><p><em><code>nodeos</code> 명령으로 EOS 노드를 띄우는 자세한 내용은 <a href="https://homoefficio.github.io/2018/06/06/EOS-Single-Node-Testnet-실행/">EOS Single Node Testnet 실행</a>을 참고한다.</em></p><p><img src="https://i.imgur.com/PQ3oqEt.png" alt="Imgur"></p><h2 id="계정-생성-준비"><a href="#계정-생성-준비" class="headerlink" title="계정 생성 준비"></a>계정 생성 준비</h2><h3 id="사전-준비"><a href="#사전-준비" class="headerlink" title="사전 준비"></a>사전 준비</h3><p>EOS 블록체인에서 계정을 생성하려면 여러가지 사전 준비가 필요하다.</p><ul><li>nodeos: 계정 생성도 트랜잭션이므로 nodeos가 실행되어 있어야 한다.</li><li>이미 존재하는 계정: 계정 생성이 이미 존재하는 계정이 실행하는 트랜잭션이므로 이미 존재하는 계정이 필요하다.</li><li>이미 존재하는 계정의 키가 연동된 지갑: 계정 생성의 주체인 authorizing_account의 서명, 즉 authorizing_account의 개인키가 필요하며, 개인키를 읽어올 수 있도록 authorizing_account의 개인키가 연동된 지갑이 있어야한다.</li><li>keosd: 지갑을 사용하므로, <code>keosd</code>가 실행되어 있어야 한다.</li><li>새로 생성할 계정의 owner 자격에 사용될 공개키</li><li>새로 생성할 계정의 active 자격에 사용될 공개키</li></ul><p>Single Node Testnet 에는 EOS 노드를 부트스트랩하는 <code>eosio</code> 계정 하나만 존재하므로, 최초의 사용자 계정을 만들 때는 <code>eosio</code> 계정을 사용할 수 밖에 없다. 그리고 <code>eosio</code> 계정으로 서명을 하므로 <code>eosio</code> 계정의 비밀키가 필요하다.</p><p><code>eosio</code> 계정의 비밀키는 리눅스의 경우 <code>~/.local/share/eosio/nodeos/config/config.ini</code>, 맥의 경우 <code>~/Libraries/Application Support/eosio/nodeos/config/config.ini</code> 파일 안에 <code>signature-provider</code>라는 항목의 <code>KEY</code>에 명시되어 있다.</p><h3 id="이미-존재하는-계정의-키가-연동된-지갑-생성"><a href="#이미-존재하는-계정의-키가-연동된-지갑-생성" class="headerlink" title="이미 존재하는 계정의 키가 연동된 지갑 생성"></a>이미 존재하는 계정의 키가 연동된 지갑 생성</h3><p>아래의 명령으로 계정 생성에 사용되는 <code>eosio</code> 계정의 키와 연동된 지갑 <code>temp</code>를 만든다.</p><blockquote><p>cleos --wallet-url=<a href="http://localhost:8899" target="_blank" rel="noopener">http://localhost:8899</a> wallet create -n temp</p></blockquote><p>!15</p><p>아래와 같이 지갑 목록을 조회하면 <code>temp</code> 지갑이 표시되며, 지갑 이름 옆의 <code>*</code> 표시는 지갑의 잠금이 해제되어 있음을 의미한다.</p><p>!16</p><h3 id="새로-생성할-계정에-사용될-키-생성"><a href="#새로-생성할-계정에-사용될-키-생성" class="headerlink" title="새로 생성할 계정에 사용될 키 생성"></a>새로 생성할 계정에 사용될 키 생성</h3><p>새로 생성할 계정의 <code>owner_key</code>, <code>active_key</code>에 사용될 키 두 개 생성</p><blockquote><p>cleos create key</p></blockquote><p>!17</p><p><img src="https://i.imgur.com/ecbRbVy.png" alt="Imgur"></p><h3 id="계정-생성-명령"><a href="#계정-생성-명령" class="headerlink" title="계정 생성 명령"></a>계정 생성 명령</h3><p>계정 생성 명령은 다음과 같다.</p><blockquote><p>cleos create account ${authorizing_account} ${new_account} ${owner_key} ${active_key}</p></blockquote><ul><li><code>${authorizing_account}</code>: 새 계정을 생성해서 블록체인에 발행하는 역할을 담당하는 기존 계정</li><li><code>${new_account}</code>: 새로 생성될 계정의 이름</li><li><code>${owner_key}</code>: 새로 생성될 계정의 owner 자격(authority)에 할당될 공개키</li><li><code>${active_key}</code>: 새로 생성될 계정의 active 자격(authority)에 할당될 공개키</li></ul><h4 id="새-계정-이름-규칙"><a href="#새-계정-이름-규칙" class="headerlink" title="새 계정 이름 규칙"></a>새 계정 이름 규칙</h4><ul><li>12글자까지 허용</li><li>허용되는 문자: <code>.12345abcdefghijklmnopqrstuvwxyz</code></li></ul><h4 id="owner-자격-owner-authority"><a href="#owner-자격-owner-authority" class="headerlink" title="owner 자격(owner authority)"></a>owner 자격(owner authority)</h4><p>계정의 소유권을 나타내는 자격이다. owner 자격을 필요로 하는 트랜잭션은 별로 없지만 소유자 권한을 변경하는 액션에는 owner 자격이 필요하다.</p><p>owner 자격에 할당된 키는 콜드 저장소(cold storage)에 저장하는 것이 좋으며 누구와도 공유하지 말아야 한다.</p><p>도용된 권한(permission)을 복구하는데도 owner 자격이 필요하다.</p><h4 id="active-자격-active-authority"><a href="#active-자격-active-authority" class="headerlink" title="active 자격(active authority)"></a>active 자격(active authority)</h4><p>송/수금, 블록 생산자(BP, Block Producer) 투표 및 고차원의 계정 사항 변경에 사용되는 자격이다. 대부분의 트랜잭션은 이 active 자격으로 생성할 수 있다.</p><h3 id="계정-생성"><a href="#계정-생성" class="headerlink" title="계정 생성"></a>계정 생성</h3><p>계정 생성 과정을 이해하기 위해 먼저 앞서 다룬 사전 조건과 시나리오를 정리해보자.</p><h4 id="authorizing-account-계정-생성을-실행하는-계정"><a href="#authorizing-account-계정-생성을-실행하는-계정" class="headerlink" title="${authorizing_account}(계정 생성을 실행하는 계정)"></a>${authorizing_account}(계정 생성을 실행하는 계정)</h4><p>Single Node Testnet에 이미 존재하는 유일한 계정은 Single Node를 실행할 때 사용되는 <code>eosio</code>밖에 없다. 따라서 처음 커스텀 계정을 생성할 때는 <code>eosio</code> 계정을 사용해야 한다. 이는 <code>eosio</code> 계정의 비밀키도 알아야 한다는 의미이며 비밀키 확인 방법은 위 ‘사전 준비’ 부분에 나와있다.</p><h4 id="new-account"><a href="#new-account" class="headerlink" title="${new_account}"></a>${new_account}</h4><p>새 계정 이름은 규칙에 맞에 임의로 지정하면 된다. 예제에서는 <code>homo.efficio</code>로 한다.</p><h4 id="owner-key-active-key"><a href="#owner-key-active-key" class="headerlink" title="${owner_key}, ${active_key}"></a>${owner_key}, ${active_key}</h4><p>새로 생성될 계정의 owner 자격과 active 자격에 사용할 키는 앞서 <a href="https://homoefficio.github.io/2018/06/06/EOS-지갑-만들기-및-Key-연동/">EOS 지갑 만들기 및 Key 연동</a>에서 ‘Homo-Efficio’ 지갑에 연동했던 두 개의 키의 공개키를 사용한다.</p><ul><li>owner 자격에 사용할 <code>${owner_key}</code>: <code>EOS5pBeZiRgKRrLCCCFZ23EuP2d7XXK8UhYdbRSauXjyGrPjApLAW</code></li><li>active 자격에 사용할 <code>${active_key}</code>: <code>EOS8cQKoirjCNSVVywC7WwhuzSg1bC5Q5vG5YhDmAcwf3bVoPys3e</code></li></ul><h4 id="시나리오-이해"><a href="#시나리오-이해" class="headerlink" title="시나리오 이해"></a>시나리오 이해</h4><p>계정 생성 시나리오를 정리하면 다음과 같다.</p><blockquote><p><code>homo.efficio</code>라는 신규 계정 생성에 <code>eosio</code>라는 기존 계정을 사용하며,</p><p>‘Homo-Efficio’ 지갑에 연동했던 두 개의 키를 새로 생성할 계정의 <code>owner_key</code>, <code>active_key</code>로 설정한다.</p></blockquote><p>그림으로 나타내면 다음과 같다.</p><p><img src="https://i.imgur.com/YNsQPK1.png" alt="Imgur"></p><p>결국에는 키를 매개체로 해서 <code>Homo-Efficio</code>라는 지갑과 <code>homo.efficio</code>라는 계정이 간접적으로 연결되는 모양새다. 위 그림을 토대로 새 계정이 생성된 후 새 계정과 지갑의 관계를 정리해보면 다음과 같다.</p><blockquote><p><code>homo.efficio</code>라는 계정으로 어떤 트랜잭션을 발생시킬 때</p><p>필요한 키 정보를 <code>Homo-Efficio</code>라는 지갑에서 가져온다.</p></blockquote><h2 id="계정-생성-실행"><a href="#계정-생성-실행" class="headerlink" title="계정 생성 실행"></a>계정 생성 실행</h2><h3 id="오류-테스트"><a href="#오류-테스트" class="headerlink" title="오류 테스트"></a>오류 테스트</h3><p>시험 삼아 길이가 12자를 넘는 계정 이름으로 계정을 생성해보면 다음과 같은 에러가 발생한다.</p><p><img src="https://i.imgur.com/sRJcHHm.png" alt="Imgur"></p><h3 id="지갑-잠금-오류"><a href="#지갑-잠금-오류" class="headerlink" title="지갑 잠금 오류"></a>지갑 잠금 오류</h3><p>지갑 잠금 해제 되지 않은 상태에서 계정 생성을 실행하면 다음과 같은 에러가 발생한다.</p><p><img src="https://i.imgur.com/vdL9ahu.png" alt="Imgur"></p><p>지갑 잠금 오류는 <code>keosd</code> 실행 화면에도 로그가 찍힌다.</p><p><img src="https://i.imgur.com/MKyVMjT.png" alt="Imgur"></p><h3 id="지갑-잠금-해제-후-계정-생성"><a href="#지갑-잠금-해제-후-계정-생성" class="headerlink" title="지갑 잠금 해제 후 계정 생성"></a>지갑 잠금 해제 후 계정 생성</h3><p>계정 생성의 주체인 <code>eosio</code> 계정의 키를 연동하는 지갑가 연동되어 있는 지갑을 해제한 후, <code>homo.efficio</code> 계정 생성을 실행하면 다음과 같은 에러가 발생한다.</p><p><img src="https://i.imgur.com/Sj1QugF.png" alt="Imgur"></p><p>이 에러는 <code>keosd</code> 관련 오류가 아니므로 <code>keosd</code> 화면에는 별다른 로그가 찍히지 않지만, <code>nodeos</code> 화면에 더 자세한 에러 로그가 찍힌다.</p><p><img src="https://i.imgur.com/Ak37Z07.png" alt="Imgur"></p><p>에러 내용은 serialization 수행 시간이 초과된 것이 원인인 것 같다.</p><p>혹시 잠금 해제해야할 지갑이 <code>Homo-Efficio</code>가 아니라 <code>default</code> 지갑인가 싶어서 다음과 같이 <code>Homo-Efficio</code> 지갑을 다시 잠그고 <code>default</code> 지갑을 잠금 해제한 후 다시 계정 생성을 시도하면, 이번에는 계정이 이미 있다는 에러가 발생한다.</p><p><img src="https://i.imgur.com/CnPqN3N.png" alt="Imgur"></p><p><code>nodeos</code> 화면에 더 자세한 로그가 찍힌다.</p><p><img src="https://i.imgur.com/MgN1qwB.png" alt="Imgur"></p><p><code>cleos get account homo.efficio</code> 명령으로 계정을 확인해보면 계정이 생성되어 있는 것으로 나온다.</p><p><img src="https://i.imgur.com/OpWGCPH.png" alt="Imgur"></p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;h1 id=&quot;EOS-계정-생성&quot;&gt;&lt;a href=&quot;#EOS-계정-생성&quot; class=&quot;headerlink&quot; title=&quot;EOS 계정 생성&quot;&gt;&lt;/a&gt;EOS 계정 생성&lt;/h1&gt;&lt;p&gt;공식 문서 &lt;a href=&quot;https://developers.eos.io/e
-      
-    
-    </summary>
-    
-      <category term="BlockChain" scheme="http://homoefficio.github.io/categories/BlockChain/"/>
-    
-    
-      <category term="BlockChain" scheme="http://homoefficio.github.io/tags/BlockChain/"/>
-    
-      <category term="EOS" scheme="http://homoefficio.github.io/tags/EOS/"/>
-    
-      <category term="블록체인" scheme="http://homoefficio.github.io/tags/%EB%B8%94%EB%A1%9D%EC%B2%B4%EC%9D%B8/"/>
-    
-      <category term="이오스" scheme="http://homoefficio.github.io/tags/%EC%9D%B4%EC%98%A4%EC%8A%A4/"/>
-    
-      <category term="development" scheme="http://homoefficio.github.io/tags/development/"/>
-    
-      <category term="개발" scheme="http://homoefficio.github.io/tags/%EA%B0%9C%EB%B0%9C/"/>
-    
-      <category term="dapp" scheme="http://homoefficio.github.io/tags/dapp/"/>
-    
-      <category term="디앱" scheme="http://homoefficio.github.io/tags/%EB%94%94%EC%95%B1/"/>
-    
-      <category term="Wallet" scheme="http://homoefficio.github.io/tags/Wallet/"/>
-    
-      <category term="Account" scheme="http://homoefficio.github.io/tags/Account/"/>
-    
-      <category term="nodeos" scheme="http://homoefficio.github.io/tags/nodeos/"/>
-    
-      <category term="keosd" scheme="http://homoefficio.github.io/tags/keosd/"/>
-    
-      <category term="cleos" scheme="http://homoefficio.github.io/tags/cleos/"/>
-    
-      <category term="지갑" scheme="http://homoefficio.github.io/tags/%EC%A7%80%EA%B0%91/"/>
-    
-      <category term="계정" scheme="http://homoefficio.github.io/tags/%EA%B3%84%EC%A0%95/"/>
     
   </entry>
   
