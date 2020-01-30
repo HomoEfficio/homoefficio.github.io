@@ -7,6 +7,7 @@ tags:
   - Spring Data JDBC
   - Spring Data JPA
   - Batch Insert
+  - Bulk Insert
   - MySQL
   - Hibernate
   - GenerationType
@@ -291,8 +292,13 @@ MySQL에는 Sequence가 없으므로 SEQUENCE 방식을 지정했다고 하더�
 # 마무리
 
 >- **아주 많은 수의 데이터를 한 꺼번에 입력할 때는 Spring Data JPA를 잠시 뒤로하고 Spring Data JDBC의 `batchUpdate()`를 활용하는 것도 좋다.**
->    - Spring Data JDBC는 Spring Data JPA와 함께 혼용해서 사용할 수도 있으므로, 상황에 맞게 사용할 수 있다.
+>    - Spring Data JDBC는 Spring Data JPA와 함께 혼용해서 사용할 수도 있고,
+>    - `@Transactional`을 통해 트랜잭션이 관리될 수 있으므로,
+>    - 현실적으로 가장 나은 방법이다.
 >
 >- **Spring Data JPA를 사용해야만 한다면 IDENTITY 방식 말고 Batch SEQUENCE 방식을 사용하는 것이 좋다.**
+>    - 그러나 이 방식은 애너테이션 지정이 필요 이상 복잡하고,
+>    - 테이블 생성 시부터 적용하면 괜찮지만, 이미 ID 생성 방식이 IDENTITY인 기존 테이블을 SEQUENCE 방식으로 변경해야 하는 부담이 있고,
+>    - batch 크기 지정 관련 운영 상의 단점이 있다.
 
 
