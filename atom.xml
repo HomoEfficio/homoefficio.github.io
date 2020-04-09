@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://homoefficio.github.io/"/>
-  <updated>2020-04-09T08:06:05.388Z</updated>
+  <updated>2020-04-09T08:40:35.552Z</updated>
   <id>http://homoefficio.github.io/</id>
   
   <author>
@@ -21,9 +21,9 @@
     <link href="http://homoefficio.github.io/2020/04/09/Java-Memory-Monitoring/"/>
     <id>http://homoefficio.github.io/2020/04/09/Java-Memory-Monitoring/</id>
     <published>2020-04-09T07:57:33.000Z</published>
-    <updated>2020-04-09T08:06:05.388Z</updated>
+    <updated>2020-04-09T08:40:35.552Z</updated>
     
-    <content type="html"><![CDATA[<h1 id="Java-메모리-모니터링"><a href="#Java-메모리-모니터링" class="headerlink" title="Java 메모리 모니터링"></a>Java 메모리 모니터링</h1><p>두서 없이 이것저것 모아본 자바 메모리 모니터링</p><h1 id="Heap-Dump"><a href="#Heap-Dump" class="headerlink" title="Heap Dump"></a>Heap Dump</h1><blockquote><p>힙에 있는 모든 객체 Dump<br>jmap -dump:format=b,file=HEAP_DUMP_OUTPUT_FILE_NAME.hprof PID</p><p>힙에 있는 Live 객체만 Dump<br>jmap -dump:live,format=b,file=HEAP_DUMP_OUTPUT_FILE_NAME.hprof PID</p></blockquote><h1 id="힙-분석-도구"><a href="#힙-분석-도구" class="headerlink" title="힙 분석 도구"></a>힙 분석 도구</h1><p>jmap 으로 생성한 Heap Dump 파일을 열어서 분석할 수 있는 도구</p><ul><li>Eclipse MAT: <a href="https://www.eclipse.org/mat/" target="_blank" rel="noopener">https://www.eclipse.org/mat/</a><ul><li>메모리 누수 의심 내역을 보고서 형태로 보여줘서 좋음</li><li><img src="https://i.imgur.com/zeiXYxF.png" alt="Imgur"></li><li><img src="https://i.imgur.com/yEa9Xpk.png" alt="Imgur"></li><li><img src="https://i.imgur.com/xiTL9Lh.png" alt="Imgur"></li></ul></li><li>VisuamVM: <a href="https://visualvm.github.io/" target="_blank" rel="noopener">https://visualvm.github.io/</a></li></ul><h1 id="메모리-사용-및-GC-모니터링"><a href="#메모리-사용-및-GC-모니터링" class="headerlink" title="메모리 사용 및 GC 모니터링"></a>메모리 사용 및 GC 모니터링</h1><blockquote><p>jstat -gc -h10 -t PID 10000<br>10줄마다 헤더 출력, 타임스탬프 출력, 10000밀리초마다 출력</p></blockquote><p><img src="https://i.imgur.com/d0TMbpm.png" alt="Imgur"></p><h1 id="Thread-Dump"><a href="#Thread-Dump" class="headerlink" title="Thread Dump"></a>Thread Dump</h1><blockquote><p>jstack PID &gt; THREAD_DUMP_OUTPUT_FILENAME</p></blockquote><h1 id="Thread-Dump-분석-사이트"><a href="#Thread-Dump-분석-사이트" class="headerlink" title="Thread Dump 분석 사이트"></a>Thread Dump 분석 사이트</h1><ul><li><a href="https://fastthread.io" target="_blank" rel="noopener">https://fastthread.io</a></li></ul><h1 id="자바-메모리-분석-관련-좋은-자료"><a href="#자바-메모리-분석-관련-좋은-자료" class="headerlink" title="자바 메모리 분석 관련 좋은 자료"></a>자바 메모리 분석 관련 좋은 자료</h1><ul><li>GC 관련: <ul><li><a href="https://d2.naver.com/helloworld/6043" target="_blank" rel="noopener">https://d2.naver.com/helloworld/6043</a></li></ul></li><li>OOM 및 Heap Shrinkage 관련: <ul><li><a href="https://www.samsungsds.com/global/ko/support/insights/1209174_2284.html" target="_blank" rel="noopener">https://www.samsungsds.com/global/ko/support/insights/1209174_2284.html</a></li></ul></li><li>메모리 누수 관련: <ul><li><a href="https://d2.naver.com/helloworld/1326256" target="_blank" rel="noopener">https://d2.naver.com/helloworld/1326256</a></li><li><a href="https://woowabros.github.io/tools/2019/05/24/jvm_memory_leak.html" target="_blank" rel="noopener">https://woowabros.github.io/tools/2019/05/24/jvm_memory_leak.html</a></li></ul></li><li>Thread Dump 관련:<ul><li><a href="https://brunch.co.kr/@springboot/126" target="_blank" rel="noopener">https://brunch.co.kr/@springboot/126</a></li><li><a href="https://d2.naver.com/helloworld/10963" target="_blank" rel="noopener">https://d2.naver.com/helloworld/10963</a></li></ul></li></ul><h1 id="짤막-지식"><a href="#짤막-지식" class="headerlink" title="짤막 지식"></a>짤막 지식</h1><h2 id="Heap-Shrinkage"><a href="#Heap-Shrinkage" class="headerlink" title="Heap Shrinkage"></a>Heap Shrinkage</h2><ul><li><strong>메모리 사용량을 증가 시키는 작업이 끝난다고 해서 메모리 사용량이 바로 줄어들지는 않음</strong><ul><li><strong>어떤 작업 완료 후 top로 확인한 메모리 사용이 줄지 않는다고 해서 무조건 메모리 누수라고 판단하면 안됨</strong></li></ul></li></ul><h3 id="사례"><a href="#사례" class="headerlink" title="사례"></a>사례</h3><ul><li>작업 시작 전<ul><li><img src="https://i.imgur.com/oZV4Eat.png" alt="Imgur"></li></ul></li><li>작업 중 - 메모리 사용량 증가<ul><li><img src="https://i.imgur.com/t8hwQHz.png" alt="Imgur"></li></ul></li><li>작업 완료 후 - 메모리 사용량 감소하지 않음<ul><li><img src="https://i.imgur.com/sGBCLbK.png" alt="Imgur"></li></ul></li><li>메모리 회수 - jmap 자체가 메모리 회수 명령은 아니지만, 부수적으로 메모리 사용량이 감소함<ul><li><img src="https://i.imgur.com/gQze3QN.png" alt="Imgur"></li></ul></li><li>따라서 jmap 을 힙 덤프 뿐아니라 메모리 누수 확인 간편법으로 사용할 수도 있음<ul><li>반드시 <code>-dump:live</code> 옵션을 줘야 과도한 크기의 힙 덤프 파일이 생성되지 않음</li><li>jmap 을 해도 메모리 사용량이 많이 줄지 않는다면 메모리 누수가 있는 걸로 추정 가능</li></ul></li></ul><h2 id="경험상-중첩된-Collection은-메모리-이슈-발생할-낌새가-좀-있더라"><a href="#경험상-중첩된-Collection은-메모리-이슈-발생할-낌새가-좀-있더라" class="headerlink" title="경험상 중첩된 Collection은 메모리 이슈 발생할 낌새가 좀 있더라.."></a>경험상 중첩된 Collection은 메모리 이슈 발생할 낌새가 좀 있더라..</h2><ul><li>List의 원소 안에 또 List 가 있고 그 안에 또 List 가 있고..</li><li>Map 의 value 중에 또 Map 이 있고 그 안에 또 Map 이 있고..</li><li>대량의 데이터가 위와 같은 형태로 처리되면 메모리 회수 타이밍이 좀 지연되는 것 같고, 결국 메모리 사용량이 과도하게 높아져서 OOM 이 발생하기도 하더라..</li><li>이럴 때는 GC에 맡기지 말고 중간중간 Collection 안에 중첩된 Collection 들을 직접 <code>clear()</code> 해주는 게 도움이 될 수도..</li><li>JPA 에서의 연관관계로 중첩된 Collection이 생겨난 경우에는 LazyLoading을 통해 OOM 을 방지할 수도 있다</li></ul>]]></content>
+    <content type="html"><![CDATA[<h1 id="Java-메모리-모니터링"><a href="#Java-메모리-모니터링" class="headerlink" title="Java 메모리 모니터링"></a>Java 메모리 모니터링</h1><p>두서 없이 이것저것 모아본 자바 메모리 모니터링</p><h1 id="Heap-Dump"><a href="#Heap-Dump" class="headerlink" title="Heap Dump"></a>Heap Dump</h1><blockquote><p>힙에 있는 모든 객체 Dump<br>jmap -dump:format=b,file=HEAP_DUMP_OUTPUT_FILE_NAME.hprof PID</p><p>힙에 있는 Live 객체만 Dump<br>jmap -dump:live,format=b,file=HEAP_DUMP_OUTPUT_FILE_NAME.hprof PID</p></blockquote><h1 id="힙-분석-도구"><a href="#힙-분석-도구" class="headerlink" title="힙 분석 도구"></a>힙 분석 도구</h1><p>jmap 으로 생성한 Heap Dump 파일을 열어서 분석할 수 있는 도구</p><ul><li>Eclipse MAT: <a href="https://www.eclipse.org/mat/" target="_blank" rel="noopener">https://www.eclipse.org/mat/</a><ul><li>메모리 누수 의심 내역을 보고서 형태로 보여줘서 좋음</li><li><img src="https://i.imgur.com/zeiXYxF.png" alt="Imgur"></li><li><img src="https://i.imgur.com/yEa9Xpk.png" alt="Imgur"></li><li><img src="https://i.imgur.com/xiTL9Lh.png" alt="Imgur"></li><li>Shallow Heap vs Retained Heap: <a href="https://dzone.com/articles/eclipse-mat-shallow-heap-retained-heap" target="_blank" rel="noopener">https://dzone.com/articles/eclipse-mat-shallow-heap-retained-heap</a><ul><li>shallow heap은 한 객체만이 점유한 힙의 크기</li><li>retained heap은 한 객체가 제거될 때 함께 제거될 수 있는 객체들이 점유하고 있는 힙의 크기</li></ul></li></ul></li><li>VisuamVM: <a href="https://visualvm.github.io/" target="_blank" rel="noopener">https://visualvm.github.io/</a></li></ul><h1 id="메모리-사용-및-GC-모니터링"><a href="#메모리-사용-및-GC-모니터링" class="headerlink" title="메모리 사용 및 GC 모니터링"></a>메모리 사용 및 GC 모니터링</h1><blockquote><p>jstat -gc -h10 -t PID 10000<br>10줄마다 헤더 출력, 타임스탬프 출력, 10000밀리초마다 출력</p></blockquote><p><img src="https://i.imgur.com/d0TMbpm.png" alt="Imgur"></p><h1 id="Thread-Dump"><a href="#Thread-Dump" class="headerlink" title="Thread Dump"></a>Thread Dump</h1><blockquote><p>jstack PID &gt; THREAD_DUMP_OUTPUT_FILENAME</p></blockquote><h1 id="Thread-Dump-분석-사이트"><a href="#Thread-Dump-분석-사이트" class="headerlink" title="Thread Dump 분석 사이트"></a>Thread Dump 분석 사이트</h1><ul><li><a href="https://fastthread.io" target="_blank" rel="noopener">https://fastthread.io</a></li></ul><h1 id="자바-메모리-분석-관련-좋은-자료"><a href="#자바-메모리-분석-관련-좋은-자료" class="headerlink" title="자바 메모리 분석 관련 좋은 자료"></a>자바 메모리 분석 관련 좋은 자료</h1><ul><li>GC 관련: <ul><li><a href="https://d2.naver.com/helloworld/6043" target="_blank" rel="noopener">https://d2.naver.com/helloworld/6043</a></li></ul></li><li>OOM 및 Heap Shrinkage 관련: <ul><li><a href="https://www.samsungsds.com/global/ko/support/insights/1209174_2284.html" target="_blank" rel="noopener">https://www.samsungsds.com/global/ko/support/insights/1209174_2284.html</a></li></ul></li><li>메모리 누수 관련: <ul><li><a href="https://d2.naver.com/helloworld/1326256" target="_blank" rel="noopener">https://d2.naver.com/helloworld/1326256</a></li><li><a href="https://woowabros.github.io/tools/2019/05/24/jvm_memory_leak.html" target="_blank" rel="noopener">https://woowabros.github.io/tools/2019/05/24/jvm_memory_leak.html</a></li></ul></li><li>Thread Dump 관련:<ul><li><a href="https://brunch.co.kr/@springboot/126" target="_blank" rel="noopener">https://brunch.co.kr/@springboot/126</a></li><li><a href="https://d2.naver.com/helloworld/10963" target="_blank" rel="noopener">https://d2.naver.com/helloworld/10963</a></li></ul></li></ul><h1 id="짤막-지식"><a href="#짤막-지식" class="headerlink" title="짤막 지식"></a>짤막 지식</h1><h2 id="Heap-Shrinkage"><a href="#Heap-Shrinkage" class="headerlink" title="Heap Shrinkage"></a>Heap Shrinkage</h2><ul><li><strong>메모리 사용량을 증가 시키는 작업이 끝난다고 해서 메모리 사용량이 바로 줄어들지는 않음</strong><ul><li><strong>어떤 작업 완료 후 top로 확인한 메모리 사용이 줄지 않는다고 해서 무조건 메모리 누수라고 판단하면 안됨</strong></li></ul></li></ul><h3 id="사례"><a href="#사례" class="headerlink" title="사례"></a>사례</h3><ul><li>작업 시작 전<ul><li><img src="https://i.imgur.com/oZV4Eat.png" alt="Imgur"></li></ul></li><li>작업 중 - 메모리 사용량 증가<ul><li><img src="https://i.imgur.com/t8hwQHz.png" alt="Imgur"></li></ul></li><li>작업 완료 후 - 메모리 사용량 감소하지 않음<ul><li><img src="https://i.imgur.com/sGBCLbK.png" alt="Imgur"></li></ul></li><li>메모리 회수 - jmap 자체가 메모리 회수 명령은 아니지만, 부수적으로 메모리 사용량이 감소함<ul><li><img src="https://i.imgur.com/gQze3QN.png" alt="Imgur"></li></ul></li><li>따라서 jmap 을 힙 덤프 뿐아니라 메모리 누수 확인 간편법으로 사용할 수도 있음<ul><li>반드시 <code>-dump:live</code> 옵션을 줘야 과도한 크기의 힙 덤프 파일이 생성되지 않음</li><li>jmap 을 해도 메모리 사용량이 많이 줄지 않는다면 메모리 누수가 있는 걸로 추정 가능</li></ul></li></ul><h2 id="경험상-중첩된-Collection은-메모리-이슈-발생할-낌새가-좀-있더라"><a href="#경험상-중첩된-Collection은-메모리-이슈-발생할-낌새가-좀-있더라" class="headerlink" title="경험상 중첩된 Collection은 메모리 이슈 발생할 낌새가 좀 있더라.."></a>경험상 중첩된 Collection은 메모리 이슈 발생할 낌새가 좀 있더라..</h2><ul><li>List의 원소 안에 또 List 가 있고 그 안에 또 List 가 있고..</li><li>Map 의 value 중에 또 Map 이 있고 그 안에 또 Map 이 있고..</li><li>대량의 데이터가 위와 같은 형태로 처리되면 메모리 회수 타이밍이 좀 지연되는 것 같고, 결국 메모리 사용량이 과도하게 높아져서 OOM 이 발생하기도 하더라..</li><li>이럴 때는 GC에 맡기지 말고 중간중간 Collection 안에 중첩된 Collection 들을 직접 <code>clear()</code> 해주는 게 도움이 될 수도..</li><li>JPA 에서의 연관관계로 중첩된 Collection이 생겨난 경우에는 LazyLoading을 통해 OOM 을 방지할 수도 있다</li></ul>]]></content>
     
     <summary type="html">
     
@@ -82,13 +82,13 @@
       <category term="Performance" scheme="http://homoefficio.github.io/categories/Performance/"/>
     
     
-      <category term="Native Memory" scheme="http://homoefficio.github.io/tags/Native-Memory/"/>
-    
-      <category term="DirectBuffer" scheme="http://homoefficio.github.io/tags/DirectBuffer/"/>
+      <category term="DMA" scheme="http://homoefficio.github.io/tags/DMA/"/>
     
       <category term="Direct Memory Access" scheme="http://homoefficio.github.io/tags/Direct-Memory-Access/"/>
     
-      <category term="DMA" scheme="http://homoefficio.github.io/tags/DMA/"/>
+      <category term="Native Memory" scheme="http://homoefficio.github.io/tags/Native-Memory/"/>
+    
+      <category term="DirectBuffer" scheme="http://homoefficio.github.io/tags/DirectBuffer/"/>
     
       <category term="jcmd" scheme="http://homoefficio.github.io/tags/jcmd/"/>
     
@@ -125,17 +125,15 @@
     
       <category term="Spring Data JPA" scheme="http://homoefficio.github.io/tags/Spring-Data-JPA/"/>
     
+      <category term="Hibernate" scheme="http://homoefficio.github.io/tags/Hibernate/"/>
+    
       <category term="Spring Data" scheme="http://homoefficio.github.io/tags/Spring-Data/"/>
     
       <category term="Spring Data JDBC" scheme="http://homoefficio.github.io/tags/Spring-Data-JDBC/"/>
     
       <category term="Batch Insert" scheme="http://homoefficio.github.io/tags/Batch-Insert/"/>
     
-      <category term="Bulk Insert" scheme="http://homoefficio.github.io/tags/Bulk-Insert/"/>
-    
       <category term="MySQL" scheme="http://homoefficio.github.io/tags/MySQL/"/>
-    
-      <category term="Hibernate" scheme="http://homoefficio.github.io/tags/Hibernate/"/>
     
       <category term="GenerationType" scheme="http://homoefficio.github.io/tags/GenerationType/"/>
     
@@ -156,6 +154,8 @@
       <category term="Sequence" scheme="http://homoefficio.github.io/tags/Sequence/"/>
     
       <category term="Database" scheme="http://homoefficio.github.io/tags/Database/"/>
+    
+      <category term="Bulk Insert" scheme="http://homoefficio.github.io/tags/Bulk-Insert/"/>
     
   </entry>
   
@@ -356,18 +356,6 @@
     
       <category term="Dependency Inversion Principle" scheme="http://homoefficio.github.io/tags/Dependency-Inversion-Principle/"/>
     
-      <category term="Isolation" scheme="http://homoefficio.github.io/tags/Isolation/"/>
-    
-      <category term="쿼츠" scheme="http://homoefficio.github.io/tags/%EC%BF%BC%EC%B8%A0/"/>
-    
-      <category term="스케줄러" scheme="http://homoefficio.github.io/tags/%EC%8A%A4%EC%BC%80%EC%A4%84%EB%9F%AC/"/>
-    
-      <category term="클린 아키텍처" scheme="http://homoefficio.github.io/tags/%ED%81%B4%EB%A6%B0-%EC%95%84%ED%82%A4%ED%85%8D%EC%B2%98/"/>
-    
-      <category term="인터페이스 분리 원칙" scheme="http://homoefficio.github.io/tags/%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4-%EB%B6%84%EB%A6%AC-%EC%9B%90%EC%B9%99/"/>
-    
-      <category term="격리" scheme="http://homoefficio.github.io/tags/%EA%B2%A9%EB%A6%AC/"/>
-    
       <category term="Dependency Injection" scheme="http://homoefficio.github.io/tags/Dependency-Injection/"/>
     
       <category term="SpringBeanJobFactory" scheme="http://homoefficio.github.io/tags/SpringBeanJobFactory/"/>
@@ -382,9 +370,21 @@
     
       <category term="SchedulerFactoryBean" scheme="http://homoefficio.github.io/tags/SchedulerFactoryBean/"/>
     
+      <category term="Isolation" scheme="http://homoefficio.github.io/tags/Isolation/"/>
+    
+      <category term="쿼츠" scheme="http://homoefficio.github.io/tags/%EC%BF%BC%EC%B8%A0/"/>
+    
+      <category term="스케줄러" scheme="http://homoefficio.github.io/tags/%EC%8A%A4%EC%BC%80%EC%A4%84%EB%9F%AC/"/>
+    
+      <category term="클린 아키텍처" scheme="http://homoefficio.github.io/tags/%ED%81%B4%EB%A6%B0-%EC%95%84%ED%82%A4%ED%85%8D%EC%B2%98/"/>
+    
+      <category term="인터페이스 분리 원칙" scheme="http://homoefficio.github.io/tags/%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4-%EB%B6%84%EB%A6%AC-%EC%9B%90%EC%B9%99/"/>
+    
       <category term="의존 관계 역전 원칙" scheme="http://homoefficio.github.io/tags/%EC%9D%98%EC%A1%B4-%EA%B4%80%EA%B3%84-%EC%97%AD%EC%A0%84-%EC%9B%90%EC%B9%99/"/>
     
       <category term="의존 관계 주입" scheme="http://homoefficio.github.io/tags/%EC%9D%98%EC%A1%B4-%EA%B4%80%EA%B3%84-%EC%A3%BC%EC%9E%85/"/>
+    
+      <category term="격리" scheme="http://homoefficio.github.io/tags/%EA%B2%A9%EB%A6%AC/"/>
     
       <category term="Transaction" scheme="http://homoefficio.github.io/tags/Transaction/"/>
     
@@ -437,18 +437,6 @@
     
       <category term="Dependency Inversion Principle" scheme="http://homoefficio.github.io/tags/Dependency-Inversion-Principle/"/>
     
-      <category term="Isolation" scheme="http://homoefficio.github.io/tags/Isolation/"/>
-    
-      <category term="쿼츠" scheme="http://homoefficio.github.io/tags/%EC%BF%BC%EC%B8%A0/"/>
-    
-      <category term="스케줄러" scheme="http://homoefficio.github.io/tags/%EC%8A%A4%EC%BC%80%EC%A4%84%EB%9F%AC/"/>
-    
-      <category term="클린 아키텍처" scheme="http://homoefficio.github.io/tags/%ED%81%B4%EB%A6%B0-%EC%95%84%ED%82%A4%ED%85%8D%EC%B2%98/"/>
-    
-      <category term="인터페이스 분리 원칙" scheme="http://homoefficio.github.io/tags/%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4-%EB%B6%84%EB%A6%AC-%EC%9B%90%EC%B9%99/"/>
-    
-      <category term="격리" scheme="http://homoefficio.github.io/tags/%EA%B2%A9%EB%A6%AC/"/>
-    
       <category term="Dependency Injection" scheme="http://homoefficio.github.io/tags/Dependency-Injection/"/>
     
       <category term="SpringBeanJobFactory" scheme="http://homoefficio.github.io/tags/SpringBeanJobFactory/"/>
@@ -463,9 +451,21 @@
     
       <category term="SchedulerFactoryBean" scheme="http://homoefficio.github.io/tags/SchedulerFactoryBean/"/>
     
+      <category term="Isolation" scheme="http://homoefficio.github.io/tags/Isolation/"/>
+    
+      <category term="쿼츠" scheme="http://homoefficio.github.io/tags/%EC%BF%BC%EC%B8%A0/"/>
+    
+      <category term="스케줄러" scheme="http://homoefficio.github.io/tags/%EC%8A%A4%EC%BC%80%EC%A4%84%EB%9F%AC/"/>
+    
+      <category term="클린 아키텍처" scheme="http://homoefficio.github.io/tags/%ED%81%B4%EB%A6%B0-%EC%95%84%ED%82%A4%ED%85%8D%EC%B2%98/"/>
+    
+      <category term="인터페이스 분리 원칙" scheme="http://homoefficio.github.io/tags/%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4-%EB%B6%84%EB%A6%AC-%EC%9B%90%EC%B9%99/"/>
+    
       <category term="의존 관계 역전 원칙" scheme="http://homoefficio.github.io/tags/%EC%9D%98%EC%A1%B4-%EA%B4%80%EA%B3%84-%EC%97%AD%EC%A0%84-%EC%9B%90%EC%B9%99/"/>
     
       <category term="의존 관계 주입" scheme="http://homoefficio.github.io/tags/%EC%9D%98%EC%A1%B4-%EA%B4%80%EA%B3%84-%EC%A3%BC%EC%9E%85/"/>
+    
+      <category term="격리" scheme="http://homoefficio.github.io/tags/%EA%B2%A9%EB%A6%AC/"/>
     
   </entry>
   
@@ -514,9 +514,9 @@
     
       <category term="인터페이스 분리 원칙" scheme="http://homoefficio.github.io/tags/%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4-%EB%B6%84%EB%A6%AC-%EC%9B%90%EC%B9%99/"/>
     
-      <category term="의존관계 역전 원칙" scheme="http://homoefficio.github.io/tags/%EC%9D%98%EC%A1%B4%EA%B4%80%EA%B3%84-%EC%97%AD%EC%A0%84-%EC%9B%90%EC%B9%99/"/>
-    
       <category term="격리" scheme="http://homoefficio.github.io/tags/%EA%B2%A9%EB%A6%AC/"/>
+    
+      <category term="의존관계 역전 원칙" scheme="http://homoefficio.github.io/tags/%EC%9D%98%EC%A1%B4%EA%B4%80%EA%B3%84-%EC%97%AD%EC%A0%84-%EC%9B%90%EC%B9%99/"/>
     
   </entry>
   
@@ -675,13 +675,13 @@
     
       <category term="Spring Data JPA" scheme="http://homoefficio.github.io/tags/Spring-Data-JPA/"/>
     
-      <category term="Hibernate" scheme="http://homoefficio.github.io/tags/Hibernate/"/>
-    
       <category term="Java Persistence API" scheme="http://homoefficio.github.io/tags/Java-Persistence-API/"/>
     
       <category term="ORM" scheme="http://homoefficio.github.io/tags/ORM/"/>
     
       <category term="Object Relation Mapping" scheme="http://homoefficio.github.io/tags/Object-Relation-Mapping/"/>
+    
+      <category term="Hibernate" scheme="http://homoefficio.github.io/tags/Hibernate/"/>
     
       <category term="하이버네이트" scheme="http://homoefficio.github.io/tags/%ED%95%98%EC%9D%B4%EB%B2%84%EB%84%A4%EC%9D%B4%ED%8A%B8/"/>
     
@@ -752,13 +752,13 @@
     
       <category term="Java" scheme="http://homoefficio.github.io/tags/Java/"/>
     
-      <category term="Direct Memory Access" scheme="http://homoefficio.github.io/tags/Direct-Memory-Access/"/>
-    
-      <category term="DMA" scheme="http://homoefficio.github.io/tags/DMA/"/>
-    
       <category term="자바" scheme="http://homoefficio.github.io/tags/%EC%9E%90%EB%B0%94/"/>
     
       <category term="NIO" scheme="http://homoefficio.github.io/tags/NIO/"/>
+    
+      <category term="DMA" scheme="http://homoefficio.github.io/tags/DMA/"/>
+    
+      <category term="Direct Memory Access" scheme="http://homoefficio.github.io/tags/Direct-Memory-Access/"/>
     
       <category term="Direct Buffer" scheme="http://homoefficio.github.io/tags/Direct-Buffer/"/>
     
@@ -1132,8 +1132,6 @@
     
       <category term="Application ClassLoader" scheme="http://homoefficio.github.io/tags/Application-ClassLoader/"/>
     
-      <category term="URLClassLoader" scheme="http://homoefficio.github.io/tags/URLClassLoader/"/>
-    
       <category term="ClassLoader Delegation" scheme="http://homoefficio.github.io/tags/ClassLoader-Delegation/"/>
     
       <category term="Delegation Principle" scheme="http://homoefficio.github.io/tags/Delegation-Principle/"/>
@@ -1150,8 +1148,6 @@
     
       <category term="자바 클래스로더" scheme="http://homoefficio.github.io/tags/%EC%9E%90%EB%B0%94-%ED%81%B4%EB%9E%98%EC%8A%A4%EB%A1%9C%EB%8D%94/"/>
     
-      <category term="자바 URLClassLoader" scheme="http://homoefficio.github.io/tags/%EC%9E%90%EB%B0%94-URLClassLoader/"/>
-    
       <category term="부트스트랩 클래스로더" scheme="http://homoefficio.github.io/tags/%EB%B6%80%ED%8A%B8%EC%8A%A4%ED%8A%B8%EB%9E%A9-%ED%81%B4%EB%9E%98%EC%8A%A4%EB%A1%9C%EB%8D%94/"/>
     
       <category term="애플리케이션 클래스로더" scheme="http://homoefficio.github.io/tags/%EC%95%A0%ED%94%8C%EB%A6%AC%EC%BC%80%EC%9D%B4%EC%85%98-%ED%81%B4%EB%9E%98%EC%8A%A4%EB%A1%9C%EB%8D%94/"/>
@@ -1159,6 +1155,10 @@
       <category term="플랫폼 클래스로더" scheme="http://homoefficio.github.io/tags/%ED%94%8C%EB%9E%AB%ED%8F%BC-%ED%81%B4%EB%9E%98%EC%8A%A4%EB%A1%9C%EB%8D%94/"/>
     
       <category term="시스템 클래스로더" scheme="http://homoefficio.github.io/tags/%EC%8B%9C%EC%8A%A4%ED%85%9C-%ED%81%B4%EB%9E%98%EC%8A%A4%EB%A1%9C%EB%8D%94/"/>
+    
+      <category term="URLClassLoader" scheme="http://homoefficio.github.io/tags/URLClassLoader/"/>
+    
+      <category term="자바 URLClassLoader" scheme="http://homoefficio.github.io/tags/%EC%9E%90%EB%B0%94-URLClassLoader/"/>
     
   </entry>
   
