@@ -15,7 +15,7 @@
         <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
     
     <meta name="description" content="Java NIO Direct Buffer를 이용해서 대용량 파일 행 기준으로 쪼개기기가 단위의 파일을 외부에 전송할 일이 생겼다.  한 방에 보내기엔 너무 커서 파일을 쪼개서(split) 보내려고 하는데, 그마저도 쉽지 않다. 쪼개기 위해 대용량 파일을 읽을 때 이미 수십분 동안 CPU를 너무 잡아 먹어서 이 쪼개는 배치 작업을 스케줄링하는 스케줄러(Qua">
-<meta name="keywords" content="Java,Direct Memory Access,DMA,자바,NIO,Direct Buffer,ByteBuffer,Buffer,FileChannel,Large File,Split,New Line,Carriage Return,CR,Line Feed,LF,readLine,직접 메모리 접근,다이렉트 버퍼,바이트버퍼,버퍼,파일 채널,스플릿,대용량,대용량 파일,줄 바꿈">
+<meta name="keywords" content="Java,자바,NIO,DMA,Direct Memory Access,Direct Buffer,ByteBuffer,Buffer,FileChannel,Large File,Split,New Line,Carriage Return,CR,Line Feed,LF,readLine,직접 메모리 접근,다이렉트 버퍼,바이트버퍼,버퍼,파일 채널,스플릿,대용량,대용량 파일,줄 바꿈">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Java NIO Direct Buffer를 이용해서 대용량 파일 행 기준으로 쪼개기">
 <meta property="og:url" content="http://homoefficio.github.io/2019/02/27/Java-NIO-Direct-Buffer를-이용해서-대용량-파일-행-기준으로-쪼개기/index.html">
@@ -43,7 +43,7 @@
 <meta property="og:image" content="https://i.imgur.com/kEmfUja.png">
 <meta property="og:image" content="https://i.imgur.com/axhhB1Z.png">
 <meta property="og:image" content="https://i.imgur.com/gJAbo3g.png">
-<meta property="og:updated_time" content="2019-04-28T17:03:55.367Z">
+<meta property="og:updated_time" content="2020-06-07T16:31:04.957Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java NIO Direct Buffer를 이용해서 대용량 파일 행 기준으로 쪼개기">
 <meta name="twitter:description" content="Java NIO Direct Buffer를 이용해서 대용량 파일 행 기준으로 쪼개기기가 단위의 파일을 외부에 전송할 일이 생겼다.  한 방에 보내기엔 너무 커서 파일을 쪼개서(split) 보내려고 하는데, 그마저도 쉽지 않다. 쪼개기 위해 대용량 파일을 읽을 때 이미 수십분 동안 CPU를 너무 잡아 먹어서 이 쪼개는 배치 작업을 스케줄링하는 스케줄러(Qua">
@@ -417,6 +417,7 @@
 </li>
 </ul>
 <h2 id="기타"><a href="#기타" class="headerlink" title="기타"></a>기타</h2><p>Direct Buffer를 사용하더라도 channel의 read/write 메서드가 아니라 buffer의 get/put을 쓰면 DMA가 작동하지 않는다는 글을 봤는데 확인해보진 않았다.</p>
+<h2 id="추가"><a href="#추가" class="headerlink" title="추가"></a>추가</h2><p><a href="https://homoefficio.github.io/2019/02/27/Java-NIO-Direct-Buffer를-이용해서-대용량-파일-행-기준으로-쪼개기/">Native Memory 사용 현황을 모니터링 할 수 있는 방법을 알아내서 별도의 글로 정리했다.</a> 어떤 과정을 통해 메모리가 회수 되는지는 여전히 미지수지만 Direct Buffer로 사용됐던 Native Memory는 비교적 빠른 시간 안에 회수됨을 확인할 수 있었다.</p>
 
         
         
