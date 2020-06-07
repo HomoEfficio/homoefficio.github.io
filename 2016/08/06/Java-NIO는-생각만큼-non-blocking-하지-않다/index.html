@@ -22,7 +22,7 @@
 <meta property="og:site_name" content="뒤태지존의 끄적거림">
 <meta property="og:description" content="일부러 낚시 냄새가 독하게 풍기는 제목을 지어봤다. Java NIO는 New IO의 줄임말인데, Non-blocking IO 의 줄임말이라고 알고 있는 개발자도 많은 것 같다.(나도 그랬다..)  그만큼 NIO는 Non-blocking이라는 마케팅이 꽤나 열심이었고, 또 그게 잘 먹혔기 때문인지, File I/O를 사용할 때마저 기존의 IO 방식 대신 NI">
 <meta property="og:locale" content="ko">
-<meta property="og:updated_time" content="2019-04-28T17:03:55.372Z">
+<meta property="og:updated_time" content="2020-06-07T16:34:14.333Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java NIO는 생각만큼 non-blocking 하지 않다">
 <meta name="twitter:description" content="일부러 낚시 냄새가 독하게 풍기는 제목을 지어봤다. Java NIO는 New IO의 줄임말인데, Non-blocking IO 의 줄임말이라고 알고 있는 개발자도 많은 것 같다.(나도 그랬다..)  그만큼 NIO는 Non-blocking이라는 마케팅이 꽤나 열심이었고, 또 그게 잘 먹혔기 때문인지, File I/O를 사용할 때마저 기존의 IO 방식 대신 NI">
@@ -306,7 +306,7 @@
 </ul>
 <h1 id="Non-blocking은-그럼-구라"><a href="#Non-blocking은-그럼-구라" class="headerlink" title="Non-blocking은 그럼 구라?"></a>Non-blocking은 그럼 구라?</h1><p>아니다. NIO가 생각만큼 Non-blocking하지 않다는 것이지, Non-blocking이 구라라는 소리는 아니다.</p>
 <h2 id="Non-File-I-O"><a href="#Non-File-I-O" class="headerlink" title="Non File I/O"></a>Non File I/O</h2><p>File I/O가 아닌 것들은 Non-blocking 모드로 동작하는 것들도 많다.<br><code>SelectableChannel</code>을 상속받거나 구현한 Channel은 Non-blocking 모드로 동작할 수 있다. 예를 들어, <code>DatagramChannel</code>, <code>Pipe.SourceChannel</code>, <code>SocketChannel</code>은 <code>ReadableByteChannel</code>과 <code>SelectableChannel</code>을 함께 구현하고 있어서 Non-blocking 모드로 읽는 것이 가능하다.</p>
-<h1 id="File-I-O에서는-정녕-Non-blocking은-없나"><a href="#File-I-O에서는-정녕-Non-blocking은-없나" class="headerlink" title="File I/O에서는 정녕 Non-blocking은 없나?"></a>File I/O에서는 정녕 Non-blocking은 없나?</h1><p>있다. java 7 부터 도입되어 NIO2라고 불리는 NIO에는 <code>AsynchronousFileChannel</code>이 Non-blocking 모드로 동작한다. <code>AsynchronousFileChannel</code>은 별도의 글에서 다뤄본다.</p>
+<h1 id="File-I-O에서는-정녕-Non-blocking은-없나"><a href="#File-I-O에서는-정녕-Non-blocking은-없나" class="headerlink" title="File I/O에서는 정녕 Non-blocking은 없나?"></a>File I/O에서는 정녕 Non-blocking은 없나?</h1><p>있다. java 7 부터 도입되어 NIO2라고 불리는 NIO에는 <code>AsynchronousFileChannel</code>이 Non-blocking 모드로 동작한다. <a href="https://homoefficio.github.io/2016/08/13/대용량-파일을-AsynchronousFileChannel로-다뤄보기/"><code>AsynchronousFileChannel</code>은 별도의 글</a>에서 다뤄본다.</p>
 <h1 id="정리"><a href="#정리" class="headerlink" title="정리"></a>정리</h1><blockquote>
 <ul>
 <li>NIO는 Non-blocking IO의 줄임말이 아니다.</li>
