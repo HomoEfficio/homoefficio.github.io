@@ -137,7 +137,7 @@ File I/O가 아닌 것들은 Non-blocking 모드로 동작하는 것들도 많�
 
 # File I/O에서는 정녕 Non-blocking은 없나?
 
-있다. java 7 부터 도입되어 NIO2라고 불리는 NIO에는 `AsynchronousFileChannel`이 Non-blocking 모드로 동작한다. `AsynchronousFileChannel`은 별도의 글에서 다뤄본다.
+있다. java 7 부터 도입되어 NIO2라고 불리는 NIO에는 `AsynchronousFileChannel`이 Non-blocking 모드로 동작한다. [`AsynchronousFileChannel`은 별도의 글](https://homoefficio.github.io/2016/08/13/대용량-파일을-AsynchronousFileChannel로-다뤄보기/)에서 다뤄본다.
 
 
 # 정리
