@@ -375,3 +375,6 @@ Direct Buffer는 JVM 힙이 아니라 운영체제 메모리를 사용하므로 
 
 Direct Buffer를 사용하더라도 channel의 read/write 메서드가 아니라 buffer의 get/put을 쓰면 DMA가 작동하지 않는다는 글을 봤는데 확인해보진 않았다.
 
+## 추가
+
+[Native Memory 사용 현황을 모니터링 할 수 있는 방법을 알아내서 별도의 글로 정리했다.](https://homoefficio.github.io/2019/02/27/Java-NIO-Direct-Buffer를-이용해서-대용량-파일-행-기준으로-쪼개기/) 어떤 과정을 통해 메모리가 회수 되는지는 여전히 미지수지만 Direct Buffer로 사용됐던 Native Memory는 비교적 빠른 시간 안에 회수됨을 확인할 수 있었다.
