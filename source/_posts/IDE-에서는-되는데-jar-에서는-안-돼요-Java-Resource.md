@@ -218,8 +218,7 @@ maven-fat-jar-test git:master 🍺🦑🍺🍕🍺 ❯ java -jar target/maven-fa
 //
 //        log.info("resource contents: {}", new String(chars));
 
-        URL resource = this.getClass().getResource(root + resourceLocation);
-        InputStream inputStream = resource.openStream();
+        InputStream inputStream = resourceURL.openStream();
         byte[] bytes = inputStream.readAllBytes();
         log.info("resource contents: {}", new String(bytes, StandardCharsets.UTF_8));
     }
@@ -279,4 +278,72 @@ maven-fat-jar-test git:master 🍺🦑🍺🍕🍺 ❯ java -jar target/maven-fa
 ## Properties
 
 `.properties` 파일을 읽을 때 사용하는 `Properties` 클래스에는 `load(Reader r)`, `load(InputStream i)` 두 가지 메서드가 있다. IDE, jar 모두에서 동작하려면 어느 것을 써야할지 이젠 해보지 않아도 알 수 있을 것 같다.
+
+
+## 디렉터리 내 파일 목록
+
+개별 파일은 위와 같이 대응할 수 있다는 걸 알게 됐다. 그런데 디렉터리 내 파일 목록을 읽어서 원하는 대로 처리하는 것도 IDE, jar 에서 모두 가능할까?
+
+jar 파일 내에서 목록 단위로 처리하려면 `JarFile`이 필요하다는 점만 기억해두자. 나머지 주의해서 볼 점은 주석에 표시해놨다.
+
+마지막에 나오는 코드는 `Enumeration`을 copy를 유발하지 않고 Stream 으로 쓸 수 있게 해주는 유틸 메서드다.(자바는 왜 이런 걸 공식 SDK에 포함하지 않는 건가..)
+
+```java
+    public void loadDirectoryAsStream(String dir) throws IOException {
+        log.info("OOO getResourceAsStream() + Directory");
+        log.info("content root: {}", root);
+        log.info("dir: {}", dir);
+
+        // IDE 에서는 잘 동작, jar 에서는 에러는 발생하지 않으나 esourceAsStream.readAllBytes() 값이 비어있음
+        log.info("USING naive getResourceAsStream(String directory) -----");
+        InputStream resourceAsStream = this.getClass().getResourceAsStream(root + dir);
+        byte[] bytes = resourceAsStream.readAllBytes();
+        log.info("resource contents length: {}", bytes.length);
+
+        if (bytes.length > 0) {
+            log.info("resource contents: {}", new String(bytes, StandardCharsets.UTF_8));
+        } else {
+            // jar 에서는 잘 동작
+            // IDE 에서는 예외 발생: java.io.FileNotFoundException: /Users/1003604/gitRepo/study/maven-fat-jar-test/target/classes/io/homo_efficio (Is a directory)
+            // 따라서 bytes.length = 0 일 때만 실행하도록
+            log.info("USING JarFile -----");
+            String path = this.getClass().getResource("").getPath();
+            log.info("resourcePath: {}", path);
+            
+            int exclamationIndex = path.lastIndexOf("!") > 0 ? path.lastIndexOf("!") : path.length();
+            String jarFilePath = path.substring(0, exclamationIndex).replaceAll("file:", "");
+            log.info("jarFilePath : {}", jarFilePath);
+            
+            LocalDateTime start = LocalDateTime.now();
+            log.info("jarFile start: {}", start);
+            JarFile jarFile = new JarFile(jarFilePath);
+            LocalDateTime end = LocalDateTime.now();
+            log.info("jarFile end  : {}", end);
+            
+            enumerationAsStream(jarFile.entries())
+                    .filter(entry -> entry.getRealName().startsWith((root + dir).substring(1)))
+                    .forEach(entry -> log.info("jarEntry: {}", entry.getRealName()));
+        }
+    }
+
+    // From https://stackoverflow.com/a/23276455
+    static <T> Stream<T> enumerationAsStream(Enumeration<T> e) {
+        return StreamSupport.stream(
+                Spliterators.spliteratorUnknownSize(
+                        new Iterator<T>() {
+                            @Override
+                            public boolean hasNext() {
+                                return e.hasMoreElements();
+                            }
+
+                            @Override
+                            public T next() {
+                                return e.nextElement();
+                            }
+                        },
+                        Spliterator.ORDERED
+                ), false
+        );
+    }
+```
 
