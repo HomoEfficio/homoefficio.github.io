@@ -284,9 +284,9 @@ maven-fat-jar-test git:master 🍺🦑🍺🍕🍺 ❯ java -jar target/maven-fa
 
 개별 파일은 위와 같이 대응할 수 있다는 걸 알게 됐다. 그런데 디렉터리 내 파일 목록을 읽어서 원하는 대로 처리하는 것도 IDE, jar 에서 모두 가능할까?
 
-jar 파일 내에서 목록 단위로 처리하려면 `JarFile`이 필요하다는 점만 기억해두자. 나머지 주의해서 볼 점은 주석에 표시해놨다.
+이미 구구절절 많이 떠들었으니 바로 코드로 살펴보자. **jar 파일 내에서 목록 단위로 처리하려면 `JarFile`이 필요하다는 점만 기억해두자.** 나머지 주의해서 볼 점은 주석에 표시해놨다.
 
-마지막에 나오는 코드는 `Enumeration`을 copy를 유발하지 않고 Stream 으로 쓸 수 있게 해주는 유틸 메서드다.(자바는 왜 이런 걸 공식 SDK에 포함하지 않는 건가..)
+마지막에 나오는 코드 `enumerationAsStream()` 메서드는 `Enumeration`을 copy를 유발하지 않고 Stream 으로 쓸 수 있게 해주는 유틸 메서드다.(자바는 왜 이런 걸 공식 SDK에 포함하지 않는 건가..)
 
 ```java
     public void loadDirectoryAsStream(String dir) throws IOException {
