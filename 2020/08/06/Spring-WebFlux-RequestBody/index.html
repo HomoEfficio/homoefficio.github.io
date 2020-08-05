@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="뒤태지존의 끄적거림">
+    <title>Spring WebFlux RequestBody - 뒤태지존의 끄적거림</title>
+    <meta name="author" content="HomoEfficio">
+    <meta name="description" content="뒤태지존의 끄적거림">
+    
+        <link rel="icon" href="/assets/images/favicon.ico">
+    
+    
+        <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <meta name="description" content="Spring WebFlux RequestBody - Raw vs MonoWebFlux 사용 시 Controller 단에서 RequestBody 를 인자로 받을 때, 다음과 같이 Mono를 받아오도록 작성해야할까? 1234@PostMapping(&quot;/mono&quot;)public Mono&amp;lt;SellerOut&amp;gt; createWithMono(@RequestBody">
+<meta name="keywords" content="Java,Performance,Spring,Reactor,Reactive,WebFlux,RequestBody,Mono,K6,ReactiveCrudRepository,ReactiveMongoTemplate">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Spring WebFlux RequestBody">
+<meta property="og:url" content="http://homoefficio.github.io/2020/08/06/Spring-WebFlux-RequestBody/index.html">
+<meta property="og:site_name" content="뒤태지존의 끄적거림">
+<meta property="og:description" content="Spring WebFlux RequestBody - Raw vs MonoWebFlux 사용 시 Controller 단에서 RequestBody 를 인자로 받을 때, 다음과 같이 Mono를 받아오도록 작성해야할까? 1234@PostMapping(&quot;/mono&quot;)public Mono&amp;lt;SellerOut&amp;gt; createWithMono(@RequestBody">
+<meta property="og:locale" content="ko">
+<meta property="og:image" content="https://i.imgur.com/eogpnac.png">
+<meta property="og:image" content="https://i.imgur.com/R3fX3fg.png">
+<meta property="og:image" content="https://i.imgur.com/FDRl4jU.png">
+<meta property="og:image" content="https://i.imgur.com/VhCeVTk.png">
+<meta property="og:image" content="https://i.imgur.com/L6TuAEE.png">
+<meta property="og:image" content="https://i.imgur.com/RNY24EO.png">
+<meta property="og:image" content="https://i.imgur.com/enkERzn.png">
+<meta property="og:updated_time" content="2020-08-05T16:00:14.863Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring WebFlux RequestBody">
+<meta name="twitter:description" content="Spring WebFlux RequestBody - Raw vs MonoWebFlux 사용 시 Controller 단에서 RequestBody 를 인자로 받을 때, 다음과 같이 Mono를 받아오도록 작성해야할까? 1234@PostMapping(&quot;/mono&quot;)public Mono&amp;lt;SellerOut&amp;gt; createWithMono(@RequestBody">
+<meta name="twitter:image" content="https://i.imgur.com/eogpnac.png">
+    
+        <meta rel="publisher" content="https://plus.google.com/+오명운"/>
+    
+    
+    
+        <meta property="og:image" content="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=640"/>
+    
+    
+        <meta property="og:image" content="/2020/08/06/Spring-WebFlux-RequestBody/https:/i.imgur.com/xmWc7wi.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2020/08/06/Spring-WebFlux-RequestBody/https://i.imgur.com/xmWc7wi.png" />
+    
+    
+        <meta property="og:image" content="/2020/08/06/Spring-WebFlux-RequestBody/cover-webflux-requestbody.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2020/08/06/Spring-WebFlux-RequestBody/cover-webflux-requestbody.png" />
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style.min.css">
+    <!--STYLES END-->
+    
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-79893978-1']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6494847158566766",
+    enable_page_level_ads: true
+  });
+</script>
+</head>
+
+    <body>
+        <div id="blog">
+            <header id="header" data-behavior="1">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="/ ">뒤태지존의 끄적거림</a>
+    </h1>
+    
+        <a class="header-right-picture" href="/#about">
+            <img class="header-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+        </a>
+    
+</header>
+            <nav id="sidebar" data-behavior="1">
+    
+    <div class="sidebar-profile">
+        <a href="/#about">
+            
+            <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+            
+        </a>
+        <span class="sidebar-profile-name">HomoEfficio</span>
+    </div>
+    
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/ 
+                    ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">Home</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-categories
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">Categories</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-tags
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">Tags</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-archives
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">Archives</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link st-search-show-outputs"
+                    href="#search
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                    <span class="sidebar-button-desc">Search</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="#about
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">About me</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="https://github.com/HomoEfficio" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                    <span class="sidebar-button-desc">GitHub</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="mailto:homo.efficio@gmail.com" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-envelope-o"></i>
+                    <span class="sidebar-button-desc">Mail</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/atom.xml
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+            <div id="main" data-behavior="1">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+        <div class="post-header-cover" style="background-image:url('/2020/08/06/Spring-WebFlux-RequestBody/cover-webflux-requestbody.png');">
+            <div class="post-header main-content-wrap">
+    
+        <h1 class="post-title" itemprop="headline">Spring WebFlux RequestBody</h1>
+    
+    <div class="post-meta">
+    <time  itemprop="datePublished" content="Thu Aug 06 2020 00:54:34 GMT+0900">
+        Aug 06, 2020
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Technique/">Technique</a>
+
+
+    
+</div>
+</div>
+        </div>
+    
+    <div class="post-content markdown main-content-wrap" itemprop="articleBody">
+        
+            <h1 id="Spring-WebFlux-RequestBody-Raw-vs-Mono"><a href="#Spring-WebFlux-RequestBody-Raw-vs-Mono" class="headerlink" title="Spring WebFlux RequestBody - Raw vs Mono"></a>Spring WebFlux RequestBody - Raw vs Mono</h1><p>WebFlux 사용 시 Controller 단에서 <code>RequestBody</code> 를 인자로 받을 때,</p>
+<p>다음과 같이 <code>Mono</code>를 받아오도록 작성해야할까?</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostMapping</span>(<span class="string">"/mono"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> Mono&lt;SellerOut&gt; <span class="title">createWithMono</span><span class="params">(@RequestBody Mono&lt;SellerIn&gt; sellerIn)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> sellerService.createWithMono(sellerIn);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>아니면 그냥 Raw 객체를 받아오도록 작성해야할까?</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostMapping</span>(<span class="string">"/entity"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> Mono&lt;SellerOut&gt; <span class="title">createWithRaw</span><span class="params">(@RequestBody SellerIn sellerIn)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> sellerService.createWithRaw(sellerIn);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>non-blocking 드라이버를 제공해주는 MongoDB를 사용한다고 가정하고 사용성과 성능 관점에서 살펴보자.</p>
+<h2 id="사용성"><a href="#사용성" class="headerlink" title="사용성"></a>사용성</h2><p>컨트롤러 단에서는 위에서 보는 것처럼 큰 차이가 없다. 서비스가 호출하는 데이터 접근 계층(Data Access Layer)에서 작지만 큰 차이가 발생한다.</p>
+<h3 id="ReactiveCrudRepository"><a href="#ReactiveCrudRepository" class="headerlink" title="ReactiveCrudRepository"></a>ReactiveCrudRepository</h3><p>스프링 WebFlux 환경에서도 사용하기 쉽게 추상화 된 <code>ReactiveCrudRepository</code>를 통해 쉽게 데이터 저장소에 접근할 수 있다. MongoDB 용으로 특화된 <code>ReactiveMongoRepository</code>를 사용하면 Spring Data 에서 제공해주는 편리한 <a href="https://docs.spring.io/spring-data/mongodb/docs/current/reference/html/#mongodb.repositories.queries" target="_blank" rel="noopener">메서드 이름 조합 방식</a>을 WebFlux에서도 사용할 수 있다. 이는 사용성과 생산성을 높여주는 데 큰 역할을 한다.</p>
+<p>그런데 엔티티를 저장할 때 사용되는 <code>save()</code> 메서드는 다음과 같이 Mono가 아니라 Raw 객체를 사용하도록 정의돼 있다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@NoRepositoryBean</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ReactiveCrudRepository</span>&lt;<span class="title">T</span>, <span class="title">ID</span>&gt; <span class="keyword">extends</span> <span class="title">Repository</span>&lt;<span class="title">T</span>, <span class="title">ID</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * Saves a given entity. Use the returned instance for further operations as the save operation might have changed the</span></span><br><span class="line"><span class="comment">   * entity instance completely.</span></span><br><span class="line"><span class="comment">   *</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@param</span> entity must not be &#123;<span class="doctag">@literal</span> null&#125;.</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@return</span> &#123;<span class="doctag">@link</span> Mono&#125; emitting the saved entity.</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@throws</span> IllegalArgumentException in case the given &#123;<span class="doctag">@literal</span> entity&#125; is &#123;<span class="doctag">@literal</span> null&#125;.</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  &lt;S extends T&gt; <span class="function">Mono&lt;S&gt; <span class="title">save</span><span class="params">(S entity)</span></span>;  <span class="comment">// Mono가 아니라 걍 S</span></span><br></pre></td></tr></table></figure>
+<p>그래서 컨트롤러 단에서 <code>RequestBody</code>를 <code>Mono</code>로 받아오도록 만들면 <code>save()</code> 호출 전에 <code>block()</code> 같은 것을 호출해서 <code>Mono</code>에서 Raw 객체를 꺼내서 <code>save()</code>에 전달해줘야 한다. 대략 이런 식이 된다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sellerRepository.save(sellerIn.block().toEntity());</span><br></pre></td></tr></table></figure>
+<p>쓰기도 안 좋고 보기도 안 좋고 무엇보다 중간에 <code>block()</code>을 호출하므로 <code>Mono</code>를 사용하는 의미가 퇴색된다.</p>
+<p>정리하면 결국,</p>
+<blockquote>
+<p><strong><code>RequestBody</code>를 <code>Mono</code>로 받아오면 <code>ReactiveCrudRepository</code>랑 궁합이 별로다</strong></p>
+</blockquote>
+<h3 id="ReactiveMongoTemplate"><a href="#ReactiveMongoTemplate" class="headerlink" title="ReactiveMongoTemplate"></a>ReactiveMongoTemplate</h3><p><code>ReactiveMongoTemplate</code>에는 다음과 같이 <code>Mono</code> 타입과 Raw 객체 모두 사용해서 저장할 수 있는 API를 제공해준다. 따라서 저장은 사용성에 큰 차이가 없다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> &lt;T&gt; <span class="function">Mono&lt;T&gt; <span class="title">save</span><span class="params">(Mono&lt;? extends T&gt; objectToSave)</span> </span>&#123;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> &lt;T&gt; <span class="function">Mono&lt;T&gt; <span class="title">save</span><span class="params">(Mono&lt;? extends T&gt; objectToSave, String collectionName)</span> </span>&#123;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> &lt;T&gt; <span class="function">Mono&lt;T&gt; <span class="title">save</span><span class="params">(T objectToSave)</span> </span>&#123;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> &lt;T&gt; <span class="function">Mono&lt;T&gt; <span class="title">save</span><span class="params">(T objectToSave, String collectionName)</span> </span>&#123;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>하지만 <code>ReactiveMongoTemplate</code>를 사용해서 조회할 때 메서드 이름 조합 방식을 사용할 수 없으므로, 아래에 보는 것처럼 <code>Query</code>를 전달해줘야 하므로 아무래도 <code>ReactiveCrudRepository</code> 보다는 사용성이 떨어진다고 할 수 있겠다.</p>
+<p><img src="https://i.imgur.com/eogpnac.png" alt="Imgur"></p>
+<blockquote>
+<p><strong><code>RequestBody</code>를 <code>Mono</code>로 받아오면 <code>ReactiveMongoTemplate</code>를 사용하면 되지만, 조회할 때 <code>ReactiveCrudRepository</code>보다는 불편하다</strong></p>
+</blockquote>
+<h2 id="성능"><a href="#성능" class="headerlink" title="성능"></a>성능</h2><p>처음에는 예전 Servlet 관점으로 생각을 해서 <code>RequestBody</code>를 <code>Mono</code>로 받아온다 하더라도 결국은 이미 Request에서 추출해서 만들어진 Raw 객체를 <code>Mono</code>로 wrapping 해서 컨트롤러에 넣어주는 것일 거라 생각했는데 그렇지는 않은 것 같다.</p>
+<p>WebFlux에서는 <code>HttpServletRequest</code>가 아니라 reactive 방식의 <code>ServerHttpRequest</code>를 사용한다. 따라서 Servlet 에서와는 다르게 <code>RequestBody</code>를 <code>Mono</code>로 받아오면 Raw 객체를 받아 사용하는 것과는 다르게 정말로 reactive한 처리가 가능할 수도 있겠다.</p>
+<p>reactive 방식은 처리 속도보다는 자원 사용 관점에서의 효율성을 높이는 방식이므로 속도로 비교하는 것이 합당하지 않을 수는 있지만, 그래도 참고 삼아 k6(<a href="https://k6.io/)로" target="_blank" rel="noopener">https://k6.io/)로</a> 가상사용자 100 으로 10초간 3회 돌린 결과는 다음과 같다. 그림 위쪽이 Raw 방식, 아래쪽이 <code>Mono</code> 방식이다. <code>http_reqs</code> 항목으로 비교해보면 두 방식에서 의미있는 큰 차이는 없는 것으로 보인다.</p>
+<p><img src="https://i.imgur.com/R3fX3fg.png" alt="Imgur"></p>
+<p><img src="https://i.imgur.com/FDRl4jU.png" alt="Imgur"></p>
+<p><img src="https://i.imgur.com/VhCeVTk.png" alt="Imgur"></p>
+<h2 id="선Raw후Mono-아니면-선Mono후Raw"><a href="#선Raw후Mono-아니면-선Mono후Raw" class="headerlink" title="선Raw후Mono? 아니면 선Mono후Raw?"></a>선Raw후Mono? 아니면 선Mono후Raw?</h2><p>Request에서 먼저 Raw 가 추출된 후에 Mono로 감싸져서 컨트롤러에 전달되는 걸까? 아니면 Request에서부터 계속 Mono(또는 Flux)인 채로 있다가 나중에 Raw가 추출되서 컨트롤러에 전달되는 걸까?</p>
+<p>Stack을 뒤져본 결과 분기 지점은 아래와 같음을 확인했다. 하지만 여기에서 위 질문에 대한 답은 얻을 수 없었다.</p>
+<p><img src="https://i.imgur.com/L6TuAEE.png" alt="Imgur"></p>
+<p>조금 더 살펴본 결과 아래 그림 단계까지는 netty의 <code>NettyDataBuffer</code>로 존재하다가,</p>
+<p><img src="https://i.imgur.com/RNY24EO.png" alt="Imgur"></p>
+<p>아래 그림 단계에서 처음으로 Raw 값이 확인된다.</p>
+<p><img src="https://i.imgur.com/enkERzn.png" alt="Imgur"></p>
+<p>하지만 선Raw후Mono 인지 선Mono후Raw 인지는 아직 명확하지 않다.</p>
+<h2 id="마무리"><a href="#마무리" class="headerlink" title="마무리"></a>마무리</h2><p>WebFlux 사용 시 Controller 단에서 <code>RequestBody</code> 를 인자로 받을 때,</p>
+<blockquote>
+<ul>
+<li><p><code>Mono</code>를 받아오도록 작성하면 <code>ReactiveCrudRepository</code>를 사용하기 불편해지고,<br>Raw 객체를 받아오도록 작성하면 <code>ReactiveCrudRepository</code>를 편하게 쓸 수 있다.</p>
+</li>
+<li><p><code>Mono</code>로 받아오든 Raw 객체로 받아오든 아주 특수한 상황이 아니라면 성능 상 둘 중 어느 한 쪽이 훨씬 유리하다고 할 수는 없을 것 같다.</p>
+</li>
+</ul>
+</blockquote>
+
+        
+        
+            
+        
+        <hr/>
+        <div>
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="크리에이티브 커먼즈 라이선스" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><a href='https://github.com/homoefficio' target='_blank'>HomoEfficio</a>가 작성한 이 저작물은(는) <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스</a>에 따라 이용할 수 있습니다.
+        </div>
+    </div>
+    <div class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/Java/">Java</a> <a class="tag tag--primary tag--small t-link" href="/tags/K6/">K6</a> <a class="tag tag--primary tag--small t-link" href="/tags/Mono/">Mono</a> <a class="tag tag--primary tag--small t-link" href="/tags/Performance/">Performance</a> <a class="tag tag--primary tag--small t-link" href="/tags/Reactive/">Reactive</a> <a class="tag tag--primary tag--small t-link" href="/tags/ReactiveCrudRepository/">ReactiveCrudRepository</a> <a class="tag tag--primary tag--small t-link" href="/tags/ReactiveMongoTemplate/">ReactiveMongoTemplate</a> <a class="tag tag--primary tag--small t-link" href="/tags/Reactor/">Reactor</a> <a class="tag tag--primary tag--small t-link" href="/tags/RequestBody/">RequestBody</a> <a class="tag tag--primary tag--small t-link" href="/tags/Spring/">Spring</a> <a class="tag tag--primary tag--small t-link" href="/tags/WebFlux/">WebFlux</a>
+
+            </div>
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2020/07/23/JPA-필요한-것만-조회하자/" data-tooltip="JPA 필요한 것만 조회하자">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2020/08/06/Spring-WebFlux-RequestBody/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2020/08/06/Spring-WebFlux-RequestBody/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2020/08/06/Spring-WebFlux-RequestBody/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+        
+            <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2020 HomoEfficio. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="1">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2020/07/23/JPA-필요한-것만-조회하자/" data-tooltip="JPA 필요한 것만 조회하자">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2020/08/06/Spring-WebFlux-RequestBody/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2020/08/06/Spring-WebFlux-RequestBody/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2020/08/06/Spring-WebFlux-RequestBody/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="1">
+    <ul class="share-options">
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2020/08/06/Spring-WebFlux-RequestBody/">
+                <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2020/08/06/Spring-WebFlux-RequestBody/">
+                <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2020/08/06/Spring-WebFlux-RequestBody/">
+                <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+            
+        </div>
+        <div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=110"/>
+        
+            <h4 id="about-card-name">HomoEfficio</h4>
+        
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Seoul, Korea.
+            </h5>
+        
+    </div>
+</div>
+        <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/script.min.js"></script>
+<!--SCRIPTS END-->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'hanmomhanda';
+        (function() {
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+
+
+
+</html>

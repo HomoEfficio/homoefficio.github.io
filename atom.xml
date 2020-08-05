@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://homoefficio.github.io/"/>
-  <updated>2020-07-23T11:08:08.367Z</updated>
+  <updated>2020-08-05T16:00:14.863Z</updated>
   <id>http://homoefficio.github.io/</id>
   
   <author>
@@ -15,6 +15,51 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Spring WebFlux RequestBody</title>
+    <link href="http://homoefficio.github.io/2020/08/06/Spring-WebFlux-RequestBody/"/>
+    <id>http://homoefficio.github.io/2020/08/06/Spring-WebFlux-RequestBody/</id>
+    <published>2020-08-05T15:54:34.000Z</published>
+    <updated>2020-08-05T16:00:14.863Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="Spring-WebFlux-RequestBody-Raw-vs-Mono"><a href="#Spring-WebFlux-RequestBody-Raw-vs-Mono" class="headerlink" title="Spring WebFlux RequestBody - Raw vs Mono"></a>Spring WebFlux RequestBody - Raw vs Mono</h1><p>WebFlux 사용 시 Controller 단에서 <code>RequestBody</code> 를 인자로 받을 때,</p><p>다음과 같이 <code>Mono</code>를 받아오도록 작성해야할까?</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostMapping</span>(<span class="string">"/mono"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> Mono&lt;SellerOut&gt; <span class="title">createWithMono</span><span class="params">(@RequestBody Mono&lt;SellerIn&gt; sellerIn)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> sellerService.createWithMono(sellerIn);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>아니면 그냥 Raw 객체를 받아오도록 작성해야할까?</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostMapping</span>(<span class="string">"/entity"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> Mono&lt;SellerOut&gt; <span class="title">createWithRaw</span><span class="params">(@RequestBody SellerIn sellerIn)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> sellerService.createWithRaw(sellerIn);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>non-blocking 드라이버를 제공해주는 MongoDB를 사용한다고 가정하고 사용성과 성능 관점에서 살펴보자.</p><h2 id="사용성"><a href="#사용성" class="headerlink" title="사용성"></a>사용성</h2><p>컨트롤러 단에서는 위에서 보는 것처럼 큰 차이가 없다. 서비스가 호출하는 데이터 접근 계층(Data Access Layer)에서 작지만 큰 차이가 발생한다.</p><h3 id="ReactiveCrudRepository"><a href="#ReactiveCrudRepository" class="headerlink" title="ReactiveCrudRepository"></a>ReactiveCrudRepository</h3><p>스프링 WebFlux 환경에서도 사용하기 쉽게 추상화 된 <code>ReactiveCrudRepository</code>를 통해 쉽게 데이터 저장소에 접근할 수 있다. MongoDB 용으로 특화된 <code>ReactiveMongoRepository</code>를 사용하면 Spring Data 에서 제공해주는 편리한 <a href="https://docs.spring.io/spring-data/mongodb/docs/current/reference/html/#mongodb.repositories.queries" target="_blank" rel="noopener">메서드 이름 조합 방식</a>을 WebFlux에서도 사용할 수 있다. 이는 사용성과 생산성을 높여주는 데 큰 역할을 한다.</p><p>그런데 엔티티를 저장할 때 사용되는 <code>save()</code> 메서드는 다음과 같이 Mono가 아니라 Raw 객체를 사용하도록 정의돼 있다.</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@NoRepositoryBean</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ReactiveCrudRepository</span>&lt;<span class="title">T</span>, <span class="title">ID</span>&gt; <span class="keyword">extends</span> <span class="title">Repository</span>&lt;<span class="title">T</span>, <span class="title">ID</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * Saves a given entity. Use the returned instance for further operations as the save operation might have changed the</span></span><br><span class="line"><span class="comment">   * entity instance completely.</span></span><br><span class="line"><span class="comment">   *</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@param</span> entity must not be &#123;<span class="doctag">@literal</span> null&#125;.</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@return</span> &#123;<span class="doctag">@link</span> Mono&#125; emitting the saved entity.</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@throws</span> IllegalArgumentException in case the given &#123;<span class="doctag">@literal</span> entity&#125; is &#123;<span class="doctag">@literal</span> null&#125;.</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  &lt;S extends T&gt; <span class="function">Mono&lt;S&gt; <span class="title">save</span><span class="params">(S entity)</span></span>;  <span class="comment">// Mono가 아니라 걍 S</span></span><br></pre></td></tr></table></figure><p>그래서 컨트롤러 단에서 <code>RequestBody</code>를 <code>Mono</code>로 받아오도록 만들면 <code>save()</code> 호출 전에 <code>block()</code> 같은 것을 호출해서 <code>Mono</code>에서 Raw 객체를 꺼내서 <code>save()</code>에 전달해줘야 한다. 대략 이런 식이 된다.</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sellerRepository.save(sellerIn.block().toEntity());</span><br></pre></td></tr></table></figure><p>쓰기도 안 좋고 보기도 안 좋고 무엇보다 중간에 <code>block()</code>을 호출하므로 <code>Mono</code>를 사용하는 의미가 퇴색된다.</p><p>정리하면 결국,</p><blockquote><p><strong><code>RequestBody</code>를 <code>Mono</code>로 받아오면 <code>ReactiveCrudRepository</code>랑 궁합이 별로다</strong></p></blockquote><h3 id="ReactiveMongoTemplate"><a href="#ReactiveMongoTemplate" class="headerlink" title="ReactiveMongoTemplate"></a>ReactiveMongoTemplate</h3><p><code>ReactiveMongoTemplate</code>에는 다음과 같이 <code>Mono</code> 타입과 Raw 객체 모두 사용해서 저장할 수 있는 API를 제공해준다. 따라서 저장은 사용성에 큰 차이가 없다.</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> &lt;T&gt; <span class="function">Mono&lt;T&gt; <span class="title">save</span><span class="params">(Mono&lt;? extends T&gt; objectToSave)</span> </span>&#123;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> &lt;T&gt; <span class="function">Mono&lt;T&gt; <span class="title">save</span><span class="params">(Mono&lt;? extends T&gt; objectToSave, String collectionName)</span> </span>&#123;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> &lt;T&gt; <span class="function">Mono&lt;T&gt; <span class="title">save</span><span class="params">(T objectToSave)</span> </span>&#123;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> &lt;T&gt; <span class="function">Mono&lt;T&gt; <span class="title">save</span><span class="params">(T objectToSave, String collectionName)</span> </span>&#123;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>하지만 <code>ReactiveMongoTemplate</code>를 사용해서 조회할 때 메서드 이름 조합 방식을 사용할 수 없으므로, 아래에 보는 것처럼 <code>Query</code>를 전달해줘야 하므로 아무래도 <code>ReactiveCrudRepository</code> 보다는 사용성이 떨어진다고 할 수 있겠다.</p><p><img src="https://i.imgur.com/eogpnac.png" alt="Imgur"></p><blockquote><p><strong><code>RequestBody</code>를 <code>Mono</code>로 받아오면 <code>ReactiveMongoTemplate</code>를 사용하면 되지만, 조회할 때 <code>ReactiveCrudRepository</code>보다는 불편하다</strong></p></blockquote><h2 id="성능"><a href="#성능" class="headerlink" title="성능"></a>성능</h2><p>처음에는 예전 Servlet 관점으로 생각을 해서 <code>RequestBody</code>를 <code>Mono</code>로 받아온다 하더라도 결국은 이미 Request에서 추출해서 만들어진 Raw 객체를 <code>Mono</code>로 wrapping 해서 컨트롤러에 넣어주는 것일 거라 생각했는데 그렇지는 않은 것 같다.</p><p>WebFlux에서는 <code>HttpServletRequest</code>가 아니라 reactive 방식의 <code>ServerHttpRequest</code>를 사용한다. 따라서 Servlet 에서와는 다르게 <code>RequestBody</code>를 <code>Mono</code>로 받아오면 Raw 객체를 받아 사용하는 것과는 다르게 정말로 reactive한 처리가 가능할 수도 있겠다.</p><p>reactive 방식은 처리 속도보다는 자원 사용 관점에서의 효율성을 높이는 방식이므로 속도로 비교하는 것이 합당하지 않을 수는 있지만, 그래도 참고 삼아 k6(<a href="https://k6.io/)로" target="_blank" rel="noopener">https://k6.io/)로</a> 가상사용자 100 으로 10초간 3회 돌린 결과는 다음과 같다. 그림 위쪽이 Raw 방식, 아래쪽이 <code>Mono</code> 방식이다. <code>http_reqs</code> 항목으로 비교해보면 두 방식에서 의미있는 큰 차이는 없는 것으로 보인다.</p><p><img src="https://i.imgur.com/R3fX3fg.png" alt="Imgur"></p><p><img src="https://i.imgur.com/FDRl4jU.png" alt="Imgur"></p><p><img src="https://i.imgur.com/VhCeVTk.png" alt="Imgur"></p><h2 id="선Raw후Mono-아니면-선Mono후Raw"><a href="#선Raw후Mono-아니면-선Mono후Raw" class="headerlink" title="선Raw후Mono? 아니면 선Mono후Raw?"></a>선Raw후Mono? 아니면 선Mono후Raw?</h2><p>Request에서 먼저 Raw 가 추출된 후에 Mono로 감싸져서 컨트롤러에 전달되는 걸까? 아니면 Request에서부터 계속 Mono(또는 Flux)인 채로 있다가 나중에 Raw가 추출되서 컨트롤러에 전달되는 걸까?</p><p>Stack을 뒤져본 결과 분기 지점은 아래와 같음을 확인했다. 하지만 여기에서 위 질문에 대한 답은 얻을 수 없었다.</p><p><img src="https://i.imgur.com/L6TuAEE.png" alt="Imgur"></p><p>조금 더 살펴본 결과 아래 그림 단계까지는 netty의 <code>NettyDataBuffer</code>로 존재하다가,</p><p><img src="https://i.imgur.com/RNY24EO.png" alt="Imgur"></p><p>아래 그림 단계에서 처음으로 Raw 값이 확인된다.</p><p><img src="https://i.imgur.com/enkERzn.png" alt="Imgur"></p><p>하지만 선Raw후Mono 인지 선Mono후Raw 인지는 아직 명확하지 않다.</p><h2 id="마무리"><a href="#마무리" class="headerlink" title="마무리"></a>마무리</h2><p>WebFlux 사용 시 Controller 단에서 <code>RequestBody</code> 를 인자로 받을 때,</p><blockquote><ul><li><p><code>Mono</code>를 받아오도록 작성하면 <code>ReactiveCrudRepository</code>를 사용하기 불편해지고,<br>Raw 객체를 받아오도록 작성하면 <code>ReactiveCrudRepository</code>를 편하게 쓸 수 있다.</p></li><li><p><code>Mono</code>로 받아오든 Raw 객체로 받아오든 아주 특수한 상황이 아니라면 성능 상 둘 중 어느 한 쪽이 훨씬 유리하다고 할 수는 없을 것 같다.</p></li></ul></blockquote>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;Spring-WebFlux-RequestBody-Raw-vs-Mono&quot;&gt;&lt;a href=&quot;#Spring-WebFlux-RequestBody-Raw-vs-Mono&quot; class=&quot;headerlink&quot; title=&quot;Spring WebFlux R
+      
+    
+    </summary>
+    
+      <category term="Technique" scheme="http://homoefficio.github.io/categories/Technique/"/>
+    
+    
+      <category term="Java" scheme="http://homoefficio.github.io/tags/Java/"/>
+    
+      <category term="Performance" scheme="http://homoefficio.github.io/tags/Performance/"/>
+    
+      <category term="Spring" scheme="http://homoefficio.github.io/tags/Spring/"/>
+    
+      <category term="Reactor" scheme="http://homoefficio.github.io/tags/Reactor/"/>
+    
+      <category term="Reactive" scheme="http://homoefficio.github.io/tags/Reactive/"/>
+    
+      <category term="WebFlux" scheme="http://homoefficio.github.io/tags/WebFlux/"/>
+    
+      <category term="RequestBody" scheme="http://homoefficio.github.io/tags/RequestBody/"/>
+    
+      <category term="Mono" scheme="http://homoefficio.github.io/tags/Mono/"/>
+    
+      <category term="K6" scheme="http://homoefficio.github.io/tags/K6/"/>
+    
+      <category term="ReactiveCrudRepository" scheme="http://homoefficio.github.io/tags/ReactiveCrudRepository/"/>
+    
+      <category term="ReactiveMongoTemplate" scheme="http://homoefficio.github.io/tags/ReactiveMongoTemplate/"/>
+    
+  </entry>
   
   <entry>
     <title>JPA 필요한 것만 조회하자</title>
@@ -41,11 +86,11 @@
     
       <category term="JPA" scheme="http://homoefficio.github.io/tags/JPA/"/>
     
-      <category term="Performance" scheme="http://homoefficio.github.io/tags/Performance/"/>
-    
       <category term="QueryDSL" scheme="http://homoefficio.github.io/tags/QueryDSL/"/>
     
       <category term="Projection" scheme="http://homoefficio.github.io/tags/Projection/"/>
+    
+      <category term="Performance" scheme="http://homoefficio.github.io/tags/Performance/"/>
     
   </entry>
   
@@ -199,11 +244,13 @@
       <category term="Performance" scheme="http://homoefficio.github.io/categories/Performance/"/>
     
     
+      <category term="Performance" scheme="http://homoefficio.github.io/tags/Performance/"/>
+    
+      <category term="Spring Data JPA" scheme="http://homoefficio.github.io/tags/Spring-Data-JPA/"/>
+    
       <category term="Spring Data" scheme="http://homoefficio.github.io/tags/Spring-Data/"/>
     
       <category term="Spring Data JDBC" scheme="http://homoefficio.github.io/tags/Spring-Data-JDBC/"/>
-    
-      <category term="Spring Data JPA" scheme="http://homoefficio.github.io/tags/Spring-Data-JPA/"/>
     
       <category term="Batch Insert" scheme="http://homoefficio.github.io/tags/Batch-Insert/"/>
     
@@ -222,8 +269,6 @@
       <category term="GenerationType.TABLE" scheme="http://homoefficio.github.io/tags/GenerationType-TABLE/"/>
     
       <category term="GenerationType.AUTO" scheme="http://homoefficio.github.io/tags/GenerationType-AUTO/"/>
-    
-      <category term="Performance" scheme="http://homoefficio.github.io/tags/Performance/"/>
     
       <category term="IDENTITY column" scheme="http://homoefficio.github.io/tags/IDENTITY-column/"/>
     
@@ -338,13 +383,13 @@
       <category term="개발 환경 및 도구" scheme="http://homoefficio.github.io/categories/%EA%B0%9C%EB%B0%9C-%ED%99%98%EA%B2%BD-%EB%B0%8F-%EB%8F%84%EA%B5%AC/"/>
     
     
+      <category term="JPA" scheme="http://homoefficio.github.io/tags/JPA/"/>
+    
       <category term="IntelliJ" scheme="http://homoefficio.github.io/tags/IntelliJ/"/>
     
       <category term="H2" scheme="http://homoefficio.github.io/tags/H2/"/>
     
       <category term="H2 TCP Server" scheme="http://homoefficio.github.io/tags/H2-TCP-Server/"/>
-    
-      <category term="JPA" scheme="http://homoefficio.github.io/tags/JPA/"/>
     
       <category term="JPA Console" scheme="http://homoefficio.github.io/tags/JPA-Console/"/>
     
@@ -1128,50 +1173,6 @@
       <category term="코드 최적화" scheme="http://homoefficio.github.io/tags/%EC%BD%94%EB%93%9C-%EC%B5%9C%EC%A0%81%ED%99%94/"/>
     
       <category term="상수 풀" scheme="http://homoefficio.github.io/tags/%EC%83%81%EC%88%98-%ED%92%80/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>탈중앙화된 암호화폐는 죽었다</title>
-    <link href="http://homoefficio.github.io/2018/12/11/%ED%83%88%EC%A4%91%EC%95%99%ED%99%94%EB%90%9C-%EC%95%94%ED%98%B8%ED%99%94%ED%8F%90%EB%8A%94-%EC%A3%BD%EC%97%88%EB%8B%A4/"/>
-    <id>http://homoefficio.github.io/2018/12/11/탈중앙화된-암호화폐는-죽었다/</id>
-    <published>2018-12-11T12:59:50.000Z</published>
-    <updated>2019-04-28T17:03:55.475Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="탈중앙화된-암호화폐는-죽었다"><a href="#탈중앙화된-암호화폐는-죽었다" class="headerlink" title="탈중앙화된 암호화폐는 죽었다."></a>탈중앙화된 암호화폐는 죽었다.</h1><blockquote><p>원저자인 SemkoDev의 허락을 받고 우리말로 옮긴 글입니다.<br>SemkoDev는 IOTA 재단과는 관련이 없는 3rd party 개발사입니다.</p><p>원문: <a href="https://semkodev.com/decentralised-cryptocurrency-is-dead/?lang=en" target="_blank" rel="noopener">https://semkodev.com/decentralised-cryptocurrency-is-dead/?lang=en</a></p><p>IOTA 기부</p><h5 id="원저자-IYUIUCFNGOEEQHT9CQU9VYJVOJMQI9VYTQGQLTBAKTFIPWWRBFEV9TJWUZU9EYEFPM9VB9QYXTSMCDKMDABASVXPPX"><a href="#원저자-IYUIUCFNGOEEQHT9CQU9VYJVOJMQI9VYTQGQLTBAKTFIPWWRBFEV9TJWUZU9EYEFPM9VB9QYXTSMCDKMDABASVXPPX" class="headerlink" title="원저자: IYUIUCFNGOEEQHT9CQU9VYJVOJMQI9VYTQGQLTBAKTFIPWWRBFEV9TJWUZU9EYEFPM9VB9QYXTSMCDKMDABASVXPPX"></a>원저자: IYUIUCFNGOEEQHT9CQU9VYJVOJMQI9VYTQGQLTBAKTFIPWWRBFEV9TJWUZU9EYEFPM9VB9QYXTSMCDKMDABASVXPPX</h5><h5 id="옮긴이-ALGUYPTFQAWONZEZNMFRBHFX9KXIFNHUTUCHQQHJJCHWVQOAWSRNAWKSLPMLUBCYLBTALRMNCHIULGJEYSFAISLOSB"><a href="#옮긴이-ALGUYPTFQAWONZEZNMFRBHFX9KXIFNHUTUCHQQHJJCHWVQOAWSRNAWKSLPMLUBCYLBTALRMNCHIULGJEYSFAISLOSB" class="headerlink" title="옮긴이: ALGUYPTFQAWONZEZNMFRBHFX9KXIFNHUTUCHQQHJJCHWVQOAWSRNAWKSLPMLUBCYLBTALRMNCHIULGJEYSFAISLOSB"></a>옮긴이: ALGUYPTFQAWONZEZNMFRBHFX9KXIFNHUTUCHQQHJJCHWVQOAWSRNAWKSLPMLUBCYLBTALRMNCHIULGJEYSFAISLOSB</h5></blockquote><p><img src="https://i.imgur.com/jHVJGUf.png" alt="Imgur"></p><p>블록체인은 혁신의 대명사였지만 이제는 녹이 슬어버린 예전 시스템처럼 되어가고 있습니다. 비트코인이 민주화 된 금융 질서를 세우고 불필요한 중간자를 축출할 수 있다고 생각했다면, 이제는 다시 생각해보는 게 좋을 것 같습니다.</p><p>블록체인, 탱글(tangle), 대용량 블록(2x blocks), 스마트 컨트랙트, 세그윗(segwit), 라이트닝 네트워크(lightning network), Schnorr 알고리듬과 앞으로 똑똑한 괴짜들이 고안해 낼 새로운 기술 등 암호화폐에 사용하고 있는 기술에 대한 얘기를 하려는 것이 아닙니다. 문제는 여러 다른 방법으로 해결될 수도 있으니까요.</p><p>좀 더 심오한 고민을 필요로 하는 이야기를 꺼내보려 합니다. 사토시가 제시한 최초의 비전에는 결함이 있습니다.</p><h2 id="금전적-보상은-언제나-불평등으로-이어진다"><a href="#금전적-보상은-언제나-불평등으로-이어진다" class="headerlink" title="금전적 보상은 언제나 불평등으로 이어진다."></a>금전적 보상은 언제나 불평등으로 이어진다.</h2><p>전에 썼던 <a href="https://semkodev.com/iota-why-free-transactions-matter-most/?lang=en" target="_blank" rel="noopener">IOTA: why free transactions matter most</a>에서 주장한 것처럼 문제의 핵심은 보상(rewards)입니다. 누군가에게 네트워크를 운영하라고 보상을 지불하는 것은 여러분이 가지고 있던 권력(power)을 지불하는 것입니다. 권력을 지불하면 시스템에 불균형이 발생하고, 소수의 권력 집단이 생겨나며 시스템의 바탕이 되는 다수는 힘을 잃게 됩니다. 힘 없는 다수는 힘 있는 채굴자들 없이는 존재할 수 없게 되고, 힘 있는 채굴자는 시간이 갈 수록 더 큰 권력을 얻게 됩니다.</p><p><img src="https://i.imgur.com/HcsWxIq.png" alt="Imgur"></p><p>가장 유서 깊은 탈중앙화 장부(ledger)인 비트코인은 이 문제로부터 자유로운 적이 없었습니다. 비트코인에서는 소수의 채굴 풀이 전체 해시레이트(hashrate)의 절반 이상을 점유하고 있습니다. 이는 아주 좋지 않은 소식이고 시스템을 유지관리하는 사람들에게 금전적인 보상을 지급하는 어떤 코인도 이 문제로부터 자유로울 수 없습니다.</p><p>누구든 가장 높은 해시레이트를 보유한 자가 왕입니다. 지분 증명(Proof of Stake, PoS)이 모든 문제를 해결해줄 거라고 주장하는 사람들도 있겠지만, 지분 증명은 문제를 해결하는 것이 아니라 옮겨놓을 뿐입니다. <strong>지분 증명에서는 가장 높은 해시레이트가 아니라 가장 많은 코인을 보유한 자가 왕입니다. 해시레이트가 부(wealth)로 바뀔 뿐 작업 증명에 내재되어 있던 문제와 다를 것이 없습니다. 물론 지분 증명은 작업 증명처럼 많은 자원을 필요로하지 않으므로 환경 관점에서는 더 나은 해법이겠지만 중앙화의 문제를 해결하지는 못 합니다.</strong></p><h2 id="불평등은-언제나-중앙화로-이어진다"><a href="#불평등은-언제나-중앙화로-이어진다" class="headerlink" title="불평등은 언제나 중앙화로 이어진다."></a>불평등은 언제나 중앙화로 이어진다.</h2><p>겉으로 보기에 탈중앙화된 것 같은 코인은 부유한 소수가 원하는 대로 시스템을 조작할 수 있는 현재의 금융 질서와 살짝 다를 뿐 비슷해지고 있습니다. 다시 말하지만 코인이나 그 코인이 사용하는 기술은 하나도 중요하지 않습니다. 작업 증명이든 지분 증명이든 채굴자에게 보상을 지불하는 한, 채굴자는 시스템 위에 군림하게 됩니다. 채굴자들이 모든 것을 운영하는 단 하나의 이유는 돈입니다. 채굴자들은 사실상 코인 자체에는 관심이 없습니다. 내일 비트코인이 없어진다면 채굴자들은 그저 이더리움이든 라이트코인이든 다른 코인을 채굴하면 됩니다.</p><p>그래서 블록체인의 업그레이드가 필요할 때 채굴자들은 자신들의 이기적인 이익을 최우선으로 생각합니다. 사용자들은 그런 방향을 원치 않을거라고요? 글쎄요, 체인을 포크(fork)해서 누가 더 많은 권력을 가지고 있는지 보면 알 수 있을 겁니다. 기존 체인이 죽더라도 누가 상관할까요?</p><h2 id="중앙화는-암호화폐를-퇴물로-만든다"><a href="#중앙화는-암호화폐를-퇴물로-만든다" class="headerlink" title="중앙화는 암호화폐를 퇴물로 만든다."></a>중앙화는 암호화폐를 퇴물로 만든다.</h2><p>만약 어떤 코인의 운명을 극소수의 개인이 좌우할 수 있다면 현재의 통화 시스템과 다를 게 무엇일까요? 그저 중앙 은행이 중앙 채굴자로 바뀌는 것 뿐입니다. 달라질 게 없는데 뭐하러 귀찮게 바꾸나요?</p><blockquote><p>꿈은 죽었습니다.</p></blockquote><p>채굴자 손아귀로 넘어간 권력은 탈중앙화된 암호화폐가 내세웠던 이상을 파괴합니다. 꿈은 죽었습니다. 가까스로 주류에 편입한 어떤 암호화폐라도 채굴자를 없애지 않으면 결국 똑같은 문제에 직면하게 됩니다.</p><h2 id="희망은-있다"><a href="#희망은-있다" class="headerlink" title="희망은 있다."></a>희망은 있다.</h2><p>아무도 시스템 위에 군림해서는 안 되며, 시스템의 일부가 되는 것 외에 다른 동기(motivation)가 있으면 안 됩니다. 채굴자와 사용자 사이에 아무런 차이가 없어야만 위에서 말한 문제가 생기지 않습니다. 전체를 이루는 모든 구성원은 평등(equal)해야 합니다. 문제의 핵심을 파고 들어서, 네트워크 운영에 대한 보상을 없앤다면 모두가 평등해질 수 있습니다. 보상이 없어지면 불평등이 없어지고(No rewards = no inequality), 평등해지면 중앙화는 사라집니다(No inequality = no centralization).</p><p>하지만 금전적인 보상이 없다면 도대체 누가 노드를 운영하려 할까요? 대답은 매우 단순하고, 아이오타(IOTA)는 이 문제를 처음부터 바로잡고 시작하는 유망한 프로젝트 입니다. 네트워크를 이용하려면 사용자 스스로 네트워크를 유지해야 합니다. 거래를 하고 싶으면 다른 두 개의 거래를 검사해줘야 합니다. 아주 단순하죠.</p><p>이 방식에서는 모든 사용자가 평등합니다. 네트워크의 일부가 되고 싶으면 네트워크의 일부가 되기 위해 노력을 해야 합니다. 각 사용자는 자신의 필요에 따라 주고 받습니다. 농담 섞어 말하자면 공산주의의 꿈이 디지털 암호 장부(cryptoledger)를 통해 마침내 이루어지게 되는 겁니다.</p><p>진심으로 말하자면, 이 방식은 지금까지 진정한 탈중앙화 달성을 위해 나온 여러 방식 중에서 가장 나은 접근 방식입니다. 아이오타 네트워크의 규모가 현실적으로 작고 그래서 코디네이터(coordinator)가 있어야만 안정성을 보장받을 수 있는 현 시점에서는, 진정한 탈중앙화를 이뤄낸 프로젝트는 없습니다. 하지만 규모가 충분해지고 그래서 코디네이터를 필요로 하지 않게 되는 순간, 아이오타는 현재의 암호화폐 세상의 질서를 바꿔놓을 수도 있습니다.</p><p>진정한 탈중앙화에 대한 약속이야말로 업계에서 아이오타가 사랑받는 이유입니다. 아이오타가 다른 어떤 프로젝트보다 많은 파트너십을 가질 수 있었던 이유이기도 합니다. 산업계에서 이미 큰 힘을 가지고 있는 회사가 수상한 소수의 개인에 의해 좌우될 수 있는 암호화폐 프로젝트와 뭐하러 손을 잡겠습니까? 암호화폐가 현실 세상에 제대로 도입되려면 진정한 탈중앙화와 평등은 필수 조건입니다. 99%의 암호화폐는 이 조건을 충족시키지 못합니다.</p><p>우리는 흥미진진한 세상을 살고 있습니다. 암호화폐에 대해 이렇게 비관적으로 얘기해서 유감이지만 누군가는 마음에 담았던 이야기를 해야만 하고 모든 문제의 근본 원인에 대해 이야기 해야 합니다. 경고일 수도 있고 미래의 암호화폐 프로젝트를 선택하는 팁일 수도 있는 이야기로 글을 마무리하려 합니다. 채굴자 없는 진정한 평등을 추구하지 않는 프로젝트의 운명은 이미 결정되어 있습니다.</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;h1 id=&quot;탈중앙화된-암호화폐는-죽었다&quot;&gt;&lt;a href=&quot;#탈중앙화된-암호화폐는-죽었다&quot; class=&quot;headerlink&quot; title=&quot;탈중앙화된 암호화폐는 죽었다.&quot;&gt;&lt;/a&gt;탈중앙화된 암호화폐는 죽었다.&lt;/h1&gt;&lt;blockquote&gt;
-&lt;p&gt;원저자
-      
-    
-    </summary>
-    
-      <category term="Distributed Ledger Technology" scheme="http://homoefficio.github.io/categories/Distributed-Ledger-Technology/"/>
-    
-    
-      <category term="블록체인" scheme="http://homoefficio.github.io/tags/%EB%B8%94%EB%A1%9D%EC%B2%B4%EC%9D%B8/"/>
-    
-      <category term="Cryptocurrency" scheme="http://homoefficio.github.io/tags/Cryptocurrency/"/>
-    
-      <category term="IOTA" scheme="http://homoefficio.github.io/tags/IOTA/"/>
-    
-      <category term="아이오타" scheme="http://homoefficio.github.io/tags/%EC%95%84%EC%9D%B4%EC%98%A4%ED%83%80/"/>
-    
-      <category term="암호화폐" scheme="http://homoefficio.github.io/tags/%EC%95%94%ED%98%B8%ED%99%94%ED%8F%90/"/>
-    
-      <category term="Distributed Ledger Technology" scheme="http://homoefficio.github.io/tags/Distributed-Ledger-Technology/"/>
-    
-      <category term="분산 원장 기술" scheme="http://homoefficio.github.io/tags/%EB%B6%84%EC%82%B0-%EC%9B%90%EC%9E%A5-%EA%B8%B0%EC%88%A0/"/>
-    
-      <category term="Blockchain" scheme="http://homoefficio.github.io/tags/Blockchain/"/>
-    
-      <category term="Translation" scheme="http://homoefficio.github.io/tags/Translation/"/>
-    
-      <category term="번역" scheme="http://homoefficio.github.io/tags/%EB%B2%88%EC%97%AD/"/>
     
   </entry>
   
