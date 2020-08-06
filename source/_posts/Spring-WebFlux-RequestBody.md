@@ -116,7 +116,7 @@ sellerRepository.save(sellerIn.block().toEntity());
 
 WebFlux에서는 `HttpServletRequest`가 아니라 reactive 방식의 `ServerHttpRequest`를 사용한다. 따라서 Servlet 에서와는 다르게 `RequestBody`를 `Mono`로 받아오면 Raw 객체를 받아 사용하는 것과는 다르게 정말로 reactive한 처리가 가능할 수도 있겠다.
 
-reactive 방식은 처리 속도보다는 자원 사용 관점에서의 효율성을 높이는 방식이므로 속도로 비교하는 것이 합당하지 않을 수는 있지만, 그래도 참고 삼아 k6(https://k6.io/) 로 가상사용자 100 으로 10초간 3회 돌린 결과는 다음과 같다. 그림 위쪽이 Raw 방식, 아래쪽이 `Mono` 방식이다. `http_reqs` 항목으로 비교해보면 두 방식에서 의미있는 큰 차이는 없는 것으로 보인다.
+reactive 방식은 처리 속도보다는 자원 사용 관점에서의 효율성을 높이는 방식이므로 응답 속도로 비교하는 것보다는 처리량으로 비교하는 것이 합당할 것 같다. k6(https://k6.io/) 로 가상사용자 100 으로 10초간 3회 돌린 결과는 다음과 같다. 그림 위쪽이 Raw 방식, 아래쪽이 `Mono` 방식이다. `http_reqs` 항목으로 비교해보면 두 방식에서 의미있는 큰 차이는 없는 것으로 보인다.
 
 ![Imgur](https://i.imgur.com/R3fX3fg.png)
 
@@ -129,7 +129,7 @@ reactive 방식은 처리 속도보다는 자원 사용 관점에서의 효율�
 
 Request에서 먼저 Raw 가 추출된 후에 Mono로 감싸져서 컨트롤러에 전달되는 걸까? 아니면 Request에서부터 계속 Mono(또는 Flux)인 채로 있다가 나중에 Raw가 추출되서 컨트롤러에 전달되는 걸까?
 
-Stack을 뒤져본 결과 분기 지점은 아래와 같음을 확인했다. 하지만 여기에서 위 질문에 대한 답은 얻을 수 없었다.
+Stack을 뒤져본 결과 분기 지점은 아래와 같음을 확인했다. 하지만 여기에서 위 질문에 대한 답을 바로 얻을 수는 없었다.
 
 ![Imgur](https://i.imgur.com/L6TuAEE.png)
 
@@ -141,7 +141,7 @@ Stack을 뒤져본 결과 분기 지점은 아래와 같음을 확인했다. 하
 
 ![Imgur](https://i.imgur.com/enkERzn.png)
 
-하지만 선Raw후Mono 인지 선Mono후Raw 인지는 아직 명확하지 않다.
+선Raw후Mono 인지 선Mono후Raw 인지는 아쉽게도 명확하게 알아내지 못 했다. 더 시간을 들이면 알아낼 가능성도 있지만 일단은 성능 상 어느 쪽이든 큰 차이가 없어 보이므로 이 정도에서 마무리한다.
 
 
 ## 마무리
