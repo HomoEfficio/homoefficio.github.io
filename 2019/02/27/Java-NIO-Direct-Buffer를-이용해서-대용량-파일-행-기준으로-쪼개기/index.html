@@ -43,7 +43,7 @@
 <meta property="og:image" content="https://i.imgur.com/kEmfUja.png">
 <meta property="og:image" content="https://i.imgur.com/axhhB1Z.png">
 <meta property="og:image" content="https://i.imgur.com/gJAbo3g.png">
-<meta property="og:updated_time" content="2020-06-07T16:36:27.313Z">
+<meta property="og:updated_time" content="2020-08-10T16:26:52.933Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java NIO Direct Buffer를 이용해서 대용량 파일 행 기준으로 쪼개기">
 <meta name="twitter:description" content="Java NIO Direct Buffer를 이용해서 대용량 파일 행 기준으로 쪼개기기가 단위의 파일을 외부에 전송할 일이 생겼다.  한 방에 보내기엔 너무 커서 파일을 쪼개서(split) 보내려고 하는데, 그마저도 쉽지 않다. 쪼개기 위해 대용량 파일을 읽을 때 이미 수십분 동안 CPU를 너무 잡아 먹어서 이 쪼개는 배치 작업을 스케줄링하는 스케줄러(Qua">
@@ -387,7 +387,7 @@
 </table>
 <p>FileChannel과 버퍼를 사용하는 방식은 버퍼 크기가 10M 일 때 다른 크기일 때에 비해 약 3 ~ 4배 정도 빨라지는 것이 특이하다.</p>
 <h2 id="CPU-메모리-사용량-비교"><a href="#CPU-메모리-사용량-비교" class="headerlink" title="CPU, 메모리 사용량 비교"></a>CPU, 메모리 사용량 비교</h2><p>Direct Buffer, Buffer, readLine() 방식을 순서대로 실행해서 VisualVM으로 측정했다. 그래프에 표시된 것도 맨 왼쪽부터 Direct Buffer, Buffer, readLine() 방식이다.</p>
-<p>예상대로 Direct Buffer는 JVM 메모리를 사용하지 않고 운영체제 메모리에 직접 접근하므로 JVM의 힙 메모리 사용량은 거의 없다. 물론 JVM 관점에서나 힙을 쓰지 않기 때문에 사용량이 적어 보이는 것이고, 운영체제 관점에서는 여전히 버퍼 크기 만큼의 메모리를 더 사용한다.<br>일반 Buffer는 버퍼 크기에 따라 JVM 힙 메모리 사용량도 비례해서 커지며,<br>readLine()은 1M, 10M, 50M 단위로 파일을 쪼개더라도 JVM 힙 메모리 사용량은 100M를 넘나든다.</p>
+<p>예상대로 Direct Buffer는 JVM Heap 메모리를 사용하지 않고 운영체제 메모리에 직접 접근하므로 JVM의 힙 메모리 사용량은 거의 없다. 물론 JVM 관점에서나 힙을 쓰지 않기 때문에 사용량이 적어 보이는 것이고, 운영체제 관점에서는 여전히 버퍼 크기 만큼의 메모리를 더 사용한다.<br>일반 Buffer는 버퍼 크기에 따라 JVM 힙 메모리 사용량도 비례해서 커지며,<br>readLine()은 1M, 10M, 50M 단위로 파일을 쪼개더라도 JVM 힙 메모리 사용량은 100M를 넘나든다.</p>
 <p>CPU는 Direct Buffer와 Buffer는 아주 큰 차이는 없이 모두 10% 이내다. readLine()에 비해 약 1/3 정도에 불과할 정도로 절감 효과가 크지만, readLine() 방식도 30%에 미치지 않은 걸 보면 역시 263MB 짜리 파일은 Direct Buffer 효과가 두드러질 정도로 큰 파일은 아니라고 볼 수 있다.</p>
 <h3 id="1M-버퍼-1M-단위로-자르기"><a href="#1M-버퍼-1M-단위로-자르기" class="headerlink" title="1M 버퍼, 1M 단위로 자르기"></a>1M 버퍼, 1M 단위로 자르기</h3><p><img src="https://i.imgur.com/6BET1z3.png" alt="Imgur"></p>
 <p><img src="https://i.imgur.com/7dkgJCg.png" alt="Imgur"></p>
