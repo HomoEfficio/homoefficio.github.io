@@ -27,7 +27,7 @@
 <meta property="og:image" content="https://i.imgur.com/t9gmDhx.png">
 <meta property="og:image" content="https://i.imgur.com/72E8YHH.jpg?1">
 <meta property="og:image" content="https://i.imgur.com/Nejwtsv.png">
-<meta property="og:updated_time" content="2020-08-10T23:41:56.864Z">
+<meta property="og:updated_time" content="2020-08-10T23:42:37.523Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java NIO FileChannel 과 DirectByteBuffer">
 <meta name="twitter:description" content="Java 4에서 도입된 NIO 덕분에 FileChannel과 ByteBuffer를 이용해서 File I/O 를 수행할 수 있게 됐다. 그림 출처: https://www.happycoders.eu/java/filechannel-bytebuffer-memory-mapped-file-locks/ NIO의 장점은 https://homoefficio.github.i">
@@ -317,7 +317,7 @@
 </li>
 <li><p>이렇게 <code>FileChannel</code>에 read/write 하는 코드에 의해 OOM이 발생한다면,</p>
 <ul>
-<li><code>HeapByteBuffer</code> 을 사용하지 말고 명시적으로 <code>DirectByteBuffer</code>를 사용하고,  </li>
+<li><code>HeapByteBuffer</code>을 사용하지 말고 명시적으로 <code>DirectByteBuffer</code>를 사용하고,  </li>
 <li><code>((DirectBuffer)directBuffer).cleaner().clean()</code>를 사용해서 명시적으로 해제하자.</li>
 </ul>
 </li>
