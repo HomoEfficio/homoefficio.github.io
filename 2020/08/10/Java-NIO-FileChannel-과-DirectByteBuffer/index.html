@@ -27,7 +27,7 @@
 <meta property="og:image" content="https://i.imgur.com/t9gmDhx.png">
 <meta property="og:image" content="https://i.imgur.com/72E8YHH.jpg?1">
 <meta property="og:image" content="https://i.imgur.com/Nejwtsv.png">
-<meta property="og:updated_time" content="2020-08-10T14:57:31.832Z">
+<meta property="og:updated_time" content="2020-08-10T16:19:33.411Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java NIO FileChannel 과 DirectByteBuffer">
 <meta name="twitter:description" content="Java NIO FileChannel 과 DirectByteBufferJava 4에서 도입된 NIO 덕분에 FileChannel과 ByteBuffer를 이용해서 File I/O 를 수행할 수 있게 됐다. 그림 출처: https://www.happycoders.eu/java/filechannel-bytebuffer-memory-mapped-file-locks">
@@ -234,7 +234,7 @@
             <h1 id="Java-NIO-FileChannel-과-DirectByteBuffer"><a href="#Java-NIO-FileChannel-과-DirectByteBuffer" class="headerlink" title="Java NIO FileChannel 과 DirectByteBuffer"></a>Java NIO FileChannel 과 DirectByteBuffer</h1><p>Java 4에서 도입된 NIO 덕분에 <code>FileChannel</code>과 <code>ByteBuffer</code>를 이용해서 File I/O 를 수행할 수 있게 됐다.</p>
 <p><img src="https://i.imgur.com/vEL6ni9.png" alt="Imgur"><br>그림 출처: <a href="https://www.happycoders.eu/java/filechannel-bytebuffer-memory-mapped-file-locks/" target="_blank" rel="noopener">https://www.happycoders.eu/java/filechannel-bytebuffer-memory-mapped-file-locks/</a></p>
 <p>NIO의 장점은 <a href="https://homoefficio.github.io/2016/08/06/Java-NIO는-생각만큼-non-blocking-하지-않다/">https://homoefficio.github.io/2016/08/06/Java-NIO는-생각만큼-non-blocking-하지-않다/</a> 를 참고하고, 여기에서는 <code>FileChannel</code>과 <code>DirectBuffer</code> 얘기만 다룬다.</p>
-<p><code>ByteBuffer</code>는 생성되는 위치를 기준으로 크게 나눠보면 JVM Heap 내에 생성되는 <code>HeapByteBuffer</code>와 JVM 밖에 있는 Native 공간에 생성되는 <code>DirectByteBuffer</code>로 나눌 수 있다. 아래 그림에는 먼저 <code>HeapByteBuffer</code>와 <code>MappedByteBuffer</code>로 구분되는 걸로 보이는데 <code>MappedByteBuffer</code>도 Native 공간에 생성되며 파일 일부를 메모리에 매핑한다는 점 외에는 일반적인 direct byte buffer 와 동작이 다르지 않다고 <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/MappedByteBuffer.html" target="_blank" rel="noopener">API 문서</a>에 나와있다.</p>
+<p><code>ByteBuffer</code>는 생성되는 위치를 기준으로 크게 나눠보면 JVM Heap 내에 생성되는 <code>HeapByteBuffer</code>와 JVM Heap 밖에 있는 Native 공간에 생성되는 <code>DirectByteBuffer</code>로 나눌 수 있다. 아래 그림에는 먼저 <code>HeapByteBuffer</code>와 <code>MappedByteBuffer</code>로 구분되는 걸로 보이는데 <code>MappedByteBuffer</code>도 Native 공간에 생성되며 파일 일부를 메모리에 매핑한다는 점 외에는 일반적인 direct byte buffer 와 동작이 다르지 않다고 <a href="https://docs.oracle.com/javase/8/docs/api/java/nio/MappedByteBuffer.html" target="_blank" rel="noopener">API 문서</a>에 나와있다.</p>
 <p><img src="https://i.imgur.com/AE4p00B.png" alt="Imgur"></p>
 <p>위 그림에는 안 나와있지만 <code>DirectByteBuffer</code>는 <code>DirectBuffer</code> 인터페이스를 구현하고 있다.</p>
 <p><code>HeapByteBuffer</code>를 사용하면 JVM의 GC에 안전하게 의지할 수 있지만, CPU 개입 없이 I/O를 수행할 수 있고 불필요한 copy 부하가 발생하지 않아 성능적으로 유리한 점이 많은 DMA(DirectMemoryAccess)는 활용할 수 없다.</p>
