@@ -19,7 +19,7 @@ coverImage: cover-java-native-memory.png
 
 ## DMA
 
-자바에서도 `DirectBuffer`를 이용해서 JVM이 아닌 Native 메모리를 사용하고 DMA(Direct Memory Access)의 장점을 활용할 수 있다.
+자바에서도 `DirectBuffer`를 이용해서 JVM Heap이 아닌 Native 메모리를 사용하고 DMA(Direct Memory Access)의 장점을 활용할 수 있다.
 
 구체적인 사용법 등 자세한 내용은 [Java NIO Direct Buffer를 이용해서 대용량 파일 행 기준으로 쪼개기](https://homoefficio.github.io/2019/02/27/Java-NIO-Direct-Buffer를-이용해서-대용량-파일-행-기준으로-쪼개기/)를 참고하고 장단점만 요약하면 다음과 같다.
 
@@ -40,7 +40,7 @@ coverImage: cover-java-native-memory.png
 
 ## 메모리 사용 추적
 
-그런데 JVM 메모리가 아닌 Native를 사용하므로 힙 덤프나 스레드 덤프 분석, `jstat` 등 일반적인 Java 메모리 분석 방법으로는 추적이 안 된다.
+그런데 JVM Heap 메모리가 아닌 Native를 사용하므로 힙 덤프나 스레드 덤프 분석, `jstat` 등 일반적인 Java 메모리 분석 방법으로는 추적이 안 된다.
 
 대용량 파일 사용 시 장점이 많다고 하니 아무래도 `DirectBuffer` 크기도 크게 잡을 수록 성능 상으로는 유리하겠지만, 그 큰 메모리가 어떻게 사용되고 회수되는지 확인이 안 된다면 곤란하다.
 
