@@ -79,7 +79,7 @@ public class EchoSocketClient {
 
 # Classic IO - Single Thread ServerSocket
 
-이제 서버를 만들어 보자. 1번 타자는 가장 단순한 싱글 스레드 소켓 서버다.
+이제 서버를 만들어 보자. 1번 타자는 Classic IO(또는 BIO(Blocking IO))로 만든 울트라 심플 싱글 스레드 소켓 서버다.
 
 ```java
 package io.homo_efficio.server.socket;
@@ -211,4 +211,4 @@ public abstract class EchoProcessor {
 
 >- 블로킹 방식의 싱글 스레드 소켓 서버는 시간 끄는 이상한 클라이언트가 하나만 들어와도 서버가 먹통이 되고, 다른 클라이언트까지 먹통될 수 있다.
 
-이 문제는 어떻게 해결할까? 2편에서 알아보자.
+이 문제는 어떻게 해결할까? [2편](https://homoefficio.github.io/2020/11/02/Back-to-the-Essence-Java-Servers-2/)에서 알아보자.
