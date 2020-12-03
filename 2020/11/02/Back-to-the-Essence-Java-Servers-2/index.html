@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="뒤태지존의 끄적거림">
+    <title>Back to the Essence - Java-Servers - (2) - 뒤태지존의 끄적거림</title>
+    <meta name="author" content="HomoEfficio">
+    <meta name="description" content="뒤태지존의 끄적거림">
+    
+        <link rel="icon" href="/assets/images/favicon.ico">
+    
+    
+        <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <meta name="description" content="Back to the Essence - Java Servers - 2편1편에서 블로킹 방식의 싱글 스레드 소켓 서버를 만들어봤고 다음의 문제가 있음을 발견했다.   블로킹 방식의 싱글 스레드 소켓 서버는 시간 끄는 이상한 클라이언트가 하나만 들어와도 서버가 먹통이 되고, 다른 클라이언트까지 먹통될 수 있다.   이제 시간 끄는 이상한 클라이언트가 들어오더라">
+<meta name="keywords" content="Java,I&#x2F;O,Blocking,Java IO,Echo Server,ServerSocket,Socket,netcat,accept,Multi Thread,Servlet,Spring MVC">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Back to the Essence - Java-Servers - (2)">
+<meta property="og:url" content="http://homoefficio.github.io/2020/11/02/Back-to-the-Essence-Java-Servers-2/index.html">
+<meta property="og:site_name" content="뒤태지존의 끄적거림">
+<meta property="og:description" content="Back to the Essence - Java Servers - 2편1편에서 블로킹 방식의 싱글 스레드 소켓 서버를 만들어봤고 다음의 문제가 있음을 발견했다.   블로킹 방식의 싱글 스레드 소켓 서버는 시간 끄는 이상한 클라이언트가 하나만 들어와도 서버가 먹통이 되고, 다른 클라이언트까지 먹통될 수 있다.   이제 시간 끄는 이상한 클라이언트가 들어오더라">
+<meta property="og:locale" content="ko">
+<meta property="og:image" content="https://i.imgur.com/HHYMsq0.gif">
+<meta property="og:image" content="https://i.imgur.com/zhsVRRw.gif">
+<meta property="og:updated_time" content="2020-12-03T08:23:18.874Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Back to the Essence - Java-Servers - (2)">
+<meta name="twitter:description" content="Back to the Essence - Java Servers - 2편1편에서 블로킹 방식의 싱글 스레드 소켓 서버를 만들어봤고 다음의 문제가 있음을 발견했다.   블로킹 방식의 싱글 스레드 소켓 서버는 시간 끄는 이상한 클라이언트가 하나만 들어와도 서버가 먹통이 되고, 다른 클라이언트까지 먹통될 수 있다.   이제 시간 끄는 이상한 클라이언트가 들어오더라">
+<meta name="twitter:image" content="https://i.imgur.com/HHYMsq0.gif">
+    
+        <meta rel="publisher" content="https://plus.google.com/+오명운"/>
+    
+    
+    
+        <meta property="og:image" content="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=640"/>
+    
+    
+        <meta property="og:image" content="/2020/11/02/Back-to-the-Essence-Java-Servers-2/https:/i.imgur.com/BkLRTF0.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2020/11/02/Back-to-the-Essence-Java-Servers-2/https://i.imgur.com/BkLRTF0.png" />
+    
+    
+        <meta property="og:image" content="/2020/11/02/Back-to-the-Essence-Java-Servers-2/cover-multithread-server.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2020/11/02/Back-to-the-Essence-Java-Servers-2/cover-multithread-server.png" />
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style.min.css">
+    <!--STYLES END-->
+    
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-79893978-1']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6494847158566766",
+    enable_page_level_ads: true
+  });
+</script>
+</head>
+
+    <body>
+        <div id="blog">
+            <header id="header" data-behavior="1">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="/ ">뒤태지존의 끄적거림</a>
+    </h1>
+    
+        <a class="header-right-picture" href="/#about">
+            <img class="header-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+        </a>
+    
+</header>
+            <nav id="sidebar" data-behavior="1">
+    
+    <div class="sidebar-profile">
+        <a href="/#about">
+            
+            <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+            
+        </a>
+        <span class="sidebar-profile-name">HomoEfficio</span>
+    </div>
+    
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/ 
+                    ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">Home</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-categories
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">Categories</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-tags
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">Tags</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-archives
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">Archives</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link st-search-show-outputs"
+                    href="#search
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                    <span class="sidebar-button-desc">Search</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="#about
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">About me</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="https://github.com/HomoEfficio" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                    <span class="sidebar-button-desc">GitHub</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="mailto:homo.efficio@gmail.com" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-envelope-o"></i>
+                    <span class="sidebar-button-desc">Mail</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/atom.xml
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+            <div id="main" data-behavior="1">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+        <div class="post-header-cover" style="background-image:url('/2020/11/02/Back-to-the-Essence-Java-Servers-2/cover-multithread-server.png');">
+            <div class="post-header main-content-wrap">
+    
+        <h1 class="post-title" itemprop="headline">Back to the Essence - Java-Servers - (2)</h1>
+    
+    <div class="post-meta">
+    <time  itemprop="datePublished" content="Mon Nov 02 2020 01:55:14 GMT+0900">
+        Nov 02, 2020
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Network/">Network</a>
+
+
+    
+</div>
+</div>
+        </div>
+    
+    <div class="post-content markdown main-content-wrap" itemprop="articleBody">
+        
+            <h1 id="Back-to-the-Essence-Java-Servers-2편"><a href="#Back-to-the-Essence-Java-Servers-2편" class="headerlink" title="Back to the Essence - Java Servers - 2편"></a>Back to the Essence - Java Servers - 2편</h1><p><a href="https://homoefficio.github.io/2020/11/02/Back-to-the-Essence-Java-Servers-1/">1편</a>에서 블로킹 방식의 싱글 스레드 소켓 서버를 만들어봤고 다음의 문제가 있음을 발견했다.</p>
+<blockquote>
+<ul>
+<li>블로킹 방식의 싱글 스레드 소켓 서버는 시간 끄는 이상한 클라이언트가 하나만 들어와도 서버가 먹통이 되고, 다른 클라이언트까지 먹통될 수 있다.</li>
+</ul>
+</blockquote>
+<p>이제 시간 끄는 이상한 클라이언트가 들어오더라도 서버나 다른 클라이언트가 먹통이 되지 않도록 개선해야 한다.</p>
+<p>가장 간단한 방법은 클라이언트의 요청마다 별개의 스레드에서 처리하게 하는 것이다. 가장 널리 사용하는 방식이며 서블릿도 이 방식에 기반을 두고 있고, 서블릿에 기반을 둔 Spring MVC도 이 방식이다.</p>
+<h1 id="Classic-IO-BIO-Multi-Thread-ServerSocket"><a href="#Classic-IO-BIO-Multi-Thread-ServerSocket" class="headerlink" title="Classic IO(BIO) - Multi Thread ServerSocket"></a>Classic IO(BIO) - Multi Thread ServerSocket</h1><p>서버에서 멀티 스레드를 사용한다면 크게 두 가지 전략이 떠오른다.</p>
+<ol>
+<li>멀티 스레드로 <code>ServerSocket</code>을 여러 개 띄우고, 이 스레드를 요청 처리 완료때까지 사용한다.</li>
+<li><code>ServerSocket</code>은 하나의 스레드로 하되, <code>ServerSocket.accept()</code>로 받아온 여러 소켓들을 여러 개의 스레드로 처리한다.</li>
+</ol>
+<p>일단 1번은 불가다. 아래와 같은 코드는 두 번째 <code>ServerSocket</code> 생성 시</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ServerSocket serverSocket1 = <span class="keyword">new</span> ServerSocket(Constants.SERVER_PORT);</span><br><span class="line">ServerSocket serverSocket2 = <span class="keyword">new</span> ServerSocket(Constants.SERVER_PORT);</span><br></pre></td></tr></table></figure>
+<p>다음과 같이 <code>BindException</code>이 발생한다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Exception in thread &quot;main&quot; java.net.BindException: Address already in use</span><br></pre></td></tr></table></figure>
+<p>따라서 사용할 수 있는 전략은 2번 뿐이다.</p>
+<p><code>ServerSocket</code>을 사용해서 서버 데몬을 만들고, <code>accept()</code>로 클라이언트의 연결 요청을 기다리는 것까지는 싱글 스레드 서버와 동일하다. 다만 들어온 연결 요청의 처리를 요청 마다 다른 스레드에서 담당한다는 것만 다르다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EchoSocketServerMultiThread</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        EchoSocketServerMultiThread echoSocketServerMultiThread = <span class="keyword">new</span> EchoSocketServerMultiThread();</span><br><span class="line">        echoSocketServerMultiThread.start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="comment">// 50개짜리 스레드 풀</span></span><br><span class="line">        ExecutorService es = Utils.getCommonExecutorService(<span class="number">50</span>);</span><br><span class="line">        <span class="keyword">try</span> (ServerSocket serverSocket = <span class="keyword">new</span> ServerSocket(Constants.SERVER_PORT);</span><br><span class="line">             FileOutputStream fos = Utils.getCommonFileOutputStream()</span><br><span class="line">        ) &#123;</span><br><span class="line">            Utils.serverTimeStamp(<span class="string">"==============================="</span>, fos);</span><br><span class="line">            Utils.serverTimeStamp(<span class="string">"Multi Thread Socket Echo Server 시작"</span>, fos);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">                Utils.serverTimeStamp(<span class="string">"---------------------------"</span>, fos);</span><br><span class="line">                Utils.serverTimeStamp(<span class="string">"Echo Server 대기 중"</span>, fos);</span><br><span class="line"></span><br><span class="line">                <span class="comment">// accept() 는 연결 요청이 올 때까지 return 하지 않고 blocking</span></span><br><span class="line">                Socket acceptedSocket = serverSocket.accept();</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 연결 요청이 오면 새 thread 에서 요청 처리 로직 수행</span></span><br><span class="line">                es.execute(() -&gt; &#123;</span><br><span class="line">                    <span class="keyword">try</span> &#123;</span><br><span class="line">                        Utils.serverTimeStamp(<span class="string">"Client 접속!!!"</span>, fos);</span><br><span class="line">                        Utils.serverTimeStamp(<span class="string">"Echo 시작"</span>, fos);</span><br><span class="line"><span class="comment">//                    Utils.sleep(500L);</span></span><br><span class="line">                        EchoProcessor.echo(acceptedSocket);</span><br><span class="line">                        Utils.serverTimeStamp(<span class="string">"Echo 완료"</span>, fos);</span><br><span class="line">                    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                        <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>Executors</code>를 이용해서 단순한 고정 크기 스레드 풀을 만들어 사용한다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Utils</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">getCommonExecutorService</span><span class="params">(<span class="keyword">int</span> nThreads)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Executors.newFixedThreadPool(nThreads);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="실습"><a href="#실습" class="headerlink" title="실습"></a>실습</h1><h2 id="금수저-서버-금수저-스레드-풀"><a href="#금수저-서버-금수저-스레드-풀" class="headerlink" title="금수저 서버 + 금수저 스레드 풀"></a>금수저 서버 + 금수저 스레드 풀</h2><p>50개 짜리 스레드 풀을 사용하면서 1편에서 문제를 유발했던 시나리오 그대로 수행해보자.</p>
+<ol>
+<li>EchoSocketServerMultiThread 실행</li>
+<li>EchoSocketClient 실행, EchoSocketClient는 연결 요청 후 5초 후에 메시지를 서버에 전송</li>
+<li>5초 이내에 다른 터미널에서 <code>echo -n &#39;아무거나&#39; | nc localhost 7777</code> 실행해서 메아리가 터미널에 바로 찍히면 문제 해결</li>
+</ol>
+<p>실제로는 실습 편의를 위해 EchoSocketClient가 5초가 아니라 1분 후에 보내도록 설정했다.<br>결과는 아래 움짤과 같이 여러 터미널 창에서 동시에 <code>echo -n &#39;아무거나&#39; | nc localhost 7777</code>를 실행해도 모두 거의 동시에 메아리가 출력됐다.</p>
+<p><img src="https://i.imgur.com/HHYMsq0.gif" alt="Imgur"></p>
+<p>움짤 파일 크기를 작게하기 위해 4개의 터미널창만 캡쳐했지만 실제로는 12개의 창에서 동시에 요청을 날렸다. main 스레드 + EchoSocketClient 요청 처리 스레드 + 12개의 터미널 요청 처리 스레드, 총 14개의 스레드가 사용됐다.</p>
+<p>EchoSocketClient 요청은 pool-1-thread-1 스레드가 담당했고, 12개의 터미널 요청은 pool-1-thread-2 ~ pool-1-thread-13 스레드가 각각 처리했다. 로그를 보면 쉽게 알 수 있다. <code>&lt;==</code>로 표시한 부분은 설명이다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line">scratchpad-server git:main 🍺🦑🍺🍕🍺 ❯ tail -f temp.log                                                                                               ✹</span><br><span class="line">[SERVER -            main] 2020-11-02T01:36:54.427095 - ===============================</span><br><span class="line">[SERVER -            main] 2020-11-02T01:36:54.446306 - Multi Thread Socket Echo Server 시작</span><br><span class="line">[SERVER -            main] 2020-11-02T01:36:54.446730 - ---------------------------</span><br><span class="line">[SERVER -            main] 2020-11-02T01:36:54.447015 - Echo Server 대기 중</span><br><span class="line"></span><br><span class="line">[SERVER -            main] 2020-11-02T01:37:00.181527 - ---------------------------</span><br><span class="line">[SERVER - pool-1-thread-1] 2020-11-02T01:37:00.181621 - Client 접속!!! &lt;== 1분 후 메시지 보내는 EchoSocketClient 요청 처리 시작</span><br><span class="line">[SERVER -            main] 2020-11-02T01:37:00.181954 - Echo Server 대기 중</span><br><span class="line">[SERVER - pool-1-thread-1] 2020-11-02T01:37:00.181981 - Echo 시작</span><br><span class="line">[CLIENT -            main] 2020-11-02T01:37:00.197423 - Client 시작</span><br><span class="line"></span><br><span class="line">[SERVER -            main] 2020-11-02T01:37:08.412302 - ---------------------------</span><br><span class="line">[SERVER - pool-1-thread-2] 2020-11-02T01:37:08.412373 - Client 접속!!! &lt;== 여기서부터는 터미널 nc 클라이언트 요청 처리 시작</span><br><span class="line">[SERVER - pool-1-thread-2] 2020-11-02T01:37:08.412695 - Echo 시작</span><br><span class="line">[SERVER -            main] 2020-11-02T01:37:08.412671 - Echo Server 대기 중</span><br><span class="line">[SERVER -            main] 2020-11-02T01:37:08.413172 - ---------------------------</span><br><span class="line">[SERVER - pool-1-thread-3] 2020-11-02T01:37:08.413241 - Client 접속!!!</span><br><span class="line">[SERVER - pool-1-thread-3] 2020-11-02T01:37:08.413521 - Echo 시작</span><br><span class="line">[SERVER -            main] 2020-11-02T01:37:08.413473 - Echo Server 대기 중</span><br><span class="line">[SERVER -            main] 2020-11-02T01:37:08.414077 - ---------------------------</span><br><span class="line">[SERVER - pool-1-thread-4] 2020-11-02T01:37:08.414172 - Client 접속!!!</span><br><span class="line">[SERVER - pool-1-thread-4] 2020-11-02T01:37:08.414427 - Echo 시작</span><br><span class="line">[SERVER -            main] 2020-11-02T01:37:08.414355 - Echo Server 대기 중</span><br><span class="line">[SERVER -            main] 2020-11-02T01:37:08.414899 - ---------------------------</span><br><span class="line">[SERVER - pool-1-thread-5] 2020-11-02T01:37:08.415059 - Client 접속!!!</span><br><span class="line">[SERVER -            main] 2020-11-02T01:37:08.415181 - Echo Server 대기 중</span><br><span class="line">[SERVER - pool-1-thread-5] 2020-11-02T01:37:08.415326 - Echo 시작</span><br><span class="line">[SERVER -            main] 2020-11-02T01:37:08.415654 - ---------------------------</span><br><span class="line">[SERVER - pool-1-thread-6] 2020-11-02T01:37:08.415793 - Client 접속!!!</span><br><span class="line">[SERVER -            main] 2020-11-02T01:37:08.415901 - Echo Server 대기 중</span><br><span class="line">[SERVER - pool-1-thread-6] 2020-11-02T01:37:08.416132 - Echo 시작</span><br><span class="line">[SERVER -            main] 2020-11-02T01:37:08.416741 - ---------------------------</span><br><span class="line">[SERVER - pool-1-thread-7] 2020-11-02T01:37:08.417166 - Client 접속!!!</span><br><span class="line">[SERVER -            main] 2020-11-02T01:37:08.417073 - Echo Server 대기 중</span><br><span class="line">[SERVER - pool-1-thread-7] 2020-11-02T01:37:08.417448 - Echo 시작</span><br><span class="line">[SERVER - pool-1-thread-8] 2020-11-02T01:37:08.417732 - Client 접속!!!</span><br><span class="line">[SERVER - pool-1-thread-8] 2020-11-02T01:37:08.418018 - Echo 시작</span><br><span class="line">[SERVER -            main] 2020-11-02T01:37:08.417644 - ---------------------------</span><br><span class="line">[SERVER -            main] 2020-11-02T01:37:08.418353 - Echo Server 대기 중</span><br><span class="line">[SERVER -            main] 2020-11-02T01:37:08.418818 - ---------------------------</span><br><span class="line">[SERVER - pool-1-thread-9] 2020-11-02T01:37:08.418987 - Client 접속!!!</span><br><span class="line">[SERVER -            main] 2020-11-02T01:37:08.419078 - Echo Server 대기 중</span><br><span class="line">[SERVER - pool-1-thread-9] 2020-11-02T01:37:08.419201 - Echo 시작</span><br><span class="line">[SERVER -            main] 2020-11-02T01:37:08.419664 - ---------------------------</span><br><span class="line">[SERVER - pool-1-thread-10] 2020-11-02T01:37:08.419741 - Client 접속!!!</span><br><span class="line">[SERVER -            main] 2020-11-02T01:37:08.419985 - Echo Server 대기 중</span><br><span class="line">[SERVER - pool-1-thread-10] 2020-11-02T01:37:08.419997 - Echo 시작</span><br><span class="line">[SERVER -            main] 2020-11-02T01:37:08.420454 - ---------------------------</span><br><span class="line">[SERVER - pool-1-thread-11] 2020-11-02T01:37:08.421378 - Client 접속!!!</span><br><span class="line">[SERVER -            main] 2020-11-02T01:37:08.421536 - Echo Server 대기 중</span><br><span class="line">[SERVER - pool-1-thread-11] 2020-11-02T01:37:08.421598 - Echo 시작</span><br><span class="line">[SERVER -            main] 2020-11-02T01:37:08.421942 - ---------------------------</span><br><span class="line">[SERVER - pool-1-thread-12] 2020-11-02T01:37:08.422346 - Client 접속!!!</span><br><span class="line">[SERVER -            main] 2020-11-02T01:37:08.422542 - Echo Server 대기 중</span><br><span class="line">[SERVER - pool-1-thread-12] 2020-11-02T01:37:08.422558 - Echo 시작</span><br><span class="line">[SERVER -            main] 2020-11-02T01:37:08.423231 - ---------------------------</span><br><span class="line">[SERVER - pool-1-thread-13] 2020-11-02T01:37:08.423331 - Client 접속!!!</span><br><span class="line">[SERVER -            main] 2020-11-02T01:37:08.423519 - Echo Server 대기 중</span><br><span class="line">[SERVER - pool-1-thread-13] 2020-11-02T01:37:08.423555 - Echo 시작</span><br><span class="line">[SERVER - pool-1-thread-12] 2020-11-02T01:37:08.440014 - Echo 완료</span><br><span class="line">[SERVER - pool-1-thread-7] 2020-11-02T01:37:08.440467 - Echo 완료</span><br><span class="line">[SERVER - pool-1-thread-4] 2020-11-02T01:37:08.440014 - Echo 완료</span><br><span class="line">[SERVER - pool-1-thread-3] 2020-11-02T01:37:08.440820 - Echo 완료</span><br><span class="line">[SERVER - pool-1-thread-13] 2020-11-02T01:37:08.441453 - Echo 완료</span><br><span class="line">[SERVER - pool-1-thread-11] 2020-11-02T01:37:08.441606 - Echo 완료</span><br><span class="line">[SERVER - pool-1-thread-9] 2020-11-02T01:37:08.442308 - Echo 완료</span><br><span class="line">[SERVER - pool-1-thread-2] 2020-11-02T01:37:08.442538 - Echo 완료</span><br><span class="line">[SERVER - pool-1-thread-6] 2020-11-02T01:37:08.443030 - Echo 완료</span><br><span class="line">[SERVER - pool-1-thread-10] 2020-11-02T01:37:08.442771 - Echo 완료</span><br><span class="line">[SERVER - pool-1-thread-8] 2020-11-02T01:37:08.443385 - Echo 완료</span><br><span class="line">[SERVER - pool-1-thread-5] 2020-11-02T01:37:08.443648 - Echo 완료</span><br><span class="line">[CLIENT -            main] 2020-11-02T01:38:00.227402 - 메시지 전송 시작 &lt;== EchoSocketClient 가 1분 후 메시지 전송</span><br><span class="line">[CLIENT -            main] 2020-11-02T01:38:00.238871 - 메시지 print 완료</span><br><span class="line">[CLIENT -            main] 2020-11-02T01:38:00.242828 - 메시지 flush 완료</span><br><span class="line">[CLIENT -            main] 2020-11-02T01:38:00.243060 - 서버 Echo 대기...</span><br><span class="line">[CLIENT -            main] 2020-11-02T01:38:00.261370 - 서버 Echo 도착</span><br><span class="line">[SERVER - pool-1-thread-1] 2020-11-02T01:38:00.261379 - Echo 완료 &lt;== pool-1-thread-1은 클라이언트에 의해 1분 동안 블록돼 있는 동안 0.5초 지나가므로 클라이언트로부터 메시지 받자마자 Echo</span><br><span class="line">[CLIENT -            main] 2020-11-02T01:38:00.263653 - 서버 Echo msg: Server Echo - 안녕, echo server</span><br></pre></td></tr></table></figure>
+<h2 id="흑수저-서버-흑수저-스레드-풀"><a href="#흑수저-서버-흑수저-스레드-풀" class="headerlink" title="흑수저 서버 + 흑수저 스레드 풀"></a>흑수저 서버 + 흑수저 스레드 풀</h2><p>이번에는 메아리 처리에 0.5초가 걸리는 후진 서버에서 스레드도 4개만 사용해서 테스트해보자.</p>
+<p>메아리 처리에 0.5초가 걸리도록 EchoProcessor에서 주석 처리 돼 있던 <code>sleep()</code>의 주석을 해제한다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">EchoProcessor</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> FileOutputStream fos = Utils.getCommonFileOutputStream();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">echo</span><span class="params">(Socket socket)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> (BufferedReader in = <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> InputStreamReader(socket.getInputStream()));</span><br><span class="line">             PrintWriter out = <span class="keyword">new</span> PrintWriter(socket.getOutputStream())</span><br><span class="line">        ) &#123;</span><br><span class="line">            String clientMessage = in.readLine();  <span class="comment">// in에 읽을 게 들어올 때까지 blocking</span></span><br><span class="line">            String serverMessage = <span class="string">"Server Echo - "</span> + clientMessage + System.lineSeparator();</span><br><span class="line">            Utils.sleep(<span class="number">500L</span>);  <span class="comment">// Echo 처리에 0.5초가 걸리도록 주석 해제</span></span><br><span class="line">            out.println(serverMessage);</span><br><span class="line">            out.flush();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>EchoSocketServerMultiThread의 스레드 풀을 스레드 4개만 사용하도록 <code>ExecutorService es = Utils.getCommonExecutorService(4);</code>로 바꿔서 흑수저 스레드 풀을 만든다. 그리고 앞에서와 마찬가지로 테스트 해보면 아래 움짤처럼 터미널에 표시되는 메아리에 시차가 조금 발생하는 것을 확인할 수 있다.</p>
+<p><img src="https://i.imgur.com/zhsVRRw.gif" alt="Imgur"></p>
+<p><strong>요청 처리엔 시간이 필요하고, 스레드도 메모리 및 Context Switching 부담이 있어서 마냥 늘릴 수만은 없으므로, 이 흑수저 서버 + 흑수저 스레드 풀 시나리오가 현실에 존재하는 시나리오에 가깝다</strong>고 할 수 있다.</p>
+<p>1분 지연 Java Socket Client 요청 1개, 12개의 터미널 nc 요청 처리 로그는 다음과 같다. 자세한 내용은 <code>&lt;==</code>로 설명을 추가했다.<br>스레드 이름과 화살표 길이, 중간중간 0.5초 정도 차이나는 부분을 유의해서 살펴보면 이해하는 데 도움이 될 것이다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line">scratchpad-server git:main 🍺🦑🍺🍕🍺 ❯ tail -f temp.log        </span><br><span class="line">[SERVER -            main] 2020-11-02T12:29:29.653111 - ===============================</span><br><span class="line">[SERVER -            main] 2020-11-02T12:29:29.675600 - Multi Thread Socket Echo Server 시작</span><br><span class="line">[SERVER -            main] 2020-11-02T12:29:29.676223 - ---------------------------</span><br><span class="line">[SERVER -            main] 2020-11-02T12:29:29.676571 - Echo Server 대기 중</span><br><span class="line"></span><br><span class="line">[SERVER -            main] 2020-11-02T12:29:36.000378 - ---------------------------</span><br><span class="line">[SERVER - pool-1-thread-1] 2020-11-02T12:29:36.000475 - Client 접속!!! &lt;== 1분 후 메시지 보내는 EchoSocketClient 요청</span><br><span class="line">[SERVER - pool-1-thread-1] 2020-11-02T12:29:36.000856 - Echo 시작</span><br><span class="line">[SERVER -            main] 2020-11-02T12:29:36.000830 - Echo Server 대기 중</span><br><span class="line">[CLIENT -            main] 2020-11-02T12:29:36.015713 - Client 시작</span><br><span class="line">    </span><br><span class="line">[SERVER -            main] 2020-11-02T12:29:43.072899 - ---------------------------</span><br><span class="line">[SERVER - pool-1-thread-2] 2020-11-02T12:29:43.072977 - Client 접속!!! &lt;== 터미널 요청 1 처리: 2번 스레드에서 시작</span><br><span class="line">[SERVER -            main] 2020-11-02T12:29:43.073253 - Echo Server 대기 중 &lt;== main 스레드는 블록되지 않고 계속 요청을 받아 스레드 풀에 전달하고 다음 요청 대기</span><br><span class="line">[SERVER - pool-1-thread-2] 2020-11-02T12:29:43.073283 - Echo 시작 &lt;== 요청 1 Echo 시작</span><br><span class="line">[SERVER - pool-1-thread-3] 2020-11-02T12:29:43.073725 - Client 접속!!! &lt;==== 터미널 요청 2 처리: 3번 스레드에서 시작</span><br><span class="line">[SERVER -            main] 2020-11-02T12:29:43.073657 - ---------------------------</span><br><span class="line">[SERVER - pool-1-thread-3] 2020-11-02T12:29:43.073938 - Echo 시작 &lt;==== 요청 2 Echo 시작</span><br><span class="line">[SERVER -            main] 2020-11-02T12:29:43.073984 - Echo Server 대기 중 &lt;== main 스레드는 블록되지 않고 계속 요청을 받아 스레드 풀에 전달하고 다음 요청 대기</span><br><span class="line">[SERVER -            main] 2020-11-02T12:29:43.074461 - ---------------------------</span><br><span class="line">[SERVER - pool-1-thread-4] 2020-11-02T12:29:43.074550 - Client 접속!!! &lt;====== 터미널 요청 3 처리: 4번 스레드에서 시작</span><br><span class="line">[SERVER -            main] 2020-11-02T12:29:43.074694 - Echo Server 대기 중 &lt;== main 스레드는 블록되지 않고 계속 요청을 받아 스레드 풀에 전달하고 다음 요청 대기</span><br><span class="line">[SERVER - pool-1-thread-4] 2020-11-02T12:29:43.074716 - Echo 시작 &lt;====== 요청 3 Echo 시작</span><br><span class="line">[SERVER -            main] 2020-11-02T12:29:43.075061 - ---------------------------</span><br><span class="line">[SERVER -            main] 2020-11-02T12:29:43.075294 - Echo Server 대기 중 &lt;== main 스레드는 블록되지 않고 계속 요청을 받아 스레드 풀에 전달하고 다음 요청 대기</span><br><span class="line">[SERVER -            main] 2020-11-02T12:29:43.075582 - ---------------------------</span><br><span class="line">[SERVER -            main] 2020-11-02T12:29:43.075844 - Echo Server 대기 중</span><br><span class="line">[SERVER -            main] 2020-11-02T12:29:43.076123 - ---------------------------</span><br><span class="line">[SERVER -            main] 2020-11-02T12:29:43.076339 - Echo Server 대기 중</span><br><span class="line">[SERVER -            main] 2020-11-02T12:29:43.076611 - ---------------------------</span><br><span class="line">[SERVER -            main] 2020-11-02T12:29:43.076860 - Echo Server 대기 중</span><br><span class="line">[SERVER -            main] 2020-11-02T12:29:43.080305 - ---------------------------</span><br><span class="line">[SERVER -            main] 2020-11-02T12:29:43.080641 - Echo Server 대기 중</span><br><span class="line">[SERVER -            main] 2020-11-02T12:29:43.080866 - ---------------------------</span><br><span class="line">[SERVER -            main] 2020-11-02T12:29:43.081025 - Echo Server 대기 중</span><br><span class="line">[SERVER -            main] 2020-11-02T12:29:43.081308 - ---------------------------</span><br><span class="line">[SERVER -            main] 2020-11-02T12:29:43.081528 - Echo Server 대기 중</span><br><span class="line">[SERVER -            main] 2020-11-02T12:29:43.081733 - ---------------------------</span><br><span class="line">[SERVER -            main] 2020-11-02T12:29:43.081907 - Echo Server 대기 중</span><br><span class="line">[SERVER -            main] 2020-11-02T12:29:43.082124 - ---------------------------</span><br><span class="line">[SERVER -            main] 2020-11-02T12:29:43.082250 - Echo Server 대기 중 &lt;== main 스레드는 블록되지 않고 계속 요청을 받아 스레드 풀에 전달하고 다음 요청 대기</span><br><span class="line">[SERVER - pool-1-thread-2] 2020-11-02T12:29:43.593116 - Echo 완료 &lt;== 요청 1 Echo 완료, 0.5초 소요</span><br><span class="line">[SERVER - pool-1-thread-4] 2020-11-02T12:29:43.593116 - Echo 완료 &lt;====== 요청 3 Echo 완료, 0.5초 소요</span><br><span class="line">[SERVER - pool-1-thread-3] 2020-11-02T12:29:43.593413 - Echo 완료 &lt;==== 요청 2 Echo 완료, 0.5초 소요</span><br><span class="line">[SERVER - pool-1-thread-2] 2020-11-02T12:29:43.593569 - Client 접속!!! &lt;== 요청 1 처리 완료 후 큐에 있던 후속 요청 A: 2번 스레드에서 처리 시작</span><br><span class="line">[SERVER - pool-1-thread-4] 2020-11-02T12:29:43.593575 - Client 접속!!! &lt;====== 요청 3 처리 완료 후 큐에 있던 후속 요청 C: 4번 스레드에서 처리 시작</span><br><span class="line">[SERVER - pool-1-thread-2] 2020-11-02T12:29:43.593817 - Echo 시작 &lt;== 요청 A</span><br><span class="line">[SERVER - pool-1-thread-3] 2020-11-02T12:29:43.593683 - Client 접속!!! &lt;==== 요청 2 처리 완료 후 큐에 있던 후속 요청 B: 3번 스레드에서 처리 시작</span><br><span class="line">[SERVER - pool-1-thread-4] 2020-11-02T12:29:43.593889 - Echo 시작 &lt;====== 요청 C</span><br><span class="line">[SERVER - pool-1-thread-3] 2020-11-02T12:29:43.594157 - Echo 시작 &lt;==== 요청 B</span><br><span class="line">[SERVER - pool-1-thread-2] 2020-11-02T12:29:44.097963 - Echo 완료 &lt;== 요청 A</span><br><span class="line">[SERVER - pool-1-thread-4] 2020-11-02T12:29:44.097963 - Echo 완료 &lt;====== 요청 C</span><br><span class="line">[SERVER - pool-1-thread-2] 2020-11-02T12:29:44.098370 - Client 접속!!!</span><br><span class="line">[SERVER - pool-1-thread-4] 2020-11-02T12:29:44.098411 - Client 접속!!!</span><br><span class="line">[SERVER - pool-1-thread-4] 2020-11-02T12:29:44.098672 - Echo 시작</span><br><span class="line">[SERVER - pool-1-thread-2] 2020-11-02T12:29:44.098608 - Echo 시작</span><br><span class="line">[SERVER - pool-1-thread-3] 2020-11-02T12:29:44.097963 - Echo 완료 &lt;==== 요청 B</span><br><span class="line">[SERVER - pool-1-thread-3] 2020-11-02T12:29:44.099086 - Client 접속!!!</span><br><span class="line">[SERVER - pool-1-thread-3] 2020-11-02T12:29:44.099283 - Echo 시작</span><br><span class="line">[SERVER - pool-1-thread-4] 2020-11-02T12:29:44.603912 - Echo 완료</span><br><span class="line">[SERVER - pool-1-thread-2] 2020-11-02T12:29:44.604235 - Echo 완료</span><br><span class="line">[SERVER - pool-1-thread-4] 2020-11-02T12:29:44.604316 - Client 접속!!!</span><br><span class="line">[SERVER - pool-1-thread-4] 2020-11-02T12:29:44.604478 - Echo 시작</span><br><span class="line">[SERVER - pool-1-thread-2] 2020-11-02T12:29:44.604473 - Client 접속!!!</span><br><span class="line">[SERVER - pool-1-thread-3] 2020-11-02T12:29:44.604637 - Echo 완료</span><br><span class="line">[SERVER - pool-1-thread-2] 2020-11-02T12:29:44.604910 - Echo 시작</span><br><span class="line">[SERVER - pool-1-thread-3] 2020-11-02T12:29:44.604962 - Client 접속!!!</span><br><span class="line">[SERVER - pool-1-thread-3] 2020-11-02T12:29:44.605142 - Echo 시작</span><br><span class="line">[SERVER - pool-1-thread-3] 2020-11-02T12:29:45.107464 - Echo 완료</span><br><span class="line">[SERVER - pool-1-thread-4] 2020-11-02T12:29:45.107464 - Echo 완료</span><br><span class="line">[SERVER - pool-1-thread-2] 2020-11-02T12:29:45.107464 - Echo 완료</span><br><span class="line">[CLIENT -            main] 2020-11-02T12:30:36.051155 - 메시지 전송 시작 &lt;== 1분 후 메시지 보내는 Java Socket Client</span><br><span class="line">[CLIENT -            main] 2020-11-02T12:30:36.068386 - 메시지 print 완료</span><br><span class="line">[CLIENT -            main] 2020-11-02T12:30:36.073274 - 메시지 flush 완료 &lt;== 메시지 전송</span><br><span class="line">[CLIENT -            main] 2020-11-02T12:30:36.073655 - 서버 Echo 대기...</span><br><span class="line">[SERVER - pool-1-thread-1] 2020-11-02T12:30:36.581245 - Echo 완료 &lt;== 메시지 전송 받은 후 0.5초 후에 Echo 완료</span><br><span class="line">[CLIENT -            main] 2020-11-02T12:30:36.582077 - 서버 Echo 도착</span><br><span class="line">[CLIENT -            main] 2020-11-02T12:30:36.585161 - 서버 Echo msg: Server Echo - 안녕, echo server</span><br></pre></td></tr></table></figure>
+<p>요는 다음과 같다.</p>
+<ul>
+<li><code>accept()</code>는 요청이 오는 족족 스레드 풀에 전달<ul>
+<li>요청을 받을 때까지는 블로킹이지만, 요청을 받은 후에는 블로킹하지 않고 바로 다음 요청을 블로킹하면서 대기</li>
+</ul>
+</li>
+<li>스레드 풀은<ul>
+<li>사용 가능한 스레드가 있으면 요청을 바로 처리</li>
+<li>사용 가능한 스레드가 없으면 요청을 큐에 저장 후 나중에 처리</li>
+</ul>
+</li>
+</ul>
+<h1 id="정리"><a href="#정리" class="headerlink" title="정리"></a>정리</h1><blockquote>
+<ul>
+<li><code>ServerSocket.accept()</code>로 클라이언트의 요청을 받아들이는 건 하나의 스레드에서 담당하고,</li>
+<li>요청의 처리는 요청마다 별도의 스레드에서 처리하게 하면,</li>
+<li><p>시간을 오래 끄는 클라이언트가 일부 있더라도 서버와 나머지 클라이언트는 먹통이 발생하지 않는다.</p>
+</li>
+<li><p>요청을 블로킹 방식으로 처리하는 상황에서</p>
+<ul>
+<li>요청 처리에 일정 시간이 필요하고, 스레드가 충분하지 못하다면, 일부 요청은 큐에서 쌓여 대기하다가 시차를 두고 처리된다.</li>
+<li>큐에 쌓여 대기하는 요청을 줄이려면 스레드를 늘리는 수 밖에 없다.</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<p>결국 제한된 자원 상황에서 많은 요청을 처리하려면 스레드를 늘리는 수 밖에 없지만, 자체 스택을 갖고 있는 스레드를 많이 사용하면 메모리 한계에 부딪힐 수 있고, 많은 스레드는 많은 Context Switching 을 유발해서 성능 저하의 원인이 되기도 한다.</p>
+<p>그렇다면 스레드를 무작정 늘리기보다는 스레드 사용 효율을 높이는 방법을 찾아봐야 할 것 같다.</p>
+<p>3편에서는 스레드 효율을 높일 수 있는 NIO에 대해 알아본다.</p>
+
+        
+        
+            
+        
+        <hr/>
+        <div>
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="크리에이티브 커먼즈 라이선스" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><a href='https://github.com/homoefficio' target='_blank'>HomoEfficio</a>가 작성한 이 저작물은(는) <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스</a>에 따라 이용할 수 있습니다.
+        </div>
+    </div>
+    <div class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/Blocking/">Blocking</a> <a class="tag tag--primary tag--small t-link" href="/tags/Echo-Server/">Echo Server</a> <a class="tag tag--primary tag--small t-link" href="/tags/I-O/">I/O</a> <a class="tag tag--primary tag--small t-link" href="/tags/Java/">Java</a> <a class="tag tag--primary tag--small t-link" href="/tags/Java-IO/">Java IO</a> <a class="tag tag--primary tag--small t-link" href="/tags/Multi-Thread/">Multi Thread</a> <a class="tag tag--primary tag--small t-link" href="/tags/ServerSocket/">ServerSocket</a> <a class="tag tag--primary tag--small t-link" href="/tags/Servlet/">Servlet</a> <a class="tag tag--primary tag--small t-link" href="/tags/Socket/">Socket</a> <a class="tag tag--primary tag--small t-link" href="/tags/Spring-MVC/">Spring MVC</a> <a class="tag tag--primary tag--small t-link" href="/tags/accept/">accept</a> <a class="tag tag--primary tag--small t-link" href="/tags/netcat/">netcat</a>
+
+            </div>
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2020/12/03/Constants-vs-Util/"  data-tooltip="Constants vs Util">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2020/11/02/Back-to-the-Essence-Java-Servers-1/" data-tooltip="Back to the Essence - Java Servers - (1)">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2020/11/02/Back-to-the-Essence-Java-Servers-2/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2020/11/02/Back-to-the-Essence-Java-Servers-2/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2020/11/02/Back-to-the-Essence-Java-Servers-2/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+        
+            <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2020 HomoEfficio. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="1">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2020/12/03/Constants-vs-Util/"  data-tooltip="Constants vs Util">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2020/11/02/Back-to-the-Essence-Java-Servers-1/" data-tooltip="Back to the Essence - Java Servers - (1)">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2020/11/02/Back-to-the-Essence-Java-Servers-2/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2020/11/02/Back-to-the-Essence-Java-Servers-2/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2020/11/02/Back-to-the-Essence-Java-Servers-2/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="1">
+    <ul class="share-options">
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2020/11/02/Back-to-the-Essence-Java-Servers-2/">
+                <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2020/11/02/Back-to-the-Essence-Java-Servers-2/">
+                <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2020/11/02/Back-to-the-Essence-Java-Servers-2/">
+                <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+            
+        </div>
+        <div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=110"/>
+        
+            <h4 id="about-card-name">HomoEfficio</h4>
+        
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Seoul, Korea.
+            </h5>
+        
+    </div>
+</div>
+        <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/script.min.js"></script>
+<!--SCRIPTS END-->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'hanmomhanda';
+        (function() {
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+
+
+
+</html>

@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="뒤태지존의 끄적거림">
+    <title>Back to the Essence - Java Servers - (1) - 뒤태지존의 끄적거림</title>
+    <meta name="author" content="HomoEfficio">
+    <meta name="description" content="뒤태지존의 끄적거림">
+    
+        <link rel="icon" href="/assets/images/favicon.ico">
+    
+    
+        <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <meta name="description" content="Back to the Essence - Java Servers - 1편서버 프로그래밍을 한다고는 하지만, 지난 수년 간 굴러도 스프링 위에서만 구르다보니 스프링 없이는, 아니 이제는 스프링만으로도 뭘 못할 것 같고 스프링 부트 없이는 간단한 메아리(Echo) 서버조차 못 만드는 경지지경에 이르렀다. 이 아니 부끄러운가.. 그래서 Java가 제공해주는 cla">
+<meta name="keywords" content="Java,I&#x2F;O,Blocking,Java IO,Echo Server,ServerSocket,Socket,netcat,accept">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Back to the Essence - Java Servers - (1)">
+<meta property="og:url" content="http://homoefficio.github.io/2020/11/02/Back-to-the-Essence-Java-Servers-1/index.html">
+<meta property="og:site_name" content="뒤태지존의 끄적거림">
+<meta property="og:description" content="Back to the Essence - Java Servers - 1편서버 프로그래밍을 한다고는 하지만, 지난 수년 간 굴러도 스프링 위에서만 구르다보니 스프링 없이는, 아니 이제는 스프링만으로도 뭘 못할 것 같고 스프링 부트 없이는 간단한 메아리(Echo) 서버조차 못 만드는 경지지경에 이르렀다. 이 아니 부끄러운가.. 그래서 Java가 제공해주는 cla">
+<meta property="og:locale" content="ko">
+<meta property="og:updated_time" content="2020-12-03T08:23:18.867Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Back to the Essence - Java Servers - (1)">
+<meta name="twitter:description" content="Back to the Essence - Java Servers - 1편서버 프로그래밍을 한다고는 하지만, 지난 수년 간 굴러도 스프링 위에서만 구르다보니 스프링 없이는, 아니 이제는 스프링만으로도 뭘 못할 것 같고 스프링 부트 없이는 간단한 메아리(Echo) 서버조차 못 만드는 경지지경에 이르렀다. 이 아니 부끄러운가.. 그래서 Java가 제공해주는 cla">
+    
+        <meta rel="publisher" content="https://plus.google.com/+오명운"/>
+    
+    
+    
+        <meta property="og:image" content="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=640"/>
+    
+    
+        <meta property="og:image" content="/2020/11/02/Back-to-the-Essence-Java-Servers-1/https:/i.imgur.com/uUynZ6S.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2020/11/02/Back-to-the-Essence-Java-Servers-1/https://i.imgur.com/uUynZ6S.png" />
+    
+    
+        <meta property="og:image" content="/2020/11/02/Back-to-the-Essence-Java-Servers-1/cover-single-thread-server.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2020/11/02/Back-to-the-Essence-Java-Servers-1/cover-single-thread-server.png" />
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style.min.css">
+    <!--STYLES END-->
+    
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-79893978-1']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6494847158566766",
+    enable_page_level_ads: true
+  });
+</script>
+</head>
+
+    <body>
+        <div id="blog">
+            <header id="header" data-behavior="1">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="/ ">뒤태지존의 끄적거림</a>
+    </h1>
+    
+        <a class="header-right-picture" href="/#about">
+            <img class="header-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+        </a>
+    
+</header>
+            <nav id="sidebar" data-behavior="1">
+    
+    <div class="sidebar-profile">
+        <a href="/#about">
+            
+            <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+            
+        </a>
+        <span class="sidebar-profile-name">HomoEfficio</span>
+    </div>
+    
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/ 
+                    ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">Home</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-categories
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">Categories</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-tags
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">Tags</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-archives
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">Archives</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link st-search-show-outputs"
+                    href="#search
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                    <span class="sidebar-button-desc">Search</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="#about
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">About me</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="https://github.com/HomoEfficio" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                    <span class="sidebar-button-desc">GitHub</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="mailto:homo.efficio@gmail.com" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-envelope-o"></i>
+                    <span class="sidebar-button-desc">Mail</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/atom.xml
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+            <div id="main" data-behavior="1">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+        <div class="post-header-cover" style="background-image:url('/2020/11/02/Back-to-the-Essence-Java-Servers-1/cover-single-thread-server.png');">
+            <div class="post-header main-content-wrap">
+    
+        <h1 class="post-title" itemprop="headline">Back to the Essence - Java Servers - (1)</h1>
+    
+    <div class="post-meta">
+    <time  itemprop="datePublished" content="Mon Nov 02 2020 00:34:50 GMT+0900">
+        Nov 02, 2020
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Network/">Network</a>
+
+
+    
+</div>
+</div>
+        </div>
+    
+    <div class="post-content markdown main-content-wrap" itemprop="articleBody">
+        
+            <h1 id="Back-to-the-Essence-Java-Servers-1편"><a href="#Back-to-the-Essence-Java-Servers-1편" class="headerlink" title="Back to the Essence - Java Servers - 1편"></a>Back to the Essence - Java Servers - 1편</h1><p>서버 프로그래밍을 한다고는 하지만, 지난 수년 간 굴러도 스프링 위에서만 구르다보니 스프링 없이는, 아니 이제는 스프링만으로도 뭘 못할 것 같고 스프링 부트 없이는 간단한 메아리(Echo) 서버조차 못 만드는 <del>경지</del>지경에 이르렀다. 이 아니 부끄러운가..</p>
+<p>그래서 Java가 제공해주는 classic IO, NIO, NIO2로 간단한 Echo Server를 만들어보면서 기본기를 좀 다져보려 한다.<br>만드는 데서 그치지 않고 그동안 간접 경험으로만 알아왔던 NIO, NIO2 의 장단점을 부하테스트를 통해 확인해보고자 한다.<br>나름 원대한 계획이지만 목표한 걸 모두 얻을 수 있을지는 미지수다. 그냥 달려보자.</p>
+<h1 id="Client"><a href="#Client" class="headerlink" title="Client"></a>Client</h1><p>서버를 호출할 클라이언트는 크게 3가지다.</p>
+<ul>
+<li>Java Socket Client</li>
+<li>nc(netcat)</li>
+<li>JMeter Client</li>
+</ul>
+<p>이 중에서 코딩이 필요한 건 Java Socket Client 뿐이고 코드는 다음과 같다. 이해를 위해 로깅을 많이 넣었는데, 로깅 빼면 설명할 것도 없다.<br>참고로 로깅을 콘솔이 아닌 temp.log 파일에 찍는다. 이유는 서버와 클라이언트의 로그를 한 군데 모아서 보는 게 이해하는 데 도움이 되기 때문이다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> io.homo_efficio.server.socket;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> io.homo_efficio.server.common.Constants;</span><br><span class="line"><span class="keyword">import</span> io.homo_efficio.server.common.Utils;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"><span class="keyword">import</span> java.net.Socket;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> homo.efficio@gmail.com</span></span><br><span class="line"><span class="comment"> * created on 2020-10-10</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EchoSocketClient</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        String message = <span class="string">"안녕, echo server"</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> (Socket clientSocket = <span class="keyword">new</span> Socket(Constants.SERVER_HOST_NAME, Constants.SERVER_PORT);</span><br><span class="line">             FileOutputStream fos = Utils.getCommonFileOutputStream();</span><br><span class="line">             PrintWriter out = <span class="keyword">new</span> PrintWriter(clientSocket.getOutputStream());</span><br><span class="line">             BufferedReader in = <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> InputStreamReader(clientSocket.getInputStream()))</span><br><span class="line">        ) &#123;</span><br><span class="line">            Utils.clientTimeStamp(<span class="string">"Client 시작"</span>, fos);</span><br><span class="line">            <span class="comment">// Utils.sleep(5000L);  // 서버 blocking 확인 시 사용</span></span><br><span class="line">            Utils.clientTimeStamp(<span class="string">"메시지 전송 시작"</span>, fos);</span><br><span class="line">            out.println(message);</span><br><span class="line">            Utils.clientTimeStamp(<span class="string">"메시지 print 완료"</span>, fos);</span><br><span class="line">            out.flush();</span><br><span class="line">            Utils.clientTimeStamp(<span class="string">"메시지 flush 완료"</span>, fos);</span><br><span class="line">            Utils.clientTimeStamp(<span class="string">"서버 Echo 대기..."</span>, fos);</span><br><span class="line">            <span class="comment">// in.readLine() 은 읽을 데이터가 들어올 때까지 blocking 이므로 while (true) 불필요</span></span><br><span class="line">            String messageFromServer = in.readLine();</span><br><span class="line">            Utils.clientTimeStamp(<span class="string">"서버 Echo 도착"</span>, fos);</span><br><span class="line">            Utils.clientTimeStamp(<span class="string">"서버 Echo msg: "</span> + messageFromServer, fos);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="Classic-IO-Single-Thread-ServerSocket"><a href="#Classic-IO-Single-Thread-ServerSocket" class="headerlink" title="Classic IO - Single Thread ServerSocket"></a>Classic IO - Single Thread ServerSocket</h1><p>이제 서버를 만들어 보자. 1번 타자는 Classic IO(또는 BIO(Blocking IO))로 만든 울트라 심플 싱글 스레드 소켓 서버다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> io.homo_efficio.server.socket;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> io.homo_efficio.server.common.Constants;</span><br><span class="line"><span class="keyword">import</span> io.homo_efficio.server.common.EchoProcessor;</span><br><span class="line"><span class="keyword">import</span> io.homo_efficio.server.common.Utils;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.FileOutputStream;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.net.ServerSocket;</span><br><span class="line"><span class="keyword">import</span> java.net.Socket;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> homo.efficio@gmail.com</span></span><br><span class="line"><span class="comment"> * created on 2020-10-10</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EchoSocketServerSingleThread</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        EchoSocketServerSingleThread echoSocketServerSingleThread = <span class="keyword">new</span> EchoSocketServerSingleThread();</span><br><span class="line">        echoSocketServerSingleThread.start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> (ServerSocket serverSocket = <span class="keyword">new</span> ServerSocket(Constants.SERVER_PORT);</span><br><span class="line">             FileOutputStream fos = Utils.getCommonFileOutputStream()</span><br><span class="line">        ) &#123;</span><br><span class="line">            Utils.serverTimeStamp(<span class="string">"==============================="</span>, fos);</span><br><span class="line">            Utils.serverTimeStamp(<span class="string">"Echo Server 시작"</span>, fos);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">                Utils.serverTimeStamp(<span class="string">"---------------------------"</span>, fos);</span><br><span class="line">                Utils.serverTimeStamp(<span class="string">"Single Thread Socket Echo Server 대기 중"</span>, fos);</span><br><span class="line">                <span class="comment">// accept() 는 연결 요청이 올 때까지 return 하지 않고 blocking</span></span><br><span class="line">                Socket acceptedSocket = serverSocket.accept();</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 연결 요청이 오면 accept() 가 반환하고 요청 처리 로직 수행</span></span><br><span class="line">                Utils.serverTimeStamp(<span class="string">"Client 접속!!!"</span>, fos);</span><br><span class="line"><span class="comment">//            Utils.sleep(50L);</span></span><br><span class="line">                Utils.serverTimeStamp(<span class="string">"Echo 시작"</span>, fos);</span><br><span class="line">                EchoProcessor.echo(acceptedSocket);</span><br><span class="line">                Utils.serverTimeStamp(<span class="string">"Echo 완료"</span>, fos);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>ServerSocket</code>으로 서버 소켓을 생성하고, <code>accept()</code>로 클라이언트의 연결을 기다리고, 연결이 오면 클라이언트에게 메시지를 메아리로 되돌려 준다.</p>
+<p>메아리를 담당하는 EchoProcessor는 다음과 같다.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">EchoProcessor</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> FileOutputStream fos = Utils.getCommonFileOutputStream();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">echo</span><span class="params">(Socket socket)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> (BufferedReader in = <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> InputStreamReader(socket.getInputStream()));</span><br><span class="line">             PrintWriter out = <span class="keyword">new</span> PrintWriter(socket.getOutputStream())</span><br><span class="line">        ) &#123;</span><br><span class="line">            String clientMessage = in.readLine();  <span class="comment">// in에 읽을 게 들어올 때까지 blocking</span></span><br><span class="line">            String serverMessage = <span class="string">"Server Echo - "</span> + clientMessage + System.lineSeparator();</span><br><span class="line">            out.println(serverMessage);</span><br><span class="line">            out.flush();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>Socket</code>을 인자로 받고, 소켓에서 Reader, Writer를 뽑아내서, Reader에서 메아리를 읽고 ‘Server Echo -‘라는 문자열을 앞에 붙여서 Writer로 회신한다.</p>
+<p>여기서 주의할 점이 있다. <strong>서버가 보내는 메시지에 비어 있는 행이 포함돼야 클라이언트가 <code>readLine()</code>으로 읽을 때 행을 구별해서 문제 없이 읽고 출력할 수 있다.</strong> 비어 있는 행이 없으면 클라이언트의 <code>readLine()</code>이 계속 비어 있는 행을 기다리면서 서버와의 연결을 점유하게 되고, 싱글 스레드인 서버는 먹통 상태가 된다.</p>
+<h1 id="실습"><a href="#실습" class="headerlink" title="실습"></a>실습</h1><ol>
+<li><p>EchoSocketServerSingleThread 를 실행하고, EchoSocketClient 를 실행하면 temp.log 파일에 다음과 같이 로그가 찍한다.</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">[SERVER -            main] 2020-11-01T23:49:25.119684 - ===============================</span><br><span class="line">[SERVER -            main] 2020-11-01T23:49:25.133603 - Echo Server 시작</span><br><span class="line">[SERVER -            main] 2020-11-01T23:49:25.133994 - ---------------------------</span><br><span class="line">[SERVER -            main] 2020-11-01T23:49:25.134174 - Single Thread Socket Echo Server 대기 중</span><br><span class="line">[SERVER -            main] 2020-11-01T23:49:26.976560 - Client 접속!!!</span><br><span class="line">[SERVER -            main] 2020-11-01T23:49:26.976861 - Echo 시작</span><br><span class="line">[CLIENT -            main] 2020-11-01T23:49:26.992329 - Client 시작</span><br><span class="line">[CLIENT -            main] 2020-11-01T23:49:27.006950 - 메시지 전송 시작</span><br><span class="line">[CLIENT -            main] 2020-11-01T23:49:27.007250 - 메시지 print 완료</span><br><span class="line">[CLIENT -            main] 2020-11-01T23:49:27.008839 - 메시지 flush 완료</span><br><span class="line">[CLIENT -            main] 2020-11-01T23:49:27.009160 - 서버 Echo 대기...</span><br><span class="line">[CLIENT -            main] 2020-11-01T23:49:27.020318 - 서버 Echo 도착</span><br><span class="line">[SERVER -            main] 2020-11-01T23:49:27.021049 - Echo 완료</span><br><span class="line">[SERVER -            main] 2020-11-01T23:49:27.021302 - ---------------------------</span><br><span class="line">[SERVER -            main] 2020-11-01T23:49:27.021471 - Single Thread Socket Echo Server 대기 중</span><br><span class="line">[CLIENT -            main] 2020-11-01T23:49:27.021674 - 서버 Echo msg: Server Echo - 안녕, echo server</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>서버는 여전히 대기 중이므로 다른 터미널에서 <code>echo -n &#39;아무거나&#39; | nc localhost 7777</code>을 입력하면 다음과 같이 Echo 메시지가 바로 출력되어 나온다.</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">다른 터미널창</span><br><span class="line">🍺🦑🍺🍕🍺 ❯ echo -n &apos;아무거나&apos; | nc localhost 7777                                             </span><br><span class="line">Server Echo - 아무거나</span><br></pre></td></tr></table></figure>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">... 윗 부분 생략 ...</span><br><span class="line">[SERVER -            main] 2020-11-01T23:49:27.021302 - ---------------------------</span><br><span class="line">[SERVER -            main] 2020-11-01T23:49:27.021471 - Single Thread Socket Echo Server 대기 중</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[SERVER -            main] 2020-11-02T00:03:47.863975 - Client 접속!!!</span><br><span class="line">[SERVER -            main] 2020-11-02T00:03:47.874942 - Echo 시작</span><br><span class="line">[SERVER -            main] 2020-11-02T00:03:47.878276 - Echo 완료</span><br><span class="line">[SERVER -            main] 2020-11-02T00:03:47.878572 - ---------------------------</span><br><span class="line">[SERVER -            main] 2020-11-02T00:03:47.878849 - Single Thread Socket Echo Server 대기 중</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>EchoSocketClient 에서 <code>// Utils.sleep(5000L);  // 서버 blocking 확인 시 사용</code>라고 돼 있던 부분의 주석을 해제하고 실행해서 클라이언트가 서버와 연결된 후 5초 후에 서버에 메시지를 전송하도록 하고, 5초 안에 다른 터미널에서 <code>echo -n &#39;아무거나&#39; | nc localhost 7777</code>을 입력한다.  </p>
+<ul>
+<li>그러면 메아리가 터미널에 금방 출력되지 않고 5초 후에 출력된다.</li>
+<li>이유는 앞서 말한 것처럼 EchoSocketClient가 5초 후에 메시지를 보내는 동안, EchoProcessor의 <code>in.readLine()</code>이 블로킹 상태로 대기하는데, 서버의 스레드도 1개 뿐이라 다른 요청을 <code>accept()</code> 할 수 없기 때문이다.</li>
+<li>그래서 터미널 클라이언트도 5초간 블로킹 상태로 대기하게 된다.</li>
+<li>결국 <strong>이상한 클라이언트가 하나 끼면 서버도 먹통되고 다른 클라이언트까지 먹통이 전파될 수 있다.</strong></li>
+</ul>
+</li>
+</ol>
+<h1 id="정리"><a href="#정리" class="headerlink" title="정리"></a>정리</h1><blockquote>
+<ul>
+<li>블로킹 방식의 싱글 스레드 소켓 서버는 시간 끄는 이상한 클라이언트가 하나만 들어와도 서버가 먹통이 되고, 다른 클라이언트까지 먹통될 수 있다.</li>
+</ul>
+</blockquote>
+<p>이 문제는 어떻게 해결할까? <a href="https://homoefficio.github.io/2020/11/02/Back-to-the-Essence-Java-Servers-2/">2편</a>에서 알아보자.</p>
+
+        
+        
+            
+        
+        <hr/>
+        <div>
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="크리에이티브 커먼즈 라이선스" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><a href='https://github.com/homoefficio' target='_blank'>HomoEfficio</a>가 작성한 이 저작물은(는) <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스</a>에 따라 이용할 수 있습니다.
+        </div>
+    </div>
+    <div class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/Blocking/">Blocking</a> <a class="tag tag--primary tag--small t-link" href="/tags/Echo-Server/">Echo Server</a> <a class="tag tag--primary tag--small t-link" href="/tags/I-O/">I/O</a> <a class="tag tag--primary tag--small t-link" href="/tags/Java/">Java</a> <a class="tag tag--primary tag--small t-link" href="/tags/Java-IO/">Java IO</a> <a class="tag tag--primary tag--small t-link" href="/tags/ServerSocket/">ServerSocket</a> <a class="tag tag--primary tag--small t-link" href="/tags/Socket/">Socket</a> <a class="tag tag--primary tag--small t-link" href="/tags/accept/">accept</a> <a class="tag tag--primary tag--small t-link" href="/tags/netcat/">netcat</a>
+
+            </div>
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2020/11/02/Back-to-the-Essence-Java-Servers-2/"  data-tooltip="Back to the Essence - Java-Servers - (2)">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2020/08/27/Batch-작업과-Connection-Pool/" data-tooltip="Batch 작업과 Connection Pool">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2020/11/02/Back-to-the-Essence-Java-Servers-1/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2020/11/02/Back-to-the-Essence-Java-Servers-1/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2020/11/02/Back-to-the-Essence-Java-Servers-1/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+        
+            <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2020 HomoEfficio. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="1">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2020/11/02/Back-to-the-Essence-Java-Servers-2/"  data-tooltip="Back to the Essence - Java-Servers - (2)">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2020/08/27/Batch-작업과-Connection-Pool/" data-tooltip="Batch 작업과 Connection Pool">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2020/11/02/Back-to-the-Essence-Java-Servers-1/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2020/11/02/Back-to-the-Essence-Java-Servers-1/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2020/11/02/Back-to-the-Essence-Java-Servers-1/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="1">
+    <ul class="share-options">
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2020/11/02/Back-to-the-Essence-Java-Servers-1/">
+                <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2020/11/02/Back-to-the-Essence-Java-Servers-1/">
+                <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2020/11/02/Back-to-the-Essence-Java-Servers-1/">
+                <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+            
+        </div>
+        <div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=110"/>
+        
+            <h4 id="about-card-name">HomoEfficio</h4>
+        
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Seoul, Korea.
+            </h5>
+        
+    </div>
+</div>
+        <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/script.min.js"></script>
+<!--SCRIPTS END-->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'hanmomhanda';
+        (function() {
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+
+
+
+</html>
