@@ -97,7 +97,7 @@ Util 이나 Constants 나 엎어치나 메치나 좌측 궁뎅이나 우측 방�
 (헉 실수다 감히 신성한 탭/스페이스를 운운하다니..=3=3) 
 여러분의 생각은?
 
-참고로 실무적 다른 동료의 의견에 따라 다음과 같이 깔쌈하게 마무리됐다!
+참고로 실무적으로는 다른 동료의 의견에 따라 다음과 같이 깔쌈하게 마무리됐다!
 
 ```java
 public static final String SERVER_IP = System.getProperty("java.rmi.server.hostname", "");
