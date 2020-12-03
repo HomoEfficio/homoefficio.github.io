@@ -22,7 +22,7 @@
 <meta property="og:site_name" content="뒤태지존의 끄적거림">
 <meta property="og:description" content="Constants vs Util오늘 일하다 의견을 나누게 된 Constants와 Util 얘기 애플리케이션이 실행되는 서버 IP를 가져와서 로그에 남길 일이 있다. 이유는 모르겠지만 InetAddress.getLocalHost().getHostAddress()로 찍으면 127.0.0.1 이 출력돼서 다른 방법을 찾아보니 아래와 같이 NetworkInterf">
 <meta property="og:locale" content="ko">
-<meta property="og:updated_time" content="2020-12-03T08:31:59.633Z">
+<meta property="og:updated_time" content="2020-12-03T08:32:56.308Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Constants vs Util">
 <meta name="twitter:description" content="Constants vs Util오늘 일하다 의견을 나누게 된 Constants와 Util 얘기 애플리케이션이 실행되는 서버 IP를 가져와서 로그에 남길 일이 있다. 이유는 모르겠지만 InetAddress.getLocalHost().getHostAddress()로 찍으면 127.0.0.1 이 출력돼서 다른 방법을 찾아보니 아래와 같이 NetworkInterf">
@@ -248,7 +248,7 @@
 </ul>
 </blockquote>
 <p>Util 이나 Constants 나 엎어치나 메치나 좌측 궁뎅이나 우측 방뎅이나 그게 그거 같긴 하지만,<br>설계라는 게 원래 책임, 역할, 이름 이런 거 고민하는 거니께, 탭이나 스페이스 보다는 유익한 얘기 아닐까?<br>(헉 실수다 감히 신성한 탭/스페이스를 운운하다니..=3=3)<br>여러분의 생각은?</p>
-<p>참고로 실무적 다른 동료의 의견에 따라 다음과 같이 깔쌈하게 마무리됐다!</p>
+<p>참고로 실무적으로는 다른 동료의 의견에 따라 다음과 같이 깔쌈하게 마무리됐다!</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String SERVER_IP = System.getProperty(<span class="string">"java.rmi.server.hostname"</span>, <span class="string">""</span>);</span><br></pre></td></tr></table></figure>
 
         
