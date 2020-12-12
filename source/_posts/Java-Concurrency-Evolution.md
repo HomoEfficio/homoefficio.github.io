@@ -1,9 +1,23 @@
 title: Java Concurrency Evolution
 date: 2020-12-11 16:43:41
 categories:
+  - Language
 tags:
-thumbnailImage:
-coverImage:
+  - Java
+  - Concurrency
+  - Thread
+  - MultiThread
+  - ExecutorService
+  - Fork/Join
+  - CompletableFuture
+  - Reactive
+  - Reactor  
+  - Project Loom
+  - Loom
+  - Virtual Thread
+  - Structured Concurrency
+thumbnailImage: https://i.imgur.com/lhk8EMp.jpg
+coverImage: coverImage-concurrency.png
 ---
 # Java Concurrency Evolution
 
