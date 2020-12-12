@@ -15,6 +15,7 @@
         <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
     
     <meta name="description" content="Java Concurrency EvolutionDZone에서 본 글인데 동시성 처리 관련 여러 방식을 비교하면서, 프로젝트 룸(Loom) 코드도 구경할 수 있어서 원글 작성자의 허락을 받고 우리말로 옮겨본다.  원문: https://dzone.com/articles/java-concurrency-evolution  자바는 초창기부터 스레드를 사용해서 동시성">
+<meta name="keywords" content="Java,Reactor,Reactive,Concurrency,Thread,MultiThread,ExecutorService,Fork&#x2F;Join,CompletableFuture,Project Loom,Loom,Virtual Thread,Structured Concurrency">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Java Concurrency Evolution">
 <meta property="og:url" content="http://homoefficio.github.io/2020/12/11/Java-Concurrency-Evolution/index.html">
@@ -33,7 +34,7 @@
 <meta property="og:image" content="https://i.imgur.com/apiXLU8.png">
 <meta property="og:image" content="https://i.imgur.com/UwjyH08.png">
 <meta property="og:image" content="https://i.imgur.com/Lu0h22b.png">
-<meta property="og:updated_time" content="2020-12-12T06:05:51.166Z">
+<meta property="og:updated_time" content="2020-12-12T06:29:05.844Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java Concurrency Evolution">
 <meta name="twitter:description" content="Java Concurrency EvolutionDZone에서 본 글인데 동시성 처리 관련 여러 방식을 비교하면서, 프로젝트 룸(Loom) 코드도 구경할 수 있어서 원글 작성자의 허락을 받고 우리말로 옮겨본다.  원문: https://dzone.com/articles/java-concurrency-evolution  자바는 초창기부터 스레드를 사용해서 동시성">
@@ -46,6 +47,12 @@
         <meta property="og:image" content="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=640"/>
     
     
+        <meta property="og:image" content="/2020/12/11/Java-Concurrency-Evolution/https:/i.imgur.com/lhk8EMp.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2020/12/11/Java-Concurrency-Evolution/https://i.imgur.com/lhk8EMp.jpg" />
+    
+    
+        <meta property="og:image" content="/2020/12/11/Java-Concurrency-Evolution/coverImage-concurrency.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2020/12/11/Java-Concurrency-Evolution/coverImage-concurrency.png" />
     
     
     <!--STYLES-->
@@ -209,7 +216,8 @@
                 
 <article class="post" itemscope itemType="http://schema.org/BlogPosting">
     
-        <div class="post-header main-content-wrap">
+        <div class="post-header-cover" style="background-image:url('/2020/12/11/Java-Concurrency-Evolution/coverImage-concurrency.png');">
+            <div class="post-header main-content-wrap">
     
         <h1 class="post-title" itemprop="headline">Java Concurrency Evolution</h1>
     
@@ -218,8 +226,15 @@
         Dec 11, 2020
     </time>
     
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Language/">Language</a>
+
+
+    
 </div>
 </div>
+        </div>
     
     <div class="post-content markdown main-content-wrap" itemprop="articleBody">
         
@@ -369,6 +384,13 @@
         </div>
     </div>
     <div class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/CompletableFuture/">CompletableFuture</a> <a class="tag tag--primary tag--small t-link" href="/tags/Concurrency/">Concurrency</a> <a class="tag tag--primary tag--small t-link" href="/tags/ExecutorService/">ExecutorService</a> <a class="tag tag--primary tag--small t-link" href="/tags/Fork-Join/">Fork/Join</a> <a class="tag tag--primary tag--small t-link" href="/tags/Java/">Java</a> <a class="tag tag--primary tag--small t-link" href="/tags/Loom/">Loom</a> <a class="tag tag--primary tag--small t-link" href="/tags/MultiThread/">MultiThread</a> <a class="tag tag--primary tag--small t-link" href="/tags/Project-Loom/">Project Loom</a> <a class="tag tag--primary tag--small t-link" href="/tags/Reactive/">Reactive</a> <a class="tag tag--primary tag--small t-link" href="/tags/Reactor/">Reactor</a> <a class="tag tag--primary tag--small t-link" href="/tags/Structured-Concurrency/">Structured Concurrency</a> <a class="tag tag--primary tag--small t-link" href="/tags/Thread/">Thread</a> <a class="tag tag--primary tag--small t-link" href="/tags/Virtual-Thread/">Virtual Thread</a>
+
+            </div>
         
         <div class="post-actions-wrap">
     <nav>
