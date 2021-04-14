@@ -24,7 +24,7 @@
 <meta property="og:locale" content="ko">
 <meta property="og:image" content="https://i.imgur.com/kbp9BGI.png">
 <meta property="og:image" content="https://i.imgur.com/84eEoAS.png">
-<meta property="og:updated_time" content="2021-04-14T01:36:14.029Z">
+<meta property="og:updated_time" content="2021-04-14T01:38:29.307Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Reactive Streams with Sequence Diagram">
 <meta name="twitter:description" content="Reactive Streams with Sequence Diagram1 req == 1 therad인 서블릿 방식의 한계를 뛰어넘기 위해 Spring에서 WebFlux를 내놨다.Spring WebFlux는 내부적으로 Spring Reactor를 사용하는데, Spring Reactor는 Reactive Streams 구현체다.Reactive Streams는">
@@ -265,7 +265,7 @@
 <p><code>Publisher.subscribe(Subscriber)</code></p>
 <p>발행자가 구독한다 구독자를. 읭? 발행자가 구독자를 구독한다고? 뭥미?</p>
 </blockquote>
-<p>일단 구독은 구독자의 행위인데 구독자가 아니라 엉뚱하게 발행자가 주어로 나와있다. 사실 이렇게 행위의 주어와 메서드가 소속된 객체가 다르게 돼 있는 API는 많다. 모든 getter 메서드는 get이라는 행위의 주어와 getXXX라는 메서드가 소속된 객체가 다르다. 그리고 멀리 갈 것 없이 위 시퀀스 다이어그램에 나오는 <code>subscription.request(numOfData)</code>도 마찬가지다. request 행위의 주어는 <code>subscriber</code>지만 <code>request()</code> 메서드는 <code>subscription</code>에 소속돼 있다. 그래도 이 코드를 읽는 데는 전혀 불편함이 없다. 결국 <strong>행위의 주어와 메서드가 소속된 객체가 다르다는 것만으로는 불편함을 느끼지 않는다.</strong></p>
+<p>일단 구독은 구독자의 행위인데 구독자가 아니라 엉뚱하게 발행자가 주어로 나와있다. 사실 이렇게 행위의 주어와 메서드가 소속된 객체가 다르게 돼 있는 API는 많다. 모든 getter 메서드는 get이라는 행위의 주어와 getXXX라는 메서드가 소속된 객체가 다르다. 멀리 갈 것 없이 위 시퀀스 다이어그램에 나오는 <code>subscription.request(numOfData)</code>도 마찬가지다. request 행위의 주어는 <code>subscriber</code>지만 <code>request()</code> 메서드는 <code>subscription</code>에 소속돼 있다. 그래도 이 코드를 읽는 데는 전혀 불편함이 없다. 결국 <strong>행위의 주어와 메서드가 소속된 객체가 다르다는 것만으로는 불편함을 느끼지 않는다.</strong></p>
 <p>하지만 <strong><code>Publisher.subscribe(Subscriber)</code>는 단순히 행위의 주어와 메서드가 소속된 객체가 불일치하는 데 그치지 않고, 발행자/구독자라는 대칭 관계에 있는 애들이 구독한다(subscribe)라는 행위(동사)를 중심으로 주어, 목적어가 뒤바뀌어 있다.</strong> 그래서 직관적으로 자연스럽게 협력 구조를 이해하는 데 큰 걸림돌이 된다.</p>
 <p>단순히 문장 해석하듯 자연스럽게 이해되지 않는 것뿐만 아니라 불편한 이유는 몇 가지 더 있다.</p>
 <p>먼저 이 <code>subscribe</code>라는 이름은 실제 동작과도 부합하지 않는다.</p>
