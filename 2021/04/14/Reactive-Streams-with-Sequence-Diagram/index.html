@@ -14,20 +14,20 @@
     
         <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <meta name="description" content="Reactive Streams with Sequence Diagram1 req == 1 therad인 서블릿 방식의 한계를 뛰어넘기 위해 Spring에서 WebFlux를 내놨다.Spring WebFlux는 내부적으로 Spring Reactor를 사용하는데, Spring Reactor는 Reactive Streams 구현체다.Reactive Streams는">
+    <meta name="description" content="Reactive Streams with Sequence Diagram1 req == 1 therad인 서블릿 방식의 한계를 뛰어넘기 위해 Spring에서 WebFlux를 내놨다.Spring WebFlux는 내부적으로 Reactor를 사용하는데, Reactor는 Reactive Streams 구현체다.Reactive Streams는 홈페이지에 다음과 같이 간">
 <meta name="keywords" content="Spring,Reactor,Reactive Streams,Reactive Streams Sequence Diagram,Sequence Diagram,Async,Publisher,Subscriber,Subscription">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Reactive Streams with Sequence Diagram">
 <meta property="og:url" content="http://homoefficio.github.io/2021/04/14/Reactive-Streams-with-Sequence-Diagram/index.html">
 <meta property="og:site_name" content="뒤태지존의 끄적거림">
-<meta property="og:description" content="Reactive Streams with Sequence Diagram1 req == 1 therad인 서블릿 방식의 한계를 뛰어넘기 위해 Spring에서 WebFlux를 내놨다.Spring WebFlux는 내부적으로 Spring Reactor를 사용하는데, Spring Reactor는 Reactive Streams 구현체다.Reactive Streams는">
+<meta property="og:description" content="Reactive Streams with Sequence Diagram1 req == 1 therad인 서블릿 방식의 한계를 뛰어넘기 위해 Spring에서 WebFlux를 내놨다.Spring WebFlux는 내부적으로 Reactor를 사용하는데, Reactor는 Reactive Streams 구현체다.Reactive Streams는 홈페이지에 다음과 같이 간">
 <meta property="og:locale" content="ko">
 <meta property="og:image" content="https://i.imgur.com/kbp9BGI.png">
 <meta property="og:image" content="https://i.imgur.com/84eEoAS.png">
-<meta property="og:updated_time" content="2021-04-14T01:38:29.307Z">
+<meta property="og:updated_time" content="2021-04-15T04:16:23.952Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Reactive Streams with Sequence Diagram">
-<meta name="twitter:description" content="Reactive Streams with Sequence Diagram1 req == 1 therad인 서블릿 방식의 한계를 뛰어넘기 위해 Spring에서 WebFlux를 내놨다.Spring WebFlux는 내부적으로 Spring Reactor를 사용하는데, Spring Reactor는 Reactive Streams 구현체다.Reactive Streams는">
+<meta name="twitter:description" content="Reactive Streams with Sequence Diagram1 req == 1 therad인 서블릿 방식의 한계를 뛰어넘기 위해 Spring에서 WebFlux를 내놨다.Spring WebFlux는 내부적으로 Reactor를 사용하는데, Reactor는 Reactive Streams 구현체다.Reactive Streams는 홈페이지에 다음과 같이 간">
 <meta name="twitter:image" content="https://i.imgur.com/kbp9BGI.png">
     
         <meta rel="publisher" content="https://plus.google.com/+오명운"/>
@@ -228,13 +228,13 @@
     
     <div class="post-content markdown main-content-wrap" itemprop="articleBody">
         
-            <h1 id="Reactive-Streams-with-Sequence-Diagram"><a href="#Reactive-Streams-with-Sequence-Diagram" class="headerlink" title="Reactive Streams with Sequence Diagram"></a>Reactive Streams with Sequence Diagram</h1><p>1 req == 1 therad인 서블릿 방식의 한계를 뛰어넘기 위해 Spring에서 WebFlux를 내놨다.<br>Spring WebFlux는 내부적으로 Spring Reactor를 사용하는데, Spring Reactor는 Reactive Streams 구현체다.<br>Reactive Streams는 <a href="https://www.reactive-streams.org/" target="_blank" rel="noopener">홈페이지</a>에 다음과 같이 간단 명료하게 정의돼 있다.</p>
+            <h1 id="Reactive-Streams-with-Sequence-Diagram"><a href="#Reactive-Streams-with-Sequence-Diagram" class="headerlink" title="Reactive Streams with Sequence Diagram"></a>Reactive Streams with Sequence Diagram</h1><p>1 req == 1 therad인 서블릿 방식의 한계를 뛰어넘기 위해 Spring에서 WebFlux를 내놨다.<br>Spring WebFlux는 내부적으로 <a href="https://projectreactor.io/" target="_blank" rel="noopener">Reactor</a>를 사용하는데, Reactor는 Reactive Streams 구현체다.<br>Reactive Streams는 <a href="https://www.reactive-streams.org/" target="_blank" rel="noopener">홈페이지</a>에 다음과 같이 간단 명료하게 정의돼 있다.</p>
 <blockquote>
 <p>Reactive Streams is an initiative to provide a standard for asynchronous stream processing with non-blocking back pressure.</p>
 <p>리액티브 스트림은 비동기 스트림 처리 표준을 제공하는 킹왕짱 계획이야. 논블로킹 백프레셔도 있다능!</p>
 </blockquote>
 <p>솔직히 뭔 소린지 모르겠다. 이거 안다고 퇴근 시간이 앞당겨질 것 같지는 않은데 몰라도 너무 모르니 한 번 알아보려 한다.</p>
-<p>이후 나오는 내용은 <a href="https://docs.oracle.com/javase/9/docs/api/java/util/concurrent/Flow.html" target="_blank" rel="noopener">JDK 9 Flow 예제</a>와 Spring Reactor, Reactive MongoDB에서 구현한 여러 Reactive Streams 구현 내용을 기준으로 작성했으며, Hot Publisher는 배제하고 Cold Publisher만 다룬다.</p>
+<p>이후 나오는 내용은 <a href="https://docs.oracle.com/javase/9/docs/api/java/util/concurrent/Flow.html" target="_blank" rel="noopener">JDK 9 Flow 예제</a>와 Reactor, Reactive MongoDB에서 구현한 여러 Reactive Streams 구현 내용을 기준으로 작성했으며, Hot Publisher는 배제하고 Cold Publisher만 다룬다.</p>
 <h2 id="등장-인물"><a href="#등장-인물" class="headerlink" title="등장 인물"></a>등장 인물</h2><p>Reactive Streams는 Publisher, Subscriber, Subscription, Processor 달랑 네 개의 인터페이스로 구성돼있다.<br>이 중에서 Processor는 자기만의 고유한 메서드는 없고 단순히 Publisher, Subscriber 두 가지 인터페이스를 상속받는다. Processor 없이 나머지 3개만으로도 Reactive Streams 협력을 구성할 수 있으므로 Processor는 등장 인물에서 제외한다.</p>
 <p>얘네들이 각각 무슨 동작을 가지고 있고 어떻게 협력해서 클라이언트에게 데이터를 반환하는지 한 눈에 알아보자.</p>
 <h2 id="시퀀스-다이어그램"><a href="#시퀀스-다이어그램" class="headerlink" title="시퀀스 다이어그램"></a>시퀀스 다이어그램</h2><p>검색해보면 몇 가지 나오기는 하는데 내가 이해할 수 있을 만큼 마음에 드는 게 없어서 새로 그렸다(개고생 ㅠㅜ).  </p>
@@ -251,7 +251,7 @@
 <h3 id="실제-데이터-접근-및-onNext-onError-onComplete-호출"><a href="#실제-데이터-접근-및-onNext-onError-onComplete-호출" class="headerlink" title="실제 데이터 접근 및 onNext/onError/onComplete 호출"></a>실제 데이터 접근 및 onNext/onError/onComplete 호출</h3><p><code>subscription</code>은 자신이 생성될 때 주입 받은 콜백을 호출해서 <code>numOfData</code>만큼만 데이터를 가져오고 <code>subscriber.onNext(data)</code>를 반복 호출해서 <code>subscriber</code>에게 데이터를 전달한다. 이 과정에서 오류가 발생하면 <code>subscriber.onError(throwable)</code>로 오류를 <code>subscriber</code>에게 전달하고, 데이터 전달이 정상적으로 완료되면 <code>subscriber.onComplete()</code>를 호출하며 협력이 끝난다.</p>
 <h2 id="비동기는-대체-어디에"><a href="#비동기는-대체-어디에" class="headerlink" title="비동기는 대체 어디에?"></a>비동기는 대체 어디에?</h2><p>리액티브 스트림이 백프레셔와 함께 비동기 스트림 처리 표준을 제공하는 킹왕짱 계획이라고 했는데, 이 협력 구조 상에서 비동기 처리는 어디에 있는 걸까?</p>
 <p>사실 리액티브 스트림이 비동기 스트림 처리 표준 제공 어쩌구라고는 하지만 4가지 인터페이스를 보면 비동기 관련 내용은 전혀 없다. 다시 말해 비동기 처리 없이 동기 처리만 사용하더라도 스트림을 리액티브 방식으로 처리하는 것이 가능하다. 결국 <strong>리액티브 스트림은 비동기 처리 표준을 지향하긴 하지만 그렇다고 비동기를 강제하는 것도 아니다.</strong> 따라서 비동기 처리는 실질적으로는 구현에 달려 있다.</p>
-<p>Spring Reactor의 비동기 처리 관련 규약은 <code>reactor.core.scheduler.Scheduler</code> 인터페이스에 담겨 있다. <code>reactor.core.publisher</code> 패키지에서 Scheduler가 사용되는 곳을 검색하면 어떻게 비동기 처리를 하는지 대략 감을 잡을 수 있을 것이다.</p>
+<p>Reactor의 비동기 처리 관련 규약은 <code>reactor.core.scheduler.Scheduler</code> 인터페이스에 담겨 있다. <code>reactor.core.publisher</code> 패키지에서 Scheduler가 사용되는 곳을 검색하면 어떻게 비동기 처리를 하는지 대략 감을 잡을 수 있을 것이다.</p>
 <p>또 다른 예로 <a href="https://docs.oracle.com/javase/9/docs/api/java/util/concurrent/Flow.html" target="_blank" rel="noopener">JDK 9 예제</a>에 보면 <code>Subscription</code>이 <code>Subscriber</code>의 <code>onNext()</code>를 호출할 때 <code>Executor</code>를 이용해서 비동기로 호출하고 있다.</p>
 <h2 id="마무리"><a href="#마무리" class="headerlink" title="마무리"></a>마무리</h2><blockquote>
 <p>Reactive Streams는 논블로킹, 백프레셔를 포함해서 스트림을 비동기 방식으로 처리할 수 있는 표준 API다.</p>
