@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="뒤태지존의 끄적거림">
+    <title>Counter-Intuitive Reactive Streams - 뒤태지존의 끄적거림</title>
+    <meta name="author" content="HomoEfficio">
+    <meta name="description" content="뒤태지존의 끄적거림">
+    
+        <link rel="icon" href="/assets/images/favicon.ico">
+    
+    
+        <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <meta name="description" content="Counter-Intuitive Reactive Streams비동기 프로그래밍은 늘 어렵다. 이미 오래된 애기지만 Reactive Streams의 구현체인 RxJava나 Reactor가 나오고 Spring에서도 WebFlux가 나오면서 저변이 더욱 확대된 것 같다.학습에 의해 넘을 수 있다고는 하지만 그것도 일부 잘 하는 개발자들에 대한 얘기같고, 현실적으">
+<meta name="keywords" content="Spring,Reactor,Reactive Streams,Async,Kotlin,Coroutine">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Counter-Intuitive Reactive Streams">
+<meta property="og:url" content="http://homoefficio.github.io/2021/11/28/Counter-Intuitive-Reactive-Streams/index.html">
+<meta property="og:site_name" content="뒤태지존의 끄적거림">
+<meta property="og:description" content="Counter-Intuitive Reactive Streams비동기 프로그래밍은 늘 어렵다. 이미 오래된 애기지만 Reactive Streams의 구현체인 RxJava나 Reactor가 나오고 Spring에서도 WebFlux가 나오면서 저변이 더욱 확대된 것 같다.학습에 의해 넘을 수 있다고는 하지만 그것도 일부 잘 하는 개발자들에 대한 얘기같고, 현실적으">
+<meta property="og:locale" content="ko">
+<meta property="og:updated_time" content="2021-11-28T10:28:44.369Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Counter-Intuitive Reactive Streams">
+<meta name="twitter:description" content="Counter-Intuitive Reactive Streams비동기 프로그래밍은 늘 어렵다. 이미 오래된 애기지만 Reactive Streams의 구현체인 RxJava나 Reactor가 나오고 Spring에서도 WebFlux가 나오면서 저변이 더욱 확대된 것 같다.학습에 의해 넘을 수 있다고는 하지만 그것도 일부 잘 하는 개발자들에 대한 얘기같고, 현실적으">
+    
+        <meta rel="publisher" content="https://plus.google.com/+오명운"/>
+    
+    
+    
+        <meta property="og:image" content="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=640"/>
+    
+    
+        <meta property="og:image" content="/2021/11/28/Counter-Intuitive-Reactive-Streams/https:/i.imgur.com/1bAQQ8k.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2021/11/28/Counter-Intuitive-Reactive-Streams/https://i.imgur.com/1bAQQ8k.jpg" />
+    
+    
+        <meta property="og:image" content="/2021/11/28/Counter-Intuitive-Reactive-Streams/cover-counter-intuitive-reactive-streams.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2021/11/28/Counter-Intuitive-Reactive-Streams/cover-counter-intuitive-reactive-streams.png" />
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style.min.css">
+    <!--STYLES END-->
+    
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-79893978-1']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6494847158566766",
+    enable_page_level_ads: true
+  });
+</script>
+</head>
+
+    <body>
+        <div id="blog">
+            <header id="header" data-behavior="1">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="/ ">뒤태지존의 끄적거림</a>
+    </h1>
+    
+        <a class="header-right-picture" href="/#about">
+            <img class="header-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+        </a>
+    
+</header>
+            <nav id="sidebar" data-behavior="1">
+    
+    <div class="sidebar-profile">
+        <a href="/#about">
+            
+            <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+            
+        </a>
+        <span class="sidebar-profile-name">HomoEfficio</span>
+    </div>
+    
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/ 
+                    ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">Home</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-categories
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">Categories</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-tags
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">Tags</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-archives
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">Archives</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link st-search-show-outputs"
+                    href="#search
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                    <span class="sidebar-button-desc">Search</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="#about
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">About me</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="https://github.com/HomoEfficio" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                    <span class="sidebar-button-desc">GitHub</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="mailto:homo.efficio@gmail.com" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-envelope-o"></i>
+                    <span class="sidebar-button-desc">Mail</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/atom.xml
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+            <div id="main" data-behavior="1">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+        <div class="post-header-cover" style="background-image:url('/2021/11/28/Counter-Intuitive-Reactive-Streams/cover-counter-intuitive-reactive-streams.png');">
+            <div class="post-header main-content-wrap">
+    
+        <h1 class="post-title" itemprop="headline">Counter-Intuitive Reactive Streams</h1>
+    
+    <div class="post-meta">
+    <time  itemprop="datePublished" content="Sun Nov 28 2021 18:48:28 GMT+0900">
+        Nov 28, 2021
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Technique/">Technique</a>
+
+
+    
+</div>
+</div>
+        </div>
+    
+    <div class="post-content markdown main-content-wrap" itemprop="articleBody">
+        
+            <h1 id="Counter-Intuitive-Reactive-Streams"><a href="#Counter-Intuitive-Reactive-Streams" class="headerlink" title="Counter-Intuitive Reactive Streams"></a>Counter-Intuitive Reactive Streams</h1><p>비동기 프로그래밍은 늘 어렵다.</p>
+<p>이미 오래된 애기지만 Reactive Streams의 구현체인 RxJava나 Reactor가 나오고 Spring에서도 WebFlux가 나오면서 저변이 더욱 확대된 것 같다.<br>학습에 의해 넘을 수 있다고는 하지만 그것도 일부 잘 하는 개발자들에 대한 얘기같고, 현실적으로는 나같은 일반적인 개발자의 직관에 반하는 부분들이 많아 여전히 어렵고 고통스럽다.<br>저변이 확대되는 것은 좋지만, 일부 개발자는 어쩌면 겉멋을 부리려고 굳이 쓰지 않아도 되는 곳에 사용하고, 이력서에 Reactor/Reactive 개발 경험을 추가하고 그걸 발판 삼아 회사를 떠난다.<br>고통은 남아서 이어 받는 사람들의 몫..</p>
+<p>자바라면 아직까지는 답이 없고(토비님이 알려주신 <a href="https://github.com/vsilaev/tascalate-async-await" target="_blank" rel="noopener">https://github.com/vsilaev/tascalate-async-await</a> 같은 서드파티 라이브러리가 있기는 하다),<br>코틀린이라면 다행히 코루틴(coroutine)이 있다.</p>
+<p>둘을 비교해서 코루틴이 쉽고 직관적이라는 자료는 이미 많이 있지만, 그냥 하나 더 덧붙여본다.</p>
+<h2 id="Reactor"><a href="#Reactor" class="headerlink" title="Reactor"></a>Reactor</h2><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">fluxRangeSample</span><span class="params">()</span></span>: Mono&lt;String&gt; &#123;</span><br><span class="line">    <span class="keyword">val</span> strList: MutableList&lt;String&gt; = mutableListOf()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> Flux.range(<span class="number">0</span>, <span class="number">2</span>)</span><br><span class="line">        .doOnNext &#123; outer -&gt;</span><br><span class="line">            println(<span class="string">"outer loop index: <span class="variable">$outer</span>"</span>)</span><br><span class="line">    </span><br><span class="line">            Flux.range(<span class="number">1</span>, <span class="number">4</span>)</span><br><span class="line">                .subscribe &#123; inner -&gt;</span><br><span class="line">                    println(<span class="string">"  inner loop i: <span class="variable">$inner</span>"</span>)</span><br><span class="line">                    </span><br><span class="line">                    Mono.just(<span class="string">"    DB 호출 없는 Mono: <span class="variable">$inner</span>"</span>)</span><br><span class="line">                        .subscribe &#123; anyStr -&gt; println(anyStr) &#125;</span><br><span class="line">                    </span><br><span class="line">                    memberRepository.findById(<span class="string">"moid117"</span>)</span><br><span class="line">                        .subscribe &#123; member -&gt;</span><br><span class="line">                            println(<span class="string">"    DB 호출 있는 Mono: <span class="subst">$&#123;member.oid&#125;</span> - <span class="subst">$&#123;member.name&#125;</span>"</span>)</span><br><span class="line">                            strList.add(<span class="string">"<span class="subst">$&#123;member.oid&#125;</span> - <span class="subst">$&#123;member.name&#125;</span>"</span>)</span><br><span class="line">                        &#125;</span><br><span class="line">                &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        .doOnNext &#123;</span><br><span class="line">            println(<span class="string">"Second doOnNext"</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        .doOnComplete &#123;</span><br><span class="line">            <span class="keyword">for</span> (i <span class="keyword">in</span> <span class="number">1.</span><span class="number">.5</span>) &#123;</span><br><span class="line">                println(<span class="string">"doOnComplete i: <span class="variable">$i</span>"</span>)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        .then(Mono.just(<span class="string">"[<span class="subst">$&#123;strList.joinToString(" | ")&#125;</span>]"</span>))</span><br></pre></td></tr></table></figure>
+<p>사실 보기만 해도 보고 싶은 마음이 별로 들지 않는다. 하지만 봐야 하니 참고 보면, 대충 2중 루프 돌면서 DB에서 읽은 문자열을 <code>strList</code>에 추가해서 반환하는 코드다.</p>
+<p>그래서 아래와 같은 컨트롤러를 붙여서 호출하면 <code>|</code>로 구분된 문자열 목록이 나올 것이다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping(<span class="meta-string">"/flux-range"</span>)</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">fluxRange</span><span class="params">()</span></span>: Mono&lt;ResponseEntity&lt;String&gt;&gt; &#123;</span><br><span class="line">    <span class="keyword">return</span> memberCommandService.fluxRangeSample()</span><br><span class="line">        .map &#123; ResponseEntity.ok(it) &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>실행해보면 짠~ 하고</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">~ 🦑🍕🍺 ❯ http GET :8080/api/members/flux-range</span><br><span class="line">HTTP/1.1 200 OK</span><br><span class="line">Content-Length: 2</span><br><span class="line">Content-Type: text/plain;charset=UTF-8</span><br><span class="line"></span><br><span class="line">[]</span><br></pre></td></tr></table></figure>
+<p>예상과는 다르게 공허하게 비어있는 리스트가 반환된다. 하지만 로그에 보면 아래와 같이 DB에서 읽은 값도 출력이 된다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">outer loop index: 0</span><br><span class="line">  inner loop i: 1</span><br><span class="line">    DB 호출 없는 Mono: 1</span><br><span class="line">  inner loop i: 2</span><br><span class="line">    DB 호출 없는 Mono: 2</span><br><span class="line">  inner loop i: 3</span><br><span class="line">    DB 호출 없는 Mono: 3</span><br><span class="line">  inner loop i: 4</span><br><span class="line">    DB 호출 없는 Mono: 4</span><br><span class="line">Second doOnNext</span><br><span class="line">outer loop index: 1</span><br><span class="line">  inner loop i: 1</span><br><span class="line">    DB 호출 없는 Mono: 1</span><br><span class="line">  inner loop i: 2</span><br><span class="line">    DB 호출 없는 Mono: 2</span><br><span class="line">  inner loop i: 3</span><br><span class="line">    DB 호출 없는 Mono: 3</span><br><span class="line">  inner loop i: 4</span><br><span class="line">    DB 호출 없는 Mono: 4</span><br><span class="line">Second doOnNext</span><br><span class="line">doOnComplete i: 1</span><br><span class="line">doOnComplete i: 2</span><br><span class="line">doOnComplete i: 3</span><br><span class="line">doOnComplete i: 4</span><br><span class="line">doOnComplete i: 5</span><br><span class="line">    DB 호출 있는 Mono: moid117 - 문어</span><br><span class="line">    DB 호출 있는 Mono: moid117 - 문어</span><br><span class="line">    DB 호출 있는 Mono: moid117 - 문어</span><br><span class="line">    DB 호출 있는 Mono: moid117 - 문어</span><br><span class="line">    DB 호출 있는 Mono: moid117 - 문어</span><br><span class="line">    DB 호출 있는 Mono: moid117 - 문어</span><br><span class="line">    DB 호출 있는 Mono: moid117 - 문어</span><br></pre></td></tr></table></figure>
+<p>‘DB 호출 없는 Mono’는 예상대로 로그에 찍혀 있지만, 함께 찍힐 것이라고 기대했던 ‘DB 호출 있는 Mono’는 가장 마지막에 찍혀 있다.</p>
+<p>코드를 보면 DB 조회를 모두 완료한 후에 이름처럼 <code>doOnComplete(...)</code>과 <code>then(...)</code>이 실행될 것 같지만, 실제로는 DB 조회 결과 후 리스트에 추가하는 부분이 가장 나중에 실행된 것이다.<br>심지어 메서드가 반환된 다음에 실행되기 때문에 비어있는 리스트가 반환됐다.</p>
+<p>그뿐만이 아니다. <code>Flux.range(0, 2).doOnNext(...)</code>는 예상대로 0, 1만 반복하지만, <code>Flux.range(1, 4).subscribe(...)</code>는 예상과 달리 1, 2, 3에서 끝나지 않고 4까지 반복된다. range()의 두 번째 인자가 inclusive 인지 exclusive 인지도 그때그때 달라요 처럼 보인다.</p>
+<p>이처럼 직관과 다른 부분이 Reactor(RxJava도 마찬가지) 사용을 힘들게 만든다. 물론 앞서 말했 듯 학습을 통해 제대로 된 사용법을 익히면 <code>|</code>로 구분된 문자열을 반환하도록 수정할 수 있겠지만 그 학습 비용이 만만치 않다. 게다가 대안이 있다면 더더욱 그 비용은 낭비다.</p>
+<h2 id="Coroutine"><a href="#Coroutine" class="headerlink" title="Coroutine"></a>Coroutine</h2><p>똑같은 일을 하는 코루틴 코드를 보자. <code>suspend</code>와 <code>awaitSingle()</code>을 제외하면 늘 봐오던 코드와 다를 게 없이 편안하다.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">suspend <span class="function"><span class="keyword">fun</span> <span class="title">asyncAwaitRange</span><span class="params">()</span></span>: String &#123;</span><br><span class="line">    <span class="keyword">val</span> strList: MutableList&lt;String&gt; = mutableListOf()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (outer <span class="keyword">in</span> <span class="number">0.</span><span class="number">.1</span>) &#123;</span><br><span class="line">        println(<span class="string">"outer loop index: <span class="variable">$outer</span>"</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (inner <span class="keyword">in</span> <span class="number">1.</span><span class="number">.4</span>) &#123;</span><br><span class="line">            println(<span class="string">"  inner loop i: <span class="variable">$inner</span>"</span>)</span><br><span class="line">            println(<span class="string">"    DB 호출 없는 Mono: <span class="variable">$inner</span>"</span>)</span><br><span class="line">            <span class="keyword">val</span> member = memberRepository.findById(<span class="string">"moid117"</span>).awaitSingle()</span><br><span class="line">            println(<span class="string">"    DB 호출 있는 Mono: <span class="subst">$&#123;member.oid&#125;</span> - <span class="subst">$&#123;member.name&#125;</span>"</span>)</span><br><span class="line">            strList.add(<span class="string">"<span class="subst">$&#123;member.oid&#125;</span> - <span class="subst">$&#123;member.name&#125;</span>"</span>)</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        println(<span class="string">"Second doOnNext"</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (i <span class="keyword">in</span> <span class="number">1.</span><span class="number">.5</span>) &#123;</span><br><span class="line">        println(<span class="string">"doOnComplete i: <span class="variable">$i</span>"</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="string">"[<span class="subst">$&#123;strList.joinToString(" | ")&#125;</span>]"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>아래와 같은 컨트롤러를 붙여서,</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping(<span class="meta-string">"/async-await-range"</span>)</span></span><br><span class="line">suspend <span class="function"><span class="keyword">fun</span> <span class="title">asyncAwaitRange</span><span class="params">()</span></span>: ResponseEntity&lt;String&gt; &#123;</span><br><span class="line">    <span class="keyword">return</span> ResponseEntity.ok(memberCommandService.asyncAwaitRange())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>아래와 같이 호출해보면 의도했던 것처럼 문자열 목록이 나온다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">~ 🦑🍕🍺 ❯ http GET :8080/api/members/async-await-range</span><br><span class="line">HTTP/1.1 200 OK</span><br><span class="line">Content-Length: 151</span><br><span class="line">Content-Type: text/plain;charset=UTF-8</span><br><span class="line"></span><br><span class="line">[moid117 - 문어 | moid117 - 문어 | moid117 - 문어 | moid117 - 문어 | moid117 - 문어 | moid117 - 문어 | moid117 - 문어 | moid117 - 문어]</span><br></pre></td></tr></table></figure>
+<p>로그도 직관에서 한 치의 벗어남이 없다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">outer loop index: 0</span><br><span class="line">  inner loop i: 1</span><br><span class="line">    DB 호출 없는 Mono: 1</span><br><span class="line">    DB 호출 있는 Mono: moid117 - 문어</span><br><span class="line">  inner loop i: 2</span><br><span class="line">    DB 호출 없는 Mono: 2</span><br><span class="line">    DB 호출 있는 Mono: moid117 - 문어</span><br><span class="line">  inner loop i: 3</span><br><span class="line">    DB 호출 없는 Mono: 3</span><br><span class="line">    DB 호출 있는 Mono: moid117 - 문어</span><br><span class="line">  inner loop i: 4</span><br><span class="line">    DB 호출 없는 Mono: 4</span><br><span class="line">    DB 호출 있는 Mono: moid117 - 문어</span><br><span class="line">Second doOnNext</span><br><span class="line">outer loop index: 1</span><br><span class="line">  inner loop i: 1</span><br><span class="line">    DB 호출 없는 Mono: 1</span><br><span class="line">    DB 호출 있는 Mono: moid117 - 문어</span><br><span class="line">  inner loop i: 2</span><br><span class="line">    DB 호출 없는 Mono: 2</span><br><span class="line">    DB 호출 있는 Mono: moid117 - 문어</span><br><span class="line">  inner loop i: 3</span><br><span class="line">    DB 호출 없는 Mono: 3</span><br><span class="line">    DB 호출 있는 Mono: moid117 - 문어</span><br><span class="line">  inner loop i: 4</span><br><span class="line">    DB 호출 없는 Mono: 4</span><br><span class="line">    DB 호출 있는 Mono: moid117 - 문어</span><br><span class="line">Second doOnNext</span><br><span class="line">doOnComplete i: 1</span><br><span class="line">doOnComplete i: 2</span><br><span class="line">doOnComplete i: 3</span><br><span class="line">doOnComplete i: 4</span><br><span class="line">doOnComplete i: 5</span><br></pre></td></tr></table></figure>
+<h2 id="마무리"><a href="#마무리" class="headerlink" title="마무리"></a>마무리</h2><p>직관에서 많이 벗어나는 Reactive Streams는 써야만 할 때만 쓰자.</p>
+<p>써야만 할 때가 언제일까?</p>
+<p><a href="https://www.reactive-streams.org/" target="_blank" rel="noopener">https://www.reactive-streams.org/</a> 의 첫 문장에 다음과 같이 나와있다.</p>
+<blockquote>
+<p>Reactive Streams is an initiative to provide a standard for asynchronous stream processing with non-blocking back pressure.</p>
+</blockquote>
+<p>대충 우림말로 ‘논블로킹 배압을 사용해서 비동기 스트림을 처리하는 표준을 제공한다’ 정도로 보이는데 길진 않지만 금방 이해가 되지는 않는다.</p>
+<p>정확하게 같은 의미는 아닐지라도 앞에서 살펴본 사례에서 이어지는 흐름대로 조금 구체화해서 재해석해보면,</p>
+<blockquote>
+<p><strong>선형적인 처리 흐름인데 그 흐름에 들어있는 단위 과정 중간중간에 자원 낭비를 유발하는 blocking 구간이 있어서 이를 최적화 해야하고 배압(back pressure) 적용이 필요할 때</strong></p>
+</blockquote>
+<p>라고 할 수 있을 것 같다.</p>
+<p>물론 선형적인 흐름이 아니라도 <code>Mono.zip()</code> 등 여러가지 (너무) 다양한 리액티브 연산자를 동원하면서 의도대로 실행되게 작성할 수는 있겠지만, 많은 학습 비용과 삽질을 각오해야 한다. 할 수 있다고 해서 무조건 하는 거랑 대안을 검토해보고 해야만 할 때 하는 거랑은 큰 차이가 있다.</p>
+<p>이 글에서는 언급하지 않았지만 Reactive Streams에서 강조하는 또 한 가지 요소는 배압(back pressure)이다. 배압은 데이터를 발생시키는 Publisher(Producer)에게 Subscriber(Consumer)가 처리할 수 있는 만큼만 요청할 수 있게 해주는 메커니즘을 의미한다.</p>
+<p>일반적인 웹 서비스에서 보면 웹 클라이언트가 서버에 요청을 보내면(Publish), API 서버는 이를 받아서 처리(Consume)하고 응답을 클라이언트에게 반환한다. 이런 흐름에서 API 서버가 처리할 수 있는 만큼만 보내라는 요청을 개별 웹 클라이언트에게 보내는 일은 거의 없다.</p>
+<p>결국 위 코드 사례처럼 선형적인 처리가 아니라 여러 중첩된 처리 과정이 난무할 때, 그리고 배압 메커니즘이 필요 없을 때, 그러니까 사실 상 대부분의 일반적인 웹 서비스의 경우에는 코루틴을 사용하는 것이 편리하다고 본다.</p>
+<p>그리고 머지 않아(한 2년 이내?) Virtual Thread이 나온다는 것을 감안하면 Reactive Streams를 사용한 코드는 많은 경우 부담스러운 레거시로 남을 가능성이 크다.</p>
+<p>이미 Reactive Streams로 작성되어 있어 피할 수 없거나, 또는 비동기 스트림 처리와 배압이 정말로 필요한 상황이라서 써야만 한다면, <a href="https://homoefficio.github.io/2021/04/14/Reactive-Streams-with-Sequence-Diagram/">https://homoefficio.github.io/2021/04/14/Reactive-Streams-with-Sequence-Diagram/</a> 여기에서 시작해보자.</p>
+
+        
+        
+            
+        
+        <hr/>
+        <div>
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="크리에이티브 커먼즈 라이선스" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><a href='https://github.com/homoefficio' target='_blank'>HomoEfficio</a>가 작성한 이 저작물은(는) <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스</a>에 따라 이용할 수 있습니다.
+        </div>
+    </div>
+    <div class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/Async/">Async</a> <a class="tag tag--primary tag--small t-link" href="/tags/Coroutine/">Coroutine</a> <a class="tag tag--primary tag--small t-link" href="/tags/Kotlin/">Kotlin</a> <a class="tag tag--primary tag--small t-link" href="/tags/Reactive-Streams/">Reactive Streams</a> <a class="tag tag--primary tag--small t-link" href="/tags/Reactor/">Reactor</a> <a class="tag tag--primary tag--small t-link" href="/tags/Spring/">Spring</a>
+
+            </div>
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2021/04/14/Reactive-Streams-with-Sequence-Diagram/" data-tooltip="Reactive Streams with Sequence Diagram">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2021/11/28/Counter-Intuitive-Reactive-Streams/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2021/11/28/Counter-Intuitive-Reactive-Streams/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2021/11/28/Counter-Intuitive-Reactive-Streams/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+        
+            <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2021 HomoEfficio. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="1">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2021/04/14/Reactive-Streams-with-Sequence-Diagram/" data-tooltip="Reactive Streams with Sequence Diagram">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2021/11/28/Counter-Intuitive-Reactive-Streams/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2021/11/28/Counter-Intuitive-Reactive-Streams/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2021/11/28/Counter-Intuitive-Reactive-Streams/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="1">
+    <ul class="share-options">
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2021/11/28/Counter-Intuitive-Reactive-Streams/">
+                <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2021/11/28/Counter-Intuitive-Reactive-Streams/">
+                <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2021/11/28/Counter-Intuitive-Reactive-Streams/">
+                <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+            
+        </div>
+        <div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=110"/>
+        
+            <h4 id="about-card-name">HomoEfficio</h4>
+        
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Seoul, Korea.
+            </h5>
+        
+    </div>
+</div>
+        <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/script.min.js"></script>
+<!--SCRIPTS END-->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'hanmomhanda';
+        (function() {
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+
+
+
+</html>
