@@ -63,7 +63,7 @@ coverImage: cover-helm.png
     _helpers.tpl : 차트 전체에서 다시 사용할 수 있는 템플릿 헬퍼를 지정하는 공간
     ```
 
-  - 예를 들어 deployment.yaml 파일에 아래와 같은 내용이 있다면, `helm install` 실행 시 사용되는 values.yaml 파일에 `spring.configLocation`이라는 항목(key)이 있다면 그 값을 `SPRING_CONFIG_LOCATION` 환경변수에 저장한다.
+  - 예를 들어 deployment.yaml 파일에 아래와 같은 내용이 있고, `helm install` 실행 시 사용되는 values.yaml 파일에 `spring.configLocation`이라는 항목(key)이 있다면 그 값을 `SPRING_CONFIG_LOCATION` 환경변수에 저장한다.
 
       ```yaml
           env:
@@ -75,9 +75,10 @@ coverImage: cover-helm.png
 
 - values.yaml 파일도 포함돼 있는데 이 파일을 사용할 수도 있고, helm chart 밖에 존재하는 별도의 values.yaml 파일을 지정해서 사용할 수도 있다. 위 그림에 나온 방식은 별도의 values.yaml 파일을 사용하고 있다.
 
+
 ## helm release
 
-- `helm install` 명령 실행결과로 생성되며, helm chart의 인스턴스라고 볼 수 있다.
+- `helm install` 명령 실행 결과로 생성되며, helm chart의 인스턴스라고 볼 수 있다.
 - 하나의 helm chart 에
   - 서로 다른 values.yaml 을 적용해서 내용적으로 다른 여러 helm release 를 만들 수도 있고,
   - 동일한 values.yaml 을 적용하되 release 이름을 다르게 지정해서 내용적으로는 동일한 여러 helm release 를 만들 수도 있다.
@@ -93,42 +94,48 @@ coverImage: cover-helm.png
 
 ## helm push
 
-helm chart를 helm repository에 저장
-
 ```
 형식: helm push 올릴chart경로 helmRepo이름
 예제: helm push deploy/my-chart my-repo
 ```
 
+- git push 와 비슷하다고 보면 된다.
+- helm chart를 helm repository에 저장한다.
+
 
 ## helm install
-
-helm repository에 저장된 helm chart를 가져오고 여기에 특정 values-xxx.yaml 을 명시적으로 지정해서 helm chart에 포함된 k8s yaml template files 에 values-xxx.yaml 파일에 있는 값을 주입하고 k8s 자원 yaml을 생성할 수 있는 helm release 를 생성하고 실제로 k8s에 자원 배포
 
 ```
 형식: helm install -n k8sNamespace 생성될release이름 사용할chart이름 -f 사용할valuesyaml파일경로
 예제: helm install -n my-namespace my-release my-repo/my-chart -f deploy/values-my-values.yaml
 ```
 
+- package.json 내용 대로 패키지를 가져와서 설치하는 npm install 과 비슷하다고 보면 된다.
+- helm repository에 저장된 helm chart를 가져오고,
+- 명시적으로 지정한 values-xxx.yaml 에 있는 값을 helm chart 에 포함돼 있는 여러 k8s yaml template 파일에 주입해서,
+- k8s 자원 yaml을 생성할 수 있는 helm release 를 생성하고,
+- helm chart 에 지정돼 있는 위치에서 컨테이너 이미지를 가져와서 실제로 k8s에 자원을 생성한다.
+- 복잡해 보이지만 위 그림을 다시 보면 더 쉽게 이해할 수 있다.
+
 
 ## helm uninstall
-
-install 에 의해 생성된 helm release를 삭제하고 k8s에 생성됐던 deployment 등 관련 자원도 모두 삭제된다
 
 ```
 형식: helm uninstall -n k8sNamespace 삭제할release이름
 예제: helm uninstall -n my-namespace my-release
 ```
 
+- install 에 의해 생성된 helm release를 삭제하고 k8s에 생성됐던 deployment 등 관련 자원도 모두 삭제된다.
+
 
 ## helm upgrade
-
-install 에 의해 생성된 helm release의 내용 변경
 
 ```
 형식: helm upgrade -n k8sNamespace release이름 사용할chart이름 -f 사용할valuesyaml파일경로
 예제: helm upgrade -n my-namespace my-release my-repo/my-chart -f deploy/values-my-other-values.yaml
 ```
+
+- install 에 의해 생성된 helm release의 내용을 변경한다.
 
 
 # 실무 사용 참고
