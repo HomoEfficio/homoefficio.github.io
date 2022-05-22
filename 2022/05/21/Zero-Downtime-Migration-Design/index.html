@@ -15,7 +15,7 @@
         <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
     
     <meta name="description" content="Zero Downtime Migration - Design오징어 전문 쇼핑몰을 만들었는데 입소문이 잘 났다. 그래서 포털 몇 군데에도 API 열어줬더니 대애애애박이 났다. 물 들어 온 김에 노저어야지. 해산물 종합 쇼핑몰로 확장하려고 한다. 그런데 아뿔싸.. 엔티티 이름, 테이블 이름 등이 squid로 돼 있다. 잘못된 건 없다. 애초에 오징어 전문 쇼핑몰">
-<meta name="keywords" content="migration,architecture">
+<meta name="keywords" content="migration,architecture,zero downtime">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Zero Downtime Migration - Design">
 <meta property="og:url" content="http://homoefficio.github.io/2022/05/21/Zero-Downtime-Migration-Design/index.html">
@@ -37,7 +37,7 @@
 <meta property="og:image" content="https://i.imgur.com/hPVKUbC.png">
 <meta property="og:image" content="https://i.imgur.com/JCrhECX.png">
 <meta property="og:image" content="https://i.imgur.com/wI6kcCW.png">
-<meta property="og:updated_time" content="2022-05-22T07:22:16.437Z">
+<meta property="og:updated_time" content="2022-05-22T10:08:44.891Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Zero Downtime Migration - Design">
 <meta name="twitter:description" content="Zero Downtime Migration - Design오징어 전문 쇼핑몰을 만들었는데 입소문이 잘 났다. 그래서 포털 몇 군데에도 API 열어줬더니 대애애애박이 났다. 물 들어 온 김에 노저어야지. 해산물 종합 쇼핑몰로 확장하려고 한다. 그런데 아뿔싸.. 엔티티 이름, 테이블 이름 등이 squid로 돼 있다. 잘못된 건 없다. 애초에 오징어 전문 쇼핑몰">
@@ -269,7 +269,7 @@
 <p><img src="https://i.imgur.com/ZzyAanE.jpg" alt="Imgur"></p>
 <p>따라서 고된 분리 작업을 거쳐서 전환 과정에서의 안정성을 높일지, 아니면 고된 분리 작업을 생략하는 대신 전환 과정에서 발생할 수 있는 위험을 감수하고 한 방에 전환할지 신중하게 고민하고 선택해야 한다.</p>
 <p>하지만 API가 애초부터 다음과 같이 구성돼 있었다면 아주 자연스럽게 Command와 Query를 분리 전환할 할 수 있다. </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">- 특정 해산물 조회: /command/api/seafoods/&#123;id&#125; GET</span><br><span class="line">- 특정 해산물 수정: /query/api/seafoods/&#123;id&#125; PUT</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">- 특정 해산물 조회: /query/api/seafoods/&#123;id&#125; GET</span><br><span class="line">- 특정 해산물 수정: /command/api/seafoods/&#123;id&#125; PUT</span><br></pre></td></tr></table></figure>
 <p>다행스럽게도 OLD 애플리케이션은 위와 같이 Command와 Query가 분리돼 있었다.</p>
 <p><img src="https://i.imgur.com/hCjQ43f.jpg" alt="Imgur"></p>
 <p>서론이 길었는데 위와 같은 현황과 요구사항을 반영해서 구체화된 설계도는 다음과 같다.</p>
@@ -302,7 +302,7 @@
             <div class="post-footer-tags">
                 <span class="text-color-light text-small">TAGGED IN</span><br/>
                 
-    <a class="tag tag--primary tag--small t-link" href="/tags/architecture/">architecture</a> <a class="tag tag--primary tag--small t-link" href="/tags/migration/">migration</a>
+    <a class="tag tag--primary tag--small t-link" href="/tags/architecture/">architecture</a> <a class="tag tag--primary tag--small t-link" href="/tags/migration/">migration</a> <a class="tag tag--primary tag--small t-link" href="/tags/zero-downtime/">zero downtime</a>
 
             </div>
         
