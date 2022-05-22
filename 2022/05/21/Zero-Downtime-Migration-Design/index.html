@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="ko">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="뒤태지존의 끄적거림">
+    <title>Zero Downtime Migration - Design - 뒤태지존의 끄적거림</title>
+    <meta name="author" content="HomoEfficio">
+    <meta name="description" content="뒤태지존의 끄적거림">
+    
+        <link rel="icon" href="/assets/images/favicon.ico">
+    
+    
+        <link rel="alternative" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <meta name="description" content="Zero Downtime Migration - Design오징어 전문 쇼핑몰을 만들었는데 입소문이 잘 났다. 그래서 포털 몇 군데에도 API 열어줬더니 대애애애박이 났다. 물 들어 온 김에 노저어야지. 해산물 종합 쇼핑몰로 확장하려고 한다. 그런데 아뿔싸.. 엔티티 이름, 테이블 이름 등이 squid로 돼 있다. 잘못된 건 없다. 애초에 오징어 전문 쇼핑몰">
+<meta name="keywords" content="migration,architecture">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Zero Downtime Migration - Design">
+<meta property="og:url" content="http://homoefficio.github.io/2022/05/21/Zero-Downtime-Migration-Design/index.html">
+<meta property="og:site_name" content="뒤태지존의 끄적거림">
+<meta property="og:description" content="Zero Downtime Migration - Design오징어 전문 쇼핑몰을 만들었는데 입소문이 잘 났다. 그래서 포털 몇 군데에도 API 열어줬더니 대애애애박이 났다. 물 들어 온 김에 노저어야지. 해산물 종합 쇼핑몰로 확장하려고 한다. 그런데 아뿔싸.. 엔티티 이름, 테이블 이름 등이 squid로 돼 있다. 잘못된 건 없다. 애초에 오징어 전문 쇼핑몰">
+<meta property="og:locale" content="ko">
+<meta property="og:image" content="https://i.imgur.com/LYJSPU8.jpg">
+<meta property="og:image" content="https://i.imgur.com/ZzyAanE.jpg">
+<meta property="og:image" content="https://i.imgur.com/hCjQ43f.jpg">
+<meta property="og:image" content="https://i.imgur.com/1POOzAp.png">
+<meta property="og:image" content="https://i.imgur.com/7iLeHNP.png">
+<meta property="og:image" content="https://i.imgur.com/1cmjqcV.png">
+<meta property="og:image" content="https://i.imgur.com/Pnaf5mM.png">
+<meta property="og:image" content="https://i.imgur.com/aGE0xxC.png">
+<meta property="og:image" content="https://i.imgur.com/o1hUGlF.png">
+<meta property="og:image" content="https://i.imgur.com/iJ6Iy3K.png">
+<meta property="og:image" content="https://i.imgur.com/80AUKB0.png">
+<meta property="og:image" content="https://i.imgur.com/yd1MLVp.png">
+<meta property="og:image" content="https://i.imgur.com/hPVKUbC.png">
+<meta property="og:image" content="https://i.imgur.com/JCrhECX.png">
+<meta property="og:image" content="https://i.imgur.com/wI6kcCW.png">
+<meta property="og:updated_time" content="2022-05-22T07:22:16.437Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Zero Downtime Migration - Design">
+<meta name="twitter:description" content="Zero Downtime Migration - Design오징어 전문 쇼핑몰을 만들었는데 입소문이 잘 났다. 그래서 포털 몇 군데에도 API 열어줬더니 대애애애박이 났다. 물 들어 온 김에 노저어야지. 해산물 종합 쇼핑몰로 확장하려고 한다. 그런데 아뿔싸.. 엔티티 이름, 테이블 이름 등이 squid로 돼 있다. 잘못된 건 없다. 애초에 오징어 전문 쇼핑몰">
+<meta name="twitter:image" content="https://i.imgur.com/LYJSPU8.jpg">
+    
+        <meta rel="publisher" content="https://plus.google.com/+오명운"/>
+    
+    
+    
+        <meta property="og:image" content="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=640"/>
+    
+    
+        <meta property="og:image" content="/2022/05/21/Zero-Downtime-Migration-Design/https:/i.imgur.com/mUTRoWz.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2022/05/21/Zero-Downtime-Migration-Design/https://i.imgur.com/mUTRoWz.png" />
+    
+    
+        <meta property="og:image" content="/2022/05/21/Zero-Downtime-Migration-Design/cover-migration.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://homoefficio.github.io/2022/05/21/Zero-Downtime-Migration-Design/cover-migration.jpg" />
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style.min.css">
+    <!--STYLES END-->
+    
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-79893978-1']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6494847158566766",
+    enable_page_level_ads: true
+  });
+</script>
+</head>
+
+    <body>
+        <div id="blog">
+            <header id="header" data-behavior="1">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="/ ">뒤태지존의 끄적거림</a>
+    </h1>
+    
+        <a class="header-right-picture" href="/#about">
+            <img class="header-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+        </a>
+    
+</header>
+            <nav id="sidebar" data-behavior="1">
+    
+    <div class="sidebar-profile">
+        <a href="/#about">
+            
+            <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=90"/>
+            
+        </a>
+        <span class="sidebar-profile-name">HomoEfficio</span>
+    </div>
+    
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/ 
+                    ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">Home</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-categories
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">Categories</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-tags
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">Tags</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/all-archives
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">Archives</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link st-search-show-outputs"
+                    href="#search
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                    <span class="sidebar-button-desc">Search</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="#about
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">About me</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="https://github.com/HomoEfficio" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                    <span class="sidebar-button-desc">GitHub</span>
+                </a>
+        </li>
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link " href="mailto:homo.efficio@gmail.com" target="_blank">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-envelope-o"></i>
+                    <span class="sidebar-button-desc">Mail</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+    <ul class="sidebar-buttons">
+        
+        <li class="sidebar-button">
+            
+                <a  class="sidebar-button-link "
+                    href="/atom.xml
+                            ">
+            
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+            <div id="main" data-behavior="1">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+        <div class="post-header-cover" style="background-image:url('/2022/05/21/Zero-Downtime-Migration-Design/cover-migration.jpg');">
+            <div class="post-header main-content-wrap">
+    
+        <h1 class="post-title" itemprop="headline">Zero Downtime Migration - Design</h1>
+    
+    <div class="post-meta">
+    <time  itemprop="datePublished" content="Sat May 21 2022 20:09:58 GMT+0900">
+        May 21, 2022
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Technique/">Technique</a>, <a class="category-link" href="/categories/Technique/SRE/">SRE</a>
+
+
+    
+</div>
+</div>
+        </div>
+    
+    <div class="post-content markdown main-content-wrap" itemprop="articleBody">
+        
+            <h1 id="Zero-Downtime-Migration-Design"><a href="#Zero-Downtime-Migration-Design" class="headerlink" title="Zero Downtime Migration - Design"></a>Zero Downtime Migration - Design</h1><p>오징어 전문 쇼핑몰을 만들었는데 입소문이 잘 났다. 그래서 포털 몇 군데에도 API 열어줬더니 대애애애박이 났다. 물 들어 온 김에 노저어야지. 해산물 종합 쇼핑몰로 확장하려고 한다.</p>
+<p>그런데 아뿔싸.. 엔티티 이름, 테이블 이름 등이 <code>squid</code>로 돼 있다. 잘못된 건 없다. 애초에 오징어 전문 쇼핑몰이 목표였으니까. 요구사항이 바뀌었고 그에 따라 시스템을 전환해야 하는 일이 생겼을 뿐 잘못된 것은 없다.</p>
+<p>어떻게 전환해야 할까? 시스템을 멈추고 점검 화면을 보여주고 전환해도 될 것 같지만, 우리를 돈쭐내고 싶어 안달이난 사용자들을 오랜 시간 대기하게 만드는 것은 예의가 아니다.</p>
+<p><img src="https://i.imgur.com/LYJSPU8.jpg" alt="Imgur"></p>
+<p>시스템 중단 없이 마이그레이션 해보자.</p>
+<h1 id="요구사항"><a href="#요구사항" class="headerlink" title="요구사항"></a>요구사항</h1><ul>
+<li>마이그레이션 전/중/후에 사용자 요청 처리에 아무 오류가 없어야 한다.</li>
+<li>API 클라이언트는 마이그레이션 후에도 당분간 기존 API를 사용할 수 있어야 각자 편한 시기에 새 API로 변경할 수 있어야 한다.</li>
+<li><code>squid</code> 엔티티는 <code>seafood</code> 엔티티로 변경한다.</li>
+</ul>
+<h1 id="일반적인-마이그레이션-시나리오"><a href="#일반적인-마이그레이션-시나리오" class="headerlink" title="일반적인 마이그레이션 시나리오"></a>일반적인 마이그레이션 시나리오</h1><p>편의상 기존 오징어 전문 쇼핑몰은 OLD 라고 하고, 해산물 종합 쇼핑몰은 NEW 라고 하면 대략 다음과 같은 시나리오로 전환 작업이 진행된다.</p>
+<ol>
+<li><code>squid</code> 대신 <code>seafood</code> 기준으로 동작하는 NEW 애플리케이션 작성</li>
+<li><code>squid</code> 기준의 OLD db에서 <code>seafood</code> 기준으로 구성된 NEW db로의 데이터 복제 구성</li>
+<li>NEW 애플리케이션 배포</li>
+<li>OLD 애플리케이션으로 향하던 트래픽을 NEW 애플리케이션으로 향하도록 라우팅 변경</li>
+</ol>
+<h1 id="Command와-Query의-분리"><a href="#Command와-Query의-분리" class="headerlink" title="Command와 Query의 분리"></a>Command와 Query의 분리</h1><p>시스템의 상태를 변경하는 CUD 작업과 상태를 변경하지 않고 R 작업만 수행하는 기능이 하나의 애플리케이션에 들어있다면, 전환도 한 번에 할 수 밖에 없다. 한 번에 전환하는 것이 꼭 나쁘다고 할 수는 없지만, CUD와 R을 분리해서 전환하면 분리 집중, 점진적 실행 등 Divide and Conquer 전략의 일반적인 장점을 누릴 수 있다. 조금 더 구체적으로 기술하면 다음과 같다.</p>
+<ul>
+<li>상태 변경이 없으므로 전환 작업이 상대적으로 훨씬 수월한 R을 먼저 전환하고 모니터링하면서 <code>seafood</code> 기준의 로직에 오류가 없는지 점검하고 수정할 기회를 가질 수 있다.</li>
+<li>R 전환에서 얻은 경험을 토대로 데이터 일관성 유지에 훨씬 더 많은 주의를 기울어야 할 CUD에 대해 더 면밀히 준비하고, 전환 이후에도 상태 변경에 대해서만 집중적으로 모니터링하고 대처할 수 있다.</li>
+</ul>
+<p>따라서 가능하다면 기존 애플리케이션을 CUD를 수행하는 Command와 R을 수행하는 Query로 분리할 수 있다면 분리하는 것이 좋다. 마이그레이션 관점에서는 API Endpoint 수준에서만 분리돼도 충분하다. Endpoint 수준에서의 분리가 말은 쉬워보이지만 다음과 같이 데이터 조회와 수정에 대한 API URL이 동일하게 구성되고 HTTP Method만 다르게 돼 있는 경우에는,</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">- 특정 해산물 조회: /api/seafoods/&#123;id&#125; GET</span><br><span class="line">- 특정 해산물 수정: /api/seafoods/&#123;id&#125; PUT</span><br></pre></td></tr></table></figure>
+<p>애플리케이션 서버 앞단에 있는 Reverse Proxy에서 API 하나하나마다 HTTP Method 수준의 분기를 구성해야 하므로 굉장히 고된 작업일 수 있다.</p>
+<p><img src="https://i.imgur.com/ZzyAanE.jpg" alt="Imgur"></p>
+<p>따라서 고된 분리 작업을 거쳐서 전환 과정에서의 안정성을 높일지, 아니면 고된 분리 작업을 생략하는 대신 전환 과정에서 발생할 수 있는 위험을 감수하고 한 방에 전환할지 신중하게 고민하고 선택해야 한다.</p>
+<p>하지만 API가 애초부터 다음과 같이 구성돼 있었다면 아주 자연스럽게 Command와 Query를 분리 전환할 할 수 있다. </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">- 특정 해산물 조회: /command/api/seafoods/&#123;id&#125; GET</span><br><span class="line">- 특정 해산물 수정: /query/api/seafoods/&#123;id&#125; PUT</span><br></pre></td></tr></table></figure>
+<p>다행스럽게도 OLD 애플리케이션은 위와 같이 Command와 Query가 분리돼 있었다.</p>
+<p><img src="https://i.imgur.com/hCjQ43f.jpg" alt="Imgur"></p>
+<p>서론이 길었는데 위와 같은 현황과 요구사항을 반영해서 구체화된 설계도는 다음과 같다.</p>
+<h1 id="전환-작업-설계"><a href="#전환-작업-설계" class="headerlink" title="전환 작업 설계"></a>전환 작업 설계</h1><p>그림에 간략한 설명이 있으니 그냥 주욱 살펴보자.</p>
+<h3 id="1-현황"><a href="#1-현황" class="headerlink" title="1. 현황"></a>1. 현황</h3><p><img src="https://i.imgur.com/1POOzAp.png" alt="Imgur"></p>
+<h3 id="2-데이터-복제"><a href="#2-데이터-복제" class="headerlink" title="2. 데이터 복제"></a>2. 데이터 복제</h3><p><img src="https://i.imgur.com/7iLeHNP.png" alt="Imgur"></p>
+<h3 id="3-NEW-Query-애플리케이션-배포"><a href="#3-NEW-Query-애플리케이션-배포" class="headerlink" title="3. NEW Query 애플리케이션 배포"></a>3. NEW Query 애플리케이션 배포</h3><p><img src="https://i.imgur.com/1cmjqcV.png" alt="Imgur"></p>
+<h3 id="4-Query-라우팅-전환"><a href="#4-Query-라우팅-전환" class="headerlink" title="4. Query 라우팅 전환"></a>4. Query 라우팅 전환</h3><p><img src="https://i.imgur.com/Pnaf5mM.png" alt="Imgur"></p>
+<h3 id="5-NEW-Command-애플리케이션-배포"><a href="#5-NEW-Command-애플리케이션-배포" class="headerlink" title="5. NEW Command 애플리케이션 배포"></a>5. NEW Command 애플리케이션 배포</h3><p><img src="https://i.imgur.com/aGE0xxC.png" alt="Imgur"></p>
+<h3 id="6-Command-라우팅-전환"><a href="#6-Command-라우팅-전환" class="headerlink" title="6. Command 라우팅 전환"></a>6. Command 라우팅 전환</h3><p><img src="https://i.imgur.com/o1hUGlF.png" alt="Imgur"></p>
+<h3 id="7-DB-복제-중지"><a href="#7-DB-복제-중지" class="headerlink" title="7. DB 복제 중지"></a>7. DB 복제 중지</h3><p><img src="https://i.imgur.com/iJ6Iy3K.png" alt="Imgur"></p>
+<h3 id="8-NEW-API-라우팅-추가"><a href="#8-NEW-API-라우팅-추가" class="headerlink" title="8. NEW API 라우팅 추가"></a>8. NEW API 라우팅 추가</h3><p><img src="https://i.imgur.com/80AUKB0.png" alt="Imgur"></p>
+<h3 id="9-클라이언트-API-변경"><a href="#9-클라이언트-API-변경" class="headerlink" title="9. 클라이언트 API 변경"></a>9. 클라이언트 API 변경</h3><p><img src="https://i.imgur.com/yd1MLVp.png" alt="Imgur"></p>
+<h3 id="10-OLD-라우팅-제거"><a href="#10-OLD-라우팅-제거" class="headerlink" title="10. OLD 라우팅 제거"></a>10. OLD 라우팅 제거</h3><p><img src="https://i.imgur.com/hPVKUbC.png" alt="Imgur"></p>
+<h3 id="11-OLD-API-Endpoint-제거"><a href="#11-OLD-API-Endpoint-제거" class="headerlink" title="11. OLD API Endpoint 제거"></a>11. OLD API Endpoint 제거</h3><p><img src="https://i.imgur.com/JCrhECX.png" alt="Imgur"></p>
+<h3 id="12-마이그레이션-완료"><a href="#12-마이그레이션-완료" class="headerlink" title="12. 마이그레이션 완료"></a>12. 마이그레이션 완료</h3><p><img src="https://i.imgur.com/wI6kcCW.png" alt="Imgur"></p>
+<p>단계별 실제 구현 작업은 다음 편에서 알아보자.</p>
+
+        
+        
+            
+        
+        <hr/>
+        <div>
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="크리에이티브 커먼즈 라이선스" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><a href='https://github.com/homoefficio' target='_blank'>HomoEfficio</a>가 작성한 이 저작물은(는) <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제 라이선스</a>에 따라 이용할 수 있습니다.
+        </div>
+    </div>
+    <div class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/architecture/">architecture</a> <a class="tag tag--primary tag--small t-link" href="/tags/migration/">migration</a>
+
+            </div>
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2022/03/19/helm-초간단-정리/" data-tooltip="helm 초간단 정리">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2022/05/21/Zero-Downtime-Migration-Design/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2022/05/21/Zero-Downtime-Migration-Design/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2022/05/21/Zero-Downtime-Migration-Design/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+        
+            <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2022 HomoEfficio. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="1">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2022/03/19/helm-초간단-정리/" data-tooltip="helm 초간단 정리">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2022/05/21/Zero-Downtime-Migration-Design/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2022/05/21/Zero-Downtime-Migration-Design/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2022/05/21/Zero-Downtime-Migration-Design/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="1">
+    <ul class="share-options">
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://homoefficio.github.io/2022/05/21/Zero-Downtime-Migration-Design/">
+                <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://homoefficio.github.io/2022/05/21/Zero-Downtime-Migration-Design/">
+                <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://homoefficio.github.io/2022/05/21/Zero-Downtime-Migration-Design/">
+                <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+            
+        </div>
+        <div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://www.gravatar.com/avatar/30f0244ab86396288cdb62c3591c0c30?s=110"/>
+        
+            <h4 id="about-card-name">HomoEfficio</h4>
+        
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Seoul, Korea.
+            </h5>
+        
+    </div>
+</div>
+        <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/script.min.js"></script>
+<!--SCRIPTS END-->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'hanmomhanda';
+        (function() {
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+
+
+
+</html>
