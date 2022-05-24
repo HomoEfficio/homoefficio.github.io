@@ -6,6 +6,7 @@ categories:
 tags:
   - migration
   - architecture
+  - zero downtime
 thumbnailImage: https://i.imgur.com/mUTRoWz.png
 coverImage: cover-migration.jpg
 ---
@@ -63,8 +64,8 @@ coverImage: cover-migration.jpg
 하지만 API가 애초부터 다음과 같이 구성돼 있었다면 아주 자연스럽게 Command와 Query를 분리 전환할 할 수 있다. 
 
 ```
-- 특정 해산물 조회: /command/api/seafoods/{id} GET
-- 특정 해산물 수정: /query/api/seafoods/{id} PUT
+- 특정 해산물 조회: /query/api/seafoods/{id} GET
+- 특정 해산물 수정: /command/api/seafoods/{id} PUT
 ```
 
 다행스럽게도 OLD 애플리케이션은 위와 같이 Command와 Query가 분리돼 있었다.
