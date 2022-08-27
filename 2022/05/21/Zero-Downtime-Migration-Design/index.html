@@ -37,7 +37,7 @@
 <meta property="og:image" content="https://i.imgur.com/hPVKUbC.png">
 <meta property="og:image" content="https://i.imgur.com/JCrhECX.png">
 <meta property="og:image" content="https://i.imgur.com/wI6kcCW.png">
-<meta property="og:updated_time" content="2022-05-22T10:08:44.891Z">
+<meta property="og:updated_time" content="2022-08-27T16:16:44.689Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Zero Downtime Migration - Design">
 <meta name="twitter:description" content="Zero Downtime Migration - Design오징어 전문 쇼핑몰을 만들었는데 입소문이 잘 났다. 그래서 포털 몇 군데에도 API 열어줬더니 대애애애박이 났다. 물 들어 온 김에 노저어야지. 해산물 종합 쇼핑몰로 확장하려고 한다. 그런데 아뿔싸.. 엔티티 이름, 테이블 이름 등이 squid로 돼 있다. 잘못된 건 없다. 애초에 오징어 전문 쇼핑몰">
@@ -249,12 +249,12 @@
 <h1 id="요구사항"><a href="#요구사항" class="headerlink" title="요구사항"></a>요구사항</h1><ul>
 <li>마이그레이션 전/중/후에 사용자 요청 처리에 아무 오류가 없어야 한다.</li>
 <li>API 클라이언트는 마이그레이션 후에도 당분간 기존 API를 사용할 수 있어야 각자 편한 시기에 새 API로 변경할 수 있어야 한다.</li>
-<li><code>squid</code> 엔티티는 <code>seafood</code> 엔티티로 변경한다.</li>
+<li><code>squid</code> 대신 <code>seafood</code> 엔티티가 중심이 되고 <code>squid</code>는 <code>seafood</code>의 여러 타입 중 하나가 된다.</li>
 </ul>
 <h1 id="일반적인-마이그레이션-시나리오"><a href="#일반적인-마이그레이션-시나리오" class="headerlink" title="일반적인 마이그레이션 시나리오"></a>일반적인 마이그레이션 시나리오</h1><p>편의상 기존 오징어 전문 쇼핑몰은 OLD 라고 하고, 해산물 종합 쇼핑몰은 NEW 라고 하면 대략 다음과 같은 시나리오로 전환 작업이 진행된다.</p>
 <ol>
 <li><code>squid</code> 대신 <code>seafood</code> 기준으로 동작하는 NEW 애플리케이션 작성</li>
-<li><code>squid</code> 기준의 OLD db에서 <code>seafood</code> 기준으로 구성된 NEW db로의 데이터 복제 구성</li>
+<li><code>squid</code> 기준의 OLD db에서 <code>seafood</code> 기준으로 구성된 NEW db로의 데이터 마이그레이션 구성</li>
 <li>NEW 애플리케이션 배포</li>
 <li>OLD 애플리케이션으로 향하던 트래픽을 NEW 애플리케이션으로 향하도록 라우팅 변경</li>
 </ol>
@@ -275,7 +275,7 @@
 <p>서론이 길었는데 위와 같은 현황과 요구사항을 반영해서 구체화된 설계도는 다음과 같다.</p>
 <h1 id="전환-작업-설계"><a href="#전환-작업-설계" class="headerlink" title="전환 작업 설계"></a>전환 작업 설계</h1><p>그림에 간략한 설명이 있으니 그냥 주욱 살펴보자.</p>
 <h3 id="1-현황"><a href="#1-현황" class="headerlink" title="1. 현황"></a>1. 현황</h3><p><img src="https://i.imgur.com/1POOzAp.png" alt="Imgur"></p>
-<h3 id="2-데이터-복제"><a href="#2-데이터-복제" class="headerlink" title="2. 데이터 복제"></a>2. 데이터 복제</h3><p><img src="https://i.imgur.com/7iLeHNP.png" alt="Imgur"></p>
+<h3 id="2-데이터-마이그레이션"><a href="#2-데이터-마이그레이션" class="headerlink" title="2. 데이터 마이그레이션"></a>2. 데이터 마이그레이션</h3><p><img src="https://i.imgur.com/7iLeHNP.png" alt="Imgur"></p>
 <h3 id="3-NEW-Query-애플리케이션-배포"><a href="#3-NEW-Query-애플리케이션-배포" class="headerlink" title="3. NEW Query 애플리케이션 배포"></a>3. NEW Query 애플리케이션 배포</h3><p><img src="https://i.imgur.com/1cmjqcV.png" alt="Imgur"></p>
 <h3 id="4-Query-라우팅-전환"><a href="#4-Query-라우팅-전환" class="headerlink" title="4. Query 라우팅 전환"></a>4. Query 라우팅 전환</h3><p><img src="https://i.imgur.com/Pnaf5mM.png" alt="Imgur"></p>
 <h3 id="5-NEW-Command-애플리케이션-배포"><a href="#5-NEW-Command-애플리케이션-배포" class="headerlink" title="5. NEW Command 애플리케이션 배포"></a>5. NEW Command 애플리케이션 배포</h3><p><img src="https://i.imgur.com/aGE0xxC.png" alt="Imgur"></p>
