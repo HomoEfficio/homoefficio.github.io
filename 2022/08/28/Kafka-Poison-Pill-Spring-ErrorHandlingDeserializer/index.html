@@ -23,7 +23,7 @@
 <meta property="og:description" content="Kafka Poison Pill Spring ErrorHandlingDeserializer카프카 메시지 consume은 대략 다음과 같은 절차로 진행된다.  Fetch Serialized Data from Broker(직렬화된 데이터를 브로커로부터 가져와서) Deserialize the fetched serialized data(정해진 타입으로 역직렬화하고">
 <meta property="og:locale" content="ko">
 <meta property="og:image" content="https://i.imgur.com/ly5PPnv.png">
-<meta property="og:updated_time" content="2022-08-27T16:44:23.303Z">
+<meta property="og:updated_time" content="2022-08-27T16:45:04.064Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Kafka Poison Pill Spring ErrorHandlingDeserializer">
 <meta name="twitter:description" content="Kafka Poison Pill Spring ErrorHandlingDeserializer카프카 메시지 consume은 대략 다음과 같은 절차로 진행된다.  Fetch Serialized Data from Broker(직렬화된 데이터를 브로커로부터 가져와서) Deserialize the fetched serialized data(정해진 타입으로 역직렬화하고">
@@ -240,7 +240,7 @@
 <h2 id="역직렬화에-실패하면"><a href="#역직렬화에-실패하면" class="headerlink" title="역직렬화에 실패하면.."></a>역직렬화에 실패하면..</h2><p>그런데 2번 역직렬화 과정에서 에러가 나면 어떻게 될까?</p>
 <p>예를 들어 JsonSerializer/JsonDeserializer를 사용해서 JSON으로 직렬화/역직렬화하도록 구성했는데,<br>JSON 규격에 맞지 않는 메시지(poison pill)가 인입되면 역직렬화 과정에서 에러가 발생하게 된다.</p>
 <p>2번 <strong>역직렬화 과정은 3번 과정보다 앞서 진행되므로 2번 과정에서 에러가 발생하면 개발자가 작성한 리스너로 진입하지 못하며,</strong><br>그 앞 단계에서 즉 프레임워크 수준에서 에러 처리가 돼야 한다.<br>그런데 이 에러 처리를 별로 신경쓰지 않고 사용하다가 역직렬화 과정에서 에러가 발생하면,<br>3번 과정에서 처럼 정해진 횟수만큼 재시도하다가 얌전히 포기하고 commit 처리되는 게 아니라,<br><strong>역직렬화에 성공할 때까지 계속, 그것도 아주 빠른 속도로 재시도한다.</strong></p>
-<p>그런데 역직렬화 실패한 데이터를 다시 역직렬화 하면 성공할 수 있을까?<br>그럴 가능성은 거의 없다고 생각하는데 안타깝게도 카프카 컨수머는, 아니 최소한 <strong>카프카 스프링 컨수머는 역직렬화 안 되면 될 때까지, 서버 빠개질때까지!! 그렇게 무식하게 동작한다.</strong></p>
+<p>그런데 역직렬화 실패한 데이터를 다시 역직렬화 하면 성공할 수 있을까?<br>그럴 가능성은 거의 없다고 생각하는데 안타깝게도 카프카 컨수머는, 아니 최소한 <strong>카프카 스프링 컨수머는 역직렬화 안 되면 될 때까지!! 서버 빠개질때까지!! 그렇게 불사파처럼 무식하게 동작한다.</strong></p>
 <p><img src="https://i.imgur.com/ly5PPnv.png" alt="Imgur"></p>
 <p>그 결과 컨수머 시스템 자원이 갉아먹히는데,<br><strong>이 컨수머가 다른 토픽의 컨수머이기도 하면 자원 부족으로 그 다른 토픽의 메시지를 컨숨하는 속도가 느려지고 그 다른 토픽에도 메시지가 쌓이게 된다.</strong><br><strong>결국 이 컨수머를 포함하고 있는 서버 인스턴스들은 점점 좀비화되고 서비스 장애 상황으로 이어진다.</strong></p>
 <p>그러니 역직렬화에 실패하면,<br>마치 혁명에 실패하면 반역죄로 능지처사에 3족이 멸문 당하는 것처럼 아주 걍 작살이 나는 거시다.</p>
