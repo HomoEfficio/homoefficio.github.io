@@ -28,7 +28,8 @@ coverImage: cover-migration.jpg
 
 - 마이그레이션 전/중/후에 사용자 요청 처리에 아무 오류가 없어야 한다.
 - API 클라이언트는 마이그레이션 후에도 당분간 기존 API를 사용할 수 있어야 각자 편한 시기에 새 API로 변경할 수 있어야 한다.
-- `squid` 엔티티는 `seafood` 엔티티로 변경한다.
+- `squid` 대신 `seafood` 엔티티가 중심이 되고 `squid`는 `seafood`의 여러 타입 중 하나가 된다.
+
 
 
 # 일반적인 마이그레이션 시나리오
@@ -36,7 +37,7 @@ coverImage: cover-migration.jpg
 편의상 기존 오징어 전문 쇼핑몰은 OLD 라고 하고, 해산물 종합 쇼핑몰은 NEW 라고 하면 대략 다음과 같은 시나리오로 전환 작업이 진행된다.
 
 1. `squid` 대신 `seafood` 기준으로 동작하는 NEW 애플리케이션 작성
-2. `squid` 기준의 OLD db에서 `seafood` 기준으로 구성된 NEW db로의 데이터 복제 구성
+2. `squid` 기준의 OLD db에서 `seafood` 기준으로 구성된 NEW db로의 데이터 마이그레이션 구성
 3. NEW 애플리케이션 배포
 4. OLD 애플리케이션으로 향하던 트래픽을 NEW 애플리케이션으로 향하도록 라우팅 변경
 
@@ -84,7 +85,7 @@ coverImage: cover-migration.jpg
 
 ![Imgur](https://i.imgur.com/1POOzAp.png)
 
-### 2. 데이터 복제
+### 2. 데이터 마이그레이션
 
 ![Imgur](https://i.imgur.com/7iLeHNP.png)
 
